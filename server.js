@@ -6,7 +6,10 @@ const API_KEY = process.env.WHATSSCALE_API_KEY;
 const SESSION = process.env.WHATSSCALE_SESSION || 'user_8b1cb7983c6d4999b2cffecca2da723a_08Q8thOB';
 const GROUP_JID = process.env.WHATSSCALE_GROUP_JID || '120363411404153606@g.us';
 const TRIGGER_SECRET = process.env.KAIROS_TRIGGER_SECRET;
+const TEST_TOKEN = process.env.KAIROS_TEST_TOKEN;
 const BASE_URL = 'https://proxy.whatsscale.com';
+const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
+let testSent = false;
 
 function json(res, status, body) {
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' });
@@ -48,20 +51,44 @@ async function sendWhatsApp(text) {
   return data;
 }
 
+function normalize(upstream) {
+  return {
+    ok: true,
+    remoteJid: upstream?.key?.remoteJid ?? null,
+    messageId: upstream?.key?.id ?? null,
+    fromMe: upstream?.key?.fromMe ?? null,
+    status: upstream?.status ?? null,
+    messageTimestamp: upstream?.messageTimestamp ?? null
+  };
+}
+
 const server = http.createServer(async (req, res) => {
   try {
-    if (req.method === 'GET' && req.url === '/health') {
+    const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+
+    if (req.method === 'GET' && url.pathname === '/health') {
       return json(res, 200, {
         ok: true,
         service: 'kairos-whatsapp-cloud',
         apiKeyConfigured: Boolean(API_KEY),
         triggerSecretConfigured: Boolean(TRIGGER_SECRET),
+        testTokenConfigured: Boolean(TEST_TOKEN),
         sessionConfigured: Boolean(SESSION),
         groupConfigured: Boolean(GROUP_JID)
       });
     }
 
-    if (req.method === 'POST' && req.url === '/send') {
+    if (req.method === 'GET' && url.pathname === '/test') {
+      if (!TEST_TOKEN) return json(res, 503, { ok: false, error: 'KAIROS_TEST_TOKEN is not configured' });
+      const token = url.searchParams.get('token') || '';
+      if (!safeEqual(token, TEST_TOKEN)) return json(res, 401, { ok: false, error: 'unauthorized' });
+      if (testSent) return json(res, 409, { ok: false, error: 'test already sent in this instance' });
+      const upstream = await sendWhatsApp(TEST_TEXT);
+      testSent = true;
+      return json(res, 200, { ...normalize(upstream), test: true, countedAsEdition: false });
+    }
+
+    if (req.method === 'POST' && url.pathname === '/send') {
       if (!TRIGGER_SECRET) return json(res, 503, { ok: false, error: 'KAIROS_TRIGGER_SECRET is not configured' });
       const auth = req.headers.authorization || '';
       const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
@@ -73,14 +100,7 @@ const server = http.createServer(async (req, res) => {
       if (text.length > 4096) return json(res, 400, { ok: false, error: 'text exceeds WhatsScale 4096 character limit' });
 
       const upstream = await sendWhatsApp(text);
-      return json(res, 200, {
-        ok: true,
-        remoteJid: upstream?.key?.remoteJid ?? null,
-        messageId: upstream?.key?.id ?? null,
-        fromMe: upstream?.key?.fromMe ?? null,
-        status: upstream?.status ?? null,
-        messageTimestamp: upstream?.messageTimestamp ?? null
-      });
+      return json(res, 200, normalize(upstream));
     }
 
     return json(res, 404, { ok: false, error: 'not found' });
