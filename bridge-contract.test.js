@@ -84,3 +84,9 @@ assert.match(source,/DIVA_REPLY_TOKEN/,'authorized canary must be protected by a
 assert.match(source,/DIVA E2E OK/,'authorized canary must use a fixed non-user-controlled prompt');
 assert.match(source,/DIVA_WHATSAPP_AUTHORIZED_CANARY_RESULT/,'authorized canary must emit a secret-safe proof marker');
 console.log('DIVA_AUTHORIZED_CANARY_CONTRACT_OK');
+
+assert.match(source,/DIVA_AUTHORIZED_CANARY_ON_START/,'authorized canary startup flag must exist');
+assert.match(source,/DIVA_AUTHORIZED_CANARY_CHAT_ID/,'authorized canary target must come from backend environment');
+assert.match(source,/divaAuthorizedCanaryOnStart/,'health must expose authorized canary enablement without the target');
+assert.match(source,/runDivaAuthorizedCanary\(DIVA_AUTHORIZED_CANARY_CHAT_ID\)/,'startup must execute the authorized canary only with backend-configured target');
+console.log('DIVA_AUTHORIZED_STARTUP_CANARY_CONTRACT_OK');
