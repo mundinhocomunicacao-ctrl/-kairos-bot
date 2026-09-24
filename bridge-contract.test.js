@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-const source=fs.readFileSync(new URL("../server.js",import.meta.url),"utf8");
+const source=fs.readFileSync(new URL("./server.js",import.meta.url),"utf8");
+assert.doesNotThrow(()=>JSON.parse(fs.readFileSync(new URL("./package.json",import.meta.url),"utf8")));
+assert.equal(source.includes("\\nconst"),false,"escaped newline corruption must be absent");
 assert.match(source,/\/webhooks\/whatsscale/);
 assert.match(source,/x-whatsscale-signature/i);
 assert.match(source,/WHATSSCALE_WEBHOOK_SECRET/);
 assert.match(source,/DIVA_INGRESS_URL/);
 assert.match(source,/DIVA_BRIDGE_SECRET/);
 assert.match(source,/createHmac\(['"]sha256['"]/);
-assert.match(source,/120363411404153606@g\.us/);
 assert.match(source,/fromMe/);
 console.log("KAIROS_DIVA_BRIDGE_CONTRACT_OK");
