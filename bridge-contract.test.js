@@ -55,3 +55,8 @@ assert.match(source,/runDivaStartupCanary/,"Render must execute the canary throu
 assert.match(source,/ignored_unauthorized_sender/,"canary must require the Wix allowlist to reject its synthetic sender");
 assert.match(source,/DIVA_WHATSAPP_CANARY_OK/,"successful canary must emit a secret-safe proof marker");
 console.log("DIVA_WHATSAPP_STARTUP_CANARY_CONTRACT_OK");
+
+assert.match(source,/verifyActiveWebhookSignature/,"provider HMAC verification must be a shared instance-local function");
+assert.match(source,/forwardRawToDiva/,"Render→Wix forwarding must be a shared instance-local function");
+assert.match(source,/DIVA_WHATSAPP_CANARY_FAILED/,"canary failures must be reported separately from subscription failures");
+console.log("DIVA_CANARY_INSTANCE_LOCAL_FIX_CONTRACT_OK");
