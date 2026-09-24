@@ -65,3 +65,11 @@ assert.match(source,/WHATSCALE_SEND_RECEIPT_SHAPE/,'send receipt shape must be o
 assert.match(source,/topLevelKeys/,'receipt telemetry must expose top-level field names only');
 assert.match(source,/nestedDataKeys/,'receipt telemetry must expose nested data field names only');
 console.log('WHATSCALE_RECEIPT_SHAPE_OBSERVABILITY_CONTRACT_OK');
+
+
+assert.match(source,/bridgeStats/,'bridge must keep secret-safe runtime counters');
+assert.match(source,/providerWebhooksAccepted/,'health must distinguish real provider webhooks from internal canaries');
+assert.match(source,/DIVA_WHATSAPP_INGRESS_ACCEPTED/,'real inbound webhook acceptance must emit a proof marker');
+assert.match(source,/DIVA_WHATSAPP_WIX_RESULT/,'Render→Wix result must emit a proof marker');
+assert.match(source,/DIVA_WHATSAPP_REPLY_SENT/,'Wix→Render→WhatsScale delivery must emit a proof marker');
+console.log('DIVA_WHATSAPP_E2E_OBSERVABILITY_CONTRACT_OK');
