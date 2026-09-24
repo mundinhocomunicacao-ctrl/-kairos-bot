@@ -77,7 +77,11 @@ const server = http.createServer(async (req, res) => {
         triggerSecretConfigured: Boolean(TRIGGER_SECRET),
         testTokenConfigured: Boolean(TEST_TOKEN),
         sessionConfigured: Boolean(SESSION),
-        groupConfigured: Boolean(GROUP_JID)
+        groupConfigured: Boolean(GROUP_JID),
+        whatsScaleWebhookSecretConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET),
+        divaIngressConfigured: Boolean(DIVA_INGRESS_URL),
+        divaBridgeSecretConfigured: Boolean(DIVA_BRIDGE_SECRET),
+        bridgeConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
       });
     }
 
