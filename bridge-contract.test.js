@@ -41,3 +41,24 @@ assert.match(source,/request_id/);
 assert.match(source,/trace_id/);
 assert.match(source,/persisted\s*!==\s*true/);
 console.log("DIVA_WHATSAPP_ROUNDTRIP_CONTRACT_OK");
+
+const relayRequirements=[
+  'DIVA_1ON1_RELAY_ENABLED',
+  'DIVA_RELAY_URL',
+  'DIVA_RELAY_SECRET',
+  'DIVA_WHATSAPP_ALLOWED_NUMBERS',
+  '/webhooks/diva-1on1',
+  '/v1/webhooks',
+  '/v1/webhooks/subscribe',
+  'signing_secret',
+  'x-diva-whatsapp-relay-signature',
+  'x-diva-whatsapp-relay-timestamp'
+];
+for(const requirement of relayRequirements){
+  assert.ok(source.includes(requirement),`missing 1:1 relay contract: ${requirement}`);
+}
+assert.ok(source.includes("trigger_type:'1on1'")||source.includes("trigger_type: '1on1'"),'WhatsScale subscription must be 1on1');
+assert.ok(source.includes('sendWhatsApp(reply.text, reply.recipient)'),'reply must return to the exact origin contact');
+assert.equal(source.includes('/api/diva-whatsapp-ingress'),false,'legacy phantom ingress must be removed');
+assert.equal(source.includes('/api/diva-whatsapp-reply-receipt'),false,'legacy phantom receipt route must be removed');
+console.log('DIVA_WHATSAPP_1ON1_RELAY_CONTRACT_OK');
