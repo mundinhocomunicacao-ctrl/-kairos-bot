@@ -98,3 +98,7 @@ assert.match(source,/\/api\/sessions/,'provider diagnostics must inspect the con
 assert.match(source,/\/v1\/webhooks/,'provider diagnostics must inspect webhook subscription metadata');
 assert.match(source,/\/deliveries\?limit=10/,'provider diagnostics must inspect recent provider delivery states');
 console.log('DIVA_WHATSAPP_PROVIDER_DIAGNOSTICS_CONTRACT_OK');
+
+
+assert.match(source,/sessionSelfLast4/,'provider diagnostics must expose only the last four digits of the connected session');
+console.log('DIVA_WHATSAPP_SESSION_SUFFIX_CONTRACT_OK');
