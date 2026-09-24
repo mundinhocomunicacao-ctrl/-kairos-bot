@@ -65,6 +65,44 @@ function normalize(upstream) {
   };
 }
 
+function signDivaBody(raw) {
+  if (!DIVA_BRIDGE_SECRET) throw new Error('DIVA_BRIDGE_SECRET is not configured');
+  return crypto.createHmac('sha256', DIVA_BRIDGE_SECRET).update(raw).digest('hex');
+}
+
+function divaReplyReceiptUrl() {
+  if (!DIVA_INGRESS_URL) return null;
+  const url = new URL(DIVA_INGRESS_URL);
+  if (!/\/api\/diva-whatsapp-ingress\/?$/.test(url.pathname)) return null;
+  url.pathname = url.pathname.replace(/\/api\/diva-whatsapp-ingress\/?$/, '/api/diva-whatsapp-reply-receipt');
+  url.search = '';
+  url.hash = '';
+  return url.toString();
+}
+
+async function postDivaReplyReceipt(receipt) {
+  const receiptUrl = divaReplyReceiptUrl();
+  if (!receiptUrl) throw new Error('DIVA reply receipt URL could not be derived');
+  const raw = JSON.stringify(receipt);
+  const response = await fetch(receiptUrl, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-diva-signature': signDivaBody(raw)
+    },
+    body: raw
+  });
+  const responseText = await response.text();
+  let responseBody;
+  try { responseBody = JSON.parse(responseText); } catch { responseBody = { raw: responseText }; }
+  if (!response.ok || responseBody?.ok !== true || responseBody?.persisted !== true) {
+    const err = new Error(`DIVA reply receipt returned HTTP ${response.status}`);
+    err.details = responseBody;
+    throw err;
+  }
+  return responseBody;
+}
+
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -81,7 +119,8 @@ const server = http.createServer(async (req, res) => {
         whatsScaleWebhookSecretConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET),
         divaIngressConfigured: Boolean(DIVA_INGRESS_URL),
         divaBridgeSecretConfigured: Boolean(DIVA_BRIDGE_SECRET),
-        bridgeConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
+        divaReplyReceiptConfigured: Boolean(divaReplyReceiptUrl()),
+        bridgeConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET && divaReplyReceiptUrl())
       });
     }
 
@@ -95,11 +134,11 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { ...normalize(upstream), test: true, countedAsEdition: false });
     }
 
-
     if (req.method === 'POST' && url.pathname === '/webhooks/whatsscale') {
-      if (!WHATSSCALE_WEBHOOK_SECRET || !DIVA_INGRESS_URL || !DIVA_BRIDGE_SECRET) {
+      if (!WHATSSCALE_WEBHOOK_SECRET || !DIVA_INGRESS_URL || !DIVA_BRIDGE_SECRET || !divaReplyReceiptUrl()) {
         return json(res, 503, { ok: false, error: 'bridge is not configured' });
       }
+
       const chunks = [];
       for await (const chunk of req) chunks.push(chunk);
       const raw = Buffer.concat(chunks).toString('utf8');
@@ -113,17 +152,20 @@ const server = http.createServer(async (req, res) => {
       if (!safeEqual(supplied, expected)) return json(res, 401, { ok: false, error: 'invalid webhook signature' });
 
       const body = raw ? JSON.parse(raw) : {};
-      const remoteJid = body?.data?.key?.remoteJid ?? body?.key?.remoteJid ?? null;
-      const fromMe = body?.data?.key?.fromMe ?? body?.key?.fromMe ?? false;
+      const eventData = body?.data ?? body;
+      const remoteJid = eventData?.key?.remoteJid ?? body?.key?.remoteJid ?? null;
+      const fromMe = eventData?.key?.fromMe ?? body?.key?.fromMe ?? false;
+      const sourceEventId = eventData?.key?.id ?? body?.key?.id ?? body?.id ?? null;
       if (remoteJid !== GROUP_JID) return json(res, 202, { ok: true, accepted: false, reason: 'group_not_allowed' });
       if (fromMe) return json(res, 202, { ok: true, accepted: false, reason: 'from_me' });
+      if (!sourceEventId) return json(res, 202, { ok: true, accepted: false, reason: 'missing_event_id' });
 
       const canonical = JSON.stringify({
         event: 'messages.upsert',
         instance: SESSION,
-        data: body.data ?? body
+        data: eventData
       });
-      const signature = crypto.createHmac('sha256', DIVA_BRIDGE_SECRET).update(canonical).digest('hex');
+      const signature = signDivaBody(canonical);
       const upstream = await fetch(DIVA_INGRESS_URL, {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'x-diva-signature': signature },
@@ -132,7 +174,51 @@ const server = http.createServer(async (req, res) => {
       const responseText = await upstream.text();
       let responseBody;
       try { responseBody = JSON.parse(responseText); } catch { responseBody = { raw: responseText }; }
-      return json(res, upstream.ok ? 200 : 502, { ok: upstream.ok, diva: responseBody });
+
+      if (!upstream.ok || responseBody?.ok !== true) {
+        return json(res, 502, { ok: false, error: 'diva_ingress_failed', divaStatus: upstream.status });
+      }
+
+      if (responseBody?.alreadyDispatched === true) {
+        return json(res, 200, { ok: true, accepted: true, dispatched: false, reason: 'already_dispatched' });
+      }
+      if (responseBody?.alreadyReserved === true) {
+        return json(res, 200, { ok: true, accepted: true, dispatched: false, reason: 'already_reserved' });
+      }
+
+      if (responseBody?.persisted !== true) {
+        return json(res, 502, { ok: false, error: 'diva_persistence_not_confirmed' });
+      }
+
+      const reply = responseBody?.reply;
+      if (!reply || reply.replyOnlyToOrigin !== true || reply.recipient !== GROUP_JID) {
+        return json(res, 502, { ok: false, error: 'diva_reply_origin_contract_failed' });
+      }
+      if (typeof reply.text !== 'string' || !reply.text.trim()) {
+        return json(res, 502, { ok: false, error: 'diva_reply_text_missing' });
+      }
+      if (reply.text.length > 4096) {
+        return json(res, 502, { ok: false, error: 'diva_reply_exceeds_whatsapp_limit' });
+      }
+
+      const sent = await sendWhatsApp(reply.text);
+      const normalizedSent = normalize(sent);
+      const receipt = await postDivaReplyReceipt({
+        source_event_id: sourceEventId,
+        chat_id: remoteJid,
+        provider_message_id: normalizedSent.messageId,
+        sent_at: new Date().toISOString(),
+        request_id: responseBody?.runtime?.requestId ?? null,
+        trace_id: responseBody?.runtime?.traceId ?? null
+      });
+
+      return json(res, 200, {
+        ok: true,
+        accepted: true,
+        dispatched: true,
+        messageId: normalizedSent.messageId,
+        receiptEventId: receipt.eventId ?? null
+      });
     }
 
     if (req.method === 'POST' && url.pathname === '/send') {
@@ -162,5 +248,11 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`kairos-whatsapp-cloud listening on ${PORT}`);
-  console.log('DIVA_BRIDGE_READINESS', { whatsScaleWebhookSecretConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET), divaIngressConfigured:Boolean(DIVA_INGRESS_URL), divaBridgeSecretConfigured:Boolean(DIVA_BRIDGE_SECRET), bridgeConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET) });
+  console.log('DIVA_BRIDGE_READINESS', {
+    whatsScaleWebhookSecretConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET),
+    divaIngressConfigured: Boolean(DIVA_INGRESS_URL),
+    divaBridgeSecretConfigured: Boolean(DIVA_BRIDGE_SECRET),
+    divaReplyReceiptConfigured: Boolean(divaReplyReceiptUrl()),
+    bridgeConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET && divaReplyReceiptUrl())
+  });
 });
