@@ -132,7 +132,7 @@ async function ensureDivaSubscription(){
 function verifyActiveWebhookSignature({raw,supplied,timestamp,nowSeconds=Math.floor(Date.now()/1000)}={}){
   const ts=Number(timestamp);
   if(!activeWebhookSecret||!raw||!supplied||!Number.isFinite(ts))return false;
-  if(Math.abs(Number(nowSeconds)-ts)>300)return false;
+  if(Math.abs(Number(nowSeconds)-ts)> 300)return false;
   const expected='sha256='+crypto.createHmac('sha256',activeWebhookSecret).update(raw).digest('hex');
   return safeEqual(String(supplied),expected);
 }
