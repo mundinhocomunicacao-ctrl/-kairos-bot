@@ -27,6 +27,7 @@ let lastCanaryStatus = 'not_run';
 const providerDiagnostics = {
   lastCheckedAt: null,
   sessionStatus: null,
+  sessionSelfLast4: null,
   authorizedTargetMatchesSessionSelf: null,
   activeSubscriptionId: null,
   subscriptionIsActive: null,
@@ -96,6 +97,8 @@ async function refreshProviderDiagnostics({force=false}={}){
     const current=sessions.find(item=>String(item?.name||'')===String(SESSION))||null;
     providerDiagnostics.sessionStatus=current?.status||null;
     const selfId=String(current?.me?.id||'').trim();
+    const selfDigits=selfId.replace(/\D/g,'');
+    providerDiagnostics.sessionSelfLast4=selfDigits?selfDigits.slice(-4):null;
     const targetId=String(DIVA_AUTHORIZED_CANARY_CHAT_ID||'').trim();
     providerDiagnostics.authorizedTargetMatchesSessionSelf=Boolean(selfId&&targetId&&selfId===targetId);
 
