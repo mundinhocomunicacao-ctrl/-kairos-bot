@@ -41,3 +41,11 @@ assert.match(source,/DIVA_REPLY_TOKEN/,"reply relay must use a dedicated bearer 
 assert.match(source,/chatId/,"reply relay must accept the WhatsApp chat id");
 assert.match(source,/sendWhatsAppToChat/,"reply relay must send through the existing Render-held WhatsScale API key");
 console.log("DIVA_WHATSAPP_REPLY_RELAY_CONTRACT_OK");
+
+assert.match(source,/DIVA_AUTO_SUBSCRIBE/,"Render must support automatic DIVA webhook subscription");
+assert.match(source,/activeWebhookSecret/,"Render must retain the one-time WhatsScale signing secret in process memory");
+assert.match(source,/ensureDivaSubscription/,"Render must self-heal the subscription on boot");
+assert.match(source,/trigger_type\s*!==\s*['"]1on1['"]/,"Render webhook must ignore non-1:1 traffic");
+assert.match(source,/x-diva-bridge-signature/i,"Render must forward the raw event to Wix with an internal HMAC");
+assert.match(source,/DIVA_INGRESS_URL/,"Render must forward to the governed Wix DIVA ingress");
+console.log("DIVA_SELF_TERMINATING_WEBHOOK_CONTRACT_OK");
