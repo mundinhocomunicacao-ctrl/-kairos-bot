@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "start": "node server.js",
-    "test": "node bridge-contract.test.js"
-  },
-  "engines": {
-    "node": ">=20"
-  }
-}\n
+  "scripts": {"start":"node server.js","test":"node bridge-contract.test.js"},
+  "engines":{"node":">=20"}
+}
