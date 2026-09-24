@@ -27,3 +27,17 @@ assert.equal(docsContract.base,"https://proxy.whatsscale.com");
 assert.equal(docsContract.subscribe,"/v1/webhooks/subscribe");
 assert.equal(docsContract.trigger,"group");
 console.log("WHATSCALE_DIRECT_SUBSCRIBE_CONTRACT_OK");
+
+assert.match(source,/function\s+divaReplyReceiptUrl\s*\(/);
+assert.match(source,/diva-whatsapp-reply-receipt/);
+assert.match(source,/alreadyDispatched/);
+assert.match(source,/alreadyReserved/);
+assert.match(source,/replyOnlyToOrigin/);
+assert.match(source,/recipient\s*!==\s*GROUP_JID/);
+assert.match(source,/sendWhatsApp\(reply\.text\)/);
+assert.match(source,/source_event_id/);
+assert.match(source,/provider_message_id/);
+assert.match(source,/request_id/);
+assert.match(source,/trace_id/);
+assert.match(source,/persisted\s*!==\s*true/);
+console.log("DIVA_WHATSAPP_ROUNDTRIP_CONTRACT_OK");
