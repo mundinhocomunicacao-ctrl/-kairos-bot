@@ -10,6 +10,8 @@ const TEST_TOKEN = process.env.KAIROS_TEST_TOKEN;
 const WHATSSCALE_WEBHOOK_SECRET = process.env.WHATSSCALE_WEBHOOK_SECRET;
 const DIVA_INGRESS_URL = process.env.DIVA_INGRESS_URL;
 const DIVA_BRIDGE_SECRET = process.env.DIVA_BRIDGE_SECRET;
+const DIVA_SUBSCRIBE_TOKEN = process.env.DIVA_SUBSCRIBE_TOKEN;
+const DIVA_WHATSAPP_WEBHOOK_URL = process.env.DIVA_WHATSAPP_WEBHOOK_URL;
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
@@ -33,25 +35,74 @@ async function readBody(req) {
   return raw ? JSON.parse(raw) : {};
 }
 
-async function sendWhatsApp(text) {
+async function whatsScaleJson(path, init = {}) {
   if (!API_KEY) throw new Error('WHATSSCALE_API_KEY is not configured');
-  const response = await fetch(`${BASE_URL}/api/sendText`, {
-    method: 'POST',
+  const response = await fetch(BASE_URL + path, {
+    ...init,
     headers: {
       'X-Api-Key': API_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ session: SESSION, chatId: GROUP_JID, text })
+      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(init.headers || {})
+    }
   });
   const raw = await response.text();
   let data;
-  try { data = JSON.parse(raw); } catch { data = { raw }; }
+  try { data = raw ? JSON.parse(raw) : {}; } catch { data = { raw }; }
+  return { response, data, raw };
+}
+
+async function sendWhatsApp(text) {
+  const { response, data } = await whatsScaleJson('/api/sendText', {
+    method: 'POST',
+    body: JSON.stringify({ session: SESSION, chatId: GROUP_JID, text })
+  });
   if (!response.ok) {
     const err = new Error(`WhatsScale returned HTTP ${response.status}`);
     err.details = data;
     throw err;
   }
   return data;
+}
+
+async function subscribeDivaWebhook() {
+  if (!DIVA_WHATSAPP_WEBHOOK_URL) throw new Error('DIVA_WHATSAPP_WEBHOOK_URL is not configured');
+  const payload = {
+    session: SESSION,
+    webhook_url: DIVA_WHATSAPP_WEBHOOK_URL,
+    trigger_type: '1on1'
+  };
+  let attempt = await whatsScaleJson('/v1/webhooks/subscribe', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+
+  if (attempt.response.status === 409) {
+    const subscriptionId = attempt.data?.subscription_id;
+    if (!subscriptionId) throw new Error('WhatsScale duplicate webhook without subscription_id');
+    const removed = await whatsScaleJson('/v1/webhooks/' + encodeURIComponent(subscriptionId), {
+      method: 'DELETE'
+    });
+    if (!removed.response.ok) throw new Error('WhatsScale duplicate webhook could not be rotated');
+    attempt = await whatsScaleJson('/v1/webhooks/subscribe', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  if (!attempt.response.ok) {
+    const err = new Error(`WhatsScale subscribe returned HTTP ${attempt.response.status}`);
+    err.details = attempt.data;
+    throw err;
+  }
+  const signingSecret = String(attempt.data?.signing_secret || '');
+  const subscriptionId = String(attempt.data?.subscription_id || '');
+  if (!signingSecret || !subscriptionId) throw new Error('WhatsScale subscribe response missing signing_secret or subscription_id');
+  return {
+    subscription_id: subscriptionId,
+    signing_secret: signingSecret,
+    webhook_url: attempt.data?.webhook_url || DIVA_WHATSAPP_WEBHOOK_URL,
+    trigger_type: attempt.data?.trigger_type || '1on1'
+  };
 }
 
 function normalize(upstream) {
@@ -81,6 +132,8 @@ const server = http.createServer(async (req, res) => {
         whatsScaleWebhookSecretConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET),
         divaIngressConfigured: Boolean(DIVA_INGRESS_URL),
         divaBridgeSecretConfigured: Boolean(DIVA_BRIDGE_SECRET),
+        divaSubscribeTokenConfigured: Boolean(DIVA_SUBSCRIBE_TOKEN),
+        divaWhatsappWebhookUrlConfigured: Boolean(DIVA_WHATSAPP_WEBHOOK_URL),
         bridgeConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
       });
     }
@@ -95,6 +148,14 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { ...normalize(upstream), test: true, countedAsEdition: false });
     }
 
+    if (req.method === 'POST' && url.pathname === '/admin/subscribe-diva') {
+      if (!DIVA_SUBSCRIBE_TOKEN) return json(res, 503, { ok: false, error: 'DIVA_SUBSCRIBE_TOKEN is not configured' });
+      const auth = req.headers.authorization || '';
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+      if (!safeEqual(token, DIVA_SUBSCRIBE_TOKEN)) return json(res, 401, { ok: false, error: 'unauthorized' });
+      const subscription = await subscribeDivaWebhook();
+      return json(res, 200, { ok: true, ...subscription });
+    }
 
     if (req.method === 'POST' && url.pathname === '/webhooks/whatsscale') {
       if (!WHATSSCALE_WEBHOOK_SECRET || !DIVA_INGRESS_URL || !DIVA_BRIDGE_SECRET) {
@@ -162,5 +223,12 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`kairos-whatsapp-cloud listening on ${PORT}`);
-  console.log('DIVA_BRIDGE_READINESS', { whatsScaleWebhookSecretConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET), divaIngressConfigured:Boolean(DIVA_INGRESS_URL), divaBridgeSecretConfigured:Boolean(DIVA_BRIDGE_SECRET), bridgeConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET) });
+  console.log('DIVA_BRIDGE_READINESS', {
+    whatsScaleWebhookSecretConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET),
+    divaIngressConfigured:Boolean(DIVA_INGRESS_URL),
+    divaBridgeSecretConfigured:Boolean(DIVA_BRIDGE_SECRET),
+    divaSubscribeTokenConfigured:Boolean(DIVA_SUBSCRIBE_TOKEN),
+    divaWhatsappWebhookUrlConfigured:Boolean(DIVA_WHATSAPP_WEBHOOK_URL),
+    bridgeConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
+  });
 });

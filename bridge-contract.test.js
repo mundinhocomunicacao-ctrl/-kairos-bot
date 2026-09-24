@@ -22,8 +22,16 @@ assert.equal(persistenceGate("evt-qa",{status:"ready",found:false}),false);
 assert.equal(persistenceGate("evt-qa",{status:"ready",found:true,event:{event_id:"different"}}),false);
 console.log("DIVA_WHATSAPP_PERSISTENCE_FAIL_CLOSED_OK");
 
-const docsContract={base:"https://proxy.whatsscale.com",subscribe:"/v1/webhooks/subscribe",trigger:"group"};
+const docsContract={base:"https://proxy.whatsscale.com",subscribe:"/v1/webhooks/subscribe",trigger:"1on1"};
 assert.equal(docsContract.base,"https://proxy.whatsscale.com");
 assert.equal(docsContract.subscribe,"/v1/webhooks/subscribe");
-assert.equal(docsContract.trigger,"group");
+assert.equal(docsContract.trigger,"1on1");
 console.log("WHATSCALE_DIRECT_SUBSCRIBE_CONTRACT_OK");
+
+assert.match(source,/\/admin\/subscribe-diva/,"admin subscribe route must exist");
+assert.match(source,/DIVA_SUBSCRIBE_TOKEN/,"admin subscribe route must be separately authenticated");
+assert.match(source,/DIVA_WHATSAPP_WEBHOOK_URL/,"webhook target must be explicit");
+assert.match(source,/\/v1\/webhooks\/subscribe/,"server must call WhatsScale subscribe endpoint");
+assert.match(source,/trigger_type:\s*['"]1on1['"]/,"DIVA subscription must target 1:1 messages");
+assert.match(source,/signing_secret/,"subscribe response must capture the one-time signing secret");
+console.log("DIVA_WHATSAPP_SUBSCRIBE_ADMIN_CONTRACT_OK");
