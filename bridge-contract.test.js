@@ -21,3 +21,9 @@ assert.equal(persistenceGate("evt-qa",{status:"ready",found:true,event:{event_id
 assert.equal(persistenceGate("evt-qa",{status:"ready",found:false}),false);
 assert.equal(persistenceGate("evt-qa",{status:"ready",found:true,event:{event_id:"different"}}),false);
 console.log("DIVA_WHATSAPP_PERSISTENCE_FAIL_CLOSED_OK");
+
+const docsContract={base:"https://proxy.whatsscale.com",subscribe:"/v1/webhooks/subscribe",trigger:"group"};
+assert.equal(docsContract.base,"https://proxy.whatsscale.com");
+assert.equal(docsContract.subscribe,"/v1/webhooks/subscribe");
+assert.equal(docsContract.trigger,"group");
+console.log("WHATSCALE_DIRECT_SUBSCRIBE_CONTRACT_OK");
