@@ -116,3 +116,8 @@ assert.match(source,/DIVA_WHATSAPP_SESSION_SWITCH/,'session migration must emit 
 assert.match(source,/setInterval\(/,'runtime must periodically re-evaluate sessions after a new QR pairing');
 assert.match(source,/sendWhatsAppToChat\(chatId, text, activeDivaSession\)/,'DIVA replies must use the dedicated effective session');
 console.log('DIVA_WHATSAPP_AUTO_SESSION_SWITCH_CONTRACT_OK');
+
+
+assert.match(source,/cleanupStaleDivaSubscriptions/,'session migration must remove stale DIVA-only subscriptions');
+assert.match(source,/webhook_url.*DIVA_WHATSAPP_WEBHOOK_URL/s,'cleanup must scope itself to the DIVA webhook URL');
+console.log('DIVA_WHATSAPP_STALE_SUBSCRIPTION_CLEANUP_CONTRACT_OK');
