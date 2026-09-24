@@ -73,6 +73,10 @@ async function sendWhatsAppToChat(chatId, text) {
     err.details = data;
     throw err;
   }
+  const topLevelKeys = data && typeof data === 'object' ? Object.keys(data).sort() : [];
+  const nestedDataKeys = data?.data && typeof data.data === 'object' ? Object.keys(data.data).sort() : [];
+  const nestedKeyKeys = data?.key && typeof data.key === 'object' ? Object.keys(data.key).sort() : [];
+  console.log('WHATSCALE_SEND_RECEIPT_SHAPE', { topLevelKeys, nestedDataKeys, nestedKeyKeys });
   return data;
 }
 

@@ -60,3 +60,8 @@ assert.match(source,/verifyActiveWebhookSignature/,"provider HMAC verification m
 assert.match(source,/forwardRawToDiva/,"Render→Wix forwarding must be a shared instance-local function");
 assert.match(source,/DIVA_WHATSAPP_CANARY_FAILED/,"canary failures must be reported separately from subscription failures");
 console.log("DIVA_CANARY_INSTANCE_LOCAL_FIX_CONTRACT_OK");
+
+assert.match(source,/WHATSCALE_SEND_RECEIPT_SHAPE/,'send receipt shape must be observable without payload values');
+assert.match(source,/topLevelKeys/,'receipt telemetry must expose top-level field names only');
+assert.match(source,/nestedDataKeys/,'receipt telemetry must expose nested data field names only');
+console.log('WHATSCALE_RECEIPT_SHAPE_OBSERVABILITY_CONTRACT_OK');
