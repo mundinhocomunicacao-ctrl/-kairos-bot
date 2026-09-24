@@ -65,3 +65,7 @@ assert.match(source,/WHATSCALE_SEND_RECEIPT_SHAPE/,'send receipt shape must be o
 assert.match(source,/topLevelKeys/,'receipt telemetry must expose top-level field names only');
 assert.match(source,/nestedDataKeys/,'receipt telemetry must expose nested data field names only');
 console.log('WHATSCALE_RECEIPT_SHAPE_OBSERVABILITY_CONTRACT_OK');
+
+assert.match(source,/nestedUnderscoreDataKeys/,'receipt telemetry must expose _data field names without values');
+assert.match(source,/upstream\?\.id/,'normalizer must support current top-level WhatsScale id');
+console.log('WHATSCALE_MODERN_RECEIPT_CONTRACT_OK');

@@ -75,8 +75,9 @@ async function sendWhatsAppToChat(chatId, text) {
   }
   const topLevelKeys = data && typeof data === 'object' ? Object.keys(data).sort() : [];
   const nestedDataKeys = data?.data && typeof data.data === 'object' ? Object.keys(data.data).sort() : [];
+  const nestedUnderscoreDataKeys = data?._data && typeof data._data === 'object' ? Object.keys(data._data).sort() : [];
   const nestedKeyKeys = data?.key && typeof data.key === 'object' ? Object.keys(data.key).sort() : [];
-  console.log('WHATSCALE_SEND_RECEIPT_SHAPE', { topLevelKeys, nestedDataKeys, nestedKeyKeys });
+  console.log('WHATSCALE_SEND_RECEIPT_SHAPE', { topLevelKeys, nestedDataKeys, nestedUnderscoreDataKeys, nestedKeyKeys });
   return data;
 }
 
@@ -198,7 +199,7 @@ function normalize(upstream) {
   return {
     ok: true,
     remoteJid: upstream?.key?.remoteJid ?? null,
-    messageId: upstream?.key?.id ?? null,
+    messageId: upstream?.key?.id ?? upstream?.id ?? null,
     fromMe: upstream?.key?.fromMe ?? null,
     status: upstream?.status ?? null,
     messageTimestamp: upstream?.messageTimestamp ?? null
