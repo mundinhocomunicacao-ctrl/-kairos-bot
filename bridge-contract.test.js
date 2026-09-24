@@ -5,6 +5,8 @@ assert.doesNotThrow(()=>JSON.parse(fs.readFileSync(new URL("./package.json",impo
 assert.equal(source.includes("\\nconst"),false,"escaped newline corruption must be absent");
 assert.match(source,/\/webhooks\/whatsscale/);
 assert.match(source,/x-whatsscale-signature/i);
+assert.match(source,/x-whatsscale-timestamp/i);
+assert.match(source,/> 300/);
 assert.match(source,/WHATSSCALE_WEBHOOK_SECRET/);
 assert.match(source,/DIVA_INGRESS_URL/);
 assert.match(source,/DIVA_BRIDGE_SECRET/);
