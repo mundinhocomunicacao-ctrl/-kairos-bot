@@ -205,6 +205,40 @@ async function runDivaStartupCanary(){
   return {ok:true,eventId,wixStatus};
 }
 
+async function runDivaAuthorizedCanary(chatId){
+  const candidate=String(chatId||'').trim();
+  if(!/^\d{10,15}@c\.us$/.test(candidate))throw new Error('authorized canary chatId must be a WhatsApp contact id');
+  const number=candidate.slice(0,-5);
+  const nowSeconds=Math.floor(Date.now()/1000);
+  const eventId='diva_authorized_canary_'+nowSeconds;
+  const raw=JSON.stringify({
+    event_id:eventId,
+    event_type:'incoming.message',
+    trigger_type:'1on1',
+    session:SESSION,
+    data:{
+      message_id:eventId+'_msg',
+      from_number:number,
+      from_id:candidate,
+      chat_id:candidate,
+      from_name:'DIVA Authorized Canary',
+      body:'DIVA, responda apenas: DIVA E2E OK',
+      from_me:false
+    }
+  });
+  const {upstream,responseBody}=await forwardRawToDiva(raw,nowSeconds);
+  const wixStatus=String(responseBody?.status||responseBody?.error||'unknown').slice(0,120);
+  const responseKeys=responseBody&&typeof responseBody==='object'?Object.keys(responseBody).sort():[];
+  console.log('DIVA_WHATSAPP_AUTHORIZED_CANARY_RESULT',{
+    eventId,
+    httpStatus:upstream.status,
+    wixStatus,
+    responseKeys
+  });
+  if(!upstream.ok)throw new Error('DIVA authorized canary failed: '+upstream.status+' '+wixStatus);
+  return {ok:true,eventId,wixStatus,responseKeys};
+}
+
 function normalize(upstream) {
   return {
     ok: true,
@@ -262,6 +296,18 @@ const server = http.createServer(async (req, res) => {
       if (!safeEqual(token, DIVA_SUBSCRIBE_TOKEN)) return json(res, 401, { ok: false, error: 'unauthorized' });
       const subscription = await ensureDivaSubscription();
       return json(res, 200, { ok: true, ...subscription });
+    }
+
+    if (req.method === 'POST' && url.pathname === '/admin/canary-authorized') {
+      if (!DIVA_REPLY_TOKEN) return json(res, 503, { ok: false, error: 'DIVA_REPLY_TOKEN is not configured' });
+      const auth = req.headers.authorization || '';
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+      if (!safeEqual(token, DIVA_REPLY_TOKEN)) return json(res, 401, { ok: false, error: 'unauthorized' });
+      const body = await readBody(req);
+      const chatId = typeof body.chatId === 'string' ? body.chatId.trim() : '';
+      if (!/^\d{10,15}@c\.us$/.test(chatId)) return json(res, 400, { ok: false, error: 'valid WhatsApp contact chatId is required' });
+      const result = await runDivaAuthorizedCanary(chatId);
+      return json(res, 200, result);
     }
 
     if (req.method === 'POST' && url.pathname === '/diva/reply') {

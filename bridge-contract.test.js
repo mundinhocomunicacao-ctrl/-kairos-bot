@@ -77,3 +77,10 @@ assert.match(source,/DIVA_WHATSAPP_INGRESS_ACCEPTED/,'real inbound webhook accep
 assert.match(source,/DIVA_WHATSAPP_WIX_RESULT/,'Render→Wix result must emit a proof marker');
 assert.match(source,/DIVA_WHATSAPP_REPLY_SENT/,'Wix→Render→WhatsScale delivery must emit a proof marker');
 console.log('DIVA_WHATSAPP_E2E_OBSERVABILITY_CONTRACT_OK');
+
+assert.match(source,/\/admin\/canary-authorized/,'authorized DIVA canary route must exist');
+assert.match(source,/runDivaAuthorizedCanary/,'authorized canary must use a dedicated function');
+assert.match(source,/DIVA_REPLY_TOKEN/,'authorized canary must be protected by an existing backend-only bearer secret');
+assert.match(source,/DIVA E2E OK/,'authorized canary must use a fixed non-user-controlled prompt');
+assert.match(source,/DIVA_WHATSAPP_AUTHORIZED_CANARY_RESULT/,'authorized canary must emit a secret-safe proof marker');
+console.log('DIVA_AUTHORIZED_CANARY_CONTRACT_OK');
