@@ -99,8 +99,13 @@ const server = http.createServer(async (req, res) => {
       const chunks = [];
       for await (const chunk of req) chunks.push(chunk);
       const raw = Buffer.concat(chunks).toString('utf8');
-      const supplied = String(req.headers['x-whatsscale-signature'] || '').replace(/^sha256=/i, '');
-      const expected = crypto.createHmac('sha256', WHATSSCALE_WEBHOOK_SECRET).update(raw).digest('hex');
+      const supplied = String(req.headers['x-whatsscale-signature'] || '');
+      const webhookTimestamp = Number(req.headers['x-whatsscale-timestamp'] || 0);
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      if (!Number.isFinite(webhookTimestamp) || Math.abs(nowSeconds - webhookTimestamp) > 300) {
+        return json(res, 401, { ok: false, error: 'stale webhook timestamp' });
+      }
+      const expected = 'sha256=' + crypto.createHmac('sha256', WHATSSCALE_WEBHOOK_SECRET).update(raw).digest('hex');
       if (!safeEqual(supplied, expected)) return json(res, 401, { ok: false, error: 'invalid webhook signature' });
 
       const body = raw ? JSON.parse(raw) : {};
