@@ -35,3 +35,9 @@ assert.match(source,/\/v1\/webhooks\/subscribe/,"server must call WhatsScale sub
 assert.match(source,/trigger_type:\s*['"]1on1['"]/,"DIVA subscription must target 1:1 messages");
 assert.match(source,/signing_secret/,"subscribe response must capture the one-time signing secret");
 console.log("DIVA_WHATSAPP_SUBSCRIBE_ADMIN_CONTRACT_OK");
+
+assert.match(source,/\/diva\/reply/,"DIVA reply relay route must exist");
+assert.match(source,/DIVA_REPLY_TOKEN/,"reply relay must use a dedicated bearer secret");
+assert.match(source,/chatId/,"reply relay must accept the WhatsApp chat id");
+assert.match(source,/sendWhatsAppToChat/,"reply relay must send through the existing Render-held WhatsScale API key");
+console.log("DIVA_WHATSAPP_REPLY_RELAY_CONTRACT_OK");

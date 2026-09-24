@@ -12,6 +12,7 @@ const DIVA_INGRESS_URL = process.env.DIVA_INGRESS_URL;
 const DIVA_BRIDGE_SECRET = process.env.DIVA_BRIDGE_SECRET;
 const DIVA_SUBSCRIBE_TOKEN = process.env.DIVA_SUBSCRIBE_TOKEN;
 const DIVA_WHATSAPP_WEBHOOK_URL = process.env.DIVA_WHATSAPP_WEBHOOK_URL;
+const DIVA_REPLY_TOKEN = process.env.DIVA_REPLY_TOKEN;
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
@@ -51,10 +52,15 @@ async function whatsScaleJson(path, init = {}) {
   return { response, data, raw };
 }
 
-async function sendWhatsApp(text) {
+async function sendWhatsAppToChat(chatId, text) {
+  const recipient = String(chatId || '').trim();
+  const message = String(text || '').trim();
+  if (!recipient) throw new Error('chatId is required');
+  if (!message) throw new Error('text is required');
+  if (message.length > 4096) throw new Error('text exceeds WhatsScale 4096 character limit');
   const { response, data } = await whatsScaleJson('/api/sendText', {
     method: 'POST',
-    body: JSON.stringify({ session: SESSION, chatId: GROUP_JID, text })
+    body: JSON.stringify({ session: SESSION, chatId: recipient, text: message })
   });
   if (!response.ok) {
     const err = new Error(`WhatsScale returned HTTP ${response.status}`);
@@ -62,6 +68,10 @@ async function sendWhatsApp(text) {
     throw err;
   }
   return data;
+}
+
+async function sendWhatsApp(text) {
+  return sendWhatsAppToChat(GROUP_JID, text);
 }
 
 async function subscribeDivaWebhook() {
@@ -134,6 +144,7 @@ const server = http.createServer(async (req, res) => {
         divaBridgeSecretConfigured: Boolean(DIVA_BRIDGE_SECRET),
         divaSubscribeTokenConfigured: Boolean(DIVA_SUBSCRIBE_TOKEN),
         divaWhatsappWebhookUrlConfigured: Boolean(DIVA_WHATSAPP_WEBHOOK_URL),
+        divaReplyTokenConfigured: Boolean(DIVA_REPLY_TOKEN),
         bridgeConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
       });
     }
@@ -155,6 +166,19 @@ const server = http.createServer(async (req, res) => {
       if (!safeEqual(token, DIVA_SUBSCRIBE_TOKEN)) return json(res, 401, { ok: false, error: 'unauthorized' });
       const subscription = await subscribeDivaWebhook();
       return json(res, 200, { ok: true, ...subscription });
+    }
+
+    if (req.method === 'POST' && url.pathname === '/diva/reply') {
+      if (!DIVA_REPLY_TOKEN) return json(res, 503, { ok: false, error: 'DIVA_REPLY_TOKEN is not configured' });
+      const auth = req.headers.authorization || '';
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+      if (!safeEqual(token, DIVA_REPLY_TOKEN)) return json(res, 401, { ok: false, error: 'unauthorized' });
+      const body = await readBody(req);
+      const chatId = typeof body.chatId === 'string' ? body.chatId.trim() : '';
+      const text = typeof body.text === 'string' ? body.text.trim() : '';
+      if (!chatId || !text) return json(res, 400, { ok: false, error: 'chatId and text are required' });
+      const upstream = await sendWhatsAppToChat(chatId, text);
+      return json(res, 200, normalize(upstream));
     }
 
     if (req.method === 'POST' && url.pathname === '/webhooks/whatsscale') {
@@ -229,6 +253,7 @@ server.listen(PORT, '0.0.0.0', () => {
     divaBridgeSecretConfigured:Boolean(DIVA_BRIDGE_SECRET),
     divaSubscribeTokenConfigured:Boolean(DIVA_SUBSCRIBE_TOKEN),
     divaWhatsappWebhookUrlConfigured:Boolean(DIVA_WHATSAPP_WEBHOOK_URL),
+    divaReplyTokenConfigured:Boolean(DIVA_REPLY_TOKEN),
     bridgeConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
   });
 });
