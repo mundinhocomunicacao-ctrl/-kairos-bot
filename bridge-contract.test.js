@@ -107,3 +107,12 @@ console.log('DIVA_WHATSAPP_SESSION_SUFFIX_CONTRACT_OK');
 assert.match(source,/sessionCount/,'provider diagnostics must expose WhatsScale session count');
 assert.match(source,/otherSessionSuffixes/,'provider diagnostics must expose only masked suffixes for alternate sessions');
 console.log('DIVA_WHATSAPP_SESSION_INVENTORY_CONTRACT_OK');
+
+
+assert.match(source,/DIVA_WHATSAPP_SESSION/,'DIVA may pin an explicit dedicated WhatsScale session');
+assert.match(source,/activeDivaSession/,'DIVA transport must track its own effective session separately from KAIROS');
+assert.match(source,/selectDivaSession/,'DIVA must auto-select a session distinct from the authorized human number');
+assert.match(source,/DIVA_WHATSAPP_SESSION_SWITCH/,'session migration must emit a secret-safe proof marker');
+assert.match(source,/setInterval\(/,'runtime must periodically re-evaluate sessions after a new QR pairing');
+assert.match(source,/sendWhatsAppToChat\(chatId, text, activeDivaSession\)/,'DIVA replies must use the dedicated effective session');
+console.log('DIVA_WHATSAPP_AUTO_SESSION_SWITCH_CONTRACT_OK');
