@@ -162,4 +162,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`kairos-whatsapp-cloud listening on ${PORT}`);
+  console.log('DIVA_BRIDGE_READINESS', { whatsScaleWebhookSecretConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET), divaIngressConfigured:Boolean(DIVA_INGRESS_URL), divaBridgeSecretConfigured:Boolean(DIVA_BRIDGE_SECRET), bridgeConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET) });
 });
