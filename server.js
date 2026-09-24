@@ -24,6 +24,19 @@ let activeWebhookSecret = WHATSSCALE_WEBHOOK_SECRET || '';
 let activeSubscriptionId = null;
 let subscriptionPromise = null;
 let lastCanaryStatus = 'not_run';
+const providerDiagnostics = {
+  lastCheckedAt: null,
+  sessionStatus: null,
+  authorizedTargetMatchesSessionSelf: null,
+  activeSubscriptionId: null,
+  subscriptionIsActive: null,
+  failureCount: null,
+  lastTriggeredAt: null,
+  lastSuccessAt: null,
+  recentDeliveryStatusCounts: {},
+  error: null
+};
+
 const bridgeStats = {
   providerWebhooksAccepted: 0,
   divaForwardAttempts: 0,
@@ -68,6 +81,54 @@ async function whatsScaleJson(path, init = {}) {
   let data;
   try { data = raw ? JSON.parse(raw) : {}; } catch { data = { raw }; }
   return { response, data, raw };
+}
+
+async function refreshProviderDiagnostics({force=false}={}){
+  const now=Date.now();
+  const last=providerDiagnostics.lastCheckedAt?Date.parse(providerDiagnostics.lastCheckedAt):0;
+  if(!force&&last&&now-last<10000)return providerDiagnostics;
+  providerDiagnostics.lastCheckedAt=new Date(now).toISOString();
+  providerDiagnostics.error=null;
+  try{
+    const sessionsResult=await whatsScaleJson('/api/sessions');
+    if(!sessionsResult.response.ok)throw new Error('sessions_http_'+sessionsResult.response.status);
+    const sessions=Array.isArray(sessionsResult.data)?sessionsResult.data:[];
+    const current=sessions.find(item=>String(item?.name||'')===String(SESSION))||null;
+    providerDiagnostics.sessionStatus=current?.status||null;
+    const selfId=String(current?.me?.id||'').trim();
+    const targetId=String(DIVA_AUTHORIZED_CANARY_CHAT_ID||'').trim();
+    providerDiagnostics.authorizedTargetMatchesSessionSelf=Boolean(selfId&&targetId&&selfId===targetId);
+
+    const hooksResult=await whatsScaleJson('/v1/webhooks');
+    if(!hooksResult.response.ok)throw new Error('webhooks_http_'+hooksResult.response.status);
+    const subscriptions=Array.isArray(hooksResult.data?.subscriptions)?hooksResult.data.subscriptions:[];
+    const currentSub=subscriptions.find(item=>
+      String(item?.session||'')===String(SESSION)&&
+      String(item?.trigger_type||'')==='1on1'&&
+      String(item?.webhook_url||'')===String(DIVA_WHATSAPP_WEBHOOK_URL)
+    )||null;
+    providerDiagnostics.activeSubscriptionId=currentSub?.id||activeSubscriptionId||null;
+    providerDiagnostics.subscriptionIsActive=currentSub?.is_active??null;
+    providerDiagnostics.failureCount=currentSub?.failure_count??null;
+    providerDiagnostics.lastTriggeredAt=currentSub?.last_triggered_at||null;
+    providerDiagnostics.lastSuccessAt=currentSub?.last_success_at||null;
+
+    const subId=providerDiagnostics.activeSubscriptionId;
+    providerDiagnostics.recentDeliveryStatusCounts={};
+    if(subId){
+      const deliveriesResult=await whatsScaleJson('/v1/webhooks/'+encodeURIComponent(subId)+'/deliveries?limit=10');
+      if(deliveriesResult.response.ok){
+        const deliveries=Array.isArray(deliveriesResult.data?.deliveries)?deliveriesResult.data.deliveries:[];
+        for(const delivery of deliveries){
+          const status=String(delivery?.status||'unknown');
+          providerDiagnostics.recentDeliveryStatusCounts[status]=(providerDiagnostics.recentDeliveryStatusCounts[status]||0)+1;
+        }
+      }
+    }
+  }catch(error){
+    providerDiagnostics.error=String(error?.message||error).slice(0,160);
+  }
+  return providerDiagnostics;
 }
 
 async function sendWhatsAppToChat(chatId, text) {
@@ -257,6 +318,7 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
 
     if (req.method === 'GET' && url.pathname === '/health') {
+      await refreshProviderDiagnostics();
       return json(res, 200, {
         ok: true,
         service: 'kairos-whatsapp-cloud',
@@ -279,7 +341,8 @@ const server = http.createServer(async (req, res) => {
         divaAuthorizedCanaryTargetConfigured: Boolean(DIVA_AUTHORIZED_CANARY_CHAT_ID),
         canaryStatus:lastCanaryStatus,
         bridgeConfigured: Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET),
-        bridgeStats:{...bridgeStats}
+        bridgeStats:{...bridgeStats},
+        providerDiagnostics:{...providerDiagnostics}
       });
     }
 
