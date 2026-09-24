@@ -14,12 +14,14 @@ const DIVA_SUBSCRIBE_TOKEN = process.env.DIVA_SUBSCRIBE_TOKEN;
 const DIVA_WHATSAPP_WEBHOOK_URL = process.env.DIVA_WHATSAPP_WEBHOOK_URL;
 const DIVA_REPLY_TOKEN = process.env.DIVA_REPLY_TOKEN;
 const DIVA_AUTO_SUBSCRIBE = String(process.env.DIVA_AUTO_SUBSCRIBE || '').toLowerCase() === 'true';
+const DIVA_STARTUP_CANARY = String(process.env.DIVA_STARTUP_CANARY || '').toLowerCase() === 'true';
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
 let activeWebhookSecret = WHATSSCALE_WEBHOOK_SECRET || '';
 let activeSubscriptionId = null;
 let subscriptionPromise = null;
+let lastCanaryStatus = 'not_run';
 
 function json(res, status, body) {
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' });
@@ -127,6 +129,49 @@ async function ensureDivaSubscription(){
   return subscriptionPromise;
 }
 
+async function runDivaStartupCanary(){
+  if(!activeWebhookSecret)throw new Error('active WhatsScale webhook secret unavailable');
+  if(!DIVA_WHATSAPP_WEBHOOK_URL)throw new Error('DIVA_WHATSAPP_WEBHOOK_URL is not configured');
+  const nowSeconds=Math.floor(Date.now()/1000);
+  const eventId='diva_canary_'+nowSeconds;
+  const raw=JSON.stringify({
+    event_id:eventId,
+    event_type:'incoming.message',
+    trigger_type:'1on1',
+    session:SESSION,
+    data:{
+      message_id:eventId+'_msg',
+      from_number:'000000000000',
+      from_id:'000000000000@c.us',
+      chat_id:'000000000000',
+      from_name:'DIVA QA Canary',
+      body:'DIVA: canary interno',
+      from_me:false
+    }
+  });
+  const signature='sha256='+crypto.createHmac('sha256',activeWebhookSecret).update(raw).digest('hex');
+  const response=await fetch(DIVA_WHATSAPP_WEBHOOK_URL,{
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-whatsscale-signature':signature,
+      'x-whatsscale-timestamp':String(nowSeconds)
+    },
+    body:raw
+  });
+  const text=await response.text();
+  let data={};
+  try{data=text?JSON.parse(text):{}}catch{data={raw:text}}
+  const wixStatus=data?.diva?.status||null;
+  if(!response.ok||wixStatus!=='ignored_unauthorized_sender'){
+    lastCanaryStatus='failed';
+    throw new Error('DIVA startup canary failed: '+response.status+' '+String(wixStatus||data?.error||'unexpected').slice(0,200));
+  }
+  lastCanaryStatus='passed';
+  console.log('DIVA_WHATSAPP_CANARY_OK',{eventId,wixStatus});
+  return {ok:true,eventId,wixStatus};
+}
+
 function normalize(upstream) {
   return {
     ok: true,
@@ -160,6 +205,8 @@ const server = http.createServer(async (req, res) => {
         divaWhatsappWebhookUrlConfigured: Boolean(DIVA_WHATSAPP_WEBHOOK_URL),
         divaReplyTokenConfigured: Boolean(DIVA_REPLY_TOKEN),
         divaAutoSubscribe: DIVA_AUTO_SUBSCRIBE,
+        divaStartupCanary: DIVA_STARTUP_CANARY,
+        canaryStatus:lastCanaryStatus,
         bridgeConfigured: Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
       });
     }
@@ -262,7 +309,10 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`kairos-whatsapp-cloud listening on ${PORT}`);
   if(DIVA_AUTO_SUBSCRIBE){
     ensureDivaSubscription()
-      .then(info=>console.log('DIVA_WHATSCALE_SUBSCRIPTION_READY',{subscriptionId:info.subscription_id,triggerType:info.trigger_type,webhookUrl:info.webhook_url}))
+      .then(async info=>{
+        console.log('DIVA_WHATSCALE_SUBSCRIPTION_READY',{subscriptionId:info.subscription_id,triggerType:info.trigger_type,webhookUrl:info.webhook_url});
+        if(DIVA_STARTUP_CANARY)await runDivaStartupCanary();
+      })
       .catch(error=>console.error('DIVA_WHATSCALE_SUBSCRIPTION_FAILED',{message:String(error?.message||error).slice(0,500)}));
   }
   console.log('DIVA_BRIDGE_READINESS', {
