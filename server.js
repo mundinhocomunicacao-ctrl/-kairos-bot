@@ -15,6 +15,8 @@ const DIVA_WHATSAPP_WEBHOOK_URL = process.env.DIVA_WHATSAPP_WEBHOOK_URL;
 const DIVA_REPLY_TOKEN = process.env.DIVA_REPLY_TOKEN;
 const DIVA_AUTO_SUBSCRIBE = String(process.env.DIVA_AUTO_SUBSCRIBE || '').toLowerCase() === 'true';
 const DIVA_STARTUP_CANARY = String(process.env.DIVA_STARTUP_CANARY || '').toLowerCase() === 'true';
+const DIVA_AUTHORIZED_CANARY_ON_START = String(process.env.DIVA_AUTHORIZED_CANARY_ON_START || '').toLowerCase() === 'true';
+const DIVA_AUTHORIZED_CANARY_CHAT_ID = String(process.env.DIVA_AUTHORIZED_CANARY_CHAT_ID || '').trim();
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
@@ -273,6 +275,8 @@ const server = http.createServer(async (req, res) => {
         divaReplyTokenConfigured: Boolean(DIVA_REPLY_TOKEN),
         divaAutoSubscribe: DIVA_AUTO_SUBSCRIBE,
         divaStartupCanary: DIVA_STARTUP_CANARY,
+        divaAuthorizedCanaryOnStart: DIVA_AUTHORIZED_CANARY_ON_START,
+        divaAuthorizedCanaryTargetConfigured: Boolean(DIVA_AUTHORIZED_CANARY_CHAT_ID),
         canaryStatus:lastCanaryStatus,
         bridgeConfigured: Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET),
         bridgeStats:{...bridgeStats}
@@ -404,6 +408,14 @@ server.listen(PORT, '0.0.0.0', () => {
           try{await runDivaStartupCanary()}
           catch(error){console.error('DIVA_WHATSAPP_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
         }
+        if(DIVA_AUTHORIZED_CANARY_ON_START){
+          if(!DIVA_AUTHORIZED_CANARY_CHAT_ID){
+            console.error('DIVA_WHATSAPP_AUTHORIZED_CANARY_FAILED',{message:'authorized canary target not configured'});
+          }else{
+            try{await runDivaAuthorizedCanary(DIVA_AUTHORIZED_CANARY_CHAT_ID)}
+            catch(error){console.error('DIVA_WHATSAPP_AUTHORIZED_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
+          }
+        }
       })
       .catch(error=>console.error('DIVA_WHATSCALE_SUBSCRIPTION_FAILED',{message:String(error?.message||error).slice(0,500)}));
   }
@@ -415,6 +427,8 @@ server.listen(PORT, '0.0.0.0', () => {
     divaWhatsappWebhookUrlConfigured:Boolean(DIVA_WHATSAPP_WEBHOOK_URL),
     divaReplyTokenConfigured:Boolean(DIVA_REPLY_TOKEN),
     divaAutoSubscribe:DIVA_AUTO_SUBSCRIBE,
+    divaAuthorizedCanaryOnStart:DIVA_AUTHORIZED_CANARY_ON_START,
+    divaAuthorizedCanaryTargetConfigured:Boolean(DIVA_AUTHORIZED_CANARY_CHAT_ID),
     activeWebhookSecretConfigured:Boolean(activeWebhookSecret),
     activeSubscriptionId:activeSubscriptionId||null,
     bridgeConfigured:Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
