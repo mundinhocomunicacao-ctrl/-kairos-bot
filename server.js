@@ -129,9 +129,34 @@ async function ensureDivaSubscription(){
   return subscriptionPromise;
 }
 
+function verifyActiveWebhookSignature({raw,supplied,timestamp,nowSeconds=Math.floor(Date.now()/1000)}={}){
+  const ts=Number(timestamp);
+  if(!activeWebhookSecret||!raw||!supplied||!Number.isFinite(ts))return false;
+  if(Math.abs(Number(nowSeconds)-ts)> 300)return false;
+  const expected='sha256='+crypto.createHmac('sha256',activeWebhookSecret).update(raw).digest('hex');
+  return safeEqual(String(supplied),expected);
+}
+
+async function forwardRawToDiva(raw,timestamp){
+  if(!DIVA_INGRESS_URL||!DIVA_BRIDGE_SECRET)throw new Error('DIVA ingress bridge is not configured');
+  const signature=crypto.createHmac('sha256',DIVA_BRIDGE_SECRET).update(raw).digest('hex');
+  const upstream=await fetch(DIVA_INGRESS_URL,{
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-diva-bridge-signature':signature,
+      'x-whatsscale-timestamp':String(timestamp||'')
+    },
+    body:raw
+  });
+  const responseText=await upstream.text();
+  let responseBody={};
+  try{responseBody=responseText?JSON.parse(responseText):{}}catch{responseBody={raw:responseText}}
+  return {upstream,responseBody};
+}
+
 async function runDivaStartupCanary(){
   if(!activeWebhookSecret)throw new Error('active WhatsScale webhook secret unavailable');
-  if(!DIVA_WHATSAPP_WEBHOOK_URL)throw new Error('DIVA_WHATSAPP_WEBHOOK_URL is not configured');
   const nowSeconds=Math.floor(Date.now()/1000);
   const eventId='diva_canary_'+nowSeconds;
   const raw=JSON.stringify({
@@ -149,23 +174,16 @@ async function runDivaStartupCanary(){
       from_me:false
     }
   });
-  const signature='sha256='+crypto.createHmac('sha256',activeWebhookSecret).update(raw).digest('hex');
-  const response=await fetch(DIVA_WHATSAPP_WEBHOOK_URL,{
-    method:'POST',
-    headers:{
-      'content-type':'application/json',
-      'x-whatsscale-signature':signature,
-      'x-whatsscale-timestamp':String(nowSeconds)
-    },
-    body:raw
-  });
-  const text=await response.text();
-  let data={};
-  try{data=text?JSON.parse(text):{}}catch{data={raw:text}}
-  const wixStatus=data?.diva?.status||null;
-  if(!response.ok||wixStatus!=='ignored_unauthorized_sender'){
+  const providerSignature='sha256='+crypto.createHmac('sha256',activeWebhookSecret).update(raw).digest('hex');
+  if(!verifyActiveWebhookSignature({raw,supplied:providerSignature,timestamp:nowSeconds,nowSeconds})){
     lastCanaryStatus='failed';
-    throw new Error('DIVA startup canary failed: '+response.status+' '+String(wixStatus||data?.error||'unexpected').slice(0,200));
+    throw new Error('DIVA startup canary provider signature verification failed');
+  }
+  const {upstream,responseBody}=await forwardRawToDiva(raw,nowSeconds);
+  const wixStatus=responseBody?.status||null;
+  if(!upstream.ok||wixStatus!=='ignored_unauthorized_sender'){
+    lastCanaryStatus='failed';
+    throw new Error('DIVA startup canary failed: '+upstream.status+' '+String(wixStatus||responseBody?.error||'unexpected').slice(0,200));
   }
   lastCanaryStatus='passed';
   console.log('DIVA_WHATSAPP_CANARY_OK',{eventId,wixStatus});
@@ -250,34 +268,19 @@ const server = http.createServer(async (req, res) => {
       const chunks = [];
       for await (const chunk of req) chunks.push(chunk);
       const raw = Buffer.concat(chunks).toString('utf8');
-      const supplied = String(req.headers['x-whatsscale-signature'] || '');
-      const webhookTimestamp = Number(req.headers['x-whatsscale-timestamp'] || 0);
-      const nowSeconds = Math.floor(Date.now() / 1000);
-      if (!Number.isFinite(webhookTimestamp) || Math.abs(nowSeconds - webhookTimestamp) > 300) {
-        return json(res, 401, { ok: false, error: 'stale webhook timestamp' });
+      const supplied=String(req.headers['x-whatsscale-signature']||'');
+      const webhookTimestamp=Number(req.headers['x-whatsscale-timestamp']||0);
+      if(!verifyActiveWebhookSignature({raw,supplied,timestamp:webhookTimestamp})){
+        return json(res,401,{ok:false,error:'invalid or stale webhook signature'});
       }
-      const expected = 'sha256=' + crypto.createHmac('sha256', activeWebhookSecret).update(raw).digest('hex');
-      if (!safeEqual(supplied, expected)) return json(res, 401, { ok: false, error: 'invalid webhook signature' });
 
       const body = raw ? JSON.parse(raw) : {};
       if (body?.trigger_type !== '1on1') return json(res, 202, { ok: true, accepted: false, reason: 'non_1on1' });
       if (body?.event_type && body.event_type !== 'incoming.message') return json(res, 202, { ok: true, accepted: false, reason: 'event_type' });
       if (body?.data?.from_me === true || body?.data?.fromMe === true) return json(res, 202, { ok: true, accepted: false, reason: 'from_me' });
 
-      const signature = crypto.createHmac('sha256', DIVA_BRIDGE_SECRET).update(raw).digest('hex');
-      const upstream = await fetch(DIVA_INGRESS_URL, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          'x-diva-bridge-signature': signature,
-          'x-whatsscale-timestamp': String(req.headers['x-whatsscale-timestamp'] || '')
-        },
-        body: raw
-      });
-      const responseText = await upstream.text();
-      let responseBody;
-      try { responseBody = JSON.parse(responseText); } catch { responseBody = { raw: responseText }; }
-      return json(res, upstream.ok ? 200 : 502, { ok: upstream.ok, diva: responseBody });
+      const {upstream,responseBody}=await forwardRawToDiva(raw,webhookTimestamp);
+      return json(res,upstream.ok?200:502,{ok:upstream.ok,diva:responseBody});
     }
 
     if (req.method === 'POST' && url.pathname === '/send') {
@@ -311,7 +314,10 @@ server.listen(PORT, '0.0.0.0', () => {
     ensureDivaSubscription()
       .then(async info=>{
         console.log('DIVA_WHATSCALE_SUBSCRIPTION_READY',{subscriptionId:info.subscription_id,triggerType:info.trigger_type,webhookUrl:info.webhook_url});
-        if(DIVA_STARTUP_CANARY)await runDivaStartupCanary();
+        if(DIVA_STARTUP_CANARY){
+          try{await runDivaStartupCanary()}
+          catch(error){console.error('DIVA_WHATSAPP_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
+        }
       })
       .catch(error=>console.error('DIVA_WHATSCALE_SUBSCRIPTION_FAILED',{message:String(error?.message||error).slice(0,500)}));
   }
