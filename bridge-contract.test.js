@@ -102,3 +102,8 @@ console.log('DIVA_WHATSAPP_PROVIDER_DIAGNOSTICS_CONTRACT_OK');
 
 assert.match(source,/sessionSelfLast4/,'provider diagnostics must expose only the last four digits of the connected session');
 console.log('DIVA_WHATSAPP_SESSION_SUFFIX_CONTRACT_OK');
+
+
+assert.match(source,/sessionCount/,'provider diagnostics must expose WhatsScale session count');
+assert.match(source,/otherSessionSuffixes/,'provider diagnostics must expose only masked suffixes for alternate sessions');
+console.log('DIVA_WHATSAPP_SESSION_INVENTORY_CONTRACT_OK');

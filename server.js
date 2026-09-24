@@ -27,7 +27,9 @@ let lastCanaryStatus = 'not_run';
 const providerDiagnostics = {
   lastCheckedAt: null,
   sessionStatus: null,
+  sessionCount: null,
   sessionSelfLast4: null,
+  otherSessionSuffixes: [],
   authorizedTargetMatchesSessionSelf: null,
   activeSubscriptionId: null,
   subscriptionIsActive: null,
@@ -95,6 +97,11 @@ async function refreshProviderDiagnostics({force=false}={}){
     if(!sessionsResult.response.ok)throw new Error('sessions_http_'+sessionsResult.response.status);
     const sessions=Array.isArray(sessionsResult.data)?sessionsResult.data:[];
     const current=sessions.find(item=>String(item?.name||'')===String(SESSION))||null;
+    providerDiagnostics.sessionCount=sessions.length;
+    providerDiagnostics.otherSessionSuffixes=sessions
+      .filter(item=>String(item?.name||'')!==String(SESSION))
+      .map(item=>String(item?.me?.id||'').replace(/\D/g,'').slice(-4))
+      .filter(Boolean);
     providerDiagnostics.sessionStatus=current?.status||null;
     const selfId=String(current?.me?.id||'').trim();
     const selfDigits=selfId.replace(/\D/g,'');
