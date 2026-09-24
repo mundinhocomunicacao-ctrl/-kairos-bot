@@ -1,48 +1,17 @@
-import assert from "node:assert/strict";
-import fs from "node:fs";
-const source=fs.readFileSync(new URL("./server.js",import.meta.url),"utf8");
-assert.doesNotThrow(()=>JSON.parse(fs.readFileSync(new URL("./package.json",import.meta.url),"utf8")));
-assert.equal(source.includes("\\nconst"),false,"escaped newline corruption must be absent");
-assert.match(source,/\/webhooks\/whatsscale/);
-assert.match(source,/x-whatsscale-signature/i);
-assert.match(source,/x-whatsscale-timestamp/i);
-assert.match(source,/> 300/);
-assert.match(source,/WHATSSCALE_WEBHOOK_SECRET/);
-assert.match(source,/DIVA_INGRESS_URL/);
-assert.match(source,/DIVA_BRIDGE_SECRET/);
-assert.match(source,/createHmac\(['"]sha256['"]/);
-assert.match(source,/fromMe/);
-console.log("KAIROS_DIVA_BRIDGE_CONTRACT_OK");
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
 
-function persistenceGate(expectedEventId,recovery){
-  return Boolean(expectedEventId&&recovery?.status==="ready"&&recovery?.found===true&&recovery?.event?.event_id===expectedEventId);
-}
-assert.equal(persistenceGate("evt-qa",{status:"ready",found:true,event:{event_id:"evt-qa"}}),true);
-assert.equal(persistenceGate("evt-qa",{status:"ready",found:false}),false);
-assert.equal(persistenceGate("evt-qa",{status:"ready",found:true,event:{event_id:"different"}}),false);
-console.log("DIVA_WHATSAPP_PERSISTENCE_FAIL_CLOSED_OK");
+const source=fs.readFileSync(new URL('./server.js',import.meta.url),'utf8');
+assert.doesNotThrow(()=>JSON.parse(fs.readFileSync(new URL('./package.json',import.meta.url),'utf8')));
+assert.equal(source.includes('\\nconst'),false,'escaped newline corruption must be absent');
 
-const docsContract={base:"https://proxy.whatsscale.com",subscribe:"/v1/webhooks/subscribe",trigger:"group"};
-assert.equal(docsContract.base,"https://proxy.whatsscale.com");
-assert.equal(docsContract.subscribe,"/v1/webhooks/subscribe");
-assert.equal(docsContract.trigger,"group");
-console.log("WHATSCALE_DIRECT_SUBSCRIBE_CONTRACT_OK");
-
-assert.match(source,/function\s+divaReplyReceiptUrl\s*\(/);
-assert.match(source,/diva-whatsapp-reply-receipt/);
-assert.match(source,/alreadyDispatched/);
-assert.match(source,/alreadyReserved/);
-assert.match(source,/replyOnlyToOrigin/);
-assert.match(source,/recipient\s*!==\s*GROUP_JID/);
-assert.match(source,/sendWhatsApp\(reply\.text\)/);
-assert.match(source,/source_event_id/);
-assert.match(source,/provider_message_id/);
-assert.match(source,/request_id/);
-assert.match(source,/trace_id/);
-assert.match(source,/persisted\s*!==\s*true/);
-console.log("DIVA_WHATSAPP_ROUNDTRIP_CONTRACT_OK");
-
-const relayRequirements=[
+for(const invariant of [
+  'WHATSSCALE_API_KEY',
+  'WHATSSCALE_SESSION',
+  'KAIROS_TRIGGER_SECRET',
+  'KAIROS_TEST_TOKEN',
+  '/send',
+  '/test',
   'DIVA_1ON1_RELAY_ENABLED',
   'DIVA_RELAY_URL',
   'DIVA_RELAY_SECRET',
@@ -51,14 +20,27 @@ const relayRequirements=[
   '/v1/webhooks',
   '/v1/webhooks/subscribe',
   'signing_secret',
+  'x-whatsscale-signature',
+  'x-whatsscale-timestamp',
   'x-diva-whatsapp-relay-signature',
   'x-diva-whatsapp-relay-timestamp'
-];
-for(const requirement of relayRequirements){
-  assert.ok(source.includes(requirement),`missing 1:1 relay contract: ${requirement}`);
+]){
+  assert.ok(source.includes(invariant),`missing bridge invariant: ${invariant}`);
 }
-assert.ok(source.includes("trigger_type:'1on1'")||source.includes("trigger_type: '1on1'"),'WhatsScale subscription must be 1on1');
-assert.ok(source.includes('sendWhatsApp(reply.text, reply.recipient)'),'reply must return to the exact origin contact');
-assert.equal(source.includes('/api/diva-whatsapp-ingress'),false,'legacy phantom ingress must be removed');
-assert.equal(source.includes('/api/diva-whatsapp-reply-receipt'),false,'legacy phantom receipt route must be removed');
+
+assert.ok(source.includes("trigger_type: '1on1'"),'subscription must use WhatsScale 1on1 trigger');
+assert.ok(source.includes("row?.trigger_type === '1on1'"),'startup rotation must identify only the owned 1on1 subscription');
+assert.ok(source.includes('row?.webhook_url === webhookUrl'),'startup rotation must never delete unrelated subscriptions');
+assert.ok(source.includes("String(process.env.DIVA_1ON1_RELAY_ENABLED || '').toLowerCase() === 'true'"),'relay must default fail-closed');
+assert.ok(source.includes("Math.abs(Math.floor(Date.now() / 1000) - ts) > 300"),'WhatsScale replay window must be enforced');
+assert.ok(source.includes(".update(timestamp + '\\n')"),'Render to Wix relay signature must bind timestamp and raw body');
+assert.ok(source.includes('allowedSender(fromNumber)'),'sender allowlist must be enforced before relay');
+assert.ok(source.includes('extractDivaPrompt(data.body)'),'DIVA wake word must gate automatic replies');
+assert.ok(source.includes('reply.replyOnlyToOrigin !== true'),'reply must be origin-bound');
+assert.ok(source.includes('reply.recipient !== replyChatId'),'reply recipient must equal inbound contact');
+assert.ok(source.includes('sendWhatsApp(reply.text, reply.recipient)'),'reply must return to exact origin contact');
+assert.equal(source.includes('/api/diva-whatsapp-ingress'),false,'phantom ingress must not remain');
+assert.equal(source.includes('/api/diva-whatsapp-reply-receipt'),false,'phantom receipt must not remain');
+
+console.log('KAIROS_BASE_TRANSPORT_CONTRACT_OK');
 console.log('DIVA_WHATSAPP_1ON1_RELAY_CONTRACT_OK');
