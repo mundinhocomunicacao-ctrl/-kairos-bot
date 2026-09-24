@@ -90,3 +90,11 @@ assert.match(source,/DIVA_AUTHORIZED_CANARY_CHAT_ID/,'authorized canary target m
 assert.match(source,/divaAuthorizedCanaryOnStart/,'health must expose authorized canary enablement without the target');
 assert.match(source,/runDivaAuthorizedCanary\(DIVA_AUTHORIZED_CANARY_CHAT_ID\)/,'startup must execute the authorized canary only with backend-configured target');
 console.log('DIVA_AUTHORIZED_STARTUP_CANARY_CONTRACT_OK');
+
+
+assert.match(source,/providerDiagnostics/,'health must expose secret-safe WhatsScale provider diagnostics');
+assert.match(source,/authorizedTargetMatchesSessionSelf/,'provider diagnostics must compare authorized target to session self without exposing ids');
+assert.match(source,/\/api\/sessions/,'provider diagnostics must inspect the connected WhatsScale session');
+assert.match(source,/\/v1\/webhooks/,'provider diagnostics must inspect webhook subscription metadata');
+assert.match(source,/\/deliveries\?limit=10/,'provider diagnostics must inspect recent provider delivery states');
+console.log('DIVA_WHATSAPP_PROVIDER_DIAGNOSTICS_CONTRACT_OK');
