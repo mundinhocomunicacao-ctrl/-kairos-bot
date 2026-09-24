@@ -6,7 +6,7 @@ const API_KEY = process.env.WHATSSCALE_API_KEY;
 const SESSION = process.env.WHATSSCALE_SESSION || 'user_8b1cb7983c6d4999b2cffecca2da723a_08Q8thOB';
 const GROUP_JID = process.env.WHATSSCALE_GROUP_JID || '120363411404153606@g.us';
 const TRIGGER_SECRET = process.env.KAIROS_TRIGGER_SECRET;
-const TEST_TOKEN = process.env.KAIROS_TEST_TOKEN;
+const TEST_TOKEN = process.env.KAIROS_TEST_TOKEN;\nconst WHATSSCALE_WEBHOOK_SECRET = process.env.WHATSSCALE_WEBHOOK_SECRET;\nconst DIVA_INGRESS_URL = process.env.DIVA_INGRESS_URL;\nconst DIVA_BRIDGE_SECRET = process.env.DIVA_BRIDGE_SECRET;
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
@@ -86,6 +86,41 @@ const server = http.createServer(async (req, res) => {
       const upstream = await sendWhatsApp(TEST_TEXT);
       testSent = true;
       return json(res, 200, { ...normalize(upstream), test: true, countedAsEdition: false });
+    }
+
+
+    if (req.method === 'POST' && url.pathname === '/webhooks/whatsscale') {
+      if (!WHATSSCALE_WEBHOOK_SECRET || !DIVA_INGRESS_URL || !DIVA_BRIDGE_SECRET) {
+        return json(res, 503, { ok: false, error: 'bridge is not configured' });
+      }
+      const chunks = [];
+      for await (const chunk of req) chunks.push(chunk);
+      const raw = Buffer.concat(chunks).toString('utf8');
+      const supplied = String(req.headers['x-whatsscale-signature'] || '').replace(/^sha256=/i, '');
+      const expected = crypto.createHmac('sha256', WHATSSCALE_WEBHOOK_SECRET).update(raw).digest('hex');
+      if (!safeEqual(supplied, expected)) return json(res, 401, { ok: false, error: 'invalid webhook signature' });
+
+      const body = raw ? JSON.parse(raw) : {};
+      const remoteJid = body?.data?.key?.remoteJid ?? body?.key?.remoteJid ?? null;
+      const fromMe = body?.data?.key?.fromMe ?? body?.key?.fromMe ?? false;
+      if (remoteJid !== GROUP_JID) return json(res, 202, { ok: true, accepted: false, reason: 'group_not_allowed' });
+      if (fromMe) return json(res, 202, { ok: true, accepted: false, reason: 'from_me' });
+
+      const canonical = JSON.stringify({
+        event: 'messages.upsert',
+        instance: SESSION,
+        data: body.data ?? body
+      });
+      const signature = crypto.createHmac('sha256', DIVA_BRIDGE_SECRET).update(canonical).digest('hex');
+      const upstream = await fetch(DIVA_INGRESS_URL, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-diva-signature': signature },
+        body: canonical
+      });
+      const responseText = await upstream.text();
+      let responseBody;
+      try { responseBody = JSON.parse(responseText); } catch { responseBody = { raw: responseText }; }
+      return json(res, upstream.ok ? 200 : 502, { ok: upstream.ok, diva: responseBody });
     }
 
     if (req.method === 'POST' && url.pathname === '/send') {
