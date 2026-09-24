@@ -204,9 +204,34 @@ async function sendWhatsApp(text) {
   return sendWhatsAppToChat(GROUP_JID, text);
 }
 
+async function cleanupStaleDivaSubscriptions(){
+  if(!DIVA_WHATSAPP_WEBHOOK_URL)return {removed:0};
+  const hooksResult=await whatsScaleJson('/v1/webhooks');
+  if(!hooksResult.response.ok)throw new Error('WhatsScale webhook inventory unavailable for DIVA migration');
+  const subscriptions=Array.isArray(hooksResult.data?.subscriptions)?hooksResult.data.subscriptions:[];
+  const stale=subscriptions.filter(item=>
+    String(item?.webhook_url||'')===String(DIVA_WHATSAPP_WEBHOOK_URL)&&
+    String(item?.trigger_type||'')==='1on1'&&
+    String(item?.session||'')!==String(activeDivaSession)
+  );
+  let removed=0;
+  for(const item of stale){
+    const id=String(item?.id||'');
+    if(!id)continue;
+    const result=await whatsScaleJson('/v1/webhooks/'+encodeURIComponent(id),{method:'DELETE'});
+    if(!result.response.ok)throw new Error('Failed to remove stale DIVA WhatsScale subscription');
+    removed+=1;
+  }
+  if(removed){
+    console.log('DIVA_WHATSAPP_STALE_SUBSCRIPTIONS_REMOVED',{removed});
+  }
+  return {removed};
+}
+
 async function subscribeDivaWebhook() {
   if (!DIVA_WHATSAPP_WEBHOOK_URL) throw new Error('DIVA_WHATSAPP_WEBHOOK_URL is not configured');
   await refreshProviderDiagnostics({force:true});
+  await cleanupStaleDivaSubscriptions();
   const payload = {
     session: activeDivaSession,
     webhook_url: DIVA_WHATSAPP_WEBHOOK_URL,
