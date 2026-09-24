@@ -49,3 +49,9 @@ assert.match(source,/trigger_type\s*!==\s*['"]1on1['"]/,"Render webhook must ign
 assert.match(source,/x-diva-bridge-signature/i,"Render must forward the raw event to Wix with an internal HMAC");
 assert.match(source,/DIVA_INGRESS_URL/,"Render must forward to the governed Wix DIVA ingress");
 console.log("DIVA_SELF_TERMINATING_WEBHOOK_CONTRACT_OK");
+
+assert.match(source,/DIVA_STARTUP_CANARY/,"Render must support a non-delivery startup canary");
+assert.match(source,/runDivaStartupCanary/,"Render must execute the canary through the real webhook path");
+assert.match(source,/ignored_unauthorized_sender/,"canary must require the Wix allowlist to reject its synthetic sender");
+assert.match(source,/DIVA_WHATSAPP_CANARY_OK/,"successful canary must emit a secret-safe proof marker");
+console.log("DIVA_WHATSAPP_STARTUP_CANARY_CONTRACT_OK");
