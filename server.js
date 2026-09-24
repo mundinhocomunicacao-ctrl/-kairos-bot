@@ -22,6 +22,16 @@ let activeWebhookSecret = WHATSSCALE_WEBHOOK_SECRET || '';
 let activeSubscriptionId = null;
 let subscriptionPromise = null;
 let lastCanaryStatus = 'not_run';
+const bridgeStats = {
+  providerWebhooksAccepted: 0,
+  divaForwardAttempts: 0,
+  divaForwardSuccess: 0,
+  replyRelayRequests: 0,
+  outboundSent: 0,
+  lastWixStatus: null,
+  lastProviderEventAt: null,
+  lastReplyAt: null
+};
 
 function json(res, status, body) {
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' });
@@ -230,7 +240,8 @@ const server = http.createServer(async (req, res) => {
         divaAutoSubscribe: DIVA_AUTO_SUBSCRIBE,
         divaStartupCanary: DIVA_STARTUP_CANARY,
         canaryStatus:lastCanaryStatus,
-        bridgeConfigured: Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
+        bridgeConfigured: Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET),
+        bridgeStats:{...bridgeStats}
       });
     }
 
@@ -262,7 +273,14 @@ const server = http.createServer(async (req, res) => {
       const chatId = typeof body.chatId === 'string' ? body.chatId.trim() : '';
       const text = typeof body.text === 'string' ? body.text.trim() : '';
       if (!chatId || !text) return json(res, 400, { ok: false, error: 'chatId and text are required' });
+      bridgeStats.replyRelayRequests += 1;
       const upstream = await sendWhatsAppToChat(chatId, text);
+      bridgeStats.outboundSent += 1;
+      bridgeStats.lastReplyAt = new Date().toISOString();
+      console.log('DIVA_WHATSAPP_REPLY_SENT',{
+        replyRelayRequests:bridgeStats.replyRelayRequests,
+        outboundSent:bridgeStats.outboundSent
+      });
       return json(res, 200, normalize(upstream));
     }
 
@@ -284,7 +302,24 @@ const server = http.createServer(async (req, res) => {
       if (body?.event_type && body.event_type !== 'incoming.message') return json(res, 202, { ok: true, accepted: false, reason: 'event_type' });
       if (body?.data?.from_me === true || body?.data?.fromMe === true) return json(res, 202, { ok: true, accepted: false, reason: 'from_me' });
 
+      const eventId=String(body?.event_id||'').slice(0,128)||null;
+      bridgeStats.providerWebhooksAccepted += 1;
+      bridgeStats.lastProviderEventAt = new Date().toISOString();
+      console.log('DIVA_WHATSAPP_INGRESS_ACCEPTED',{
+        eventId,
+        providerWebhooksAccepted:bridgeStats.providerWebhooksAccepted
+      });
+      bridgeStats.divaForwardAttempts += 1;
       const {upstream,responseBody}=await forwardRawToDiva(raw,webhookTimestamp);
+      if(upstream.ok)bridgeStats.divaForwardSuccess += 1;
+      bridgeStats.lastWixStatus=String(responseBody?.status||responseBody?.error||'unknown').slice(0,120);
+      console.log('DIVA_WHATSAPP_WIX_RESULT',{
+        eventId,
+        httpStatus:upstream.status,
+        wixStatus:bridgeStats.lastWixStatus,
+        divaForwardAttempts:bridgeStats.divaForwardAttempts,
+        divaForwardSuccess:bridgeStats.divaForwardSuccess
+      });
       return json(res,upstream.ok?200:502,{ok:upstream.ok,diva:responseBody});
     }
 
