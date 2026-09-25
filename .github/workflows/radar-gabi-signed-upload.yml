@@ -1,0 +1,86 @@
+name: Radar Gabi · Signed Upload Relay
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "deploy/radar-gabi/secure-upload/request-*.txt"
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve request
+        id: req
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST_FILE="$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" | grep '^deploy/radar-gabi/secure-upload/request-.*\.txt$' | head -1)"
+          test -n "$REQUEST_FILE"
+          REQUEST_ID="$(basename "$REQUEST_FILE" .txt | sed 's/^request-//')"
+          echo "id=$REQUEST_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Create ephemeral key and publish public half
+        shell: bash
+        env:
+          REQUEST_ID: ${{ steps.req.outputs.id }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/radar-relay deploy/radar-gabi/secure-upload
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/radar-relay/private.pem >/dev/null 2>&1
+          openssl pkey -in /tmp/radar-relay/private.pem -pubout -out "deploy/radar-gabi/secure-upload/public-$REQUEST_ID.pem" >/dev/null 2>&1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "deploy/radar-gabi/secure-upload/public-$REQUEST_ID.pem"
+          git commit -m "relay(radar): publish ephemeral upload key $REQUEST_ID"
+          git push origin HEAD:main
+
+      - name: Wait for encrypted signed URL
+        shell: bash
+        env:
+          REQUEST_ID: ${{ steps.req.outputs.id }}
+        run: |
+          set -euo pipefail
+          ENC="deploy/radar-gabi/secure-upload/url-$REQUEST_ID.enc"
+          for i in $(seq 1 90); do
+            git pull --ff-only origin main >/dev/null 2>&1 || true
+            if [ -s "$ENC" ]; then
+              openssl pkeyutl -decrypt                 -inkey /tmp/radar-relay/private.pem                 -in "$ENC"                 -out /tmp/radar-relay/upload-url.txt                 -pkeyopt rsa_padding_mode:oaep                 -pkeyopt rsa_oaep_md:sha256
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "RADAR_SIGNED_URL_TIMEOUT"
+          exit 1
+
+      - name: Upload exact Radar bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(wc -c < deploy/radar-gabi/index.html | tr -d ' ')" = "150922"
+          test "$(md5sum deploy/radar-gabi/index.html | awk '{print $1}')" = "b0768fa6b33b181ab8b456a97aea9132"
+          curl --fail --silent --show-error             -X PUT             -H "Content-Type: text/html"             --data-binary @deploy/radar-gabi/index.html             "$(cat /tmp/radar-relay/upload-url.txt)"
+          echo "RADAR_SIGNED_UPLOAD=PASS"
+
+      - name: Record result without secret material
+        if: always()
+        shell: bash
+        env:
+          REQUEST_ID: ${{ steps.req.outputs.id }}
+        run: |
+          set -euo pipefail
+          git pull --ff-only origin main >/dev/null 2>&1 || true
+          STATUS="FAIL"
+          if [ "${{ job.status }}" = "success" ]; then STATUS="PASS"; fi
+          printf '%s\n' "$STATUS" > "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
+          git add "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
+          git commit -m "relay(radar): upload result $REQUEST_ID $STATUS" || true
+          git push origin HEAD:main || true
