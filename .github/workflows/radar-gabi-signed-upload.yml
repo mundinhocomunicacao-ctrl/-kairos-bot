@@ -72,10 +72,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat relay-v3/chunk-*.txt > /tmp/radar-v3.html
-          test "$(wc -c < /tmp/radar-v3.html | tr -d ' ')" = "157884"
-          test "$(md5sum /tmp/radar-v3.html | awk '{print $1}')" = "2b7ffebfc858918126fe72fdc354b8dc"
-          curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-v3.html "$(cat /tmp/radar-relay/upload-url.txt)"
+          cat relay-v4/chunk-*.txt > /tmp/radar-v4.html
+          test "$(wc -c < /tmp/radar-v4.html | tr -d ' ')" = "162184"
+          test "$(md5sum /tmp/radar-v4.html | awk '{print $1}')" = "57ef9be97ec842dced1312f0e31c169c"
+          curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-v4.html "$(cat /tmp/radar-relay/upload-url.txt)"
           echo "RADAR_SIGNED_UPLOAD=PASS"
 
       - name: Record result without secret material
