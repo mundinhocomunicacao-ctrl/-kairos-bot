@@ -36,6 +36,12 @@ jobs:
           grep -F 'data-diva-3d' /tmp/radar-live.html >/dev/null
           grep -F "gabiStudioMic" /tmp/radar-live.html >/dev/null
           grep -F "GABI_RADAR_PUBLIC_SAFE_V3" /tmp/radar-live.html >/dev/null
+          grep -F 'id="radarMovementChart"' /tmp/radar-live.html >/dev/null
+          grep -F 'id="radarIbiChart"' /tmp/radar-live.html >/dev/null
+          grep -F "createElementNS" /tmp/radar-live.html >/dev/null
+          grep -F "const proposals=currentProposalCatalog" /tmp/radar-live.html >/dev/null
+          grep -F "Nova proposta enviada em 24/09 após reunião" /tmp/radar-live.html >/dev/null
+          grep -F "Proposta atualizada em 24/09 · material vigente" /tmp/radar-live.html >/dev/null
           for forbidden in "CLIENT_SAFE_GABI v2" "voz ativa" "sem acesso ao bastidor interno" "segunda inspeção client-safe" "pacote mínimo de dados" "clientSafeContext:"; do
             if grep -F "$forbidden" /tmp/radar-live.html >/dev/null; then
               echo "FORBIDDEN=$forbidden"
