@@ -153,3 +153,13 @@ assert.match(source,/\/v1\/groups\/[\s\S]{0,120}participants\?limit=1/,'entitlem
 assert.match(source,/if\(!entitled\)[\s\S]{0,220}existing subscription preserved/,'failed entitlement probe must preserve the existing subscription');
 assert.match(source,/if\(entitled\)[\s\S]{0,500}method:\s*['"]DELETE['"]/,'subscription may be deleted only after Starter+ entitlement is proven');
 console.log('DIVA_WHATSAPP_SAFE_SECRET_RECOVERY_CONTRACT_OK');
+
+
+assert.match(source,/DIVA_LOCAL_RELAY_SECRET/,'local satellite relay must use a dedicated secret');
+assert.match(source,/\/diva\/local-relay/,'local satellite relay route must exist');
+assert.match(source,/verifyDivaLocalRelaySignature/,'local relay must verify canonical HMAC material');
+assert.match(source,/DIVA_LOCAL_RELAY_NONCES/,'local relay must reject nonce replay');
+assert.match(source,/local_relay_unauthorized_group/,'local relay must fail closed outside Diva Mundinho Os');
+assert.match(source,/invokeDivaGatewayBody/,'local relay must forward through Render-held canonical Gateway credentials');
+assert.match(source,/DIVA_LOCAL_RELAY_OK/,'local relay must emit secret-safe success evidence');
+console.log('DIVA_LOCAL_WHATSAPP_RELAY_CONTRACT_OK');
