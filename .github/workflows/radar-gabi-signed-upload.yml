@@ -49,16 +49,18 @@ jobs:
           REQUEST_ID: ${{ steps.req.outputs.id }}
         run: |
           set -euo pipefail
-          KEY_ENC="deploy/radar-gabi/secure-upload/key-$REQUEST_ID.enc"
-          URL_ENC="deploy/radar-gabi/secure-upload/url-$REQUEST_ID.enc"
+          KEY_ENC_B64="deploy/radar-gabi/secure-upload/key-$REQUEST_ID.b64"
+          URL_ENC_B64="deploy/radar-gabi/secure-upload/url-$REQUEST_ID.b64"
           IV_FILE="deploy/radar-gabi/secure-upload/iv-$REQUEST_ID.txt"
           for i in $(seq 1 90); do
             git pull --ff-only origin main >/dev/null 2>&1 || true
-            if [ -s "$KEY_ENC" ] && [ -s "$URL_ENC" ] && [ -s "$IV_FILE" ]; then
-              openssl pkeyutl -decrypt -inkey /tmp/radar-relay/private.pem -in "$KEY_ENC" -out /tmp/radar-relay/aes.key -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
+            if [ -s "$KEY_ENC_B64" ] && [ -s "$URL_ENC_B64" ] && [ -s "$IV_FILE" ]; then
+              base64 -d "$KEY_ENC_B64" > /tmp/radar-relay/key.enc
+              base64 -d "$URL_ENC_B64" > /tmp/radar-relay/url.enc
+              openssl pkeyutl -decrypt -inkey /tmp/radar-relay/private.pem -in /tmp/radar-relay/key.enc -out /tmp/radar-relay/aes.key -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
               KEY_HEX="$(xxd -p /tmp/radar-relay/aes.key | tr -d '\n')"
               IV_HEX="$(tr -d '\n\r ' < "$IV_FILE")"
-              openssl enc -d -aes-256-cbc -K "$KEY_HEX" -iv "$IV_HEX" -in "$URL_ENC" -out /tmp/radar-relay/upload-url.txt
+              openssl enc -d -aes-256-cbc -K "$KEY_HEX" -iv "$IV_HEX" -in /tmp/radar-relay/url.enc -out /tmp/radar-relay/upload-url.txt
               exit 0
             fi
             sleep 5
