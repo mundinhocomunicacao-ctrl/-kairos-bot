@@ -32,6 +32,8 @@ jobs:
           set -euo pipefail
           curl --fail --silent --show-error --location --retry 6 --retry-all-errors --retry-delay 5             "https://radar.gabi.mundinhocomunicacao.com/" -o /tmp/radar-live.html
           grep -F "DIVA Studio" /tmp/radar-live.html >/dev/null
+          grep -F 'data-diva-studio-shell="v3"' /tmp/radar-live.html >/dev/null
+          grep -F 'data-diva-3d' /tmp/radar-live.html >/dev/null
           grep -F "gabiStudioMic" /tmp/radar-live.html >/dev/null
           grep -F "GABI_RADAR_PUBLIC_SAFE_V3" /tmp/radar-live.html >/dev/null
           for forbidden in "CLIENT_SAFE_GABI v2" "voz ativa" "sem acesso ao bastidor interno" "segunda inspeção client-safe" "pacote mínimo de dados" "clientSafeContext:"; do
