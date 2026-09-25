@@ -55,7 +55,7 @@ console.log("DIVA_SELF_TERMINATING_WEBHOOK_CONTRACT_OK");
 
 assert.match(source,/DIVA_STARTUP_CANARY/,"Render must support a non-delivery startup canary");
 assert.match(source,/runDivaStartupCanary/,"Render must execute the canary through the real webhook path");
-assert.match(source,/ignored_unauthorized_sender/,"canary must require the Wix allowlist to reject its synthetic sender");
+assert.match(source,/ignored_unauthorized_group/,"canary must require the Wix group allowlist to reject its synthetic group");
 assert.match(source,/DIVA_WHATSAPP_CANARY_OK/,"successful canary must emit a secret-safe proof marker");
 console.log("DIVA_WHATSAPP_STARTUP_CANARY_CONTRACT_OK");
 
