@@ -163,3 +163,14 @@ assert.match(source,/local_relay_unauthorized_group/,'local relay must fail clos
 assert.match(source,/invokeDivaGatewayBody/,'local relay must forward through Render-held canonical Gateway credentials');
 assert.match(source,/DIVA_LOCAL_RELAY_OK/,'local relay must emit secret-safe success evidence');
 console.log('DIVA_LOCAL_WHATSAPP_RELAY_CONTRACT_OK');
+
+
+assert.match(source,/diva-whatsapp-continuity\.mjs/,'cloud bridge must use the governed WhatsApp continuity resolver');
+assert.match(source,/diva-voice-action\.mjs/,'cloud bridge must use the governed voice action classifier');
+assert.match(source,/DIVA_CONVERSATION_TTL_MS/,'cloud bridge must bound short-turn continuity');
+assert.match(source,/turn\.control===['"]pause['"]/,'cloud bridge must honor pause locally');
+assert.match(source,/turn\.control===['"]resume['"]/,'cloud bridge must honor resume locally');
+assert.match(source,/gatewayUrlForOperation/,'cloud bridge must choose the signed gateway operation explicitly');
+assert.match(source,/['"]voice_action['"]/,'recognized OS actions must use the verified voice_action operation');
+assert.match(source,/without_active_diva_context/,'bare short replies must not hijack ordinary group chat');
+console.log('DIVA_WHATSAPP_CLOUD_CONTINUITY_CONTRACT_OK');
