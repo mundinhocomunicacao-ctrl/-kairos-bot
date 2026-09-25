@@ -5,7 +5,7 @@ SITE_ID="7687d145-056b-4cc0-9f6f-70c2bb32912e"
 LIVE_URL="https://radar.gabi.mundinhocomunicacao.com/"
 ROOT="${CI_PROJECT_DIR:-/tmp}/gabi-radar-clean"
 RADAR_DIR="$ROOT/radar-gabi-site"
-BUNDLE_BASE="https://raw.githubusercontent.com/mundinhocomunicacao-ctrl/-kairos-bot/main/deploy/radar-gabi"
+BUNDLE_BASE="https://raw.githubusercontent.com/mundinhocomunicacao-ctrl/-kairos-bot/58dd8d2259fe713fafaf8592bac8318fee531eae/deploy/radar-gabi"
 
 rm -rf "$ROOT"
 mkdir -p "$RADAR_DIR/dist"
