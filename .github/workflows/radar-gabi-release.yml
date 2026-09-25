@@ -1,0 +1,39 @@
+name: Radar Gabi · Clean Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/radar-gabi-release.yml"
+      - "deploy/radar-gabi/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      WIX_GABI_RADAR_API_KEY: ${{ secrets.WIX_GABI_RADAR_API_KEY }}
+      WIX_MUNDO_API_KEY: ${{ secrets.WIX_MUNDO_API_KEY }}
+    steps:
+      - name: Verify release credential
+        shell: bash
+        run: |
+          if [ -n "${WIX_GABI_RADAR_API_KEY:-${WIX_MUNDO_API_KEY:-}}" ]; then
+            echo "WIX_RELEASE_CREDENTIAL=AVAILABLE"
+          else
+            echo "WIX_RELEASE_CREDENTIAL=MISSING"
+            exit 1
+          fi
+
+      - name: Run immutable Radar release
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors \
+            "https://raw.githubusercontent.com/mundinhocomunicacao-ctrl/-kairos-bot/45a5e47a1543c45c3f767f5a0e85b0ec0f1ddffb/deploy/radar-gabi/release-clean.sh" \
+            -o /tmp/gabi-radar-release-clean.sh
+          chmod +x /tmp/gabi-radar-release-clean.sh
+          /tmp/gabi-radar-release-clean.sh
