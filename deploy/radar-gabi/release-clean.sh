@@ -10,7 +10,9 @@ RADAR_DIR="$ROOT/radar-gabi-site"
 rm -rf "$ROOT"
 mkdir -p "$RADAR_DIR/dist"
 
-cp "$SOURCE_DIR/index.html" "$RADAR_DIR/index.html"
+cat "${GITHUB_WORKSPACE:-$(pwd)}"/relay-v4/chunk-*.txt > "$RADAR_DIR/index.html"
+test "$(wc -c < "$RADAR_DIR/index.html" | tr -d ' ')" = "162184"
+test "$(md5sum "$RADAR_DIR/index.html" | awk '{print $1}')" = "57ef9be97ec842dced1312f0e31c169c"
 cp "$SOURCE_DIR/wix.config.json" "$RADAR_DIR/wix.config.json"
 
 grep -F "$SITE_ID" "$RADAR_DIR/wix.config.json" >/dev/null
@@ -32,6 +34,12 @@ done
 
 grep -F "GABI_RADAR_PUBLIC_SAFE_V3" "$RADAR_DIR/index.html" >/dev/null
 grep -F "DIVA Studio" "$RADAR_DIR/index.html" >/dev/null
+grep -F 'id="radarMovementChart"' "$RADAR_DIR/index.html" >/dev/null
+grep -F 'id="radarIbiChart"' "$RADAR_DIR/index.html" >/dev/null
+grep -F "createElementNS" "$RADAR_DIR/index.html" >/dev/null
+grep -F "const proposals=currentProposalCatalog" "$RADAR_DIR/index.html" >/dev/null
+grep -F "Nova proposta enviada em 24/09 após reunião" "$RADAR_DIR/index.html" >/dev/null
+grep -F "Proposta atualizada em 24/09 · material vigente" "$RADAR_DIR/index.html" >/dev/null
 cp "$RADAR_DIR/index.html" "$RADAR_DIR/dist/index.html"
 
 cd "$RADAR_DIR"
@@ -46,8 +54,12 @@ CACHE_BUST="$(date +%s)"
 curl -fsSL --retry 6 --retry-all-errors --retry-delay 5 "$LIVE_URL?release=$CACHE_BUST" -o /tmp/gabi-radar-live.html
 grep -F "DIVA Studio" /tmp/gabi-radar-live.html >/dev/null
 grep -F "GABI_RADAR_PUBLIC_SAFE_V3" /tmp/gabi-radar-live.html >/dev/null
-grep -F "marcas no universo mapeado" /tmp/gabi-radar-live.html >/dev/null
-grep -F "Histórico de relacionamento:" /tmp/gabi-radar-live.html >/dev/null
+grep -F 'id="radarMovementChart"' /tmp/gabi-radar-live.html >/dev/null
+grep -F 'id="radarIbiChart"' /tmp/gabi-radar-live.html >/dev/null
+grep -F "createElementNS" /tmp/gabi-radar-live.html >/dev/null
+grep -F "const proposals=currentProposalCatalog" /tmp/gabi-radar-live.html >/dev/null
+grep -F "Nova proposta enviada em 24/09 após reunião" /tmp/gabi-radar-live.html >/dev/null
+grep -F "Proposta atualizada em 24/09 · material vigente" /tmp/gabi-radar-live.html >/dev/null
 for forbidden in \
   "CLIENT_SAFE_GABI v2" \
   "voz ativa" \
