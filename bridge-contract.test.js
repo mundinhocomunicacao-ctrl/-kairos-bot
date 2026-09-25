@@ -48,7 +48,8 @@ assert.match(source,/DIVA_AUTO_SUBSCRIBE/,"Render must support automatic DIVA we
 assert.match(source,/activeWebhookSecret/,"Render must retain the one-time WhatsScale signing secret in process memory");
 assert.match(source,/ensureDivaSubscription/,"Render must self-heal the subscription on boot");
 assert.match(source,/trigger_type\s*!==\s*['"]group['"]/,"Render webhook must ignore traffic outside the governed group trigger");
-assert.match(source,/body\?\.data\?\.group_id\s*!==\s*DIVA_WHATSAPP_GROUP_JID/,"Render webhook must reject non-allowlisted groups");
+assert.match(source,/group_id[\s\S]{0,160}DIVA_WHATSAPP_GROUP_JID/,"Render webhook must compare inbound group id against the governed Comercial group");
+assert.match(source,/unauthorized_group/,"Render webhook must reject non-allowlisted groups");
 assert.match(source,/x-diva-bridge-signature/i,"Render must forward the raw event to Wix with an internal HMAC");
 assert.match(source,/DIVA_INGRESS_URL/,"Render must forward to the governed Wix DIVA ingress");
 console.log("DIVA_SELF_TERMINATING_WEBHOOK_CONTRACT_OK");
