@@ -36,10 +36,10 @@ jobs:
           set -euo pipefail
           mkdir -p /tmp/diva-relay deploy/radar-gabi/secure-upload
           openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/diva-relay/private.pem >/dev/null 2>&1
-          openssl pkey -in /tmp/diva-relay/private.pem -pubout -out "deploy/radar-gabi/secure-upload/public-$REQUEST_ID.pem" >/dev/null 2>&1
+          openssl pkey -in /tmp/diva-relay/private.pem -pubout -out "deploy/radar-gabi/secure-upload/public-diva-$REQUEST_ID.pem" >/dev/null 2>&1
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "deploy/radar-gabi/secure-upload/public-$REQUEST_ID.pem"
+          git add "deploy/radar-gabi/secure-upload/public-diva-$REQUEST_ID.pem"
           git commit -m "relay(radar): publish DIVA 3D ephemeral key $REQUEST_ID"
           git push origin HEAD:main
 
@@ -95,7 +95,7 @@ jobs:
           git pull --ff-only origin main >/dev/null 2>&1 || true
           STATUS="FAIL"
           if [ "${{ job.status }}" = "success" ]; then STATUS="PASS"; fi
-          printf '%s\n' "$STATUS" > "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
-          git add "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
+          printf '%s\n' "$STATUS" > "deploy/radar-gabi/secure-upload/result-diva-$REQUEST_ID.txt"
+          git add "deploy/radar-gabi/secure-upload/result-diva-$REQUEST_ID.txt"
           git commit -m "relay(radar): DIVA 3D upload result $REQUEST_ID $STATUS" || true
           git push origin HEAD:main || true
