@@ -1,0 +1,140 @@
+'aria-label',safeState==='listening'?'DIVA 3D ouvindo':safeState==='thinking'?'DIVA 3D criando':safeState==='speaking'?'DIVA 3D falando':'DIVA 3D pronta para criar')}
+  if(label)label.textContent=safeState==='listening'?'Estou ouvindo você':safeState==='thinking'?'Organizando a melhor direção':safeState==='speaking'?'Te contando a ideia':'Pronta para criar com você';
+}
+function gabiStudioSmartPreset(intent=gabiStudioIntent,brief=''){
+  const text=normalizedLiveText(brief||'');
+  const minutes=Number((text.match(/(\d{1,3})\s*(?:min|minuto|minutos)/)||[])[1]||0);
+  const fast=intent==='record_now'||(minutes&&minutes<=20)||/agora|rápido|rapidinho|correndo/.test(text);
+  const reference=intent==='reference'||/refer[eê]ncia|trend|tend[eê]ncia|vídeo que vi/.test(text);
+  const intimate=/desabafo|pessoal|sincero|sincera|vulner[aá]vel|reflex/.test(text);
+  const playful=/engra[cç]|leve|divertid|humor|meme/.test(text);
+  const location=/carro/.test(text)?'carro':/faculdade|aula/.test(text)?'faculdade':/aeroporto|avi[aã]o|viagem/.test(text)?'viagem':/casa|quarto|sala/.test(text)?'casa':'rotina';
+  const duration=fast?'15–25s':intimate?'35–50s':'25–35s';
+  const tone=playful?'leve e espontâneo':intimate?'íntimo e direto':reference?'original com linguagem de referência':'natural e pessoal';
+  const production=fast?'1–3 planos · edição mínima':location==='rotina'?'3–5 planos · produção leve':`3–5 planos · aproveitar ${location}`;
+  const format=reference?'Reels/TikTok reinterpretado':'Reels/TikTok vertical';
+  const preset={format,duration,tone,production,location,fast,reference};
+  const summary=document.getElementById('gabiStudioPresetSummary');if(summary)summary.textContent=`${format} · ${duration} · ${tone} · ${production}`;
+  return preset;
+}
+function gabiStudioPublicText(value,n=1600){
+  return feedText(value,n)
+    .replace(/\bclient[- ]?safe\b/gi,'')
+    .replace(/\bmodo local\b\s*[:.-]?/gi,'')
+    .replace(/\b(provider|policy|backend|pacote (?:mínimo )?de dados|segunda inspeção)\b/gi,'')
+    .replace(/\s{2,}/g,' ')
+    .replace(/\s+([,.;:!?])/g,'$1')
+    .trim();
+}
+function gabiStudioPickVoice(voices=[]){
+  const score=v=>{
+    const name=String(v?.name||'').toLowerCase(),lang=String(v?.lang||'').toLowerCase();
+    let s=0;if(lang==='pt-br')s+=100;else if(lang.startsWith('pt'))s+=55;else return-999;
+    if(/google.*portugu|microsoft.*francisca|luciana|camila|fernanda|leticia|maria/.test(name))s+=34;
+    if(v?.localService)s+=8;if(/natural|neural|premium|enhanced/.test(name))s+=18;if(/compact|espeak/.test(name))s-=30;
+    return s;
+  };
+  return [...voices].sort((a,b)=>score(b)-score(a))[0]||null;
+}
+function gabiStudioSpeak(text){
+  gabiStudioLastSpeech=gabiStudioPublicText(text,2600);
+  if(!gabiStudioVoiceEnabled||!gabiStudioLastSpeech||!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const spoken=gabiStudioLastSpeech.replace(/[`*_#>]/g,' ').replace(/\s+/g,' ').trim();
+  const u=new SpeechSynthesisUtterance(spoken);
+  u.lang='pt-BR';u.rate=.91;u.pitch=.98;u.volume=.96;
+  const preferred=gabiStudioPickVoice(window.speechSynthesis.getVoices());
+  if(preferred)u.voice=preferred;
+  u.onstart=()=>{gabiStudioSetPresenceState('speaking');gabiStudioSetVoiceStatus('DIVA falando… diga “pare” para interromper.')};
+  u.onend=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus('Pronta para continuar.')};
+  u.onerror=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus('A voz falhou, mas a resposta continua aqui na tela.')};
+  window.speechSynthesis.speak(u);
+}
+function gabiStudioLocalVoiceCommand(value){
+  const normalized=normalizedLiveText(value).replace(/^diva\s*/,'').trim();
+  if(normalized.includes('pare')){
+    if('speechSynthesis' in window)window.speechSynthesis.cancel();
+    gabiStudioSetVoiceStatus('Parei. Diga “continue” quando quiser.');
+    return true;
+  }
+  if(normalized.includes('continue')){
+    if('speechSynthesis' in window&&window.speechSynthesis.paused)window.speechSynthesis.resume();
+    else if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech);
+    gabiStudioSetVoiceStatus('Continuando.');
+    return true;
+  }
+  if(normalized.includes('repete')||normalized.includes('repita')){
+    if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech);
+    return true;
+  }
+  return false;
+}
+function gabiStudioBlock(title,value,full=false,list=false){
+  const box=document.createElement('div');box.className='studioResultBlock'+(full?' full':'');
+  const label=document.createElement('b');label.textContent=title;box.appendChild(label);
+  if(list){
+    const ul=document.createElement('ul');(Array.isArray(value)?value:[]).forEach(item=>{const li=document.createElement('li');li.textContent=feedText(item,700);ul.appendChild(li)});box.appendChild(ul);
+  }else if(title==='IDEIA'){
+    const h=document.createElement('h3');h.textContent=feedText(value,1200);box.appendChild(h);
+  }else{
+    const p=document.createElement('p');p.textContent=feedText(value,1600);box.appendChild(p);
+  }
+  return box;
+}
+function renderGabiStudioResult(payload){
+  const raw=payload?.result||{},proposalMode=raw.mode==='proposal'||!!raw.proposal;
+  const result={
+    mode:proposalMode?'proposal':'content',
+    headline:gabiStudioPublicText(raw.headline,220),
+    idea:gabiStudioPublicText(raw.idea||raw.headline,1200),
+    hook:gabiStudioPublicText(raw.hook,500),
+    script:(Array.isArray(raw.script)?raw.script:[]).map(x=>gabiStudioPublicText(x,600)).filter(Boolean),
+    shotList:(Array.isArray(raw.shotList)?raw.shotList:[]).map(x=>gabiStudioPublicText(x,320)).filter(Boolean),
+    production:gabiStudioPublicText(raw.production,900),
+    caption:gabiStudioPublicText(raw.caption,800)
+  };
+  if(proposalMode){
+    const p=raw.proposal||{};
+    result.proposal={
+      opportunity:gabiStudioPublicText(p.opportunity,1200),
+      talentFit:gabiStudioPublicText(p.talentFit,1200),
+      ideaName:gabiStudioPublicText(p.ideaName,220),
+      concept:gabiStudioPublicText(p.concept,1600),
+      execution:(Array.isArray(p.execution)?p.execution:[]).map(x=>gabiStudioPublicText(x,700)).filter(Boolean),
+      brandRole:gabiStudioPublicText(p.brandRole,1200),
+      proof:(Array.isArray(p.proof)?p.proof:[]).map(x=>gabiStudioPublicText(x,500)).filter(Boolean),
+      extensions:(Array.isArray(p.extensions)?p.extensions:[]).map(x=>gabiStudioPublicText(x,500)).filter(Boolean),
+      nextStep:gabiStudioPublicText(p.nextStep,900)
+    };
+  }
+  gabiStudioLastResult=result;
+  const panel=document.getElementById('gabiStudioResult'),primary=document.getElementById('gabiStudioResultPrimary'),grid=document.getElementById('gabiStudioResultGrid'),refs=document.getElementById('gabiStudioRefs'),details=document.getElementById('gabiStudioResultDetails');
+  primary.replaceChildren();grid.replaceChildren();refs.replaceChildren();details.open=false;
+  if(proposalMode){
+    const p=result.proposal;
+    primary.append(
+      gabiStudioBlock('OPORTUNIDADE',p.opportunity||result.idea,true),
+      gabiStudioBlock('POR QUE GABI',p.talentFit||''),
+      gabiStudioBlock('IDEIA CENTRAL',[p.ideaName,p.concept].filter(Boolean).join(' — '),true),
+      gabiStudioBlock('COMO ACONTECE',p.execution||[],true,true)
+    );
+    grid.append(
+      gabiStudioBlock('PAPEL DA MARCA',p.brandRole||'',true),
+      gabiStudioBlock('PROVAS',p.proof||[],false,true),
+      gabiStudioBlock('DESDOBRAMENTOS',p.extensions||[],false,true),
+      gabiStudioBlock('PRÓXIMO PASSO',p.nextStep||'',true)
+    );
+  }else{
+    primary.append(
+      gabiStudioBlock('IDEIA',result.idea,true),
+      gabiStudioBlock('GANCHO',result.hook||''),
+      gabiStudioBlock('ROTEIRO',result.script.slice(0,4),false,true)
+    );
+    grid.append(
+      gabiStudioBlock('CENAS',result.shotList||[],false,true),
+      gabiStudioBlock('PRODUÇÃO',result.production||''),
+      gabiStudioBlock('LEGENDA',result.caption||'',true)
+    );
+  }
+  (Array.isArray(payload?.references)?payload.references:[]).forEach(ref=>{
+    const url=safePublicUrl
