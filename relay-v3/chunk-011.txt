@@ -1,0 +1,57 @@
+udio-refine="funny">🙂 Mais leve</button>
+        <button type="button" data-studio-refine="caption">✍️ Faz a legenda</button>
+      </div>
+      <details class="studioDetails" id="gabiStudioResultDetails">
+        <summary>Ver cenas, produção, legenda e referências ↓</summary>
+        <div class="studioResultGrid" id="gabiStudioResultGrid"></div>
+        <div class="studioRefs" id="gabiStudioRefs"></div>
+      </details>
+    </div>
+  </div>
+</section>
+<div class="foot">Painel executivo da Gabriella. O painel mostra apenas informações selecionadas para acompanhamento da Gabriella.</div></main>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true"><div class="modalBox"><button class="close">×</button><div class="ey">Contexto comercial</div><h2 id="modalTitle"></h2><div id="modalBody" class="context"></div></div></div>
+<script>
+const proposalCatalog=[
+{brand:"Fluency Academy",angle:"Vida adulta",front:"Educação / credibilidade",status:"Proposta atualizada em 24/09 · em avaliação",updatedAt:"24/09/2026",url:"https://docs.google.com/presentation/d/1OVPq5qUyHDBSQ9ogCfYjt5_iJKeuQe_L/edit?usp=drivesdk&ouid=108727720996210614304&rtpof=true&sd=true"},
+{brand:"BAIMS",angle:"Cachos & beleza",front:"Beauty / makeup",status:"Aprovada · contato de marketing validado",updatedAt:"",url:""},
+{brand:"Águia Branca",angle:"Verão",front:"Mobilidade / viagem",status:"Aprovada · material solicitado pela marca",updatedAt:"",url:""},
+{brand:"Meu Sapato Preto",angle:"Vida adulta",front:"Moda / calçados",status:"Aprovada · pronta para continuidade",updatedAt:"",url:""},
+{brand:"Constance",angle:"Vida adulta",front:"Moda / calçados",status:"Aprovada · material solicitado pela marca",updatedAt:"",url:""},
+{brand:"Amissima",angle:"Vida adulta",front:"Moda",status:"Aprovada · outbound realizado",updatedAt:"",url:""},
+{brand:"Airbnb",angle:"Brasil ↔ EUA",front:"Viagem internacional",status:"Aprovada · a prospectar",updatedAt:"16/09/2026",url:"https://www.canva.com/d/XOoKtgWtmQiKTH7"},
+{brand:"Canva",angle:"Vida adulta",front:"Tecnologia / criação",status:"Aprovada",updatedAt:"15/09/2026",url:"https://www.canva.com/d/Eo8xzMng3IFFpY-"},
+{brand:"CVC",angle:"Verão",front:"Viagens pelo Brasil",status:"Aprovada / salva",updatedAt:"15/09/2026",url:"https://www.canva.com/d/H8dtwJZLoWZkyP8"},
+{brand:"WeMobi",angle:"Verão",front:"Mobilidade / verão",status:"Resposta humana · canal de marketing indicado",updatedAt:"15/09/2026",url:"https://www.canva.com/d/6WAeYVkoIMK96yG"},
+{brand:"Buser",angle:"Verão",front:"Mobilidade / verão",status:"Aprovada / salva · conversa aberta",updatedAt:"15/09/2026",url:"https://www.canva.com/d/PRcliIR2yrwukoW"},
+{brand:"Australian Gold",angle:"Verão",front:"Beleza / solar",status:"Aprovada / salva",updatedAt:"",url:"https://www.canva.com/d/frS0moHvTXkhDOr"},
+{brand:"Tinder",angle:"Vida adulta",front:"Lifestyle / relacionamento",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/9ahIAetMj42nndT"},
+{brand:"Quem Disse, Berenice?",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/4-CvYwiYZF290yR"},
+{brand:"iFood",angle:"Vida adulta",front:"Consumo / rotina",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/IJfWj3uOOdjZkH5"},
+{brand:"Reformation",angle:"Vida adulta",front:"Moda / transição adulta",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/zCLOl8e9Q_i3g2z"},
+{brand:"Catharine Hill",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/wX0HPmVVDuNBJEV"},
+{brand:"Nestlé Brasil",angle:"Vida adulta",front:"Consumo / rotina",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/yt4DIZZJn9qlozO"},
+{brand:"Skence",angle:"Cachos & beleza",front:"Hair care",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/uiRICc6Gnhmt4o7"},
+{brand:"Curly Care",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/YZhsVpTXyQyQIh0"},
+{brand:"Dapop",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada · material solicitado",updatedAt:"",url:"https://www.canva.com/d/CKnc6IbekaKOIB-"},
+{brand:"Nick Vick",angle:"Cachos & beleza",front:"Hair care",status:"Aprovada · contato localizado",updatedAt:"",url:"https://www.canva.com/d/GJB9seHhqJOH2pR"},
+{brand:"Widi Care",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada · material enviado",updatedAt:"",url:"https://www.canva.com/d/MDtEbBbs36OxGhu"},
+{brand:"Risqué",angle:"Cachos & beleza",front:"Beauty / unhas",status:"Aprovada · material solicitado · atualizada em 24/09",updatedAt:"24/09/2026",url:"https://www.canva.com/d/8XJYt_5F8lG-sN3"},
+{brand:"Soft Hair + Bio Soft",angle:"Cachos & beleza",front:"Hair care",status:"Aprovada · material solicitado",updatedAt:"",url:"https://www.canva.com/d/98A0zrYqy0ACyBm"},
+{brand:"Revolut",angle:"Brasil ↔ EUA",front:"Vida Brasil–EUA",status:"Histórico preservado · prospecção pausada",updatedAt:"",url:"https://www.canva.com/d/QDpTjl6SVxScyNJ"},
+{brand:"Phytoderm",angle:"Cachos & beleza",front:"Beauty / fragrância",status:"Aprovada · contato validado",updatedAt:"",url:"https://www.canva.com/d/9Aftsb-y0_tQe12"},
+{brand:"Bela Berê",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada · material solicitado",updatedAt:"",url:"https://www.canva.com/d/nZjC4eEtyxHMOyV"},
+{brand:"Oficial Nutri",angle:"Vida adulta",front:"Wellness / rotina",status:"Aprovada / salva · pronta para envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/COjdIjKdbFVGRM2"},
+{brand:"Ynayê",angle:"Vida adulta",front:"Lifestyle",status:"Aprovada / salva · pronta para envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/Ae3NtfZ_GqaNv4a"},
+{brand:"Alyne",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada / salva · continuidade aberta",updatedAt:"17/09/2026",url:"https://www.canva.com/d/Tl_7L7D6Ppz45uo"},
+{brand:"Bella Jasmin",angle:"Vida adulta",front:"Lifestyle / beleza",status:"Aprovada / salva · pronta para envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/49svYOCTaskBIZn"},
+{brand:"Freck Beauty",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada / salva · conversa em andamento",updatedAt:"17/09/2026",url:"https://www.canva.com/d/w_zN-90-8mN1LuN"},
+{brand:"Adaptogen Science",angle:"Vida adulta",front:"Wellness",status:"Aprovada / salva · preparar envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/n0_GpFqBX6OV-KD"},
+{brand:"Baggio Café",angle:"Vida adulta",front:"Lifestyle / rotina",status:"Aprovada / salva · preparar envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/keM3GnmRM1S3z3k"},
+{brand:"Authentic Beauty Concept",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/PobjMaEReOW7NOU"},
+{brand:"Açaí da Barra",angle:"Verão",front:"Verão no Brasil",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/5MO89_dbBiyKVJf"},
+{brand:"Klauterre",angle:"Vida adulta",front:"Lifestyle / beleza natural",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/NYNnp2APSuRbCgu"},
+{brand:"Avène",angle:"Cachos & beleza",front:"Skincare / verão",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/I1DhnKCFcZu9bV7"}
+];
+const proposalLinks=Object.fromEntries(proposalCatalog.filter(p=>p.url).map(p=>[p.brand,p.url]));
+proposalLinks.Fluency=proposalLinks["Fluency Academy"];;const categories={"Beleza & Hair care":["Salon Line","Widi Care","Bela Berê","Curly Care","Nazca","Catharine Hill","Skence","Dapop","Kiss New York"],"Moda":["Riachuelo","Amissima","Constance","Reformation","Meu Sapato Preto"],"Viagem & Mobilidade":["LATAM","Buser","WeMobi","CVC","Airbnb","Bagaggio","Águia Branca"],"Financeiro":["Revolut","Wise","PicPay"],"Educação":["Fluency","EBAC","Cambridge English","Duolingo"],"Tecnologia":
