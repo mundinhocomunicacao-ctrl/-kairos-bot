@@ -10,9 +10,8 @@ RADAR_DIR="$ROOT/radar-gabi-site"
 rm -rf "$ROOT"
 mkdir -p "$RADAR_DIR/dist"
 
-cat "${GITHUB_WORKSPACE:-$(pwd)}"/relay-v4/chunk-*.txt > "$RADAR_DIR/index.html"
-test "$(wc -c < "$RADAR_DIR/index.html" | tr -d ' ')" = "162184"
-test "$(md5sum "$RADAR_DIR/index.html" | awk '{print $1}')" = "57ef9be97ec842dced1312f0e31c169c"
+cp "$SOURCE_DIR/index.html" "$RADAR_DIR/index.html"
+test -s "$RADAR_DIR/index.html"
 cp "$SOURCE_DIR/wix.config.json" "$RADAR_DIR/wix.config.json"
 
 grep -F "$SITE_ID" "$RADAR_DIR/wix.config.json" >/dev/null
@@ -40,6 +39,11 @@ grep -F "createElementNS" "$RADAR_DIR/index.html" >/dev/null
 grep -F "const proposals=currentProposalCatalog" "$RADAR_DIR/index.html" >/dev/null
 grep -F "Nova proposta enviada em 24/09 após reunião" "$RADAR_DIR/index.html" >/dev/null
 grep -F "Proposta atualizada em 24/09 · material vigente" "$RADAR_DIR/index.html" >/dev/null
+grep -F "universe:807" "$RADAR_DIR/index.html" >/dev/null
+grep -F "presented:35" "$RADAR_DIR/index.html" >/dev/null
+grep -F "agencies:68" "$RADAR_DIR/index.html" >/dev/null
+grep -F 'camera-orbit="0deg 78deg 92%"' "$RADAR_DIR/index.html" >/dev/null
+grep -F "divaStageHalo" "$RADAR_DIR/index.html" >/dev/null
 cp "$RADAR_DIR/index.html" "$RADAR_DIR/dist/index.html"
 
 cd "$RADAR_DIR"
@@ -60,6 +64,11 @@ grep -F "createElementNS" /tmp/gabi-radar-live.html >/dev/null
 grep -F "const proposals=currentProposalCatalog" /tmp/gabi-radar-live.html >/dev/null
 grep -F "Nova proposta enviada em 24/09 após reunião" /tmp/gabi-radar-live.html >/dev/null
 grep -F "Proposta atualizada em 24/09 · material vigente" /tmp/gabi-radar-live.html >/dev/null
+grep -F "universe:807" /tmp/gabi-radar-live.html >/dev/null
+grep -F "presented:35" /tmp/gabi-radar-live.html >/dev/null
+grep -F "agencies:68" /tmp/gabi-radar-live.html >/dev/null
+grep -F 'camera-orbit="0deg 78deg 92%"' /tmp/gabi-radar-live.html >/dev/null
+grep -F "divaStageHalo" /tmp/gabi-radar-live.html >/dev/null
 for forbidden in \
   "CLIENT_SAFE_GABI v2" \
   "voz ativa" \
