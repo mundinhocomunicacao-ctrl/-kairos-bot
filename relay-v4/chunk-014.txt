@@ -1,0 +1,57 @@
+
+  if(!rail||rail.hidden)return;
+  const key=rail.dataset.contextSource||'home';
+  const hit=contextCardHit(key,safeRadarRows(rows));
+  const contextLive=document.getElementById('contextLive');
+  const source=document.getElementById('contextCardSource');
+  if(hit){
+    const d=hit.data||hit;
+    rail.dataset.contextLive='true';
+    source.textContent='ao vivo';
+    contextLive.textContent=['Novo movimento',feedText(d.status,70),feedText(d.title,160),feedText(d.summary,360),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+  }else{
+    rail.dataset.contextLive='false';
+    source.textContent='base consolidada';
+    contextLive.textContent='Base consolidada · nenhuma atualização nova altera esta leitura.';
+  }
+}
+
+function openPanel(id){
+  const p=document.getElementById(id);
+  if(!p)return false;
+  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+  p.classList.add('active');
+  const t=document.querySelector('.tab[data-tab="'+id+'"]');
+  if(t)t.classList.add('active');
+  requestAnimationFrame(()=>p.scrollIntoView({behavior:'smooth',block:'start'}));
+  return true;
+}
+function handlePanelNavigation(e){
+  const trigger=e.target?.closest?.('[data-open]');
+  if(!trigger)return;
+  const nested=e.target?.closest?.('a,button');
+  if(nested&&nested!==trigger)return;
+  const target=trigger.dataset.open;
+  if(!target||!document.getElementById(target))return;
+  e.preventDefault();
+  showContextCard(target,trigger);
+  openPanel(target);
+}
+function activatePanelNavigation(){
+  document.querySelectorAll('[data-open]').forEach(el=>{
+    el.setAttribute('tabindex','0');
+    el.setAttribute('role','button');
+    el.setAttribute('aria-controls',el.dataset.open);
+  });
+  document.addEventListener('click',handlePanelNavigation);
+  document.addEventListener('keydown',e=>{
+    const trigger=e.target?.closest?.('[data-open]');
+    if(trigger&&(e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      if(document.getElementById(trigger.dataset.open)){showContextCard(trigger.dataset.open,trigger);openPanel(trigger.dataset.open);}
+    }
+  });
+}
+activatePanelNavigation();
+const stageText={radar:["Radar de marcas","Universo de marcas mapeadas pela Mundinho. Use as categorias e a Word Cloud para explorar as relações já identificadas."],apresentadas:["Marcas apresentadas","Uma marca entra aqui quando existe evidência de que a Gabriella foi efetivamente apresentada. O mesmo nome é deduplicado para que diferentes interações não inflem o total."],propostas:["Propostas comprovadas","Aqui ficam as oportunidades que avançaram até proposta com evidência de envio. A abertura completa conecta marca, categoria, ângulo criativo e situação da conversa."],categorias:["Categorias comerciais","A visão por categoria ajuda a entender em quais territórios a carreira da Gabriella já está ganhando mais portas: beleza, viagem, mobilidade, financeiro, educação, moda, tecnologia, lifestyle e outros."],angulos:["Ângulos criativos","Esta área organiza as propostas aprovadas pelo território criativo usado: qual aspecto da vida e imagem da Gabriella foi transformado em oportunidade para uma marca."]};
+const socials={"Salon Line":["@salonlinebrasil","https://www.instagram.com/salonlinebrasil/"],"Widi Care":["@widicare","https://www.instagram.com/widicare/"],"Bela Berê":["@belabere","https://www.instagram.com/belabere/"],"Nazca":["@nazcacosmeticos","https://www.instagram.com/nazcacosmeticos/"],"Catharine Hill":["@catharinehilloficial","https://www.instagram.com/catharinehilloficial/"],"Dapop":["@dapopmakeup","https://www.instagram.com/dapopmakeup/"],"Kiss New York":["@kissnybrasil","https://www.instagram.com/kissnybrasil/"],"Riachuelo":["@riachuelo","https://www.instagram.com/riachuelo/"],"Amissima":["@amissima","https://www.instagram.com/amissima/"],"Constance":["@constancecalcados","https://www.instagram.com/constancecalcados/"],"Reformation":["@reformation","https://www.instagram.com/reformation/"],"Meu Sapato Preto":["@meusapatopreto","https://www.instagram.com/meusapatopreto/"],"LATAM":["@latambrasil","https://www.instagram.com/latambrasil/"],"Buser":["@buserbrasil","https://www.instagram.com/buserbrasil/"],"WeMobi":["@wemobi","https://www.instagram.com/wemobi/"],"CVC":["@cvcviagens","https://www.instagram.com/cvcviagens/"],"Airbnb":["@airbnb","https://www.instagram.com/airbnb/"],"Bagaggio":["@bagaggio","https://www.instagram.com/bagaggio/"],"Águia Branca":["@viacaoaguiabranca","https://www.instagram.com/viacaoaguiabranca/"],"Revolut":["@revolutapp","https://www.instagram.com/revolutapp/"],"Wise":["@wise","https://www.instagram.com/wise/"],"PicPay":["@picpay","https://www.instagram.com/picpay/"],"Fluency":["@fluencytv","https://www.instagram.com/fluencytv/"],"Fluency Academy":["@fluencytv","https://www.instagram.com/fluencytv/"],"EBAC":["@ebaconline","https://www.instagram.com/ebaconline/"],"Duolingo":["@duolingo","https://www.instagram.com/duolingo/"],"Canva":["@canva","https://www.instagram.com/canva/"],"CapCut":["@capcutapp","https://www.instagram.com/capcutapp/"],"Stickerly":["@stickerly","https://www.instagram.com/stickerly/"],"TotalPass":["@totalpass","https://www.instagram.com/totalpass/"],"iFood":["@ifoodbrasil","https://www.instagram.com/ifoodbrasil/"],"Shopee":["@shopee_br","https://www.instagram.com/shopee_br/"],"AliExpress":["@aliexpressbr","https://www.instagram.com/aliexpressbr/"]};const brandLinks={"Salon Line":"https://www.instagram.com/salonlinebrasil/","Fluency":"https://www.instagram.com/fluencytv/","LATAM":"https://www.instagram.com/latambrasil/","Buser":"https://www.instagram.com/buserbrasil/","Revolut":"https://www.instagram.com/revolutapp/"};const reconciled={"Fluency Academy":"Resposta positiva e proposta enviada. A oportunidade conecta a adaptação da Gabi ao inglês, vida acadêmica e carreira nos EUA.","Fluency":"Resposta positiva e proposta enviada. A oportunidade conecta a adaptação da Gabi ao inglês, vida acadêmica e carreira nos EUA.","Revolut":"Proposta enviada em 16/09. O histórico comercial permanece no Radar mesmo quando a prospecção deixa de ser prioridade.","Alyne Cosméticos":"A marca respondeu e abriu continuidade para a conversa.","Freck Beauty":"A marca respondeu e pediu detalhes, datas-chave e entregáveis para revisão.","Chocolate Lugano":"A marca abriu espaço para continuidade da conversa.","Parachute":"A marca informou não ter oportunidade ativa agora e deixou aberta a possibilidade de contato futuro.","Amaéco":"A marca respondeu e compartilhou o canal institucional de Marketing para continuidade."};const brandDossier={"Salon Line":"Marca brasileira de hair care com forte histórico em cabelos cacheados e crespos e comunidade própria de creators. Para a Gabi, o ponto de aderência é a assinatura visual dos cachos e a abertura concreta já criada por produto.","Fluency":"Escola digital de idiomas. O território construído para a Gabi conecta inglês, adaptação aos EUA, atuação e vida universitária. A conversa já avançou além do primeiro contato.","LATAM":"Companhia aérea e território central para a narrativa Brasil ↔ EUA. O primeiro ciclo foi Rock in Rio; o valor agora está em preservar a relação para uma janela de planejamento mais confortável.","Buser":"Mobilidade rodoviária e viagens pelo Brasil. A proposta conecta Black Friday, verão e deslocamentos reais da Gabi no país.","Revolut":"Fintech internacional. A proposta explorou a vida financeira e cotidiana entre Brasil e Estados Unidos; o histórico permanece preservado mesmo com a prospecção pausada."};const advice={"Fluency":"Como você pode ajudar: publique conteúdos sobre aprendizado de inglês, diferenças culturais, gírias e situações reais de viver em outro idioma. Isso reforça, de forma orgânica, o território que já apresentamos à marca.","Salon Line":"Como você pode ajudar: manter os cachos visíveis em conteúdos de rotina e cuidado fortalece a associação imediata entre sua imagem e hair care. Acompanhar a marca também ajuda você a reconhecer lançamentos e conversas em que
