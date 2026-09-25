@@ -4,9 +4,12 @@ ia que ganhou novas camadas</div><p class="explain">Este rastro organiza momento
   <div class="grid">
     <div class="card span12 studioShell" data-diva-studio-shell="v3">
       <aside class="studioPresence" data-diva-3d data-state="idle" aria-label="DIVA 3D pronta para criar">
-        <div class="giva3dStage" aria-hidden="true">
-          <div class="giva3dAura a1"></div><div class="giva3dAura a2"></div>
-          <div class="giva3dPortrait"><div class="giva3dEye l"></div><div class="giva3dEye r"></div><div class="giva3dMouth"></div><div class="giva3dMonogram">DIVA</div></div>
+        <div class="giva3dStage diva3dRealStage" aria-hidden="true">
+          <model-viewer id="gabiDivaModel" class="divaModel3d" src="https://static.wixstatic.com/3d/f447cd_31ad20addd514017a0297318f193c80a.glb" alt="DIVA 3D" camera-controls disable-pan autoplay animation-name="DIVA_STATES" shadow-intensity="1" exposure="1.05" interaction-prompt="none"></model-viewer>
+          <div class="giva3dFallback" data-diva-3d-fallback>
+            <div class="giva3dAura a1"></div><div class="giva3dAura a2"></div>
+            <div class="giva3dPortrait"><div class="giva3dEye l"></div><div class="giva3dEye r"></div><div class="giva3dMouth"></div><div class="giva3dMonogram">DIVA</div></div>
+          </div>
         </div>
         <div class="giva3dStatus"><b>DIVA · GABI</b><span id="gabiStudioPresenceLabel">Pronta para criar com você</span></div>
       </aside>
