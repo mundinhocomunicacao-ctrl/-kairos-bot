@@ -1,0 +1,60 @@
+name: Radar Gabi · Live Acceptance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "deploy/radar-gabi/live-check/request-*.txt"
+
+permissions:
+  contents: write
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Resolve request
+        id: req
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST_FILE="$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" | grep '^deploy/radar-gabi/live-check/request-.*\.txt$' | head -1)"
+          test -n "$REQUEST_FILE"
+          REQUEST_ID="$(basename "$REQUEST_FILE" .txt | sed 's/^request-//')"
+          echo "id=$REQUEST_ID" >> "$GITHUB_OUTPUT"
+      - name: Check live Radar
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 6 --retry-all-errors --retry-delay 5             "https://radar.gabi.mundinhocomunicacao.com/" -o /tmp/radar-live.html
+          grep -F "DIVA Studio" /tmp/radar-live.html >/dev/null
+          grep -F "gabiStudioMic" /tmp/radar-live.html >/dev/null
+          grep -F "GABI_RADAR_PUBLIC_SAFE_V3" /tmp/radar-live.html >/dev/null
+          for forbidden in "CLIENT_SAFE_GABI v2" "voz ativa" "sem acesso ao bastidor interno" "segunda inspeção client-safe" "pacote mínimo de dados" "clientSafeContext:"; do
+            if grep -F "$forbidden" /tmp/radar-live.html >/dev/null; then
+              echo "FORBIDDEN=$forbidden"
+              exit 1
+            fi
+          done
+          echo "GABI_RADAR_LIVE_ACCEPTANCE=PASS"
+      - name: Record result
+        if: always()
+        shell: bash
+        env:
+          REQUEST_ID: ${{ steps.req.outputs.id }}
+        run: |
+          set -euo pipefail
+          git pull --ff-only origin main >/dev/null 2>&1 || true
+          STATUS="FAIL"
+          if [ "${{ job.status }}" = "success" ]; then STATUS="PASS"; fi
+          mkdir -p deploy/radar-gabi/live-check
+          printf '%s\n' "$STATUS" > "deploy/radar-gabi/live-check/result-$REQUEST_ID.txt"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "deploy/radar-gabi/live-check/result-$REQUEST_ID.txt"
+          git commit -m "qa(radar): live acceptance $REQUEST_ID $STATUS" || true
+          git push origin HEAD:main || true
