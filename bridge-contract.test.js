@@ -142,7 +142,8 @@ assert.match(source,/DIVA_WHATSAPP_GATEWAY_RESULT/,'direct Gateway execution mus
 assert.match(source,/DIVA_WHATSAPP_GATEWAY_CANARY_OK/,'startup canary must prove Render to DIVA Gateway without depending on provider ingress');
 console.log('DIVA_DIRECT_GATEWAY_CONTRACT_OK');
 
-const startupCanaryIndex=source.indexOf("runDivaGatewayCanary()");
-const autoSubscribeIndex=source.lastIndexOf("ensureDivaSubscription()");
+const startupBlock=source.slice(source.indexOf("server.listen("));
+const startupCanaryIndex=startupBlock.indexOf("await runDivaGatewayCanary()");
+const autoSubscribeIndex=startupBlock.indexOf("ensureDivaSubscription()");
 assert.ok(startupCanaryIndex>=0&&autoSubscribeIndex>=0&&startupCanaryIndex<autoSubscribeIndex,'direct Gateway canary must run before provider subscription so HTTP 402 cannot hide Gateway health');
 console.log('DIVA_GATEWAY_CANARY_BEFORE_PROVIDER_CONTRACT_OK');
