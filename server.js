@@ -658,17 +658,22 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', async () => {
   console.log(`kairos-whatsapp-cloud listening on ${PORT}`);
+
+  // Prove Render -> DIVA independently. A provider billing/subscription error must never hide Gateway health.
+  if(DIVA_STARTUP_CANARY&&DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP){
+    try{await runDivaGatewayCanary()}
+    catch(error){console.error('DIVA_WHATSAPP_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
+  }
+
   if(DIVA_AUTO_SUBSCRIBE){
     ensureDivaSubscription()
       .then(async info=>{
         console.log('DIVA_WHATSCALE_SUBSCRIPTION_READY',{subscriptionId:info.subscription_id,triggerType:info.trigger_type,webhookUrl:info.webhook_url});
-        if(DIVA_STARTUP_CANARY){
-          try{
-            if(DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP)await runDivaGatewayCanary();
-            else await runDivaStartupCanary();
-          }catch(error){console.error('DIVA_WHATSAPP_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
+        if(DIVA_STARTUP_CANARY&&!DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP){
+          try{await runDivaStartupCanary()}
+          catch(error){console.error('DIVA_WHATSAPP_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
         }
         if(DIVA_AUTHORIZED_CANARY_ON_START){
           if(!DIVA_AUTHORIZED_CANARY_CHAT_ID){
