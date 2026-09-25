@@ -1,0 +1,92 @@
+(ref.url);if(!url)return;
+    const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=gabiStudioPublicText(ref.label,120);refs.appendChild(a);
+  });
+  panel.classList.add('ready');
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+  const spoken=proposalMode
+    ?['Gabi, montei uma proposta pra você.',result.proposal.opportunity,result.proposal.ideaName?('A ideia central é '+result.proposal.ideaName):result.proposal.concept,'Se quiser, eu posso deixar mais comercial, mais criativa ou mais curta.']
+    :['Gabi, pensei em uma direção pra você.',result.idea,result.hook?'O gancho pode ser: '+result.hook:'','Se quiser, eu ajusto com você.'];
+  gabiStudioSpeak(spoken.filter(Boolean).join(' '));
+}
+function gabiStudioLocalFallback(intent,brief,context=[]){
+  const cleanBrief=feedText(brief,700);
+  const ctx=(Array.isArray(context)?context:[]).slice(0,4).map(x=>feedText([x.title,x.summary,x.status].filter(Boolean).join(' · '),240)).filter(Boolean);
+  const seed=cleanBrief||ctx[0]||'rotina criativa entre Brasil e Estados Unidos';
+  const headline=intent==='record_now'?'Uma cena simples que já existe na sua rotina':intent==='reference'?'Pegue a linguagem, não copie a ideia':intent==='idea'?'Sua ideia, com uma virada visual':'Brasil ↔ EUA em um detalhe que só você percebe';
+  const asksProposal=/\b(proposta|parceria|campanha|branded content)\b/i.test(cleanBrief);
+  const idea=asksProposal
+    ? 'A proposta precisa ligar a marca a uma situação concreta da sua vida e dar a ela uma função que realmente mude o que acontece.'
+    : intent==='record_now'
+      ? 'Tenho um caminho simples para gravar agora: escolha um detalhe real do momento, comece já dentro da situação e deixe a história acontecer sem introdução longa.'
+      : intent==='reference'
+        ? 'Vamos usar a referência só como linguagem — ritmo, enquadramento ou sensação — e reconstruir tudo a partir de uma situação verdadeira da sua rotina.'
+        : 'Vamos pegar o tema que você trouxe e transformar em uma observação pessoal, simples de entender e fácil de gravar.';
+  const hook=intent==='record_now'?'“Eu ia gravar outra coisa, mas isso acabou de acontecer…”':'“Tem uma parte de viver entre dois lugares que ninguém me contou.”';
+  const script=[
+    '0–3s · Abra já dentro da situação, sem introdução longa.',
+    '3–10s · Mostre o detalhe concreto e conte o que você pensava antes.',
+    '10–20s · Faça a virada: o que mudou na prática, com uma reação ou exemplo real.',
+    '20–30s · Feche com uma pergunta simples para puxar identificação nos comentários.'
+  ];
+  const shotList=['Close espontâneo falando com a câmera','Plano detalhe do objeto/ambiente que prova a história','Plano médio em movimento para dar respiro','Último close com a pergunta final'];
+  const production='Vertical 9:16 · luz natural · 20–35s · edição leve · som ambiente preservado quando ajudar a sensação de rotina.';
+  const caption='Tem coisas que só fazem sentido quando a gente vive entre dois mundos. Qual detalhe da sua rotina mudou sem você perceber?';
+  const query=encodeURIComponent((cleanBrief||'rotina Brasil Estados Unidos creator vlog').slice(0,180));
+  const proposal=asksProposal?{
+    opportunity:'Existe uma oportunidade de transformar o pedido em uma história específica para a marca, sem depender de uma ideia genérica de influência.',
+    talentFit:'A Gabi entra pela parte real da vida, trajetória ou comportamento que torna essa parceria diferente de simplesmente contratar alcance.',
+    ideaName:'A MARCA MUDA O QUE ACONTECE',
+    concept:'A ideia começa numa situação concreta e faz a marca provocar uma decisão, acesso, transformação ou solução dentro da história.',
+    execution:['Começar por uma situação real da Gabi.','Fazer a marca entrar quando algo precisa acontecer.','Mostrar a consequência dessa entrada.','Fechar com um desdobramento que amplie a ideia sem virar lista de formatos.'],
+    brandRole:'A marca ocupa uma função clara na narrativa e não aparece apenas como product placement.',
+    proof:ctx.length?ctx:['Usar apenas dados e credenciais que provem esta oportunidade específica.'],
+    extensions:['Conteúdo principal','Desdobramentos sociais','PR quando existir uma pauta real'],
+    nextStep:'Definir produto, objetivo e momento da marca para fechar a versão pronta para apresentação.'
+  }:null;
+  return{
+    ok:true,fallback:true,
+    result:asksProposal
+      ?{mode:'proposal',headline:'Uma proposta que dá função real para a marca',idea,whyNow:'O pedido pode virar uma proposta específica sem inventar fatos.',hook:'A marca entra porque faz alguma coisa acontecer.',proposal,searchTerms:{visual:seed+' campaign visual creator',video:seed+' branded content creator'}}
+      :{mode:'content',headline,idea,whyNow:'A ideia parte do momento que você trouxe e pode ser ajustada até ficar com a sua cara.',hook,script,shotList,production,caption},
+    references:[
+      {type:'visual',label:'Referências visuais no Pinterest',url:'https://www.pinterest.com/search/pins/?q='+query},
+      {type:'video',label:'Referências de vídeo no YouTube',url:'https://www.youtube.com/results?search_query='+query},
+      {type:'video',label:'Referências de linguagem no TikTok',url:'https://www.tiktok.com/search?q='+query}
+    ]
+  };
+}
+
+async function gabiStudioGenerate(intent=gabiStudioIntent,overrideBrief=''){
+  const composer=document.getElementById('gabiStudioComposer'),button=document.getElementById('gabiStudioGenerate'),brief=(overrideBrief||document.getElementById('gabiStudioBrief').value).trim();
+  gabiStudioLastBrief=brief;
+  if(gabiStudioLocalVoiceCommand(brief))return;
+  const preset=gabiStudioSmartPreset(intent,brief);composer.classList.add('studioLoading');button.textContent='Criando…';gabiStudioSetPresenceState('thinking');gabiStudioSetVoiceStatus('DIVA está organizando a melhor direção…');
+  try{
+    const res=await fetch(GABI_DIVA_STUDIO_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({intent,brief,preset,context:gabiStudioPublicContext()})});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.message||'Não consegui criar agora.');
+    renderGabiStudioResult(data);
+  }catch(error){
+    renderGabiStudioResult(gabiStudioLocalFallback(intent,brief,gabiStudioPublicContext()));
+    gabiStudioSetVoiceStatus('Tenho uma alternativa pronta para você.');
+  }finally{composer.classList.remove('studioLoading');if(document.querySelector('[data-diva-3d]')?.dataset.state==='thinking')gabiStudioSetPresenceState('idle');button.textContent='Criar →'}
+}
+function gabiStudioRefine(kind){
+  const map={
+    another:'Crie uma direção completamente diferente da anterior, mantendo o mesmo objetivo.',
+    shorter:'Faça uma versão mais curta, direta e fácil de gravar.',
+    funny:'Deixe a ideia mais leve, espontânea e divertida, sem forçar humor.',
+    caption:'Priorize uma legenda forte e curta para acompanhar a ideia.'
+  };
+  const instruction=map[kind];if(!instruction)return;
+  const previous=gabiStudioLastResult?.idea?('Ideia anterior: '+gabiStudioLastResult.idea):'';
+  const base=document.getElementById('gabiStudioBrief')?.value.trim()||gabiStudioLastBrief||'';
+  gabiStudioGenerate(gabiStudioIntent,[base,previous,instruction].filter(Boolean).join('\n'));
+}
+function startGabiStudioMic(){
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Recognition){gabiStudioSetVoiceStatus('Este navegador não liberou reconhecimento de voz. Você ainda pode escrever o briefing.');return}
+  if(gabiStudioRecognition){try{gabiStudioRecognition.stop()}catch{}}
+  const mic=document.getElementById('gabiStudioMic'),brief=document.getElementById('gabiStudioBrief');
+  const rec=new Recognition();gabiStudioRecognition=rec;rec.lang='pt-BR';rec.interimResults=false;rec.continuous=false;
+  rec.onstart=()=>{mic.classList.add('listening');mic.textContent='■ Ouvindo';gabiStudioSetPresenceState('listening');gabiStudioS
