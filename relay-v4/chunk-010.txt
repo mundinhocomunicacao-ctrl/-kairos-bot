@@ -1,0 +1,91 @@
+ia que ganhou novas camadas</div><p class="explain">Este rastro organiza momentos públicos da carreira. Ele não é um “score” de reputação: mostra como os assuntos associados à Gabriella ficaram mais amplos ao longo do tempo.</p><div style="display:grid;gap:8px;margin-top:20px"><div class="step" style="width:38%"><b>2012</b><span>Avenida Brasil</span><p>atriz mirim e reconhecimento nacional</p></div><div class="step" style="width:52%"><b>2013–15</b><span>Chiquititas</span><p>personagem, público jovem e vínculo afetivo</p></div><div class="step" style="width:68%"><b>Disney+</b><span>Tudo Igual... SQN</span><p>nova fase artística e audiência digital</p></div><div class="step" style="width:84%"><b>Brasil ↔ EUA</b><span>vida internacional + estudos</span><p>novos territórios de narrativa e marcas</p></div><div class="step" style="width:100%"><b>2026</b><span>transição adulta + imprensa + mercado</span><p>reposicionamento comercial e construção de imagem adulta</p></div></div></div></div></section>
+
+<section id="studio" class="panel">
+  <div class="grid">
+    <div class="card span12 studioShell" data-diva-studio-shell="v3">
+      <aside class="studioPresence" data-diva-3d data-state="idle" aria-label="DIVA 3D pronta para criar">
+        <div class="giva3dStage" aria-hidden="true">
+          <div class="giva3dAura a1"></div><div class="giva3dAura a2"></div>
+          <div class="giva3dPortrait"><div class="giva3dEye l"></div><div class="giva3dEye r"></div><div class="giva3dMouth"></div><div class="giva3dMonogram">DIVA</div></div>
+        </div>
+        <div class="giva3dStatus"><b>DIVA · GABI</b><span id="gabiStudioPresenceLabel">Pronta para criar com você</span></div>
+      </aside>
+      <div class="studioWorkbench">
+        <div class="studioHeader">
+          <div><div class="ey">DIVA STUDIO · PARCEIRA CRIATIVA</div><div class="title">Uma ideia clara, pronta para virar vídeo.</div><p class="explain">Escolha um ponto de partida, conte o mínimo que souber e crie. A DIVA organiza formato, ritmo e produção automaticamente.</p></div>
+        </div>
+        <div class="studioPath" aria-label="Passo a passo">
+          <button class="studioPathStep active" type="button" data-studio-step="intent"><i>1</i><span>Escolher objetivo</span></button>
+          <button class="studioPathStep" type="button" data-studio-step="context"><i>2</i><span>Contar contexto</span></button>
+          <button class="studioPathStep" type="button" data-studio-step="create"><i>3</i><span>Criar com a DIVA</span></button>
+        </div>
+        <div class="studioModes" id="gabiStudioModes">
+          <button class="studioMode active" type="button" data-studio-intent="surprise"><b>✨ Criar uma ideia do zero</b><span>A DIVA escolhe o melhor caminho.</span></button>
+          <button class="studioMode" type="button" data-studio-intent="record_now"><b>🎬 Montar algo para gravar agora</b><span>Mais simples, rápido e executável.</span></button>
+          <button class="studioMode" type="button" data-studio-intent="seed"><b>💡 Desenvolver uma ideia que já tenho</b><span>Transforma a semente em roteiro.</span></button>
+          <button class="studioMode" type="button" data-studio-intent="reference"><b>🔭 Criar a partir de uma referência</b><span>Traduz linguagem sem copiar.</span></button>
+        </div>
+        <div class="studioPreset"><b>Preset inteligente</b><span id="gabiStudioPresetSummary">Vertical · 30s · natural · produção leve</span></div>
+        <div class="studioPresetActions" id="gabiStudioPresetActions" aria-label="Atalhos do preset">
+          <button type="button" data-studio-preset="Tenho 15 minutos e quero gravar agora com o celular.">15 min agora</button>
+          <button type="button" data-studio-preset="Quero uma ideia espontânea baseada na minha rotina de hoje.">Rotina real</button>
+          <button type="button" data-studio-preset="Quero uma ideia que funcione em um take só, sem produção complicada.">1 take</button>
+          <button type="button" data-studio-preset="Quero adaptar uma referência ou trend para algo original e com a minha cara.">Referência</button>
+        </div>
+        <div class="studioComposer" id="gabiStudioComposer">
+          <textarea id="gabiStudioBrief" aria-label="Contexto para a DIVA" placeholder="Ex.: tô em casa, tenho 20 minutos e quero gravar algo espontâneo sobre minha rotina entre Brasil e EUA."></textarea>
+          <div class="studioComposerActions">
+            <button class="studioBtn secondary" id="gabiStudioMic" type="button">🎙️ Falar</button>
+            <button class="studioBtn" id="gabiStudioGenerate" type="button">Criar →</button>
+          </div>
+        </div>
+        <div class="studioVoiceRow">
+          <button id="gabiStudioVoiceToggle" type="button">🔊 Voz natural: ligada</button>
+          <button id="gabiStudioStop" type="button">⏹ Parar</button>
+          <button id="gabiStudioContinue" type="button">▶ Continuar</button>
+          <span class="studioVoiceStatus" id="gabiStudioVoiceStatus">Pode falar ou escrever. A DIVA fala só o resumo e deixa o conteúdo completo na tela.</span>
+        </div>
+        <div class="studioHint"><b>Depois da primeira resposta:</b> ajuste com “mais curto”, “mais leve”, “outra ideia” ou “faz a legenda”.</div>
+        <!-- GABI_RADAR_PUBLIC_SAFE_V3 -->
+      </div>
+    </div>
+    <div class="card span12 studioResult" id="gabiStudioResult" aria-live="polite">
+      <div class="studioResultHead">
+        <div><div class="ey">3 · PRONTO PARA USAR</div><div class="title" style="font-size:22px;margin-top:4px">A DIVA montou um caminho.</div></div>
+        <button class="studioReplay" id="gabiStudioReplay" type="button">🔊 Ouvir</button>
+      </div>
+      <div class="studioResultPrimary" id="gabiStudioResultPrimary"></div>
+      <div class="studioQuickActions" aria-label="Ajustar resposta da DIVA">
+        <button type="button" data-studio-refine="another">✨ Outra ideia</button>
+        <button type="button" data-studio-refine="shorter">✂️ Mais curto</button>
+        <button type="button" data-studio-refine="funny">🙂 Mais leve</button>
+        <button type="button" data-studio-refine="caption">✍️ Faz a legenda</button>
+      </div>
+      <details class="studioDetails" id="gabiStudioResultDetails">
+        <summary>Ver cenas, produção, legenda e referências ↓</summary>
+        <div class="studioResultGrid" id="gabiStudioResultGrid"></div>
+        <div class="studioRefs" id="gabiStudioRefs"></div>
+      </details>
+    </div>
+  </div>
+</section>
+<div class="foot">Painel executivo da Gabriella. O painel mostra apenas informações selecionadas para acompanhamento da Gabriella.</div></main>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true"><div class="modalBox"><button class="close">×</button><div class="ey">Contexto comercial</div><h2 id="modalTitle"></h2><div id="modalBody" class="context"></div></div></div>
+<script>
+const SVG_NS='http://www.w3.org/2000/svg';
+const radarCommercialMetrics={universe:863,presented:108,proposals:35,dmTracked:58,dmResponses:26};
+const radarIbiSeries=[
+  {month:'out',value:null},{month:'nov',value:78},{month:'dez',value:null},{month:'jan',value:null},
+  {month:'fev',value:null},{month:'mar',value:null},{month:'abr',value:64},{month:'mai',value:58},
+  {month:'jun',value:null},{month:'jul',value:null},{month:'ago',value:76},{month:'set',value:72}
+];
+function svgNode(name,attrs={},text=''){
+  const el=document.createElementNS(SVG_NS,name);
+  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v)));
+  if(text!=='')el.textContent=text;
+  return el;
+}
+function renderRadarDonut(targetId){
+  const root=document.getElementById(targetId);if(!root)return;root.replaceChildren();
+  const m=radarCommercialMetrics,total=Math.max(1,m.universe),r=72,c=2*Math.PI*r;
+  const svg=svgNode('svg',{viewBox:'0 0 220 220',width:'100%',height:'220',role:'img','aria-label':m.universe+' marcas mapeadas; '+m.presented+' apresentadas; '+m.proposals+' propostas'}
