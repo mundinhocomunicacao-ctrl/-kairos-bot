@@ -1,0 +1,43 @@
+etVoiceStatus('Ouvindo você…')};
+  rec.onresult=e=>{
+    const text=[...e.results].map(r=>r[0]?.transcript||'').join(' ').trim();
+    if(gabiStudioLocalVoiceCommand(text))return;
+    brief.value=text;brief.dispatchEvent(new Event('input',{bubbles:true}));
+    gabiStudioSetVoiceStatus('Entendi. Criando a partir do que você falou…');gabiStudioGenerate('voice');
+  };
+  rec.onerror=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus('Não consegui ouvir. Tente novamente ou escreva o contexto.')};
+  rec.onend=()=>{mic.classList.remove('listening');mic.textContent='🎙️ Falar';if(document.querySelector('[data-diva-3d]')?.dataset.state==='listening')gabiStudioSetPresenceState('idle');gabiStudioRecognition=null};
+  rec.start();
+}
+function activateGabiStudio(){
+  const brief=document.getElementById('gabiStudioBrief');
+  const setPath=step=>document.querySelectorAll('[data-studio-step]').forEach(btn=>btn.classList.toggle('active',btn.dataset.studioStep===step));
+  document.querySelectorAll('[data-studio-intent]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-studio-intent]').forEach(x=>x.classList.remove('active'));btn.classList.add('active');gabiStudioIntent=btn.dataset.studioIntent||'surprise';gabiStudioSmartPreset(gabiStudioIntent,brief?.value||'');setPath('context');brief?.focus();
+  }));
+  document.querySelector('[data-studio-step="intent"]')?.addEventListener('click',()=>{setPath('intent');document.getElementById('gabiStudioModes')?.scrollIntoView({behavior:'smooth',block:'center'})});
+  document.querySelector('[data-studio-step="context"]')?.addEventListener('click',()=>{setPath('context');brief?.focus()});
+  document.querySelector('[data-studio-step="create"]')?.addEventListener('click',()=>{setPath('create');const result=document.getElementById('gabiStudioResult');if(result?.classList.contains('ready'))result.scrollIntoView({behavior:'smooth',block:'start'});else gabiStudioGenerate()});
+  document.getElementById('gabiStudioGenerate')?.addEventListener('click',()=>{setPath('create');gabiStudioGenerate()});
+  document.querySelectorAll('[data-studio-preset]').forEach(btn=>btn.addEventListener('click',()=>{if(!brief)return;brief.value=btn.dataset.studioPreset||'';brief.dispatchEvent(new Event('input',{bubbles:true}));brief.focus();setPath('context')}));
+  document.querySelectorAll('[data-studio-refine]').forEach(btn=>btn.addEventListener('click',()=>gabiStudioRefine(btn.dataset.studioRefine)));
+  document.getElementById('gabiStudioReplay')?.addEventListener('click',()=>{if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech)});
+  document.getElementById('gabiStudioMic')?.addEventListener('click',()=>{setPath('context');startGabiStudioMic()});
+  document.getElementById('gabiStudioStop')?.addEventListener('click',()=>gabiStudioLocalVoiceCommand('pare'));
+  document.getElementById('gabiStudioContinue')?.addEventListener('click',()=>gabiStudioLocalVoiceCommand('continue'));
+  document.getElementById('gabiStudioVoiceToggle')?.addEventListener('click',e=>{
+    gabiStudioVoiceEnabled=!gabiStudioVoiceEnabled;e.currentTarget.textContent=gabiStudioVoiceEnabled?'🔊 Voz natural: ligada':'🔇 Voz: desligada';
+    if(!gabiStudioVoiceEnabled&&'speechSynthesis' in window){window.speechSynthesis.cancel();gabiStudioSetPresenceState('idle')}
+    gabiStudioSetVoiceStatus(gabiStudioVoiceEnabled?'Voz ligada. Vou responder de forma mais curta e natural.':'Vou responder só por texto.');
+  });
+  brief?.addEventListener('input',()=>{gabiStudioSmartPreset(gabiStudioIntent,brief.value);setPath('context')});
+  brief?.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();setPath('create');gabiStudioGenerate()}});
+  if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=()=>gabiStudioPickVoice(window.speechSynthesis.getVoices());
+  gabiStudioSmartPreset(gabiStudioIntent,'');gabiStudioSetPresenceState('idle');
+}
+activateGabiStudio();
+
+showContextCard('home');hydrateLiveCards([]);activateLiveCharts();loadLiveFeed();setInterval(loadLiveFeed,120000);
+
+</script><!-- RELEASE_ROUTE_GITHUB_ACTIONS_V1 · canonical free release rail -->
+</body></html>
