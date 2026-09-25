@@ -30,24 +30,37 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --location --retry 6 --retry-all-errors --retry-delay 5             "https://radar.gabi.mundinhocomunicacao.com/" -o /tmp/radar-live.html
-          grep -F "DIVA Studio" /tmp/radar-live.html >/dev/null
-          grep -F 'data-diva-studio-shell="v3"' /tmp/radar-live.html >/dev/null
-          grep -F 'data-diva-3d' /tmp/radar-live.html >/dev/null
-          grep -F "gabiStudioMic" /tmp/radar-live.html >/dev/null
-          grep -F "GABI_RADAR_PUBLIC_SAFE_V3" /tmp/radar-live.html >/dev/null
-          grep -F 'id="radarMovementChart"' /tmp/radar-live.html >/dev/null
-          grep -F 'id="radarIbiChart"' /tmp/radar-live.html >/dev/null
-          grep -F "createElementNS" /tmp/radar-live.html >/dev/null
-          grep -F "const proposals=currentProposalCatalog" /tmp/radar-live.html >/dev/null
-          grep -F "Nova proposta enviada em 24/09 após reunião" /tmp/radar-live.html >/dev/null
-          grep -F "Proposta atualizada em 24/09 · material vigente" /tmp/radar-live.html >/dev/null
+          curl --fail --silent --show-error --location --retry 6 --retry-all-errors --retry-delay 5 "https://radar.gabi.mundinhocomunicacao.com/" -o /tmp/radar-live.html
+          : > /tmp/radar-diag.txt
+          MISSING=0
+          check() {
+            local label="$1"; local needle="$2"
+            if grep -F "$needle" /tmp/radar-live.html >/dev/null; then
+              echo "$label=PASS" >> /tmp/radar-diag.txt
+            else
+              echo "$label=FAIL" >> /tmp/radar-diag.txt
+              MISSING=1
+            fi
+          }
+          check DIVA_STUDIO "DIVA Studio"
+          check DIVA_V3 'data-diva-studio-shell="v3"'
+          check DIVA_3D 'data-diva-3d'
+          check MIC "gabiStudioMic"
+          check CLIENT_SAFE "GABI_RADAR_PUBLIC_SAFE_V3"
+          check CHART_MOVEMENT 'id="radarMovementChart"'
+          check CHART_IBI 'id="radarIbiChart"'
+          check SVG_RENDERER "createElementNS"
+          check CURRENT_PROJECTION "const proposals=currentProposalCatalog"
+          check FLUENCY_2409 "Nova proposta enviada em 24/09 após reunião"
+          check RISQUE_2409 "Proposta atualizada em 24/09 · material vigente"
           for forbidden in "CLIENT_SAFE_GABI v2" "voz ativa" "sem acesso ao bastidor interno" "segunda inspeção client-safe" "pacote mínimo de dados" "clientSafeContext:"; do
             if grep -F "$forbidden" /tmp/radar-live.html >/dev/null; then
-              echo "FORBIDDEN=$forbidden"
-              exit 1
+              echo "FORBIDDEN_FAIL" >> /tmp/radar-diag.txt
+              MISSING=1
             fi
           done
+          cat /tmp/radar-diag.txt
+          if [ "$MISSING" -ne 0 ]; then exit 1; fi
           echo "GABI_RADAR_LIVE_ACCEPTANCE=PASS"
       - name: Record result
         if: always()
@@ -61,8 +74,9 @@ jobs:
           if [ "${{ job.status }}" = "success" ]; then STATUS="PASS"; fi
           mkdir -p deploy/radar-gabi/live-check
           printf '%s\n' "$STATUS" > "deploy/radar-gabi/live-check/result-$REQUEST_ID.txt"
+          if [ -f /tmp/radar-diag.txt ]; then cp /tmp/radar-diag.txt "deploy/radar-gabi/live-check/diag-$REQUEST_ID.txt"; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "deploy/radar-gabi/live-check/result-$REQUEST_ID.txt"
+          git add "deploy/radar-gabi/live-check/result-$REQUEST_ID.txt" "deploy/radar-gabi/live-check/diag-$REQUEST_ID.txt" 2>/dev/null || git add "deploy/radar-gabi/live-check/result-$REQUEST_ID.txt"
           git commit -m "qa(radar): live acceptance $REQUEST_ID $STATUS" || true
           git push origin HEAD:main || true
