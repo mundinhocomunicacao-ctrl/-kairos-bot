@@ -1,0 +1,122 @@
+_token_missing');
+  localStorage.setItem(GABI_RADAR_TOKEN_KEY,data.access_token);
+  localStorage.setItem(GABI_RADAR_TOKEN_EXP_KEY,String(Date.now()+Math.max(300,Number(data.expires_in||14400))*1000));
+  return data.access_token;
+}
+function renderLiveFeed(rows){
+  latestClientSafeRows=safeRadarRows(rows);
+  updateProposalStatusFromFeed(rows);
+  applyRadarMetricsFromFeed(rows);
+  hydrateLiveCards(rows);activateLiveCharts();updateContextCardFromFeed(latestClientSafeRows);
+  const grid=document.getElementById('liveFeedGrid'),status=document.getElementById('feedStatus'),updated=document.getElementById('radarUpdatedAt');
+  if(updated)updated.textContent='Atualizado '+feedDate(new Date());
+  grid.replaceChildren();
+  if(!rows.length){
+    const empty=document.createElement('div');empty.className='liveFeedEmpty';empty.textContent='Nenhuma atualização nova. A leitura consolidada abaixo continua válida.';grid.appendChild(empty);
+    status.textContent='ao vivo · sem novidades';return;
+  }
+  rows.forEach(row=>{
+    const d=row.data||row;
+    const card=document.createElement('article');card.className='liveFeedCard';
+    const meta=document.createElement('small');meta.textContent=[feedText(d.category,40),feedText(d.status,60),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+    const title=document.createElement('b');title.textContent=feedText(d.title,180)||'Atualização';
+    const summary=document.createElement('p');summary.textContent=feedText(d.summary,900);
+    card.append(meta,title);if(summary.textContent)card.appendChild(summary);
+    const url=safePublicUrl(d.sourceUrl);if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir fonte ↗';card.appendChild(a)}
+    grid.appendChild(card);
+  });
+  status.textContent='ao vivo · '+rows.length+' atualizações';
+}
+async function loadLiveFeed(){
+  const status=document.getElementById('feedStatus');
+  try{
+    const token=await visitorToken();
+    const res=await fetch('https://www.wixapis.com/wix-data/v2/items/query',{method:'POST',headers:{'content-type':'application/json','authorization':token},body:JSON.stringify({dataCollectionId:GABI_RADAR_COLLECTION_ID,query:{paging:{limit:100,offset:0}}})});
+    if(!res.ok)throw new Error('feed_query_'+res.status);
+    const data=await res.json();
+    const rows=(Array.isArray(data.dataItems)?data.dataItems:[]).filter(x=>x?.data?.clientSafe===true&&!['sistema','system','bootstrap'].includes(String(x?.data?.category||'').toLowerCase())).sort((a,b)=>new Date(b?.data?.occurredAt||0)-new Date(a?.data?.occurredAt||0)).slice(0,6);
+    renderLiveFeed(rows);
+  }catch(error){
+    console.error('GABI_RADAR_LIVE_FEED',error);
+    status.textContent='leitura consolidada';status.classList.add('error');
+    const grid=document.getElementById('liveFeedGrid');grid.replaceChildren();
+    const empty=document.createElement('div');empty.className='liveFeedEmpty';empty.textContent='A atualização ao vivo está temporariamente indisponível. O restante do painel continua usando a última leitura reconciliada.';grid.appendChild(empty);
+  }
+}
+
+const GABI_DIVA_STUDIO_ENDPOINT='https://os.mundinhocomunicacao.com/api/gabi-diva-studio';
+let gabiStudioIntent='surprise',gabiStudioVoiceEnabled=true,gabiStudioRecognition=null,gabiStudioLastSpeech='',gabiStudioLastResult=null,gabiStudioLastBrief='';
+function gabiStudioPublicContext(){
+  return safeRadarRows(latestClientSafeRows).slice(0,12).map(row=>{
+    const d=row.data||row;
+    return{
+      title:feedText(d.title,180),
+      summary:feedText(d.summary,900),
+      category:feedText(d.category,60),
+      status:feedText(d.status,80),
+      occurredAt:feedText(d.occurredAt,80),
+      sourceLabel:feedText(d.sourceLabel,100),
+      sourceUrl:safePublicUrl(d.sourceUrl)
+    };
+  });
+}
+function gabiStudioSetVoiceStatus(text){const el=document.getElementById('gabiStudioVoiceStatus');if(el)el.textContent=text}
+function gabiStudioSetPresenceState(state='idle'){
+  const el=document.querySelector('[data-diva-3d]'),label=document.getElementById('gabiStudioPresenceLabel');
+  const safeState=['idle','listening','thinking','speaking'].includes(state)?state:'idle';
+  if(el){el.dataset.state=safeState;el.setAttribute('aria-label',safeState==='listening'?'DIVA 3D ouvindo':safeState==='thinking'?'DIVA 3D criando':safeState==='speaking'?'DIVA 3D falando':'DIVA 3D pronta para criar')}
+  if(label)label.textContent=safeState==='listening'?'Estou ouvindo você':safeState==='thinking'?'Organizando a melhor direção':safeState==='speaking'?'Te contando a ideia':'Pronta para criar com você';
+}
+function gabiStudioSmartPreset(intent=gabiStudioIntent,brief=''){
+  const text=normalizedLiveText(brief||'');
+  const minutes=Number((text.match(/(\d{1,3})\s*(?:min|minuto|minutos)/)||[])[1]||0);
+  const fast=intent==='record_now'||(minutes&&minutes<=20)||/agora|rápido|rapidinho|correndo/.test(text);
+  const reference=intent==='reference'||/refer[eê]ncia|trend|tend[eê]ncia|vídeo que vi/.test(text);
+  const intimate=/desabafo|pessoal|sincero|sincera|vulner[aá]vel|reflex/.test(text);
+  const playful=/engra[cç]|leve|divertid|humor|meme/.test(text);
+  const location=/carro/.test(text)?'carro':/faculdade|aula/.test(text)?'faculdade':/aeroporto|avi[aã]o|viagem/.test(text)?'viagem':/casa|quarto|sala/.test(text)?'casa':'rotina';
+  const duration=fast?'15–25s':intimate?'35–50s':'25–35s';
+  const tone=playful?'leve e espontâneo':intimate?'íntimo e direto':reference?'original com linguagem de referência':'natural e pessoal';
+  const production=fast?'1–3 planos · edição mínima':location==='rotina'?'3–5 planos · produção leve':`3–5 planos · aproveitar ${location}`;
+  const format=reference?'Reels/TikTok reinterpretado':'Reels/TikTok vertical';
+  const preset={format,duration,tone,production,location,fast,reference};
+  const summary=document.getElementById('gabiStudioPresetSummary');if(summary)summary.textContent=`${format} · ${duration} · ${tone} · ${production}`;
+  return preset;
+}
+function gabiStudioPublicText(value,n=1600){
+  return feedText(value,n)
+    .replace(/\bclient[- ]?safe\b/gi,'')
+    .replace(/\bmodo local\b\s*[:.-]?/gi,'')
+    .replace(/\b(provider|policy|backend|pacote (?:mínimo )?de dados|segunda inspeção)\b/gi,'')
+    .replace(/\s{2,}/g,' ')
+    .replace(/\s+([,.;:!?])/g,'$1')
+    .trim();
+}
+function gabiStudioPickVoice(voices=[]){
+  const score=v=>{
+    const name=String(v?.name||'').toLowerCase(),lang=String(v?.lang||'').toLowerCase();
+    let s=0;if(lang==='pt-br')s+=100;else if(lang.startsWith('pt'))s+=55;else return-999;
+    if(/google.*portugu|microsoft.*francisca|luciana|camila|fernanda|leticia|maria/.test(name))s+=34;
+    if(v?.localService)s+=8;if(/natural|neural|premium|enhanced/.test(name))s+=18;if(/compact|espeak/.test(name))s-=30;
+    return s;
+  };
+  return [...voices].sort((a,b)=>score(b)-score(a))[0]||null;
+}
+function gabiStudioSpeak(text){
+  gabiStudioLastSpeech=gabiStudioPublicText(text,2600);
+  if(!gabiStudioVoiceEnabled||!gabiStudioLastSpeech||!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const spoken=gabiStudioLastSpeech.replace(/[`*_#>]/g,' ').replace(/\s+/g,' ').trim();
+  const u=new SpeechSynthesisUtterance(spoken);
+  u.lang='pt-BR';u.rate=.91;u.pitch=.98;u.volume=.96;
+  const preferred=gabiStudioPickVoice(window.speechSynthesis.getVoices());
+  if(preferred)u.voice=preferred;
+  u.onstart=()=>{gabiStudioSetPresenceState('speaking');gabiStudioSetVoiceStatus('DIVA falando… diga “pare” para interromper.')};
+  u.onend=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus('Pronta para continuar.')};
+  u.onerror=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus('A voz falhou, mas a resposta continua aqui na tela.')};
+  window.speechSynthesis.speak(u);
+}
+function gabiStudioLocalVoiceCommand(value){
+  const normalized=normalizedLiveText(value).replace(/^diva\s*/,'').trim();
+  if(normalized.includes('pare')){
+    if('speechSynthesis' in window)window.spee
