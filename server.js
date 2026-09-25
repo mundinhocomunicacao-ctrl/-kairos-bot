@@ -191,6 +191,18 @@ async function sendWhatsApp(text) {
   return sendWhatsAppToChat(GROUP_JID, text);
 }
 
+async function probeWebhookRotationEntitlement(){
+  // Read-only Starter+ capability probe. Never destroy an existing subscription unless this succeeds.
+  const path='/v1/groups/'+encodeURIComponent(DIVA_WHATSAPP_GROUP_JID)+'/participants?limit=1';
+  try{
+    const result=await whatsScaleJson(path);
+    if(result.response.status===402)return false;
+    return result.response.ok;
+  }catch{
+    return false;
+  }
+}
+
 async function subscribeDivaWebhook() {
   if (!DIVA_WHATSAPP_WEBHOOK_URL) throw new Error('DIVA_WHATSAPP_WEBHOOK_URL is not configured');
   await refreshProviderDiagnostics({force:true});
@@ -209,18 +221,34 @@ async function subscribeDivaWebhook() {
     const subscriptionId = String(attempt.data?.subscription_id || '');
     if (!subscriptionId) throw new Error('WhatsScale duplicate webhook without subscription_id');
     activeSubscriptionId = subscriptionId;
-    console.log('DIVA_WHATSAPP_EXISTING_SUBSCRIPTION_PRESERVED',{subscriptionId});
-    if (!activeWebhookSecret) {
-      throw new Error('existing subscription preserved; signing secret unavailable in this process. Configure WHATSSCALE_WEBHOOK_SECRET instead of rotating the subscription');
+
+    if (activeWebhookSecret) {
+      console.log('DIVA_WHATSAPP_EXISTING_SUBSCRIPTION_PRESERVED',{subscriptionId});
+      return {
+        subscription_id: subscriptionId,
+        signing_secret: activeWebhookSecret,
+        webhook_url: DIVA_WHATSAPP_WEBHOOK_URL,
+        trigger_type: 'group',
+        filter_id: DIVA_WHATSAPP_GROUP_JID,
+        existing_subscription_preserved: true
+      };
     }
-    return {
-      subscription_id: subscriptionId,
-      signing_secret: activeWebhookSecret,
-      webhook_url: DIVA_WHATSAPP_WEBHOOK_URL,
-      trigger_type: 'group',
-      filter_id: DIVA_WHATSAPP_GROUP_JID,
-      existing_subscription_preserved: true
-    };
+
+    const entitled=await probeWebhookRotationEntitlement();
+    if(!entitled){
+      console.log('DIVA_WHATSAPP_EXISTING_SUBSCRIPTION_PRESERVED',{subscriptionId,reason:'entitlement_not_proven'});
+      throw new Error('existing subscription preserved; signing secret unavailable and Starter+ rotation entitlement not proven');
+    }
+
+    if(entitled){
+      const removed=await whatsScaleJson('/v1/webhooks/'+encodeURIComponent(subscriptionId),{method:'DELETE'});
+      if(!removed.response.ok)throw new Error('existing subscription preserved; safe rotation delete failed');
+      console.log('DIVA_WHATSAPP_SUBSCRIPTION_SAFE_ROTATION',{subscriptionId});
+      attempt=await whatsScaleJson('/v1/webhooks/subscribe',{
+        method:'POST',
+        body:JSON.stringify(payload)
+      });
+    }
   }
 
   if (!attempt.response.ok) {
