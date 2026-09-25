@@ -1,0 +1,94 @@
+a","avaliação","avaliacao"],now:"Propostas aprovadas, enviadas e em avaliação convivem na mesma biblioteca com status explícito.",changed:"O feed vivo atualiza status apenas quando existe um movimento confirmado.",why:"Evita confundir material pronto com proposta já enviada ou oportunidade em avaliação.",next:"Comece pelos itens com movimento recente e valide a consequência comercial antes da próxima ação."},
+apresentadas:{title:"Marcas apresentadas",target:"movimento",terms:["comercial","marca"],now:"Uma marca entra nesta camada quando há evidência de abordagem e deduplicação por entidade.",changed:"Novos contatos não aumentam automaticamente o total se forem da mesma marca.",why:"A métrica precisa representar marcas únicas, não volume de mensagens.",next:"Procure quais apresentações viraram resposta, proposta ou continuidade."},
+categorias:{title:"Categorias comerciais",target:"categoria",terms:["comercial","marca"],now:"Categorias organizam aderência e histórico por território comercial.",changed:"Uma categoria ganha relevância quando novas marcas ou movimentos reforçam aquele território.",why:"Ajuda a enxergar concentração de portas sem transformar afinidade em garantia de campanha.",next:"Abra as marcas da categoria e compare temperatura, proposta e contexto."},
+angulos:{title:"Ângulos criativos",target:"biblioteca",terms:["proposta","comercial"],now:"Ângulos organizam a lógica criativa usada para conectar a história da Gabi às marcas.",changed:"Só entram novos materiais quando a proposta aprovada ou vigente foi reconciliada.",why:"Mantém a leitura criativa ligada a um artefato comercial real, não a ideias soltas.",next:"Abra o território e compare quais marcas receberam materiais dentro dele."}
+,
+studio:{title:"DIVA Studio",target:"studio",terms:["social","conteudo","conteúdo","imagem","pr"],now:"A DIVA transforma sinais do Radar em matéria-prima criativa.",changed:"Novos sinais aprovados passam a enriquecer ideias, roteiros e referências.",why:"A criatividade fica conectada ao momento real e ao que faz sentido para você.",next:"Escolha uma entrada, fale com a DIVA ou escreva um briefing."}};
+let latestClientSafeRows=[];
+function contextCardHit(key,rows){
+  const rule=contextCardRules[key]||contextCardRules.home;
+  if(!rows.length)return null;
+  if(!rule.terms.length)return rows[0]||null;
+  return rows.find(row=>{
+    const d=row.data||row;
+    const hay=normalizedLiveText([d.category,d.status,d.title,d.summary].filter(Boolean).join(' '));
+    return rule.terms.some(term=>hay.includes(normalizedLiveText(term)));
+  })||null;
+}
+function showContextCard(key,sourceCard=null){
+  const rule=contextCardRules[key]||contextCardRules.home;
+  const rail=document.getElementById('contextCardRail');
+  if(!rail)return false;
+  const target=document.getElementById(rule.target)||document.getElementById('home');
+  if(target&&rail.parentElement!==target)target.prepend(rail);
+  rail.hidden=false;rail.dataset.contextSource=key;rail.dataset.contextLive='false';
+  const cardTitle=sourceCard?.querySelector?.('.title')?.textContent?.trim();
+  document.getElementById('contextCardTitle').textContent=cardTitle||rule.title;
+  document.getElementById('contextNow').textContent=rule.now;
+  document.getElementById('contextChanged').textContent=rule.changed;
+  document.getElementById('contextWhy').textContent=rule.why;
+  document.getElementById('contextNext').textContent=rule.next;
+  document.getElementById('contextCardSource').textContent='base consolidada';
+  const contextLive=document.getElementById('contextLive');
+  contextLive.textContent='Base consolidada · aguardando novo movimento.';
+  updateContextCardFromFeed(latestClientSafeRows);
+  return true;
+}
+function updateContextCardFromFeed(rows){
+  const rail=document.getElementById('contextCardRail');
+  if(!rail||rail.hidden)return;
+  const key=rail.dataset.contextSource||'home';
+  const hit=contextCardHit(key,safeRadarRows(rows));
+  const contextLive=document.getElementById('contextLive');
+  const source=document.getElementById('contextCardSource');
+  if(hit){
+    const d=hit.data||hit;
+    rail.dataset.contextLive='true';
+    source.textContent='ao vivo';
+    contextLive.textContent=['Novo movimento',feedText(d.status,70),feedText(d.title,160),feedText(d.summary,360),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+  }else{
+    rail.dataset.contextLive='false';
+    source.textContent='base consolidada';
+    contextLive.textContent='Base consolidada · nenhuma atualização nova altera esta leitura.';
+  }
+}
+
+function openPanel(id){
+  const p=document.getElementById(id);
+  if(!p)return false;
+  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+  p.classList.add('active');
+  const t=document.querySelector('.tab[data-tab="'+id+'"]');
+  if(t)t.classList.add('active');
+  requestAnimationFrame(()=>p.scrollIntoView({behavior:'smooth',block:'start'}));
+  return true;
+}
+function handlePanelNavigation(e){
+  const trigger=e.target?.closest?.('[data-open]');
+  if(!trigger)return;
+  const nested=e.target?.closest?.('a,button');
+  if(nested&&nested!==trigger)return;
+  const target=trigger.dataset.open;
+  if(!target||!document.getElementById(target))return;
+  e.preventDefault();
+  showContextCard(target,trigger);
+  openPanel(target);
+}
+function activatePanelNavigation(){
+  document.querySelectorAll('[data-open]').forEach(el=>{
+    el.setAttribute('tabindex','0');
+    el.setAttribute('role','button');
+    el.setAttribute('aria-controls',el.dataset.open);
+  });
+  document.addEventListener('click',handlePanelNavigation);
+  document.addEventListener('keydown',e=>{
+    const trigger=e.target?.closest?.('[data-open]');
+    if(trigger&&(e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      if(document.getElementById(trigger.dataset.open)){showContextCard(trigger.dataset.open,trigger);openPanel(trigger.dataset.open);}
+    }
+  });
+}
+activatePanelNavigation();
+const stageText={radar:["Radar de marcas","Universo de marcas mapeadas pela Mundinho. Use as categorias e a Word Cloud para explorar as relações já identificadas."],apresentadas:["Marcas apresentadas","Uma marca entra aqui quando existe evidência de que a Gabriella foi efetivamente apresentada. O mesmo nome é deduplicado para que diferentes interações não inflem o total."],propostas:["Propostas comprovadas","Aqui ficam as oportunidades que avançaram até proposta com evidência de envio. A abertura completa conecta marca, categoria, ângulo criativo e situação da conversa."],categorias:["Categorias comerciais","A visão por categoria ajuda a entender em quais territórios a carreira da Gabriella já está ganhando mais portas: beleza, viagem, mobilidade, financeiro, educação, moda, tecnologia, lifestyle e outros."],angulos:["Ângulos criativos","Esta área organiza as propostas aprovadas pelo território criativo usado: qual aspecto da vida e imagem da Gabriella foi transformado em oportunidade para uma marca."]};
+const socials={"Salon Line":["@salonlinebrasil","https://www.instagram.com/salonlinebrasil/"],"Widi Care":["@widicare","https://www.instagram.com/widicare/"],"Bela Berê":["@belabere","https://www.instagram.com/belabere/"],"Nazca":["@nazcacosmeticos","https://www.instagram.com/nazcacosmeticos/"],"Catharine Hill":["@catharinehilloficial","https://www.instagram.com/catharinehilloficial/"],"Dapop":["@dapopmakeup","https://www.instagram.com/dapopmakeup/"],"Kiss New York":["@kissnybrasil","https://www.instagram.com/kissnybrasil/"],"Riachuelo":["@riachuelo","https://www.instagram.com/riachuelo/"],"Amissima":["@amissima","https://www.instagram.com/amissima/"],"Constance":["@constancecalcados","https://www.instagram.com/constancecalcados/"],"Reformation":["@reformation","https://www.instagram.com/reformation/"],"Meu Sapato Preto":["@meusapatopreto","https://www.instagram.com/meusapatopreto/"],"LATAM":["@latambrasil","https://www.instagram.com/latambrasil/"],"Buser":["@buserbrasil","https://www.instagram.com/buserbrasil/"],"WeMobi":["@wemobi","https://www.
