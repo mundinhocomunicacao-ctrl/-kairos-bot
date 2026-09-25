@@ -19,6 +19,11 @@ const DIVA_AUTHORIZED_CANARY_ON_START = String(process.env.DIVA_AUTHORIZED_CANAR
 const DIVA_AUTHORIZED_CANARY_CHAT_ID = String(process.env.DIVA_AUTHORIZED_CANARY_CHAT_ID || '').trim();
 const DIVA_WHATSAPP_SESSION = String(process.env.DIVA_WHATSAPP_SESSION || '').trim();
 const DIVA_WHATSAPP_GROUP_JID = String(process.env.DIVA_WHATSAPP_GROUP_JID || '120363427121075030@g.us').trim();
+const DIVA_GATEWAY_URL = String(process.env.DIVA_GATEWAY_URL || 'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com/api/diva-gateway/execute').trim();
+const DIVA_GATEWAY_PATH = '/api/diva-gateway/execute';
+const DIVA_GATEWAY_INSTALLATION_ID = String(process.env.DIVA_GATEWAY_INSTALLATION_ID || 'fernando-whatsapp').trim();
+const DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP = String(process.env.DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP || '').trim();
+const DIVA_GATEWAY_VERSION = 'diva-universal-private-gateway-v0.1';
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
@@ -49,9 +54,12 @@ const bridgeStats = {
   providerWebhooksAccepted: 0,
   divaForwardAttempts: 0,
   divaForwardSuccess: 0,
+  gatewayAttempts: 0,
+  gatewaySuccess: 0,
   replyRelayRequests: 0,
   outboundSent: 0,
   lastWixStatus: null,
+  lastGatewayStatus: null,
   lastProviderEventAt: null,
   lastReplyAt: null
 };
@@ -249,6 +257,134 @@ function verifyActiveWebhookSignature({raw,supplied,timestamp,nowSeconds=Math.fl
   return safeEqual(String(supplied),expected);
 }
 
+function stableStringify(value){
+  if(Array.isArray(value))return '['+value.map(stableStringify).join(',')+']';
+  if(value&&typeof value==='object'){
+    return '{'+Object.keys(value).sort().map(key=>JSON.stringify(key)+':'+stableStringify(value[key])).join(',')+'}';
+  }
+  return JSON.stringify(value);
+}
+
+function sha256Hex(value){
+  return crypto.createHash('sha256').update(String(value||'')).digest('hex');
+}
+
+function divaGatewayHeaders(body){
+  if(!DIVA_GATEWAY_INSTALLATION_ID)throw new Error('DIVA_GATEWAY_INSTALLATION_ID is not configured');
+  if(!DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP)throw new Error('DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP is not configured');
+  const timestamp=new Date().toISOString();
+  const nonce=crypto.randomUUID();
+  const material=[
+    DIVA_GATEWAY_VERSION,
+    DIVA_GATEWAY_INSTALLATION_ID,
+    timestamp,
+    nonce,
+    'POST',
+    DIVA_GATEWAY_PATH,
+    sha256Hex(stableStringify(body))
+  ].join('\n');
+  const signature=crypto.createHmac('sha256',DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP).update(material).digest('hex');
+  return{
+    'content-type':'application/json',
+    'x-diva-installation-id':DIVA_GATEWAY_INSTALLATION_ID,
+    'x-diva-timestamp':timestamp,
+    'x-diva-nonce':nonce,
+    'x-diva-signature':signature,
+    'x-diva-gateway-version':DIVA_GATEWAY_VERSION
+  };
+}
+
+function extractDivaPrompt(message=''){
+  const text=String(message||'').trim();
+  const match=text.match(/^\s*@?diva\b\s*[:,\-]?\s*(.*)$/isu);
+  if(!match)return null;
+  return String(match[1]||'').trim()||'Oi, DIVA.';
+}
+
+function buildDivaGatewayBody(providerEvent={}){
+  const data=providerEvent?.data&&typeof providerEvent.data==='object'?providerEvent.data:{};
+  const message=String(data.body||'').trim();
+  const eventId=String(providerEvent?.event_id||data.message_id||'').trim();
+  return{
+    surface_id:'whatsapp',
+    message,
+    conversation_ref:'whatsapp://'+DIVA_WHATSAPP_GROUP_JID,
+    ...(eventId?{external_event_id:eventId}:{}),
+    currentRoute:'/webhooks/whatsscale',
+    attachments:[],
+    evidence_ids:[],
+    adapter_metadata:{
+      schema_version:'diva-surface-adapter-v0.1',
+      surface_id:'whatsapp',
+      supplied_keys:['whatsapp_group_id','whatsapp_message_id','whatsapp_sender_id','whatsapp_trigger_type']
+    },
+    context:[
+      'CANAL AUTORIZADO: grupo interno do WhatsApp via Render/WhatsScale.',
+      'A entrada usa o DIVA Universal Private Gateway; não existe runtime paralelo.',
+      'GRUPO WHATSAPP: '+DIVA_WHATSAPP_GROUP_JID,
+      data.participant_name?'NOME OBSERVADO NO WHATSAPP: '+String(data.participant_name).slice(0,160):''
+    ].filter(Boolean).join('\n'),
+    history:[],
+    native_adapter_metadata:{
+      whatsapp_group_id:DIVA_WHATSAPP_GROUP_JID,
+      whatsapp_message_id:String(data.message_id||'').slice(0,256)||null,
+      whatsapp_sender_id:String(data.participant_id||'').slice(0,256)||null,
+      whatsapp_trigger_type:'group'
+    }
+  };
+}
+
+async function invokeDivaGatewayDirect(providerEvent={}){
+  if(!DIVA_GATEWAY_URL)throw new Error('DIVA_GATEWAY_URL is not configured');
+  const body=buildDivaGatewayBody(providerEvent);
+  bridgeStats.gatewayAttempts+=1;
+  const response=await fetch(DIVA_GATEWAY_URL,{
+    method:'POST',
+    headers:divaGatewayHeaders(body),
+    body:JSON.stringify(body)
+  });
+  const raw=await response.text();
+  let data={};
+  try{data=raw?JSON.parse(raw):{}}catch{data={raw}}
+  const answer=String(data?.answer||data?.result?.answer||data?.payload?.answer||'').trim();
+  bridgeStats.lastGatewayStatus=response.ok?'ok':String(data?.error||('http_'+response.status)).slice(0,120);
+  if(!response.ok||!answer){
+    const error=new Error('DIVA Gateway returned '+response.status+(answer?'':' without answer'));
+    error.details={status:response.status,error:String(data?.error||'').slice(0,200)};
+    throw error;
+  }
+  bridgeStats.gatewaySuccess+=1;
+  console.log('DIVA_WHATSAPP_GATEWAY_RESULT',{
+    httpStatus:response.status,
+    gatewayAttempts:bridgeStats.gatewayAttempts,
+    gatewaySuccess:bridgeStats.gatewaySuccess,
+    missionMode:String(response.headers.get('x-diva-gateway-mission-mode')||'').slice(0,40),
+    answerChars:answer.length
+  });
+  return{answer,data,status:response.status};
+}
+
+async function runDivaGatewayCanary(){
+  if(!DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP)throw new Error('DIVA direct Gateway secret unavailable');
+  const eventId='diva_gateway_canary_'+Date.now();
+  const result=await invokeDivaGatewayDirect({
+    event_id:eventId,
+    event_type:'incoming.message',
+    trigger_type:'group',
+    data:{
+      message_id:eventId+'_msg',
+      group_id:DIVA_WHATSAPP_GROUP_JID,
+      participant_id:'gateway-canary@lid',
+      participant_phone:'',
+      participant_name:'DIVA Gateway Canary',
+      body:'DIVA: responda apenas DIVA GATEWAY OK',
+      from_me:false
+    }
+  });
+  console.log('DIVA_WHATSAPP_GATEWAY_CANARY_OK',{eventId,answerChars:result.answer.length});
+  return{ok:true,eventId,answerChars:result.answer.length};
+}
+
 async function forwardRawToDiva(raw,timestamp){
   if(!DIVA_INGRESS_URL||!DIVA_BRIDGE_SECRET)throw new Error('DIVA ingress bridge is not configured');
   const signature=crypto.createHmac('sha256',DIVA_BRIDGE_SECRET).update(raw).digest('hex');
@@ -364,6 +500,7 @@ const server = http.createServer(async (req, res) => {
         divaUsingBaseSession: activeDivaSession===SESSION,
         groupConfigured: Boolean(GROUP_JID),
         divaGroupConfigured: Boolean(DIVA_WHATSAPP_GROUP_JID),
+        divaGatewayConfigured: Boolean(DIVA_GATEWAY_URL && DIVA_GATEWAY_INSTALLATION_ID && DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP),
         whatsScaleWebhookSecretConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET),
         activeWebhookSecretConfigured: Boolean(activeWebhookSecret),
         activeSubscriptionId: activeSubscriptionId || null,
@@ -377,7 +514,10 @@ const server = http.createServer(async (req, res) => {
         divaAuthorizedCanaryOnStart: DIVA_AUTHORIZED_CANARY_ON_START,
         divaAuthorizedCanaryTargetConfigured: Boolean(DIVA_AUTHORIZED_CANARY_CHAT_ID),
         canaryStatus:lastCanaryStatus,
-        bridgeConfigured: Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET),
+        bridgeConfigured: Boolean(activeWebhookSecret && (
+          (DIVA_GATEWAY_URL && DIVA_GATEWAY_INSTALLATION_ID && DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP) ||
+          (DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
+        )),
         bridgeStats:{...bridgeStats},
         providerDiagnostics:{...providerDiagnostics}
       });
@@ -435,7 +575,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'POST' && url.pathname === '/webhooks/whatsscale') {
-      if (!activeWebhookSecret || !DIVA_INGRESS_URL || !DIVA_BRIDGE_SECRET) {
+      const directGatewayReady=Boolean(DIVA_GATEWAY_URL&&DIVA_GATEWAY_INSTALLATION_ID&&DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP);
+      const legacyIngressReady=Boolean(DIVA_INGRESS_URL&&DIVA_BRIDGE_SECRET);
+      if (!activeWebhookSecret || (!directGatewayReady&&!legacyIngressReady)) {
         return json(res, 503, { ok: false, error: 'bridge is not configured' });
       }
       const chunks = [];
@@ -460,7 +602,24 @@ const server = http.createServer(async (req, res) => {
         eventId,
         providerWebhooksAccepted:bridgeStats.providerWebhooksAccepted
       });
+      if(!extractDivaPrompt(body?.data?.body||'')){
+        return json(res,202,{ok:true,accepted:false,reason:'without_diva_wake_word'});
+      }
+
       bridgeStats.divaForwardAttempts += 1;
+      if(directGatewayReady){
+        try{
+          const gateway=await invokeDivaGatewayDirect(body);
+          await sendWhatsAppToChat(DIVA_WHATSAPP_GROUP_JID,gateway.answer,activeDivaSession);
+          bridgeStats.divaForwardSuccess += 1;
+          bridgeStats.lastReplyAt=new Date().toISOString();
+          return json(res,200,{ok:true,status:'replied',runtime:'diva_universal_private_gateway',event_id:eventId});
+        }catch(error){
+          console.error('DIVA_WHATSAPP_DIRECT_GATEWAY_FAILED',{eventId,message:String(error?.message||error).slice(0,300)});
+          return json(res,502,{ok:false,error:'diva_gateway_failed'});
+        }
+      }
+
       const {upstream,responseBody}=await forwardRawToDiva(raw,webhookTimestamp);
       if(upstream.ok)bridgeStats.divaForwardSuccess += 1;
       bridgeStats.lastWixStatus=String(responseBody?.status||responseBody?.error||'unknown').slice(0,120);
@@ -506,8 +665,10 @@ server.listen(PORT, '0.0.0.0', () => {
       .then(async info=>{
         console.log('DIVA_WHATSCALE_SUBSCRIPTION_READY',{subscriptionId:info.subscription_id,triggerType:info.trigger_type,webhookUrl:info.webhook_url});
         if(DIVA_STARTUP_CANARY){
-          try{await runDivaStartupCanary()}
-          catch(error){console.error('DIVA_WHATSAPP_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
+          try{
+            if(DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP)await runDivaGatewayCanary();
+            else await runDivaStartupCanary();
+          }catch(error){console.error('DIVA_WHATSAPP_CANARY_FAILED',{message:String(error?.message||error).slice(0,500)})}
         }
         if(DIVA_AUTHORIZED_CANARY_ON_START){
           if(!DIVA_AUTHORIZED_CANARY_CHAT_ID){
@@ -531,8 +692,12 @@ server.listen(PORT, '0.0.0.0', () => {
     divaAuthorizedCanaryOnStart:DIVA_AUTHORIZED_CANARY_ON_START,
     divaAuthorizedCanaryTargetConfigured:Boolean(DIVA_AUTHORIZED_CANARY_CHAT_ID),
     divaGroupConfigured:Boolean(DIVA_WHATSAPP_GROUP_JID),
+    divaGatewayConfigured:Boolean(DIVA_GATEWAY_URL&&DIVA_GATEWAY_INSTALLATION_ID&&DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP),
     activeWebhookSecretConfigured:Boolean(activeWebhookSecret),
     activeSubscriptionId:activeSubscriptionId||null,
-    bridgeConfigured:Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)
+    bridgeConfigured:Boolean(activeWebhookSecret && (
+      (DIVA_GATEWAY_URL&&DIVA_GATEWAY_INSTALLATION_ID&&DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP) ||
+      (DIVA_INGRESS_URL&&DIVA_BRIDGE_SECRET)
+    ))
   });
 });
