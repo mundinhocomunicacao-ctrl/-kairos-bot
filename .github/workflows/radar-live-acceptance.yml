@@ -1,0 +1,28 @@
+name: Gabi Radar Live Acceptance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/radar-live-acceptance.yml"
+  workflow_dispatch:
+
+jobs:
+  live-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify live Radar markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors --retry-delay 3             "https://radar.gabi.mundinhocomunicacao.com/" -o /tmp/gabi-radar-live.html
+          grep -F "DIVA Studio" /tmp/gabi-radar-live.html >/dev/null
+          grep -F "gabiStudioMic" /tmp/gabi-radar-live.html >/dev/null
+          grep -F "GABI_RADAR_PUBLIC_SAFE_V3" /tmp/gabi-radar-live.html >/dev/null
+          for forbidden in             "CLIENT_SAFE_GABI v2"             "voz ativa"             "sem acesso ao bastidor interno"             "segunda inspeção client-safe"             "pacote mínimo de dados"             "clientSafeContext:"; do
+            if grep -F "$forbidden" /tmp/gabi-radar-live.html >/dev/null; then
+              echo "GABI_RADAR_LIVE_ACCEPTANCE_FAIL=$forbidden"
+              exit 1
+            fi
+          done
+          echo "GABI_RADAR_LIVE_ACCEPTANCE=PASS"
