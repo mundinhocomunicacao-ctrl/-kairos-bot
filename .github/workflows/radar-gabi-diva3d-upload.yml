@@ -1,0 +1,101 @@
+name: Radar Gabi · DIVA 3D Signed Relay
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "deploy/radar-gabi/secure-upload/request-*-diva3d.txt"
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve request
+        id: req
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST_FILE="$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" | grep '^deploy/radar-gabi/secure-upload/request-.*-diva3d\.txt$' | head -1)"
+          test -n "$REQUEST_FILE"
+          REQUEST_ID="$(basename "$REQUEST_FILE" .txt | sed 's/^request-//')"
+          echo "id=$REQUEST_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Create ephemeral key and publish public half
+        shell: bash
+        env:
+          REQUEST_ID: ${{ steps.req.outputs.id }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/diva-relay deploy/radar-gabi/secure-upload
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/diva-relay/private.pem >/dev/null 2>&1
+          openssl pkey -in /tmp/diva-relay/private.pem -pubout -out "deploy/radar-gabi/secure-upload/public-$REQUEST_ID.pem" >/dev/null 2>&1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "deploy/radar-gabi/secure-upload/public-$REQUEST_ID.pem"
+          git commit -m "relay(radar): publish DIVA 3D ephemeral key $REQUEST_ID"
+          git push origin HEAD:main
+
+      - name: Wait for encrypted source and destination URLs
+        shell: bash
+        env:
+          REQUEST_ID: ${{ steps.req.outputs.id }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 90); do
+            git pull --ff-only origin main >/dev/null 2>&1 || true
+            READY=1
+            for P in src-key src-url src-iv dst-key dst-url dst-iv; do
+              case "$P" in
+                src-iv|dst-iv) F="deploy/radar-gabi/secure-upload/$P-$REQUEST_ID.txt" ;;
+                *) F="deploy/radar-gabi/secure-upload/$P-$REQUEST_ID.b64" ;;
+              esac
+              [ -s "$F" ] || READY=0
+            done
+            if [ "$READY" = "1" ]; then
+              for SIDE in src dst; do
+                base64 -d "deploy/radar-gabi/secure-upload/$SIDE-key-$REQUEST_ID.b64" > "/tmp/diva-relay/$SIDE.key.enc"
+                base64 -d "deploy/radar-gabi/secure-upload/$SIDE-url-$REQUEST_ID.b64" > "/tmp/diva-relay/$SIDE.url.enc"
+                openssl pkeyutl -decrypt -inkey /tmp/diva-relay/private.pem -in "/tmp/diva-relay/$SIDE.key.enc" -out "/tmp/diva-relay/$SIDE.aes.key" -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
+                KEY_HEX="$(xxd -p "/tmp/diva-relay/$SIDE.aes.key" | tr -d '\n')"
+                IV_HEX="$(tr -d '\n\r ' < "deploy/radar-gabi/secure-upload/$SIDE-iv-$REQUEST_ID.txt")"
+                openssl enc -d -aes-256-cbc -K "$KEY_HEX" -iv "$IV_HEX" -in "/tmp/diva-relay/$SIDE.url.enc" -out "/tmp/diva-relay/$SIDE-url.txt"
+              done
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "DIVA3D_SIGNED_URL_TIMEOUT"
+          exit 1
+
+      - name: Transfer exact DIVA GLB to Wix
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location "$(cat /tmp/diva-relay/src-url.txt)" -o /tmp/diva-avatar.glb
+          test "$(wc -c < /tmp/diva-avatar.glb | tr -d ' ')" = "12998812"
+          echo "c2115ac87e03b2524256808dbecc38e4ec949dc58e4a92748061e1e410adbed6  /tmp/diva-avatar.glb" | sha256sum -c -
+          curl --fail --silent --show-error -X PUT -H "Content-Type: model/gltf-binary" --data-binary @/tmp/diva-avatar.glb "$(cat /tmp/diva-relay/dst-url.txt)"
+          echo "DIVA3D_SIGNED_UPLOAD=PASS"
+
+      - name: Record result without secret material
+        if: always()
+        shell: bash
+        env:
+          REQUEST_ID: ${{ steps.req.outputs.id }}
+        run: |
+          set -euo pipefail
+          git pull --ff-only origin main >/dev/null 2>&1 || true
+          STATUS="FAIL"
+          if [ "${{ job.status }}" = "success" ]; then STATUS="PASS"; fi
+          printf '%s\n' "$STATUS" > "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
+          git add "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
+          git commit -m "relay(radar): DIVA 3D upload result $REQUEST_ID $STATUS" || true
+          git push origin HEAD:main || true
