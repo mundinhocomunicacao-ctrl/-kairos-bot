@@ -124,3 +124,20 @@ assert.match(source,/DIVA_WHATSAPP_GROUP_JID/,'governed group id must come from 
 assert.match(source,/120363427121075030@g\.us/,'Comercial Mundinho must be the fallback group target for this migration');
 assert.match(source,/existing subscription.*preserved|existing_subscription_preserved/i,'duplicate subscribe must preserve the existing subscription instead of deleting it');
 console.log('DIVA_WHATSAPP_COMERCIAL_GROUP_CONTRACT_OK');
+
+
+assert.match(source,/DIVA_GATEWAY_URL/,'Render must know the live DIVA Universal Gateway URL');
+assert.match(source,/DIVA_GATEWAY_INSTALLATION_ID/,'Render must use a per-installation Gateway identity');
+assert.match(source,/DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP/,'Render must require the WhatsApp installation secret');
+assert.match(source,/diva-universal-private-gateway-v0\.1/,'Render must sign with the canonical Gateway protocol version');
+assert.match(source,/x-diva-installation-id/,'Render must send the Gateway installation id header');
+assert.match(source,/x-diva-timestamp/,'Render must send a replay-guard timestamp');
+assert.match(source,/x-diva-nonce/,'Render must send a unique nonce');
+assert.match(source,/x-diva-signature/,'Render must HMAC-sign the exact Gateway body');
+assert.match(source,/\/api\/diva-gateway\/execute/,'Render must call the canonical execute operation');
+assert.match(source,/invokeDivaGatewayDirect/,'group ingress must use the direct Gateway client');
+assert.match(source,/conversation_ref/,'WhatsApp group continuity must be preserved');
+assert.match(source,/sendWhatsAppToChat\(DIVA_WHATSAPP_GROUP_JID[\s\S]{0,120}activeDivaSession\)/,'Gateway answer must be sent back to Comercial Mundinho');
+assert.match(source,/DIVA_WHATSAPP_GATEWAY_RESULT/,'direct Gateway execution must emit a secret-safe proof marker');
+assert.match(source,/DIVA_WHATSAPP_GATEWAY_CANARY_OK/,'startup canary must prove Render to DIVA Gateway without depending on provider ingress');
+console.log('DIVA_DIRECT_GATEWAY_CONTRACT_OK');
