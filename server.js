@@ -18,6 +18,7 @@ const DIVA_STARTUP_CANARY = String(process.env.DIVA_STARTUP_CANARY || '').toLowe
 const DIVA_AUTHORIZED_CANARY_ON_START = String(process.env.DIVA_AUTHORIZED_CANARY_ON_START || '').toLowerCase() === 'true';
 const DIVA_AUTHORIZED_CANARY_CHAT_ID = String(process.env.DIVA_AUTHORIZED_CANARY_CHAT_ID || '').trim();
 const DIVA_WHATSAPP_SESSION = String(process.env.DIVA_WHATSAPP_SESSION || '').trim();
+const DIVA_WHATSAPP_GROUP_JID = String(process.env.DIVA_WHATSAPP_GROUP_JID || '120363427121075030@g.us').trim();
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
@@ -97,17 +98,6 @@ function whatsappIdentityDigits(value=''){
     .replace(/\D/g,'');
 }
 
-function selectDivaSession(sessions=[]){
-  if(DIVA_WHATSAPP_SESSION)return DIVA_WHATSAPP_SESSION;
-  const targetDigits=whatsappIdentityDigits(DIVA_AUTHORIZED_CANARY_CHAT_ID);
-  if(!targetDigits)return SESSION;
-  const working=sessions
-    .filter(item=>String(item?.status||'')==='WORKING')
-    .sort((a,b)=>String(a?.name||'').localeCompare(String(b?.name||'')));
-  const alternate=working.find(item=>whatsappIdentityDigits(item?.me?.id)!==targetDigits);
-  return String(alternate?.name||SESSION);
-}
-
 async function refreshProviderDiagnostics({force=false}={}){
   const now=Date.now();
   const last=providerDiagnostics.lastCheckedAt?Date.parse(providerDiagnostics.lastCheckedAt):0;
@@ -118,21 +108,9 @@ async function refreshProviderDiagnostics({force=false}={}){
     const sessionsResult=await whatsScaleJson('/api/sessions');
     if(!sessionsResult.response.ok)throw new Error('sessions_http_'+sessionsResult.response.status);
     const sessions=Array.isArray(sessionsResult.data)?sessionsResult.data:[];
-    const selectedDivaSession=selectDivaSession(sessions);
-    if(selectedDivaSession!==activeDivaSession){
-      const previous=activeDivaSession;
-      activeDivaSession=selectedDivaSession;
-      activeWebhookSecret='';
-      activeSubscriptionId=null;
-      console.log('DIVA_WHATSAPP_SESSION_SWITCH',{
-        fromConfiguredBase:previous===SESSION,
-        toConfiguredBase:activeDivaSession===SESSION,
-        autoSelected:!DIVA_WHATSAPP_SESSION
-      });
-    }
     const current=sessions.find(item=>String(item?.name||'')===String(activeDivaSession))||null;
     providerDiagnostics.sessionCount=sessions.length;
-    providerDiagnostics.divaSessionAutoSelected=!DIVA_WHATSAPP_SESSION&&activeDivaSession!==SESSION;
+    providerDiagnostics.divaSessionAutoSelected=false;
     providerDiagnostics.otherSessionSuffixes=sessions
       .filter(item=>String(item?.name||'')!==String(activeDivaSession))
       .map(item=>String(item?.me?.id||'').replace(/\D/g,'').slice(-4))
@@ -150,7 +128,8 @@ async function refreshProviderDiagnostics({force=false}={}){
     const subscriptions=Array.isArray(hooksResult.data?.subscriptions)?hooksResult.data.subscriptions:[];
     const currentSub=subscriptions.find(item=>
       String(item?.session||'')===String(activeDivaSession)&&
-      String(item?.trigger_type||'')==='1on1'&&
+      String(item?.trigger_type||'')==='group'&&
+      String(item?.filter_id||'')===String(DIVA_WHATSAPP_GROUP_JID)&&
       String(item?.webhook_url||'')===String(DIVA_WHATSAPP_WEBHOOK_URL)
     )||null;
     providerDiagnostics.activeSubscriptionId=currentSub?.id||activeSubscriptionId||null;
@@ -204,38 +183,14 @@ async function sendWhatsApp(text) {
   return sendWhatsAppToChat(GROUP_JID, text);
 }
 
-async function cleanupStaleDivaSubscriptions(){
-  if(!DIVA_WHATSAPP_WEBHOOK_URL)return {removed:0};
-  const hooksResult=await whatsScaleJson('/v1/webhooks');
-  if(!hooksResult.response.ok)throw new Error('WhatsScale webhook inventory unavailable for DIVA migration');
-  const subscriptions=Array.isArray(hooksResult.data?.subscriptions)?hooksResult.data.subscriptions:[];
-  const stale=subscriptions.filter(item=>
-    String(item?.webhook_url||'')===String(DIVA_WHATSAPP_WEBHOOK_URL)&&
-    String(item?.trigger_type||'')==='1on1'&&
-    String(item?.session||'')!==String(activeDivaSession)
-  );
-  let removed=0;
-  for(const item of stale){
-    const id=String(item?.id||'');
-    if(!id)continue;
-    const result=await whatsScaleJson('/v1/webhooks/'+encodeURIComponent(id),{method:'DELETE'});
-    if(!result.response.ok)throw new Error('Failed to remove stale DIVA WhatsScale subscription');
-    removed+=1;
-  }
-  if(removed){
-    console.log('DIVA_WHATSAPP_STALE_SUBSCRIPTIONS_REMOVED',{removed});
-  }
-  return {removed};
-}
-
 async function subscribeDivaWebhook() {
   if (!DIVA_WHATSAPP_WEBHOOK_URL) throw new Error('DIVA_WHATSAPP_WEBHOOK_URL is not configured');
   await refreshProviderDiagnostics({force:true});
-  await cleanupStaleDivaSubscriptions();
   const payload = {
     session: activeDivaSession,
     webhook_url: DIVA_WHATSAPP_WEBHOOK_URL,
-    trigger_type: '1on1'
+    trigger_type: 'group',
+    filter_id: DIVA_WHATSAPP_GROUP_JID
   };
   let attempt = await whatsScaleJson('/v1/webhooks/subscribe', {
     method: 'POST',
@@ -243,16 +198,21 @@ async function subscribeDivaWebhook() {
   });
 
   if (attempt.response.status === 409) {
-    const subscriptionId = attempt.data?.subscription_id;
+    const subscriptionId = String(attempt.data?.subscription_id || '');
     if (!subscriptionId) throw new Error('WhatsScale duplicate webhook without subscription_id');
-    const removed = await whatsScaleJson('/v1/webhooks/' + encodeURIComponent(subscriptionId), {
-      method: 'DELETE'
-    });
-    if (!removed.response.ok) throw new Error('WhatsScale duplicate webhook could not be rotated');
-    attempt = await whatsScaleJson('/v1/webhooks/subscribe', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
+    activeSubscriptionId = subscriptionId;
+    console.log('DIVA_WHATSAPP_EXISTING_SUBSCRIPTION_PRESERVED',{subscriptionId});
+    if (!activeWebhookSecret) {
+      throw new Error('existing subscription preserved; signing secret unavailable in this process. Configure WHATSSCALE_WEBHOOK_SECRET instead of rotating the subscription');
+    }
+    return {
+      subscription_id: subscriptionId,
+      signing_secret: activeWebhookSecret,
+      webhook_url: DIVA_WHATSAPP_WEBHOOK_URL,
+      trigger_type: 'group',
+      filter_id: DIVA_WHATSAPP_GROUP_JID,
+      existing_subscription_preserved: true
+    };
   }
 
   if (!attempt.response.ok) {
@@ -269,7 +229,9 @@ async function subscribeDivaWebhook() {
     subscription_id: subscriptionId,
     signing_secret: signingSecret,
     webhook_url: attempt.data?.webhook_url || DIVA_WHATSAPP_WEBHOOK_URL,
-    trigger_type: attempt.data?.trigger_type || '1on1'
+    trigger_type: attempt.data?.trigger_type || 'group',
+    filter_id: attempt.data?.filter_id || DIVA_WHATSAPP_GROUP_JID,
+    existing_subscription_preserved: false
   };
 }
 
@@ -312,14 +274,14 @@ async function runDivaStartupCanary(){
   const raw=JSON.stringify({
     event_id:eventId,
     event_type:'incoming.message',
-    trigger_type:'1on1',
+    trigger_type:'group',
     session:activeDivaSession,
     data:{
       message_id:eventId+'_msg',
-      from_number:'000000000000',
-      from_id:'000000000000@c.us',
-      chat_id:'000000000000',
-      from_name:'DIVA QA Canary',
+      group_id:'000000000000@g.us',
+      participant_id:'000000000000@lid',
+      participant_phone:'000000000000',
+      participant_name:'DIVA QA Canary',
       body:'DIVA: canary interno',
       from_me:false
     }
@@ -331,7 +293,7 @@ async function runDivaStartupCanary(){
   }
   const {upstream,responseBody}=await forwardRawToDiva(raw,nowSeconds);
   const wixStatus=responseBody?.status||null;
-  if(!upstream.ok||wixStatus!=='ignored_unauthorized_sender'){
+  if(!upstream.ok||wixStatus!=='ignored_unauthorized_group'){
     lastCanaryStatus='failed';
     throw new Error('DIVA startup canary failed: '+upstream.status+' '+String(wixStatus||responseBody?.error||'unexpected').slice(0,200));
   }
@@ -401,6 +363,7 @@ const server = http.createServer(async (req, res) => {
         divaDedicatedSessionConfigured: Boolean(DIVA_WHATSAPP_SESSION),
         divaUsingBaseSession: activeDivaSession===SESSION,
         groupConfigured: Boolean(GROUP_JID),
+        divaGroupConfigured: Boolean(DIVA_WHATSAPP_GROUP_JID),
         whatsScaleWebhookSecretConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET),
         activeWebhookSecretConfigured: Boolean(activeWebhookSecret),
         activeSubscriptionId: activeSubscriptionId || null,
@@ -485,7 +448,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       const body = raw ? JSON.parse(raw) : {};
-      if (body?.trigger_type !== '1on1') return json(res, 202, { ok: true, accepted: false, reason: 'non_1on1' });
+      if (body?.trigger_type !== 'group') return json(res, 202, { ok: true, accepted: false, reason: 'non_group' });
+      if (String(body?.data?.group_id||'') !== DIVA_WHATSAPP_GROUP_JID) return json(res, 202, { ok: true, accepted: false, reason: 'unauthorized_group' });
       if (body?.event_type && body.event_type !== 'incoming.message') return json(res, 202, { ok: true, accepted: false, reason: 'event_type' });
       if (body?.data?.from_me === true || body?.data?.fromMe === true) return json(res, 202, { ok: true, accepted: false, reason: 'from_me' });
 
@@ -556,25 +520,6 @@ server.listen(PORT, '0.0.0.0', () => {
       })
       .catch(error=>console.error('DIVA_WHATSCALE_SUBSCRIPTION_FAILED',{message:String(error?.message||error).slice(0,500)}));
   }
-  setInterval(async()=>{
-    try{
-      const before=activeDivaSession;
-      await refreshProviderDiagnostics({force:true});
-      if(DIVA_AUTO_SUBSCRIBE&&activeDivaSession!==before){
-        const info=await ensureDivaSubscription();
-        console.log('DIVA_WHATSCALE_SUBSCRIPTION_READY',{
-          subscriptionId:info.subscription_id,
-          triggerType:info.trigger_type,
-          webhookUrl:info.webhook_url
-        });
-      }
-    }catch(error){
-      console.error('DIVA_WHATSAPP_SESSION_REEVALUATION_FAILED',{
-        message:String(error?.message||error).slice(0,500)
-      });
-    }
-  },30000).unref();
-
   console.log('DIVA_BRIDGE_READINESS', {
     whatsScaleWebhookSecretConfigured:Boolean(WHATSSCALE_WEBHOOK_SECRET),
     divaIngressConfigured:Boolean(DIVA_INGRESS_URL),
@@ -585,6 +530,7 @@ server.listen(PORT, '0.0.0.0', () => {
     divaAutoSubscribe:DIVA_AUTO_SUBSCRIBE,
     divaAuthorizedCanaryOnStart:DIVA_AUTHORIZED_CANARY_ON_START,
     divaAuthorizedCanaryTargetConfigured:Boolean(DIVA_AUTHORIZED_CANARY_CHAT_ID),
+    divaGroupConfigured:Boolean(DIVA_WHATSAPP_GROUP_JID),
     activeWebhookSecretConfigured:Boolean(activeWebhookSecret),
     activeSubscriptionId:activeSubscriptionId||null,
     bridgeConfigured:Boolean(activeWebhookSecret && DIVA_INGRESS_URL && DIVA_BRIDGE_SECRET)

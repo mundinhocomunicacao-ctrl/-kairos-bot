@@ -22,17 +22,19 @@ assert.equal(persistenceGate("evt-qa",{status:"ready",found:false}),false);
 assert.equal(persistenceGate("evt-qa",{status:"ready",found:true,event:{event_id:"different"}}),false);
 console.log("DIVA_WHATSAPP_PERSISTENCE_FAIL_CLOSED_OK");
 
-const docsContract={base:"https://proxy.whatsscale.com",subscribe:"/v1/webhooks/subscribe",trigger:"1on1"};
+const docsContract={base:"https://proxy.whatsscale.com",subscribe:"/v1/webhooks/subscribe",trigger:"group",filterId:"120363427121075030@g.us"};
 assert.equal(docsContract.base,"https://proxy.whatsscale.com");
 assert.equal(docsContract.subscribe,"/v1/webhooks/subscribe");
-assert.equal(docsContract.trigger,"1on1");
+assert.equal(docsContract.trigger,"group");
+assert.equal(docsContract.filterId,"120363427121075030@g.us");
 console.log("WHATSCALE_DIRECT_SUBSCRIBE_CONTRACT_OK");
 
 assert.match(source,/\/admin\/subscribe-diva/,"admin subscribe route must exist");
 assert.match(source,/DIVA_SUBSCRIBE_TOKEN/,"admin subscribe route must be separately authenticated");
 assert.match(source,/DIVA_WHATSAPP_WEBHOOK_URL/,"webhook target must be explicit");
 assert.match(source,/\/v1\/webhooks\/subscribe/,"server must call WhatsScale subscribe endpoint");
-assert.match(source,/trigger_type:\s*['"]1on1['"]/,"DIVA subscription must target 1:1 messages");
+assert.match(source,/trigger_type:\s*['"]group['"]/,"DIVA subscription must target the internal group");
+assert.match(source,/filter_id:\s*DIVA_WHATSAPP_GROUP_JID/,"DIVA subscription must be scoped to one explicit group");
 assert.match(source,/signing_secret/,"subscribe response must capture the one-time signing secret");
 console.log("DIVA_WHATSAPP_SUBSCRIBE_ADMIN_CONTRACT_OK");
 
@@ -45,14 +47,15 @@ console.log("DIVA_WHATSAPP_REPLY_RELAY_CONTRACT_OK");
 assert.match(source,/DIVA_AUTO_SUBSCRIBE/,"Render must support automatic DIVA webhook subscription");
 assert.match(source,/activeWebhookSecret/,"Render must retain the one-time WhatsScale signing secret in process memory");
 assert.match(source,/ensureDivaSubscription/,"Render must self-heal the subscription on boot");
-assert.match(source,/trigger_type\s*!==\s*['"]1on1['"]/,"Render webhook must ignore non-1:1 traffic");
+assert.match(source,/trigger_type\s*!==\s*['"]group['"]/,"Render webhook must ignore traffic outside the governed group trigger");
+assert.match(source,/body\?\.data\?\.group_id\s*!==\s*DIVA_WHATSAPP_GROUP_JID/,"Render webhook must reject non-allowlisted groups");
 assert.match(source,/x-diva-bridge-signature/i,"Render must forward the raw event to Wix with an internal HMAC");
 assert.match(source,/DIVA_INGRESS_URL/,"Render must forward to the governed Wix DIVA ingress");
 console.log("DIVA_SELF_TERMINATING_WEBHOOK_CONTRACT_OK");
 
 assert.match(source,/DIVA_STARTUP_CANARY/,"Render must support a non-delivery startup canary");
 assert.match(source,/runDivaStartupCanary/,"Render must execute the canary through the real webhook path");
-assert.match(source,/ignored_unauthorized_sender/,"canary must require the Wix allowlist to reject its synthetic sender");
+assert.match(source,/ignored_unauthorized_group/,"canary must require the Wix group allowlist to reject its synthetic group");
 assert.match(source,/DIVA_WHATSAPP_CANARY_OK/,"successful canary must emit a secret-safe proof marker");
 console.log("DIVA_WHATSAPP_STARTUP_CANARY_CONTRACT_OK");
 
@@ -109,15 +112,14 @@ assert.match(source,/otherSessionSuffixes/,'provider diagnostics must expose onl
 console.log('DIVA_WHATSAPP_SESSION_INVENTORY_CONTRACT_OK');
 
 
-assert.match(source,/DIVA_WHATSAPP_SESSION/,'DIVA may pin an explicit dedicated WhatsScale session');
-assert.match(source,/activeDivaSession/,'DIVA transport must track its own effective session separately from KAIROS');
-assert.match(source,/selectDivaSession/,'DIVA must auto-select a session distinct from the authorized human number');
-assert.match(source,/DIVA_WHATSAPP_SESSION_SWITCH/,'session migration must emit a secret-safe proof marker');
-assert.match(source,/setInterval\(/,'runtime must periodically re-evaluate sessions after a new QR pairing');
-assert.match(source,/sendWhatsAppToChat\(chatId, text, activeDivaSession\)/,'DIVA replies must use the dedicated effective session');
-console.log('DIVA_WHATSAPP_AUTO_SESSION_SWITCH_CONTRACT_OK');
+assert.match(source,/DIVA_WHATSAPP_SESSION/,'DIVA may pin an explicit WhatsScale session');
+assert.match(source,/activeDivaSession\s*=\s*DIVA_WHATSAPP_SESSION\s*\|\|\s*SESSION/,'DIVA must stay on its configured/base session instead of auto-switching');
+assert.doesNotMatch(source,/function selectDivaSession/,'DIVA must not auto-select a different session');
+assert.doesNotMatch(source,/cleanupStaleDivaSubscriptions/,'restart must never delete an existing webhook subscription automatically');
+assert.match(source,/sendWhatsAppToChat\(chatId, text, activeDivaSession\)/,'DIVA replies must use the effective session');
+console.log('DIVA_WHATSAPP_STABLE_SESSION_CONTRACT_OK');
 
-
-assert.match(source,/cleanupStaleDivaSubscriptions/,'session migration must remove stale DIVA-only subscriptions');
-assert.match(source,/webhook_url.*DIVA_WHATSAPP_WEBHOOK_URL/s,'cleanup must scope itself to the DIVA webhook URL');
-console.log('DIVA_WHATSAPP_STALE_SUBSCRIPTION_CLEANUP_CONTRACT_OK');
+assert.match(source,/DIVA_WHATSAPP_GROUP_JID/,'governed group id must come from backend environment');
+assert.match(source,/120363427121075030@g\.us/,'Comercial Mundinho must be the fallback group target for this migration');
+assert.match(source,/existing subscription.*preserved|existing_subscription_preserved/i,'duplicate subscribe must preserve the existing subscription instead of deleting it');
+console.log('DIVA_WHATSAPP_COMERCIAL_GROUP_CONTRACT_OK');
