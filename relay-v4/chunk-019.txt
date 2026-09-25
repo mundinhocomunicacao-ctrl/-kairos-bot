@@ -62,6 +62,7 @@ function startGabiStudioMic(){
   rec.start();
 }
 function activateGabiStudio(){
+  gabiStudioInitReal3d();
   const brief=document.getElementById('gabiStudioBrief');
   const setPath=step=>document.querySelectorAll('[data-studio-step]').forEach(btn=>btn.classList.toggle('active',btn.dataset.studioStep===step));
   document.querySelectorAll('[data-studio-intent]').forEach(btn=>btn.addEventListener('click',()=>{
