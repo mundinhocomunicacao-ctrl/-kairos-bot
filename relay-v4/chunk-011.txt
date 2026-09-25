@@ -1,0 +1,65 @@
+);
+  svg.append(svgNode('circle',{cx:110,cy:110,r,fill:'none',stroke:'#eadfea','stroke-width':22}));
+  const presented=Math.min(1,m.presented/total), proposals=Math.min(1,m.proposals/total);
+  const a=svgNode('circle',{cx:110,cy:110,r,fill:'none',stroke:'var(--pink)','stroke-width':22,'stroke-linecap':'round','stroke-dasharray':presented*c+' '+c,transform:'rotate(-90 110 110)'});
+  const b=svgNode('circle',{cx:110,cy:110,r,fill:'none',stroke:'var(--purple)','stroke-width':10,'stroke-linecap':'round','stroke-dasharray':proposals*c+' '+c,transform:'rotate(-90 110 110)'});
+  svg.append(a,b,svgNode('text',{x:110,y:104,'text-anchor':'middle','font-size':34,'font-weight':900,fill:'currentColor'},m.universe),svgNode('text',{x:110,y:128,'text-anchor':'middle','font-size':11,fill:'#756b77'},'marcas no radar'));
+  root.append(svg);
+}
+function renderRadarCommercialBars(){
+  const root=document.getElementById('radarMovementChart');if(!root)return;root.replaceChildren();
+  const rows=[['Apresentadas','presented'],['Propostas','proposals'],['DMs acompanhadas','dmTracked'],['Respostas DM','dmResponses']];
+  const width=720,height=300,left=160,right=44,top=24,rowH=58,usable=width-left-right,max=Math.max(1,radarCommercialMetrics.universe);
+  const svg=svgNode('svg',{viewBox:'0 0 '+width+' '+height,width:'100%',height:'300',role:'img','aria-label':'Movimento comercial dentro de '+max+' marcas mapeadas'});
+  rows.forEach(([label,key],i)=>{
+    const y=top+i*rowH,value=Number(radarCommercialMetrics[key]||0),bar=Math.max(value?3:0,usable*Math.min(1,value/max));
+    svg.append(svgNode('text',{x:0,y:y+22,'font-size':13,'font-weight':800,fill:'currentColor'},label));
+    svg.append(svgNode('rect',{x:left,y:y+5,width:usable,height:22,rx:11,fill:'#f1ebf1'}));
+    svg.append(svgNode('rect',{x:left,y:y+5,width:bar,height:22,rx:11,fill:i===1?'var(--purple)':'var(--pink)'}));
+    svg.append(svgNode('text',{x:width-right+8,y:y+22,'font-size':13,'font-weight':900,fill:'currentColor'},String(value)));
+  });
+  root.append(svg);
+}
+function renderRadarCommercialCharts(){
+  renderRadarDonut('radarHomeDonut');renderRadarDonut('radarUniverseDonut');renderRadarCommercialBars();
+  const remaining=Math.max(0,radarCommercialMetrics.universe-radarCommercialMetrics.presented);
+  const a=document.getElementById('metricPresentedLegend'),b=document.getElementById('metricProposalLegend'),c=document.getElementById('metricRemainingLegend');
+  if(a)a.textContent=String(radarCommercialMetrics.presented);if(b)b.textContent=String(radarCommercialMetrics.proposals);if(c)c.textContent=String(remaining);
+}
+function renderRadarIbiChart(){
+  const root=document.getElementById('radarIbiChart');if(!root)return;root.replaceChildren();
+  const width=920,height=300,left=48,right=18,top=18,bottom=44,innerW=width-left-right,innerH=height-top-bottom,slot=innerW/radarIbiSeries.length;
+  const svg=svgNode('svg',{viewBox:'0 0 '+width+' '+height,width:'100%',height:'100%',role:'img','aria-label':'IBI, escala de zero a cem, últimos 12 meses'});
+  [0,25,50,75,100].forEach(v=>{const y=top+innerH-(v/100)*innerH;svg.append(svgNode('line',{x1:left,y1:y,x2:width-right,y2:y,stroke:'#eee6ee','stroke-width':1}));svg.append(svgNode('text',{x:left-9,y:y+4,'text-anchor':'end','font-size':10,fill:'#8d818e'},v));});
+  radarIbiSeries.forEach((p,i)=>{const x=left+i*slot+slot*.2,w=slot*.6;svg.append(svgNode('text',{x:x+w/2,y:height-16,'text-anchor':'middle','font-size':10,'font-weight':800,fill:'#756b77'},p.month.toUpperCase()));if(p.value==null){svg.append(svgNode('line',{x1:x+w/2,y1:top+innerH-5,x2:x+w/2,y2:top+innerH,stroke:'#b9afb9','stroke-width':3,'stroke-linecap':'round'}));return;}const h=(p.value/100)*innerH,y=top+innerH-h;svg.append(svgNode('rect',{x,y,width:w,height:h,rx:8,fill:'var(--pink)'}));svg.append(svgNode('text',{x:x+w/2,y:y-7,'text-anchor':'middle','font-size':11,'font-weight':900,fill:'currentColor'},p.value));});
+  root.append(svg);
+}
+function applyRadarMetricsFromFeed(rows){
+  const map={universe:'universe',presented:'presented',proposals:'proposals',dmTracked:'dmTracked',dmResponses:'dmResponses'};
+  safeRadarRows(rows).forEach(row=>{const d=row.data||row,key=map[String(d.metricKey||'')],value=Number(d.metricValue);if(key&&Number.isFinite(value)&&value>=0)radarCommercialMetrics[key]=value;});
+  renderRadarCommercialCharts();renderRadarIbiChart();
+}
+const currentProposalCatalog=[
+{brand:"Fluency Academy",angle:"Vida adulta",front:"Educação / credibilidade",status:"Nova proposta enviada em 24/09 após reunião · aguardando avaliação",updatedAt:"24/09/2026",url:"https://docs.google.com/presentation/d/1OVPq5qUyHDBSQ9ogCfYjt5_iJKeuQe_L/edit?usp=drivesdk&ouid=108727720996210614304&rtpof=true&sd=true"},
+{brand:"Risqué",angle:"Cachos & beleza",front:"Beauty / unhas",status:"Proposta atualizada em 24/09 · material vigente",updatedAt:"24/09/2026",url:"https://docs.google.com/presentation/d/1NVAzP8LsVVgKTbEi8DOqZOeocPEU5CgZ/edit?usp=drivesdk&ouid=108727720996210614304&rtpof=true&sd=true"}
+];
+const proposalHistoryCatalog=[
+{brand:"Fluency Academy",angle:"Vida adulta",front:"Educação / credibilidade",status:"Proposta atualizada em 24/09 · em avaliação",updatedAt:"24/09/2026",url:"https://docs.google.com/presentation/d/1OVPq5qUyHDBSQ9ogCfYjt5_iJKeuQe_L/edit?usp=drivesdk&ouid=108727720996210614304&rtpof=true&sd=true"},
+{brand:"BAIMS",angle:"Cachos & beleza",front:"Beauty / makeup",status:"Aprovada · contato de marketing validado",updatedAt:"",url:""},
+{brand:"Águia Branca",angle:"Verão",front:"Mobilidade / viagem",status:"Aprovada · material solicitado pela marca",updatedAt:"",url:""},
+{brand:"Meu Sapato Preto",angle:"Vida adulta",front:"Moda / calçados",status:"Aprovada · pronta para continuidade",updatedAt:"",url:""},
+{brand:"Constance",angle:"Vida adulta",front:"Moda / calçados",status:"Aprovada · material solicitado pela marca",updatedAt:"",url:""},
+{brand:"Amissima",angle:"Vida adulta",front:"Moda",status:"Aprovada · outbound realizado",updatedAt:"",url:""},
+{brand:"Airbnb",angle:"Brasil ↔ EUA",front:"Viagem internacional",status:"Aprovada · a prospectar",updatedAt:"16/09/2026",url:"https://www.canva.com/d/XOoKtgWtmQiKTH7"},
+{brand:"Canva",angle:"Vida adulta",front:"Tecnologia / criação",status:"Aprovada",updatedAt:"15/09/2026",url:"https://www.canva.com/d/Eo8xzMng3IFFpY-"},
+{brand:"CVC",angle:"Verão",front:"Viagens pelo Brasil",status:"Aprovada / salva",updatedAt:"15/09/2026",url:"https://www.canva.com/d/H8dtwJZLoWZkyP8"},
+{brand:"WeMobi",angle:"Verão",front:"Mobilidade / verão",status:"Resposta humana · canal de marketing indicado",updatedAt:"15/09/2026",url:"https://www.canva.com/d/6WAeYVkoIMK96yG"},
+{brand:"Buser",angle:"Verão",front:"Mobilidade / verão",status:"Aprovada / salva · conversa aberta",updatedAt:"15/09/2026",url:"https://www.canva.com/d/PRcliIR2yrwukoW"},
+{brand:"Australian Gold",angle:"Verão",front:"Beleza / solar",status:"Aprovada / salva",updatedAt:"",url:"https://www.canva.com/d/frS0moHvTXkhDOr"},
+{brand:"Tinder",angle:"Vida adulta",front:"Lifestyle / relacionamento",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/9ahIAetMj42nndT"},
+{brand:"Quem Disse, Berenice?",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/4-CvYwiYZF290yR"},
+{brand:"iFood",angle:"Vida adulta",front:"Consumo / rotina",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/IJfWj3uOOdjZkH5"},
+{brand:"Reformation",angle:"Vida adulta",front:"Moda / transição adulta",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/zCLOl8e9Q_i3g2z"},
+{brand:"Catharine Hill",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/wX0HPmVVDuNBJEV"},
+{brand:"Nestlé Brasil",angle:"Vida adulta",front:"Consumo / rotina",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/yt4DIZZJn9qlozO"},
+{brand:"Skence",angle:"Cachos & beleza",front:"Hair care",status:"Aprovada · a prospectar",updatedAt:"",url:"https://w
