@@ -147,3 +147,9 @@ const startupCanaryIndex=startupBlock.indexOf("await runDivaGatewayCanary()");
 const autoSubscribeIndex=startupBlock.indexOf("ensureDivaSubscription()");
 assert.ok(startupCanaryIndex>=0&&autoSubscribeIndex>=0&&startupCanaryIndex<autoSubscribeIndex,'direct Gateway canary must run before provider subscription so HTTP 402 cannot hide Gateway health');
 console.log('DIVA_GATEWAY_CANARY_BEFORE_PROVIDER_CONTRACT_OK');
+
+assert.match(source,/probeWebhookRotationEntitlement/,'restart recovery must probe Starter+ entitlement before rotating a lost signing secret');
+assert.match(source,/\/v1\/groups\/[\s\S]{0,120}participants\?limit=1/,'entitlement probe must be read-only and scoped to the governed group');
+assert.match(source,/if\(!entitled\)[\s\S]{0,220}existing subscription preserved/,'failed entitlement probe must preserve the existing subscription');
+assert.match(source,/if\(entitled\)[\s\S]{0,500}method:\s*['"]DELETE['"]/,'subscription may be deleted only after Starter+ entitlement is proven');
+console.log('DIVA_WHATSAPP_SAFE_SECRET_RECOVERY_CONTRACT_OK');
