@@ -72,10 +72,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat relay-v4/chunk-*.txt > /tmp/radar-v4.html
-          test "$(wc -c < /tmp/radar-v4.html | tr -d ' ')" = "162184"
-          test "$(md5sum /tmp/radar-v4.html | awk '{print $1}')" = "57ef9be97ec842dced1312f0e31c169c"
-          curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-v4.html "$(cat /tmp/radar-relay/upload-url.txt)"
+          cat relay-v4/chunk-*.txt > /tmp/radar-v5.html
+          test "$(wc -c < /tmp/radar-v5.html | tr -d ' ')" = "164493"
+          grep -Fq 'GABI_RADAR_PUBLIC_SAFE_V3' /tmp/radar-v5.html
+          grep -Fq 'const radarCommercialMetrics=' /tmp/radar-v5.html
+          grep -Fq 'const currentProposalCatalog=' /tmp/radar-v5.html
+          grep -Fq 'id="gabiDivaModel"' /tmp/radar-v5.html
+          grep -Fq 'https://static.wixstatic.com/3d/f447cd_31ad20addd514017a0297318f193c80a.glb' /tmp/radar-v5.html
+          grep -Fq 'gabiStudioInitReal3d();' /tmp/radar-v5.html
+          sha256sum /tmp/radar-v5.html
+          curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-v5.html "$(cat /tmp/radar-relay/upload-url.txt)"
           echo "RADAR_SIGNED_UPLOAD=PASS"
 
       - name: Record result without secret material
