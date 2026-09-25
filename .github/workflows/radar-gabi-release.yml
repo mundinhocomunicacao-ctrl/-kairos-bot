@@ -19,6 +19,7 @@ jobs:
       WIX_GABI_RADAR_API_KEY: ${{ secrets.WIX_GABI_RADAR_API_KEY }}
       WIX_MUNDO_API_KEY: ${{ secrets.WIX_MUNDO_API_KEY }}
     steps:
+      - uses: actions/checkout@v4
       - name: Verify release credential
         shell: bash
         run: |
@@ -28,12 +29,8 @@ jobs:
             echo "WIX_RELEASE_CREDENTIAL=MISSING"
             exit 1
           fi
-
-      - name: Run immutable Radar release
+      - name: Run repository Radar release
         shell: bash
         run: |
-          curl --fail --silent --show-error --location --retry 5 --retry-all-errors \
-            "https://raw.githubusercontent.com/mundinhocomunicacao-ctrl/-kairos-bot/45a5e47a1543c45c3f767f5a0e85b0ec0f1ddffb/deploy/radar-gabi/release-clean.sh" \
-            -o /tmp/gabi-radar-release-clean.sh
-          chmod +x /tmp/gabi-radar-release-clean.sh
-          /tmp/gabi-radar-release-clean.sh
+          chmod +x deploy/radar-gabi/release-clean.sh
+          deploy/radar-gabi/release-clean.sh
