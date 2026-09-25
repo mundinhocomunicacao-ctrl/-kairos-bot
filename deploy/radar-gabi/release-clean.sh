@@ -20,7 +20,18 @@ done
 
 cp "$RADAR_DIR/index.html" "$RADAR_DIR/dist/index.html"
 cd "$RADAR_DIR"
-npx --yes @wix/cli@latest whoami
+if CI=1 npx --yes @wix/cli@latest whoami >/tmp/gabi-radar-wix-whoami.txt 2>&1; then
+  echo "WIX_CLI_CACHED_SESSION=PASS"
+else
+  WIX_CLI_KEY="${WIX_GABI_RADAR_API_KEY:-${WIX_MUNDO_API_KEY:-}}"
+  if [ -z "$WIX_CLI_KEY" ]; then
+    echo "WIX_CLI_API_KEY_MISSING"
+    exit 1
+  fi
+  CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_CLI_KEY"
+  unset WIX_CLI_KEY
+fi
+CI=1 npx --yes @wix/cli@latest whoami
 CI=1 npx --yes @wix/cli@latest release
 
 CACHE_BUST="$(date +%s)"
