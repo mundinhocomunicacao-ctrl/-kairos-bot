@@ -1,0 +1,51 @@
+olvida para conectar deslocamentos pelo Brasil, férias e verão à rotina da Gabriella. Houve resposta e discussão de vouchers. Status: conversa aberta, com material aprovado já existente.",
+"Revolut":"A proposta explorou a vida Brasil–Estados Unidos da Gabriella e avançou até envio de material. O histórico comercial foi preservado no radar, mesmo sem ser uma prioridade ativa neste momento.",
+"Lola From Rio":"A apresentação avançou para envio de produto. É uma resposta humana concreta e cria uma relação inicial com uma marca de hair care aderente ao território de cachos.",
+"Nick Vick":"Existe material/proposta localizada, mas o histórico também registra uma negativa. Por isso a marca aparece fria até que exista uma nova abertura comercial documentada."
+};
+const contextCardRules={
+home:{title:"Visão geral",target:"home",terms:[],now:"A leitura reúne comercial, agências e imagem em uma única superfície.",changed:"Novas atualizações entram como movimento vivo sem apagar a base consolidada.",why:"Separa novidade, histórico e ausência de evidência para não transformar silêncio em fato.",next:"Abra a frente que quer entender e compare o movimento recente com a leitura consolidada."},
+marcas:{title:"Marcas",target:"marcas",terms:["comercial","marca","proposta"],now:"O Radar separa universo mapeado, marcas apresentadas, propostas e avanços reais.",changed:"Respostas e novos movimentos atualizam as marcas envolvidas; totais estruturais só mudam após confirmação dos dados.",why:"Acesso a uma marca não é o mesmo que abordagem, resposta ou oportunidade concreta.",next:"Abra as marcas em movimento e depois confronte o status com a proposta correspondente."},
+agencias:{title:"Agências parceiras",target:"agencias",terms:["agência","agencia","casting","briefing"],now:"Agências e parceiros são medidos fora do total de marcas porque funcionam como portas 1→N.",changed:"A leitura só avança quando surge relação validada, briefing, casting, shortlist ou outro movimento documentado.",why:"Misturar agências e marcas no mesmo funil inflaria artificialmente a operação.",next:"Priorize relações com entidade resolvida e contexto público suficiente para entender o caminho de entrada."},
+pr:{title:"Imprensa & imagem",target:"pr",terms:["pr","imprensa","press","imagem","clipping","matéria","materia"],now:"Clipping, releases e intervenções de imagem são camadas diferentes da mesma frente de reputação.",changed:"Novas matérias entram deduplicadas; correções de enquadramento aparecem como intervenção, não como resultado positivo.",why:"PR mede como a trajetória é enquadrada e quanto a cobertura constrói marca, não apenas volume.",next:"Leia clipping, IBI e intervenções antes de concluir se houve ganho de imagem."},
+movimento:{title:"Movimento comercial",target:"movimento",terms:["comercial","proposta","avaliação","avaliacao","continuidade"],now:"O caminho comercial é lido como radar → apresentação → proposta → avanço.",changed:"O principal movimento acontece no estado de cada marca, não apenas nos totais do funil.",why:"É o status e sua consequência que mostram onde existe oportunidade real.",next:"Abra Propostas ou Marcas para entender quais casos mudaram de estado."},
+radar:{title:"Radar de marcas",target:"radar",terms:["comercial","marca","proposta"],now:"A base comercial reúne camadas com denominadores diferentes e preserva histórico.",changed:"Eventos recentes atualizam somente as entidades relacionadas e não reescrevem o passado.",why:"Isso evita transformar sinais diferentes em um funil artificial.",next:"Cruze categoria, marca, histórico e estado atual antes de interpretar oportunidade."},
+biblioteca:{title:"Biblioteca de propostas",target:"biblioteca",terms:["comercial","proposta","avaliação","avaliacao"],now:"A biblioteca mostra materiais vigentes ou aprovados ligados ao estado comercial conhecido.",changed:"Um novo evento pode atualizar o status, mas não altera o material ou afirma envio sem evidência.",why:"Aprovação, envio, avaliação e histórico pausado são estados diferentes.",next:"Abra o material vigente e compare-o com a ficha e o movimento recente da marca."},
+propostas:{title:"Propostas atuais",target:"biblioteca",terms:["comercial","proposta","avaliação","avaliacao"],now:"Propostas aprovadas, enviadas e em avaliação convivem na mesma biblioteca com status explícito.",changed:"O feed vivo atualiza status apenas quando existe um movimento confirmado.",why:"Evita confundir material pronto com proposta já enviada ou oportunidade em avaliação.",next:"Comece pelos itens com movimento recente e valide a consequência comercial antes da próxima ação."},
+apresentadas:{title:"Marcas apresentadas",target:"movimento",terms:["comercial","marca"],now:"Uma marca entra nesta camada quando há evidência de abordagem e deduplicação por entidade.",changed:"Novos contatos não aumentam automaticamente o total se forem da mesma marca.",why:"A métrica precisa representar marcas únicas, não volume de mensagens.",next:"Procure quais apresentações viraram resposta, proposta ou continuidade."},
+categorias:{title:"Categorias comerciais",target:"categoria",terms:["comercial","marca"],now:"Categorias organizam aderência e histórico por território comercial.",changed:"Uma categoria ganha relevância quando novas marcas ou movimentos reforçam aquele território.",why:"Ajuda a enxergar concentração de portas sem transformar afinidade em garantia de campanha.",next:"Abra as marcas da categoria e compare temperatura, proposta e contexto."},
+angulos:{title:"Ângulos criativos",target:"biblioteca",terms:["proposta","comercial"],now:"Ângulos organizam a lógica criativa usada para conectar a história da Gabi às marcas.",changed:"Só entram novos materiais quando a proposta aprovada ou vigente foi reconciliada.",why:"Mantém a leitura criativa ligada a um artefato comercial real, não a ideias soltas.",next:"Abra o território e compare quais marcas receberam materiais dentro dele."}
+,
+studio:{title:"DIVA Studio",target:"studio",terms:["social","conteudo","conteúdo","imagem","pr"],now:"A DIVA transforma sinais do Radar em matéria-prima criativa.",changed:"Novos sinais aprovados passam a enriquecer ideias, roteiros e referências.",why:"A criatividade fica conectada ao momento real e ao que faz sentido para você.",next:"Escolha uma entrada, fale com a DIVA ou escreva um briefing."}};
+let latestClientSafeRows=[];
+function contextCardHit(key,rows){
+  const rule=contextCardRules[key]||contextCardRules.home;
+  if(!rows.length)return null;
+  if(!rule.terms.length)return rows[0]||null;
+  return rows.find(row=>{
+    const d=row.data||row;
+    const hay=normalizedLiveText([d.category,d.status,d.title,d.summary].filter(Boolean).join(' '));
+    return rule.terms.some(term=>hay.includes(normalizedLiveText(term)));
+  })||null;
+}
+function showContextCard(key,sourceCard=null){
+  const rule=contextCardRules[key]||contextCardRules.home;
+  const rail=document.getElementById('contextCardRail');
+  if(!rail)return false;
+  const target=document.getElementById(rule.target)||document.getElementById('home');
+  if(target&&rail.parentElement!==target)target.prepend(rail);
+  rail.hidden=false;rail.dataset.contextSource=key;rail.dataset.contextLive='false';
+  const cardTitle=sourceCard?.querySelector?.('.title')?.textContent?.trim();
+  document.getElementById('contextCardTitle').textContent=cardTitle||rule.title;
+  document.getElementById('contextNow').textContent=rule.now;
+  document.getElementById('contextChanged').textContent=rule.changed;
+  document.getElementById('contextWhy').textContent=rule.why;
+  document.getElementById('contextNext').textContent=rule.next;
+  document.getElementById('contextCardSource').textContent='base consolidada';
+  const contextLive=document.getElementById('contextLive');
+  contextLive.textContent='Base consolidada · aguardando novo movimento.';
+  updateContextCardFromFeed(latestClientSafeRows);
+  return true;
+}
+function updateContextCardFromFeed(rows){
+  const rail=document.getElementById('contextCardRail');
