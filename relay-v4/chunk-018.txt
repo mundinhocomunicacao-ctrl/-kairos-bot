@@ -1,0 +1,124 @@
+chSynthesis.cancel();
+    gabiStudioSetVoiceStatus('Parei. Diga “continue” quando quiser.');
+    return true;
+  }
+  if(normalized.includes('continue')){
+    if('speechSynthesis' in window&&window.speechSynthesis.paused)window.speechSynthesis.resume();
+    else if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech);
+    gabiStudioSetVoiceStatus('Continuando.');
+    return true;
+  }
+  if(normalized.includes('repete')||normalized.includes('repita')){
+    if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech);
+    return true;
+  }
+  return false;
+}
+function gabiStudioBlock(title,value,full=false,list=false){
+  const box=document.createElement('div');box.className='studioResultBlock'+(full?' full':'');
+  const label=document.createElement('b');label.textContent=title;box.appendChild(label);
+  if(list){
+    const ul=document.createElement('ul');(Array.isArray(value)?value:[]).forEach(item=>{const li=document.createElement('li');li.textContent=feedText(item,700);ul.appendChild(li)});box.appendChild(ul);
+  }else if(title==='IDEIA'){
+    const h=document.createElement('h3');h.textContent=feedText(value,1200);box.appendChild(h);
+  }else{
+    const p=document.createElement('p');p.textContent=feedText(value,1600);box.appendChild(p);
+  }
+  return box;
+}
+function renderGabiStudioResult(payload){
+  const raw=payload?.result||{},proposalMode=raw.mode==='proposal'||!!raw.proposal;
+  const result={
+    mode:proposalMode?'proposal':'content',
+    headline:gabiStudioPublicText(raw.headline,220),
+    idea:gabiStudioPublicText(raw.idea||raw.headline,1200),
+    hook:gabiStudioPublicText(raw.hook,500),
+    script:(Array.isArray(raw.script)?raw.script:[]).map(x=>gabiStudioPublicText(x,600)).filter(Boolean),
+    shotList:(Array.isArray(raw.shotList)?raw.shotList:[]).map(x=>gabiStudioPublicText(x,320)).filter(Boolean),
+    production:gabiStudioPublicText(raw.production,900),
+    caption:gabiStudioPublicText(raw.caption,800)
+  };
+  if(proposalMode){
+    const p=raw.proposal||{};
+    result.proposal={
+      opportunity:gabiStudioPublicText(p.opportunity,1200),
+      talentFit:gabiStudioPublicText(p.talentFit,1200),
+      ideaName:gabiStudioPublicText(p.ideaName,220),
+      concept:gabiStudioPublicText(p.concept,1600),
+      execution:(Array.isArray(p.execution)?p.execution:[]).map(x=>gabiStudioPublicText(x,700)).filter(Boolean),
+      brandRole:gabiStudioPublicText(p.brandRole,1200),
+      proof:(Array.isArray(p.proof)?p.proof:[]).map(x=>gabiStudioPublicText(x,500)).filter(Boolean),
+      extensions:(Array.isArray(p.extensions)?p.extensions:[]).map(x=>gabiStudioPublicText(x,500)).filter(Boolean),
+      nextStep:gabiStudioPublicText(p.nextStep,900)
+    };
+  }
+  gabiStudioLastResult=result;
+  const panel=document.getElementById('gabiStudioResult'),primary=document.getElementById('gabiStudioResultPrimary'),grid=document.getElementById('gabiStudioResultGrid'),refs=document.getElementById('gabiStudioRefs'),details=document.getElementById('gabiStudioResultDetails');
+  primary.replaceChildren();grid.replaceChildren();refs.replaceChildren();details.open=false;
+  if(proposalMode){
+    const p=result.proposal;
+    primary.append(
+      gabiStudioBlock('OPORTUNIDADE',p.opportunity||result.idea,true),
+      gabiStudioBlock('POR QUE GABI',p.talentFit||''),
+      gabiStudioBlock('IDEIA CENTRAL',[p.ideaName,p.concept].filter(Boolean).join(' — '),true),
+      gabiStudioBlock('COMO ACONTECE',p.execution||[],true,true)
+    );
+    grid.append(
+      gabiStudioBlock('PAPEL DA MARCA',p.brandRole||'',true),
+      gabiStudioBlock('PROVAS',p.proof||[],false,true),
+      gabiStudioBlock('DESDOBRAMENTOS',p.extensions||[],false,true),
+      gabiStudioBlock('PRÓXIMO PASSO',p.nextStep||'',true)
+    );
+  }else{
+    primary.append(
+      gabiStudioBlock('IDEIA',result.idea,true),
+      gabiStudioBlock('GANCHO',result.hook||''),
+      gabiStudioBlock('ROTEIRO',result.script.slice(0,4),false,true)
+    );
+    grid.append(
+      gabiStudioBlock('CENAS',result.shotList||[],false,true),
+      gabiStudioBlock('PRODUÇÃO',result.production||''),
+      gabiStudioBlock('LEGENDA',result.caption||'',true)
+    );
+  }
+  (Array.isArray(payload?.references)?payload.references:[]).forEach(ref=>{
+    const url=safePublicUrl(ref.url);if(!url)return;
+    const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=gabiStudioPublicText(ref.label,120);refs.appendChild(a);
+  });
+  panel.classList.add('ready');
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+  const spoken=proposalMode
+    ?['Gabi, montei uma proposta pra você.',result.proposal.opportunity,result.proposal.ideaName?('A ideia central é '+result.proposal.ideaName):result.proposal.concept,'Se quiser, eu posso deixar mais comercial, mais criativa ou mais curta.']
+    :['Gabi, pensei em uma direção pra você.',result.idea,result.hook?'O gancho pode ser: '+result.hook:'','Se quiser, eu ajusto com você.'];
+  gabiStudioSpeak(spoken.filter(Boolean).join(' '));
+}
+function gabiStudioLocalFallback(intent,brief,context=[]){
+  const cleanBrief=feedText(brief,700);
+  const ctx=(Array.isArray(context)?context:[]).slice(0,4).map(x=>feedText([x.title,x.summary,x.status].filter(Boolean).join(' · '),240)).filter(Boolean);
+  const seed=cleanBrief||ctx[0]||'rotina criativa entre Brasil e Estados Unidos';
+  const headline=intent==='record_now'?'Uma cena simples que já existe na sua rotina':intent==='reference'?'Pegue a linguagem, não copie a ideia':intent==='idea'?'Sua ideia, com uma virada visual':'Brasil ↔ EUA em um detalhe que só você percebe';
+  const asksProposal=/\b(proposta|parceria|campanha|branded content)\b/i.test(cleanBrief);
+  const idea=asksProposal
+    ? 'A proposta precisa ligar a marca a uma situação concreta da sua vida e dar a ela uma função que realmente mude o que acontece.'
+    : intent==='record_now'
+      ? 'Tenho um caminho simples para gravar agora: escolha um detalhe real do momento, comece já dentro da situação e deixe a história acontecer sem introdução longa.'
+      : intent==='reference'
+        ? 'Vamos usar a referência só como linguagem — ritmo, enquadramento ou sensação — e reconstruir tudo a partir de uma situação verdadeira da sua rotina.'
+        : 'Vamos pegar o tema que você trouxe e transformar em uma observação pessoal, simples de entender e fácil de gravar.';
+  const hook=intent==='record_now'?'“Eu ia gravar outra coisa, mas isso acabou de acontecer…”':'“Tem uma parte de viver entre dois lugares que ninguém me contou.”';
+  const script=[
+    '0–3s · Abra já dentro da situação, sem introdução longa.',
+    '3–10s · Mostre o detalhe concreto e conte o que você pensava antes.',
+    '10–20s · Faça a virada: o que mudou na prática, com uma reação ou exemplo real.',
+    '20–30s · Feche com uma pergunta simples para puxar identificação nos comentários.'
+  ];
+  const shotList=['Close espontâneo falando com a câmera','Plano detalhe do objeto/ambiente que prova a história','Plano médio em movimento para dar respiro','Último close com a pergunta final'];
+  const production='Vertical 9:16 · luz natural · 20–35s · edição leve · som ambiente preservado quando ajudar a sensação de rotina.';
+  const caption='Tem coisas que só fazem sentido quando a gente vive entre dois mundos. Qual detalhe da sua rotina mudou sem você perceber?';
+  const query=encodeURIComponent((cleanBrief||'rotina Brasil Estados Unidos creator vlog').slice(0,180));
+  const proposal=asksProposal?{
+    opportunity:'Existe uma oportunidade de transformar o pedido em uma história específica para a marca, sem depender de uma ideia genérica de influência.',
+    talentFit:'A Gabi entra pela parte real da vida, trajetória ou comportamento que torna essa parceria diferente de simplesmente contratar alcance.',
+    ideaName:'A MARCA MUDA O QUE ACONTECE',
+    concept:'A ideia começa numa situação concreta e faz a marca provocar uma decisão, acesso, transformação ou solução dentro da história.',
+    execution:['Começar por uma situação re
