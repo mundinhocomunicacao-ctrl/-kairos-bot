@@ -1,0 +1,3 @@
+DIVA3D_UPLOAD_REQUEST
+id=20260925-2000-diva3d
+asset=diva-avatar.glb
