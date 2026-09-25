@@ -1,0 +1,808 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Radar da Gabi · Mundinho</title><style>
+:root{--bg:#fbf8fc;--card:#fff;--ink:#24162c;--muted:#74697a;--line:#eadfea;--pink:#ff4fa3;--purple:#8455c7;--green:#38b987;--amber:#f4aa3c;--red:#e85b68}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink)}main{max-width:1280px;margin:auto;padding:32px 22px 70px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.ey{font-size:12px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--pink)}h1{font-size:clamp(34px,5vw,58px);line-height:1;letter-spacing:-.055em;margin:10px 0 10px}.sub{font-size:19px;color:var(--muted);margin:0;max-width:760px}.tabs{display:flex;gap:8px;margin:30px 0 18px;overflow:auto}.tab{border:1px solid var(--line);background:#fff;padding:11px 16px;border-radius:999px;font-weight:800;cursor:pointer;white-space:nowrap}.tab.active{background:var(--ink);color:#fff}.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.clickable{cursor:pointer;transition:.18s}.clickable:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(58,29,69,.09)}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 10px 35px rgba(58,29,69,.045)}.span4{grid-column:span 4}.span5{grid-column:span 5}.span7{grid-column:span 7}.span8{grid-column:span 8}.span12{grid-column:span 12}.title{font-size:20px;font-weight:900;letter-spacing:-.025em}.explain{font-size:15px;line-height:1.55;color:var(--muted);margin:6px 0 0}.big{font-size:46px;font-weight:950;letter-spacing:-.06em}.mini{font-size:12px;color:var(--muted)}.donutWrap{display:flex;align-items:center;gap:25px;margin-top:18px}.donut{width:230px;aspect-ratio:1;border-radius:50%;background:conic-gradient(var(--pink) 0 12.5%,var(--purple) 12.5% 16.6%,#eadfea 16.6% 100%);position:relative;flex:none}.donut:after{content:"";position:absolute;inset:44px;background:white;border-radius:50%}.donutCenter{position:absolute;inset:0;z-index:2;display:grid;place-content:center;text-align:center}.donutCenter b{font-size:34px}.legend{display:grid;gap:12px}.lg{display:grid;grid-template-columns:12px 1fr auto;gap:9px;align-items:center;font-size:14px}.dot{width:12px;height:12px;border-radius:4px}.barrow{display:grid;grid-template-columns:120px 1fr 46px;gap:10px;align-items:center;margin:13px 0;font-size:14px}.track{height:12px;background:#f1eaf1;border-radius:999px;overflow:hidden}.fill{height:100%;border-radius:999px;background:var(--pink)}.cloud{min-height:310px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:10px 16px;padding:18px}.brand{cursor:pointer;font-weight:900;line-height:1;transition:.15s}.brand:hover{transform:scale(1.07)}.hot{color:var(--green)}.warm{color:var(--amber)}.cool{color:#a69aa9}.neg{color:var(--red)}.s1{font-size:18px}.s2{font-size:24px}.s3{font-size:31px}.s4{font-size:39px}.statusline{display:flex;gap:10px;flex-wrap:wrap;margin-top:13px}.pill{font-size:12px;font-weight:850;border-radius:999px;padding:7px 10px;background:#f5eff5}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.step{padding:17px;border-radius:18px;background:#faf6fa}.step b{font-size:27px}.step span{display:block;font-size:13px;font-weight:800;margin-top:5px}.step p{font-size:12px;color:var(--muted);line-height:1.4}.sectionHead{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:32px 0 12px}.sectionHead h2{margin:0;font-size:28px;letter-spacing:-.04em}.modal{position:fixed;inset:0;background:#26172e88;display:none;place-items:center;padding:18px;z-index:10}.modal.open{display:grid}.modalBox{background:#fff;max-width:650px;width:100%;border-radius:28px;padding:26px;max-height:85vh;overflow:auto}.close{float:right;border:0;background:#f3edf3;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer}.context{font-size:16px;line-height:1.6;color:var(--muted)}.call{background:#f7f1f7;border-radius:18px;padding:16px;margin-top:15px}.foot{font-size:12px;color:var(--muted);margin-top:24px}@media(max-width:820px){.span4,.span5,.span7,.span8{grid-column:1/-1}.donutWrap{flex-direction:column;align-items:flex-start}.flow{grid-template-columns:1fr 1fr}.top{display:block}.cloud{min-height:260px}.barrow{grid-template-columns:95px 1fr 40px}}
+.pressGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.pressItem{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}.pressThumb{height:118px;background:linear-gradient(135deg,#ead9ee,#f6eef7);display:flex;align-items:center;justify-content:center;font-size:30px}.pressBody{padding:14px}.pressBody a{color:var(--purple);font-weight:800;text-decoration:none}.brandActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.brandActions a,.brandActions button{border:0;border-radius:999px;padding:10px 14px;background:#f1e6f3;color:var(--purple);font-weight:800;text-decoration:none;cursor:pointer}.dossier{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:#fcf9fd}.dossier b{display:block;margin-bottom:5px}@media(max-width:760px){.pressGrid{grid-template-columns:1fr}}.reconGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metricBox{padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff}.metricBox b{font-size:28px;display:block}.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:16px}.flow>div{padding:12px;border-radius:14px;background:#f6eff7;text-align:center;font-size:12px}.flow b{display:block;font-size:20px}.evidenceList{display:grid;gap:10px}.evidence{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.evidence small{display:block;margin-top:5px;color:#6e6370}@media(max-width:760px){.reconGrid,.flow{grid-template-columns:1fr 1fr}}.ibiChart{height:310px;display:flex;align-items:flex-end;gap:10px;padding:28px 14px 38px;border:1px solid var(--line);border-radius:20px;background:repeating-linear-gradient(to top,#fff 0,#fff 54px,#f3edf4 55px);position:relative;overflow:hidden}.ibiChart:before{content:"100\A75\A50\A25";white-space:pre;position:absolute;left:10px;top:18px;font-size:10px;line-height:55px;color:#a294a6}.ibiCol{flex:1;height:220px;min-width:34px;position:relative;text-align:center;display:flex;flex-direction:column;justify-content:flex-end}.ibiBar{width:72%;margin:0 auto;border-radius:12px 12px 5px 5px;background:var(--pink);min-height:5px;box-shadow:0 7px 16px rgba(132,85,199,.16);transition:.2s}.ibiCol:hover .ibiBar{transform:translateY(-3px)}.ibiVal{font-size:13px;font-weight:900;margin-bottom:6px}.ibiMonth{font-size:11px;color:#756b77;position:absolute;left:50%;transform:translateX(-50%);bottom:-25px;text-transform:uppercase;font-weight:800;letter-spacing:.04em}.ibiCol:has(.ibiVal:first-child){opacity:1}.formula{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.formula>div{padding:10px;border-radius:12px;background:#f7f0f8;font-size:11px}.formula b{display:block;font-size:16px}.areaHub{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.areaHub .call{cursor:pointer}.areaHub .call:hover{transform:translateY(-2px)}.agencyCard{padding:13px;border:1px solid var(--line);border-radius:14px;background:#fff}.agencyCard b{display:block}.agencyCard a{font-size:12px;font-weight:800;color:var(--purple);text-decoration:none}.agencyNet{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.agencyCard{min-height:104px;display:flex;flex-direction:column;justify-content:flex-start;gap:5px}.agencyCard b{font-size:15px}.agencyCard small{line-height:1.4}.agencyCloud{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center}.agencyCloud .pill{white-space:normal;line-height:1.2;padding:9px 12px}@media(max-width:760px){.formula,.areaHub{grid-template-columns:1fr 1fr}.ibiChart{height:300px;gap:7px;padding-left:4px;padding-right:4px}.ibiCol{min-width:20px}.agencyNet{grid-template-columns:1fr}}.pressCover{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;border-radius:13px;border:1px solid var(--line);background:#eee;display:block}.pressGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.pressItem{border:1px solid var(--line);border-radius:16px;padding:10px;background:#fff}.pressItem a{text-decoration:none;color:inherit}.pressItem h4{margin:9px 2px 4px;font-size:14px;line-height:1.25}.pressItem small{display:block;margin:0 2px 4px;color:#756b77}@media(max-width:760px){.pressGrid{grid-template-columns:1fr}}.cloud{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:center!important;gap:14px 18px!important;padding:24px 12px!important;line-height:1.15!important}.cloud .brand{display:inline-flex!important;align-items:center;justify-content:center;white-space:nowrap!important;margin:0!important;padding:7px 11px!important;border-radius:999px;min-height:30px;letter-spacing:-.01em}.cloud .s1{font-size:13px!important}.cloud .s2{font-size:16px!important}.cloud .s3{font-size:20px!important}.cloud .s4{font-size:25px!important}.cloud .s5{font-size:31px!important}.cloud .s6{font-size:38px!important}@media(max-width:760px){.cloud{gap:10px 12px!important;padding:18px 4px!important}.cloud .s5{font-size:26px!important}.cloud .s6{font-size:31px!important}.ibiChart{height:310px;overflow-x:auto;justify-content:flex-start}.ibiCol{flex:0 0 42px}}
+/* RADAR VISUAL SYSTEM · client premium · 2026-09-19 */
+:root{--bg:#f8f5f8;--card:#fff;--ink:#211626;--muted:#776c79;--line:#eee6ee;--pink:#f34897;--pink-soft:#fff0f7;--purple:#7952a8;--green:#2da978;--amber:#d99831;--red:#d95362;--shadow:0 14px 42px rgba(58,29,69,.055);--shadow-hover:0 22px 58px rgba(58,29,69,.10)}
+body{background:radial-gradient(circle at 10% 0%,#fff 0,#fbf7fa 26%,transparent 52%),var(--bg);-webkit-font-smoothing:antialiased}
+main{max-width:1320px;padding:42px 28px 84px}
+.top{align-items:flex-end;padding:12px 2px 8px}.top>div:first-child{max-width:850px}.top>.mini{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.72);backdrop-filter:blur(12px);font-weight:750}
+.ey{font-size:11px;letter-spacing:.16em;color:#c52d79}h1{font-size:clamp(42px,5.4vw,70px);line-height:.94;letter-spacing:-.065em;max-width:900px;margin:13px 0 15px}.sub{font-size:20px;line-height:1.45;max-width:720px}
+.tabs{position:sticky;top:12px;z-index:8;margin:30px 0 24px;padding:6px;width:max-content;max-width:100%;border:1px solid rgba(234,223,234,.85);border-radius:999px;background:rgba(255,255,255,.82);box-shadow:0 10px 30px rgba(58,29,69,.06);backdrop-filter:blur(18px)}.tab{border:0;background:transparent;padding:10px 16px;color:var(--muted)}.tab.active{background:var(--ink);box-shadow:0 6px 16px rgba(33,22,38,.16)}
+.grid{gap:16px}.card{border-color:rgba(234,223,234,.9);border-radius:26px;padding:24px;box-shadow:var(--shadow);overflow:hidden}.clickable{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.clickable:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:#e5d5e3}
+.title{font-size:21px;line-height:1.12;letter-spacing:-.035em}.explain{line-height:1.62;margin-top:8px}.big{font-size:52px;line-height:.95;color:var(--ink);margin:7px 0 5px}.mini{line-height:1.4}
+.sectionHead{margin:42px 2px 16px}.sectionHead h2{font-size:34px;line-height:1.05;letter-spacing:-.05em;max-width:760px}
+/* corrected pink bars: single semantic color, visible minimum, clean baseline */
+.barrow{grid-template-columns:128px minmax(90px,1fr) 52px;gap:12px;margin:16px 0}.barrow>span{font-size:13px;font-weight:760;color:#574b5a}.barrow>b{text-align:right;font-size:14px}.track{height:10px;background:#f2ebf0;border:1px solid #eee4ec;box-shadow:inset 0 1px 2px rgba(58,29,69,.03)}.fill{min-width:4px;background:var(--pink);box-shadow:0 3px 10px rgba(243,72,151,.18)}
+.donut{background:conic-gradient(var(--pink) 0 12.5%,#b38ad0 12.5% 16.6%,#eee7ed 16.6% 100%);box-shadow:inset 0 0 0 1px rgba(58,29,69,.025)}.donut:after{inset:47px}.donutCenter b{font-size:38px;letter-spacing:-.05em}
+.flow{gap:10px}.step,.flow>div{background:#faf7fa;border:1px solid #f0e8ef}.step b,.flow b{letter-spacing:-.04em}.pill{background:#f7f2f6;border:1px solid #eee4ec;padding:8px 11px}.statusline{gap:8px}
+.cloud{background:linear-gradient(180deg,#fff,#fcf9fb);border-radius:20px}.cloud .brand{border:1px solid transparent}.cloud .brand:hover{background:#fff;box-shadow:0 8px 20px rgba(58,29,69,.08);border-color:var(--line)}
+.pressItem,.metricBox,.agencyCard,.evidence{border-color:var(--line);box-shadow:0 8px 24px rgba(58,29,69,.035)}.pressItem{border-radius:20px}.pressCover{border-radius:15px}.brandActions a,.brandActions button{background:var(--pink-soft);color:#b7256d}.dossier,.call{background:#faf7fa;border:1px solid #efe6ee}
+.ibiChart{height:330px;border-color:var(--line);border-radius:22px;background:repeating-linear-gradient(to top,#fff 0,#fff 54px,#f4eef3 55px);padding-top:30px}.ibiBar{width:64%;border-radius:10px 10px 4px 4px;background:var(--pink);box-shadow:0 8px 18px rgba(243,72,151,.16)}.ibiVal{font-size:12px}.ibiMonth{font-size:10px;letter-spacing:.06em}
+.modal{background:rgba(33,22,38,.58);backdrop-filter:blur(7px)}.modalBox{border:1px solid rgba(255,255,255,.7);box-shadow:0 30px 100px rgba(20,10,25,.24)}
+@media(max-width:820px){main{padding:26px 16px 64px}.top{align-items:flex-start}.top>.mini{margin-top:18px;display:inline-block}.tabs{top:8px;width:100%;border-radius:20px}.card{padding:20px;border-radius:22px}.sectionHead{margin-top:34px}.sectionHead h2{font-size:29px}.barrow{grid-template-columns:92px minmax(80px,1fr) 44px}.big{font-size:46px}}
+@media(max-width:520px){h1{font-size:43px}.sub{font-size:17px}.grid{gap:12px}.card{padding:18px}.title{font-size:19px}.tabs{padding:5px}.tab{padding:9px 13px}.barrow{grid-template-columns:84px 1fr 42px;gap:8px}.donut{width:205px}}
+
+/* INTERACTION CONTRACT · persistent QA */
+.clickable{cursor:pointer}.card:not(.clickable){cursor:default}.clickable:focus-visible,.tab:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid rgba(243,72,151,.35);outline-offset:3px}.clickable:active{transform:translateY(-1px)}a,button{cursor:pointer}a:hover{text-decoration:underline;text-underline-offset:3px}button:hover{filter:brightness(.98)}
+
+/* Agency cloud: prevent chip overlap and let the coverage card grow with content. */
+#agencias .pills{display:flex;flex-wrap:wrap;align-items:flex-start;align-content:flex-start;gap:8px 8px;margin-top:14px;height:auto;max-height:none;overflow:visible}
+#agencias .pills .pill{display:inline-flex;align-items:center;width:auto;max-width:100%;min-height:30px;margin:0;padding:7px 11px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;position:static;transform:none;flex:0 0 auto}
+#agencias .card.span7{align-self:start;height:auto;min-height:0;overflow:visible}
+@media(max-width:820px){#agencias .pills{gap:7px}#agencias .pills .pill{font-size:11px;padding:7px 9px}}
+
+/* LIVE MALHA FEED · client-safe projection */
+.liveFeed{margin:22px 0 8px;padding:22px 24px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(255,240,247,.58));box-shadow:var(--shadow)}
+.liveFeedHead{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:14px}.liveFeedHead h2{margin:4px 0 0;font-size:25px;letter-spacing:-.04em}.feedStatus{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #dfeee8;border-radius:999px;background:#f3fbf7;color:#267a5d;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}.feedStatus:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(45,169,120,.10)}.feedStatus.error{background:#fff7f7;color:#9b4850;border-color:#f0d8db}.feedStatus.error:before{background:var(--red)}
+.liveFeedGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.liveFeedCard{padding:15px;border:1px solid var(--line);border-radius:18px;background:#fff;min-width:0}.liveFeedCard small{display:block;color:#9b6482;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.liveFeedCard b{display:block;font-size:15px;line-height:1.2}.liveFeedCard p{margin:7px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}.liveFeedCard a{display:inline-block;margin-top:9px;color:#b7256d;font-size:11px;font-weight:850;text-decoration:none}.liveFeedEmpty{grid-column:1/-1;padding:14px 2px;color:var(--muted);font-size:12px}
+@media(max-width:900px){.liveFeedGrid{grid-template-columns:1fr 1fr}}@media(max-width:620px){.liveFeed{padding:18px}.liveFeedHead{display:block}.feedStatus{margin-top:10px}.liveFeedGrid{grid-template-columns:1fr}}
+
+
+/* RADAR LIVE SURFACES · client-safe */
+.card[data-live-surface="true"]{position:relative}
+.liveCardMeta{display:flex;align-items:center;gap:7px;width:max-content;max-width:100%;margin:0 0 12px;padding:6px 9px;border:1px solid #eee4eb;border-radius:999px;background:#faf7fa;color:#786d79;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;white-space:normal}
+.liveCardMeta:before{content:"";width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:#aaa1aa}
+.card[data-live-state="updated"] .liveCardMeta{border-color:#d9eee5;background:#f2fbf7;color:#267a5d}
+.card[data-live-state="updated"] .liveCardMeta:before{background:var(--green);box-shadow:0 0 0 4px rgba(45,169,120,.10)}
+.liveCardSignal{display:none;margin:14px 0 0;padding:11px 12px;border:1px solid #eee5ed;border-radius:14px;background:#fbf9fb;color:#665b68;font-size:11px;line-height:1.48}
+.card[data-live-state="updated"] .liveCardSignal{display:block;border-color:#dfeee8;background:#f6fbf8;color:#386b58}
+.card[data-live-state="updated"]{border-color:#dfe9e3;box-shadow:0 14px 42px rgba(38,122,93,.065)}
+.liveChart{position:relative;transition:transform .22s ease,filter .22s ease,opacity .35s ease}
+.liveChart:focus-visible{outline:3px solid rgba(243,72,151,.28);outline-offset:4px}
+.liveChart:hover{filter:saturate(1.06);transform:translateY(-1px)}
+.liveChart[data-chart-motion="bar"] .fill,.liveChart[data-chart-motion="bar"] .ibiBar{transform-origin:bottom;transition:transform .62s cubic-bezier(.2,.8,.2,1),filter .2s ease}
+.liveChart[data-chart-motion="bar"]:not(.isSeen) .fill,.liveChart[data-chart-motion="bar"]:not(.isSeen) .ibiBar{transform:scaleY(.08)}
+.liveChart[data-chart-motion="bar"].isSeen .fill,.liveChart[data-chart-motion="bar"].isSeen .ibiBar{transform:scaleY(1)}
+.chartLiveBadge{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0;padding:6px 9px;border:1px solid #eee4eb;border-radius:999px;background:#fff;color:#7a6f7b;font-size:9px;font-weight:850;letter-spacing:.04em}
+.chartLiveBadge:before{content:"";width:6px;height:6px;border-radius:50%;background:#aaa1aa}
+.card[data-live-state="updated"] .chartLiveBadge{border-color:#d9eee5;color:#267a5d;background:#f5fbf8}
+.card[data-live-state="updated"] .chartLiveBadge:before{background:var(--green)}
+.liveChartTip{position:fixed;z-index:30;pointer-events:none;max-width:260px;padding:9px 11px;border:1px solid #eadfea;border-radius:12px;background:rgba(255,255,255,.96);box-shadow:0 14px 40px rgba(36,22,44,.14);color:#463b49;font-size:10px;line-height:1.4;opacity:0;transform:translateY(3px);transition:opacity .12s ease,transform .12s ease}
+.liveChartTip.show{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.liveChart,.liveChart *{transition:none!important;animation:none!important}}
+
+
+/* CONTEXT CARDS · one reading logic across the Radar */
+.contextCardRail{margin:0 0 18px;padding:18px;border:1px solid #eadfea;border-radius:24px;background:linear-gradient(135deg,#fff,#fff8fb);box-shadow:0 12px 34px rgba(58,29,69,.05)}
+.contextCardRail[hidden]{display:none!important}.contextCardHead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px}.contextCardHead h3{margin:3px 0 0;font-size:20px;letter-spacing:-.035em}.contextCardSource{font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#b7256d;background:#fff0f7;border:1px solid #f3dbe7;border-radius:999px;padding:7px 10px;white-space:nowrap}.contextCardGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.contextCardItem{padding:12px;border:1px solid #eee6ee;border-radius:16px;background:#fff;min-width:0}.contextCardItem b{display:block;margin-bottom:5px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#7d6d7d}.contextCardItem span{display:block;font-size:12px;line-height:1.48;color:#514553}.contextLive{margin-top:10px;padding:9px 11px;border-radius:13px;background:#faf7fa;border:1px solid #eee6ee;color:#716474;font-size:11px;line-height:1.45}.contextCardRail[data-context-live="true"] .contextLive{background:#f4fbf7;border-color:#d9eee5;color:#2f7058}.contextCardRail[data-context-live="true"] .contextCardSource{background:#f3fbf7;border-color:#d9eee5;color:#267a5d}@media(max-width:900px){.contextCardGrid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.contextCardHead{display:block}.contextCardSource{display:inline-flex;margin-top:8px}.contextCardGrid{grid-template-columns:1fr}}
+
+
+/* DIVA_STUDIO_GABI_V1 · client-safe creative surface */
+.studioHero{background:linear-gradient(145deg,#25152e,#51306d 55%,#8455c7);color:#fff;border:0;overflow:hidden;position:relative}.studioHero:after{content:"✦";position:absolute;right:28px;top:10px;font-size:110px;opacity:.08}.studioHero .ey{color:#f7b6d8}.studioHero .explain{color:#eadff0;max-width:760px}.studioModes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.studioMode{border:1px solid var(--line);background:#fff;border-radius:18px;padding:16px;text-align:left;cursor:pointer;color:var(--ink);min-height:108px}.studioMode b{display:block;font-size:15px}.studioMode span{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:6px}.studioMode.active{background:#2b1934;color:#fff;border-color:#2b1934}.studioMode.active span{color:#eadff0}.studioComposer{display:grid;grid-template-columns:1fr auto auto;gap:9px;margin-top:14px}.studioComposer textarea{min-height:112px;border:1px solid var(--line);border-radius:18px;padding:14px;font:500 14px/1.45 Inter,system-ui,sans-serif;resize:vertical;color:var(--ink);background:#fff}.studioBtn{border:0;border-radius:18px;padding:0 17px;font-weight:900;cursor:pointer;background:var(--ink);color:#fff;min-width:118px}.studioBtn.secondary{background:#f4edf6;color:var(--ink);border:1px solid var(--line)}.studioBtn.listening{background:var(--red);color:#fff}.studioVoiceRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}.studioVoiceRow button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:850;cursor:pointer}.studioVoiceStatus{font-size:12px;color:var(--muted)}.studioResult{display:none;margin-top:14px}.studioResult.ready{display:block}.studioResultGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.studioResultBlock{border:1px solid var(--line);border-radius:18px;padding:16px;background:#fff}.studioResultBlock.full{grid-column:1/-1}.studioResultBlock b{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--purple)}.studioResultBlock h3{font-size:25px;letter-spacing:-.04em;margin:7px 0}.studioResultBlock p,.studioResultBlock li{font-size:13px;line-height:1.55;color:#55475b}.studioResultBlock ul{padding-left:18px;margin:9px 0}.studioRefs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.studioRefs a{display:inline-flex;border-radius:999px;padding:9px 11px;background:#f4edf6;color:var(--ink);text-decoration:none;font-size:12px;font-weight:850;border:1px solid var(--line)}.studioSafety{display:flex;gap:10px;align-items:flex-start;background:#f6fbf8;border:1px solid #d9eee5;border-radius:16px;padding:13px;margin-top:12px;color:#2f7058;font-size:12px;line-height:1.45}.studioIntroGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.studioCapability{border:1px solid #ffffff24;background:#ffffff0d;border-radius:16px;padding:13px}.studioCapability b{display:block;font-size:13px}.studioCapability span{display:block;color:#eadff0;font-size:11px;line-height:1.4;margin-top:4px}.studioHow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 22px}.studioStep{border:1px solid var(--line);border-radius:16px;padding:14px;background:#faf8fb}.studioStep strong{display:flex;align-items:center;gap:8px;font-size:13px}.studioStep i{font-style:normal;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:999px;background:var(--ink);color:#fff;font-size:11px}.studioStep span{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:7px}.studioComposerLabel{margin-top:20px}.studioComposerLabel b{display:block;font-size:14px}.studioComposerLabel span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.studioTip{border:1px solid var(--line);background:#faf8fb;border-radius:16px;padding:13px;margin-top:12px;color:var(--muted);font-size:12px;line-height:1.5}.studioTip b{color:var(--ink)}.studioCoach{display:flex;gap:12px;align-items:flex-start;margin:14px 0 4px;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,#fff4fa,#f7f2ff);border:1px solid #efdbe9}.studioCoach strong{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}.studioCoach span{display:block;color:var(--muted);font-size:12px;line-height:1.5}.studioExamples{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.studioExamples button{border:1px solid #eadfea;background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;color:var(--ink);cursor:pointer}.studioResultHead{display:flex;justify-content:space-between;gap:14px;align-items:center}.studioReplay{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap}.studioResultPrimary{display:grid;grid-template-columns:1.25fr .75fr;gap:10px;margin-top:12px}.studioResultPrimary .studioResultBlock:first-child{grid-column:1/-1}.studioQuickActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.studioQuickActions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:850;cursor:pointer}.studioDetails{margin-top:12px;border:1px solid var(--line);border-radius:18px;background:#faf8fb;overflow:hidden}.studioDetails summary{cursor:pointer;padding:14px 16px;font-size:12px;font-weight:900;color:var(--ink);list-style:none}.studioDetails summary::-webkit-details-marker{display:none}.studioDetails[open] summary{border-bottom:1px solid var(--line)}.studioDetails .studioResultGrid,.studioDetails .studioRefs{padding-left:14px;padding-right:14px}.studioDetails .studioRefs{padding-bottom:14px}.studioLoading{opacity:.6;pointer-events:none}@media(max-width:820px){.studioIntroGrid{grid-template-columns:1fr 1fr}.studioHow{grid-template-columns:1fr}.studioModes{grid-template-columns:1fr 1fr}.studioResultPrimary{grid-template-columns:1fr}.studioResultPrimary .studioResultBlock:first-child{grid-column:auto}.studioComposer{grid-template-columns:1fr 1fr}.studioComposer textarea{grid-column:1/-1}.studioResultGrid{grid-template-columns:1fr}.studioResultBlock.full{grid-column:auto}}@media(max-width:520px){.studioModes,.studioComposer{grid-template-columns:1fr}.studioComposer textarea{grid-column:auto}.studioBtn{min-height:48px}}
+</style></head><body><main><div class="top"><div><div class="ey">Mundinho × Gabriella Saraivah</div><h1>Gestão comercial e de imagem</h1><p class="sub">Como a Mundinho tem trabalhado a carreira da Gabriella Saraivah no digital?</p></div><div class="mini" id="radarUpdatedAt">Atualizando…</div></div>
+
+<section class="liveFeed" id="liveFeed" aria-live="polite">
+  <div class="liveFeedHead">
+    <div><div class="ey">Atualizações recentes</div><h2>O que mudou desde a última leitura</h2></div>
+    <span class="feedStatus" id="feedStatus">conectando</span>
+  </div>
+  <div class="liveFeedGrid" id="liveFeedGrid"><div class="liveFeedEmpty">Conectando ao Radar vivo…</div></div>
+</section>
+
+<div class="tabs"><button class="tab active" data-tab="home">Visão geral</button><button class="tab" data-tab="marcas">Marcas</button><button class="tab" data-tab="agencias">Agências parceiras</button><button class="tab" data-tab="pr">Imprensa & imagem</button><button class="tab" data-tab="studio">DIVA Studio ✦</button></div>
+<section class="contextCardRail" id="contextCardRail" data-context-source="" data-context-live="false" aria-live="polite" hidden>
+  <div class="contextCardHead"><div><div class="ey">Card de contexto</div><h3 id="contextCardTitle">Leitura contextual</h3></div><span class="contextCardSource" id="contextCardSource">base consolidada</span></div>
+  <div class="contextCardGrid">
+    <div class="contextCardItem"><b>Estado agora</b><span id="contextNow"></span></div>
+    <div class="contextCardItem"><b>O que mudou</b><span id="contextChanged"></span></div>
+    <div class="contextCardItem"><b>Por que importa</b><span id="contextWhy"></span></div>
+    <div class="contextCardItem"><b>Próxima leitura</b><span id="contextNext"></span></div>
+  </div>
+  <div class="contextLive" id="contextLive">Base consolidada · aguardando novo movimento.</div>
+</section>
+<section id="home" class="panel active"><div class="grid">
+<div data-live-surface="true" data-live-state="consolidated" class="card span7 clickable" data-open="marcas"><div class="ey">Marcas</div><div class="title">Do nosso radar até uma oportunidade concreta</div><p class="explain">A Mundinho já possui um universo amplo de marcas mapeadas. Quando apresentamos você a uma delas, essa marca vira um lead. Quando a conversa evolui para uma proposta ou oportunidade real, ela avança mais uma etapa.</p><div class="donutWrap"><div class="donut"><div class="donutCenter"><b>863</b><span class="mini">marcas mapeadas</span></div></div><div class="legend"><div class="lg"><i class="dot" style="background:var(--pink)"></i><span>Marcas já identificadas como acionadas</span><b>108+</b></div><div class="lg"><i class="dot" style="background:var(--purple)"></i><span>Propostas com envio comprovado</span><b>35</b></div><div class="lg"><i class="dot" style="background:#eadfea"></i><span>Demais marcas do universo mapeado</span><b>restante</b></div><p class="explain">Por que isso importa? Mostra a diferença entre ter acesso a uma marca e conseguir colocar seu nome dentro de uma conversa comercial.</p></div></div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span5 clickable" data-open="agencias"><div class="ey">Agências parceiras</div><div class="big">52</div><div class="title">portas adicionais para campanhas</div><p class="explain">Agências trabalham para várias marcas. Apresentar você a uma agência aumenta as chances de entrar em castings que ainda nem chegaram diretamente até a Mundinho.</p><div class="call"><b>Leitura:</b> agências e parceiros ampliam o acesso da Gabi a castings e marcas que nem sempre chegam por prospecção direta.</div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span5 clickable" data-open="pr"><div class="ey">Imprensa & imagem</div><div class="big">13</div><div class="title">registros de matérias já conciliados</div><p class="explain">PR é o trabalho de construir e proteger como sua trajetória aparece publicamente. Não é só “sair em matéria”: importa o contexto em que sua história é contada.</p><div class="statusline"><span class="pill">2 releases realizados</span><span class="pill">1 intervenção de imagem documentada</span></div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span7 clickable" data-open="movimento"><div class="ey">Movimento comercial</div><div class="title">O caminho fica mais seletivo a cada etapa</div><div class="flow"><div class="step"><b>863</b><span>Radar</span><p>marcas às quais a operação tem acesso</p></div><div class="step"><b>108+</b><span>Apresentadas</span><p>piso já identificado e deduplicado</p></div><div class="step"><b>35</b><span>Propostas</span><p>envios já comprovados</p></div><div class="step"><b>↗</b><span>Avanços</span><p>agora analisados marca por marca</p></div></div><p class="explain">Os números diminuem porque cada etapa exige mais interesse. O objetivo não é falar com todo mundo: é transformar apresentação em conversa, conversa em proposta e proposta em parceria.</p><p class="explain"><b>Status e consequência:</b> cada avanço mostra se a oportunidade está em avaliação, em andamento, com continuidade, aprovada, encerrada ou aguardando uma nova janela.</p></div>
+</div></section>
+<section id="movimento" class="panel"><div class="sectionHead"><div><div class="ey">Linha evolutiva</div><h2>Evolução das propostas · Gabriella Saraivah</h2><p class="explain">Abra cada etapa para entender o que ela significa e quais marcas estão ali.</p><p class="explain"><b>Status e consequência:</b> cada proposta indica se está em avaliação, em andamento, com continuidade, aprovada, encerrada ou aguardando uma nova janela. Isso mostra o que aconteceu depois do envio.</p></div></div><div class="grid">
+<div data-live-surface="true" data-live-state="consolidated" class="card span4 clickable" data-open="radar"><div class="big">863</div><div class="title">Radar de marcas</div><p class="explain">É o universo comercial que a Mundinho já mapeou e pode acessar. Ter uma marca no radar não significa que ela já recebeu a apresentação da Gabi.</p><div class="call"><b>Abrir:</b> categorias e universo mapeado.</div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span4 clickable" data-stage="apresentadas"><div class="big">108+</div><div class="title">Marcas apresentadas</div><p class="explain">Aqui entram marcas únicas para as quais já existe evidência de abordagem. Interações da mesma marca são deduplicadas para que o total represente marcas únicas.</p><div class="call"><b>Abrir:</b> marcas, movimentos e categorias.</div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span4 clickable" data-stage="propostas"><div class="big">35</div><div class="title">Propostas comprovadas</div><p class="mini"><b>Status da proposta:</b> disponível no detalhamento da marca.</p><p class="explain">A conversa avançou até uma possibilidade comercial concreta. É uma etapa mais profunda do que apenas apresentar a Gabi.</p><div class="call"><b>Abrir:</b> propostas, ângulos criativos e situação.</div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12 clickable" data-open="marcas"><div class="title">O que está avançando agora?</div><p class="explain">Veja a temperatura das marcas, quais relações ganharam resposta e onde existe contexto de continuidade comercial.</p></div></div></section>
+<section id="radar" class="panel"><div class="sectionHead"><div><div class="ey">Reconciliação comercial</div><h2>Do universo mapeado ao relacionamento</h2><p class="explain">As camadas abaixo têm denominadores diferentes e não são somadas entre si. O objetivo é mostrar profundidade da operação sem transformar sinais distintos em um único funil artificial.</p></div></div><div class="reconGrid"><div class="metricBox"><span class="mini">Universo mapeado</span><b>863</b><span class="mini">marcas na base sintetizada</span></div><div class="metricBox"><span class="mini">Marcas apresentadas</span><b>108+</b><span class="mini">piso reconciliado</span></div><div class="metricBox"><span class="mini">Propostas verificadas</span><b>35</b><span class="mini">registros localizados</span></div><div class="metricBox"><span class="mini">DMs acompanhadas</span><b>58</b><span class="mini">26 respostas · 20 avanços</span></div></div><div class="flow"><div><b>863</b>radar</div><div><b>108+</b>apresentadas</div><div><b>58</b>DM</div><div><b>26</b>respostas</div><div><b>35</b>propostas</div><div><b>↑</b>negociação</div></div><div class="grid" style="margin-top:16px"><div data-live-surface="true" data-live-state="consolidated" class="card span6"><div class="title">Sinais reconciliados recentes</div><div class="evidenceList"><div class="evidence"><b>Fluency Academy</b>Resposta positiva e proposta enviada.<small>Em avaliação.</small></div><div class="evidence"><b>Freck Beauty</b>A marca pediu detalhes, datas-chave e entregáveis.<small>Conversa em andamento.</small></div><div class="evidence"><b>Chocolate Lugano</b>A marca abriu espaço para continuidade.<small>Conversa em andamento.</small></div><div class="evidence"><b>Amaéco</b>A marca abriu espaço para continuidade.<small>Apresentação em andamento.</small></div></div></div><div data-live-surface="true" data-live-state="consolidated" class="card span6"><div class="title">O que também conta como resultado</div><div class="evidenceList"><div class="evidence"><b>Parachute</b>Sem oportunidade ativa agora.<small>Permanece no Radar para nova janela, sem ser tratado como silêncio.</small></div><div class="evidence"><b>Alyne Cosméticos</b>A marca respondeu e abriu continuidade para a conversa.<small>Relação em andamento.</small></div><div class="evidence"><b>Revolut</b>Proposta enviada e histórico preservado.<small>Prospecção atual pode estar pausada sem apagar o trabalho feito.</small></div></div></div></div><div class="sectionHead"><div><div class="ey">Radar de marcas</div><h2>De acesso comercial a interesse real</h2><p class="explain">Este painel abre o universo de marcas em novas camadas. Cada barra usa apenas o que já está conciliado; o que ainda está em reconstrução permanece identificado como piso.</p></div></div><div class="grid">
+<div data-live-surface="true" data-live-state="consolidated" class="card span5"><div class="title">Universo comercial mapeado</div><div class="donutWrap"><div class="donut"><div class="donutCenter"><b>863</b><span class="mini">marcas no radar</span></div></div></div><p class="explain">Esse número mostra a amplitude do universo que a Mundinho consegue trabalhar. A etapa seguinte mede quantas já receberam uma apresentação da Gabi.</p></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span7"><div class="title">Quanto desse radar já virou movimento?</div><div class="barrow"><span>Apresentadas</span><div class="track"><div class="fill" style="width:12.5%"></div></div><b>108+</b></div><div class="barrow"><span>Propostas</span><div class="track"><div class="fill" style="width:4.1%"></div></div><b>35</b></div><div class="barrow"><span>DMs conciliadas</span><div class="track"><div class="fill" style="width:6.7%"></div></div><b>58</b></div><div class="barrow"><span>Respostas DM</span><div class="track"><div class="fill" style="width:3%"></div></div><b>26</b></div><p class="mini">DM e propostas são dimensões diferentes e não devem ser somadas. As barras servem para enxergar a profundidade já comprovada dentro do universo de 863 marcas.</p></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="title">Categorias que alimentam o radar</div><div class="statusline"><span class="pill clickable" data-cat="Beleza & Hair care">Beleza & Hair care</span><span class="pill clickable" data-cat="Moda">Moda</span><span class="pill clickable" data-cat="Viagem & Mobilidade">Viagem & Mobilidade</span><span class="pill clickable" data-cat="Financeiro">Financeiro</span><span class="pill clickable" data-cat="Educação">Educação</span><span class="pill clickable" data-cat="Tecnologia">Tecnologia</span><span class="pill clickable" data-cat="Lifestyle">Lifestyle</span><span class="pill clickable" data-cat="Wellness">Wellness</span><span class="pill clickable" data-cat="Consumo">Consumo</span></div><p class="explain">Clique em uma categoria para abrir as marcas já associadas ao território e a leitura estratégica correspondente.</p></div></div></section>
+<section id="categoria" class="panel"><div class="sectionHead"><div><div class="ey">Categoria</div><h2 id="catTitle">Marcas por território</h2><p class="explain">Uma leitura do território comercial: marcas já apresentadas, oportunidades e propostas que ajudam a entender onde a carreira da Gabi está ganhando espaço.</p></div></div><div class="grid"><div data-live-surface="true" data-live-state="consolidated" class="card span5"><div class="title">Composição da categoria</div><div class="donutWrap"><div class="donut"><div class="donutCenter"><b id="catCount">—</b><span class="mini">marcas recuperadas</span></div></div></div></div><div data-live-surface="true" data-live-state="consolidated" class="card span7"><div class="title">Marcas recuperadas</div><div id="catBrands" class="cloud"></div></div><div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="title">O que este território significa?</div><p class="explain" id="catMeaning"></p></div></div></section>
+<section id="marcas" class="panel"><div class="grid"><div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Temperatura comercial</div><div class="title">Quais marcas estão mais próximas de virar negócio?</div><p class="explain">Tamanho mostra prioridade comercial; cor mostra temperatura da conversa. Clique em uma marca para entender o contexto. Esta primeira versão só destaca como “quentes” relações com contexto já documentado; o restante continua em reconciliação.</p><div class="statusline"><span class="pill hot">● quente</span><span class="pill warm">● avançando</span><span class="pill cool">● contato/proposta</span><span class="pill neg">● negativa/sem abertura</span></div><div class="cloud">
+<span class="brand hot s4" data-brand="Fluency">Fluency</span><span class="brand hot s4" data-brand="Nazca">Nazca</span><span class="brand hot s3" data-brand="LATAM">LATAM</span><span class="brand hot s3" data-brand="Bagaggio">Bagaggio</span><span class="brand hot s3" data-brand="Salon Line">Salon Line</span><span class="brand warm s2" data-brand="Buser">Buser</span><span class="brand warm s2" data-brand="Revolut">Revolut</span><span class="brand warm s2" data-brand="Lola From Rio">Lola From Rio</span><span class="brand cool s2" data-brand="Widi Care">Widi Care</span><span class="brand cool s2" data-brand="Dapop">Dapop</span><span class="brand cool s2" data-brand="Localiza">Localiza</span><span class="brand cool s2" data-brand="Riachuelo">Riachuelo</span><span class="brand cool s1" data-brand="Airbnb">Airbnb</span><span class="brand cool s1" data-brand="Canva">Canva</span><span class="brand cool s1" data-brand="CVC">CVC</span><span class="brand cool s1" data-brand="Constance">Constance</span><span class="brand cool s1" data-brand="Kiss New York">Kiss New York</span><span class="brand cool s1" data-brand="Curly Care">Curly Care</span><span class="brand cool s1" data-brand="Bela Berê">Bela Berê</span><span class="brand cool s1" data-brand="Reformation">Reformation</span><span class="brand neg s1" data-brand="Nick Vick">Nick Vick</span><span class="brand cool s1" data-brand="Chama Verde">Chama Verde</span><span class="brand cool s1" data-brand="Feegos">Feegos</span><span class="brand warm s2" data-brand="Ynayê">Ynayê</span><span class="brand cool s1" data-brand="Lusty Professional">Lusty Professional</span><span class="brand cool s1" data-brand="Beox">Beox</span><span class="brand cool s1" data-brand="Única Essencial">Única Essencial</span><span class="brand cool s1" data-brand="Amaéco">Amaéco</span><span class="brand cool s1" data-brand="Papiro Natural">Papiro Natural</span><span class="brand warm s2" data-brand="Klauterre">Klauterre</span><span class="brand warm s2" data-brand="Bella Jasmin">Bella Jasmin</span><span class="brand cool s1" data-brand="Retropy">Retropy</span><span class="brand cool s1" data-brand="JLR Beauty House">JLR Beauty House</span><span class="brand cool s1" data-brand="Mohda">Mohda</span><span class="brand cool s1" data-brand="Maria Pomposa">Maria Pomposa</span><span class="brand cool s1" data-brand="D'Cabelos">D'Cabelos</span><span class="brand cool s1" data-brand="Along Nails">Along Nails</span><span class="brand cool s1" data-brand="Baby Flower">Baby Flower</span><span class="brand cool s1" data-brand="Dilectus">Dilectus</span><span class="brand cool s1" data-brand="Pérola Cosmétick">Pérola Cosmétick</span><span class="brand cool s1" data-brand="Frooty">Frooty</span><span class="brand warm s2" data-brand="Açaí da Barra">Açaí da Barra</span><span class="brand cool s1" data-brand="Chiquinho Sorvetes">Chiquinho Sorvetes</span><span class="brand cool s1" data-brand="Uplift">Uplift</span><span class="brand cool s1" data-brand="Masterway">Masterway</span><span class="brand cool s1" data-brand="Gfarma">Gfarma</span><span class="brand cool s1" data-brand="Oficial Nutri">Oficial Nutri</span><span class="brand cool s1" data-brand="Adaptogen Science">Adaptogen Science</span><span class="brand cool s1" data-brand="Growth Movement">Growth Movement</span><span class="brand cool s1" data-brand="Kappa Brasil">Kappa Brasil</span></div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span5"><div class="title">Propostas por situação</div><p class="explain">35 envios já estão comprovados. Agora a leitura passa a ser pelo que aconteceu depois do envio, não apenas pelo volume.</p><div class="statusline"><span class="pill">Com resposta</span><span class="pill">Em conversa</span><span class="pill">Aguardando retorno</span></div><div class="call"><b>35 envios comprovados.</b> A distribuição por situação será exibida quando cada proposta estiver com o retorno revisado e confirmado.</div><p class="mini">Assim, o Radar não transforma estimativa em resultado.</p></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span7 clickable" data-stage="categorias"><div class="title">Categorias que já movimentamos</div><p class="explain">A mesma leitura poderá ser aberta por território. Isso ajuda a enxergar onde sua imagem já tem mais portas comerciais.</p><div class="statusline"><span class="pill">Beleza</span><span class="pill">Hair care</span><span class="pill">Moda</span><span class="pill">Viagem</span><span class="pill">Mobilidade</span><span class="pill">Financeiro</span><span class="pill">Educação</span><span class="pill">Tecnologia</span><span class="pill">Lifestyle</span><span class="pill">Marketplace</span></div><p class="explain">As categorias organizam o Radar por território comercial e levam às marcas relacionadas.</p></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12 clickable" data-stage="angulos"><div class="ey">Direção criativa</div><div class="title">Ângulos criativos das propostas</div><p class="explain">Além de abrir portas, a Mundinho constrói maneiras diferentes de conectar sua história às marcas. Aqui você consegue ver os territórios criativos que já estamos trabalhando.</p><div class="flow"><div class="step clickable" data-angle="Cachos & beleza"><b>💇🏽‍♀️</b><span>Cachos & beleza</span><p>Os cachos acompanham a imagem da Gabriella desde a infância e funcionam como uma assinatura visual reconhecível.</p></div><div class="step clickable" data-angle="Brasil ↔ EUA"><b>✈️</b><span>Brasil ↔ EUA</span><p>Uma brasileira que cresceu entre países, fala inglês e transforma a vida internacional em histórias de viagem, educação e serviços.</p></div><div class="step clickable" data-angle="Verão"><b>☀️</b><span>Verão</span><p>O Brazilian style solar continua presente mesmo vivendo fora e cria território para férias, mobilidade, consumo e Carnaval.</p></div><div class="step clickable" data-angle="Vida adulta"><b>🌱</b><span>Vida adulta</span><p>Rotina, estudos, wellness e evolução da imagem artística e digital acompanham a passagem para uma nova fase da carreira.</p></div></div><p class="mini">Os territórios abaixo usam apenas propostas e contextos já recuperados. Novos documentos entram quando o artefato final aprovado estiver vinculado com segurança.</p></div></div></section>
+<section id="biblioteca" class="panel"><div class="sectionHead"><div><div class="ey">Propostas aprovadas</div><h2 id="libTitle">Território criativo</h2><p class="explain">Aqui a Gabi consegue entender quais marcas receberam propostas dentro deste território. Quando há documento reconciliado, a proposta pode ser aberta diretamente a partir do card. Quando não há arquivo seguro, o Radar mostra apenas o contexto comercial disponível.</p></div></div><div class="grid" id="libGrid"></div></section>
+<section id="agencias" class="panel"><div class="sectionHead"><div><div class="ey">Agências parceiras</div><h2>Uma segunda porta de entrada para oportunidades</h2><p class="explain">A prospecção de agências não é somada às marcas. Ela amplia a chance de Gabriella entrar em castings, briefings e campanhas que surgem antes de existir uma abordagem direta da marca.</p></div></div><div class="reconGrid"><div class="metricBox"><span class="mini">Agências/parceiros únicos</span><b>52</b><span class="mini">base executiva reconciliada</span></div><div class="metricBox"><span class="mini">Onda principal</span><b>12/08</b><span class="mini">novo mídia kit distribuído</span></div><div class="metricBox"><span class="mini">Função</span><b>1→N</b><span class="mini">uma agência pode abrir várias marcas</span></div><div class="metricBox"><span class="mini">Separação</span><b>≠</b><span class="mini">não inflar total de marcas</span></div></div><div class="grid" style="margin-top:16px"><div data-live-surface="true" data-live-state="consolidated" class="card span7"><div class="ey">Cobertura</div><div class="title">Rede ativada</div><p class="explain">Todas as 52 agências/parceiros desta base receberam o mídia kit. A distribuição alcançou uma rede ampla de parceiros de influência, casting, comunicação, PR e produção. O objetivo é manter Gabriella disponível no repertório dessas empresas quando um briefing compatível surgir.</p><div class="pills"><span class="pill" data-agency="Agência Cely" tabindex="0" role="button">Agência Cely</span><span class="pill" data-agency="Agência Combo Comunicação" tabindex="0" role="button">Agência Combo Comunicação</span><span class="pill" data-agency="Agência Digital UOW" tabindex="0" role="button">Agência Digital UOW</span><span class="pill" data-agency="Agência DNA360" tabindex="0" role="button">Agência DNA360</span><span class="pill" data-agency="Agência Grapa Digital" tabindex="0" role="button">Agência Grapa Digital</span><span class="pill" data-agency="Agência InstaHero" tabindex="0" role="button">Agência InstaHero</span><span class="pill" data-agency="Agência Keepgo" tabindex="0" role="button">Agência Keepgo</span><span class="pill" data-agency="Agência LL Comunica" tabindex="0" role="button">Agência LL Comunica</span><span class="pill" data-agency="Agência LOI" tabindex="0" role="button">Agência LOI</span><span class="pill" data-agency="Agência Maindi" tabindex="0" role="button">Agência Maindi</span><span class="pill" data-agency="Agência MKT Mix" tabindex="0" role="button">Agência MKT Mix</span><span class="pill" data-agency="Agência Mosaico" tabindex="0" role="button">Agência Mosaico</span><span class="pill" data-agency="Agência Publination" tabindex="0" role="button">Agência Publination</span><span class="pill" data-agency="Agência SoWhat" tabindex="0" role="button">Agência SoWhat</span><span class="pill" data-agency="Agência we9" tabindex="0" role="button">Agência we9</span><span class="pill" data-agency="Agência Wys" tabindex="0" role="button">Agência Wys</span><span class="pill" data-agency="Gen_c" tabindex="0" role="button">Gen_c</span><span class="pill" data-agency="LI COMUNIC" tabindex="0" role="button">LI COMUNIC</span><span class="pill" data-agency="Press à Porter" tabindex="0" role="button">Press à Porter</span><span class="pill" data-agency="Spark" tabindex="0" role="button">Spark</span><span class="pill" data-agency="Teia" tabindex="0" role="button">Teia</span><span class="pill" data-agency="Wake Tech" tabindex="0" role="button">Wake Tech</span><span class="pill" data-agency="4even Casting" tabindex="0" role="button">4even Casting</span><span class="pill" data-agency="Agência Approach" tabindex="0" role="button">Agência Approach</span><span class="pill" data-agency="Agência Brands" tabindex="0" role="button">Agência Brands</span><span class="pill" data-agency="Agência Casting Ca" tabindex="0" role="button">Agência Casting Ca</span><span class="pill" data-agency="Agência Céu" tabindex="0" role="button">Agência Céu</span><span class="pill" data-agency="Agência Cocada" tabindex="0" role="button">Agência Cocada</span><span class="pill" data-agency="Agência HTM" tabindex="0" role="button">Agência HTM</span><span class="pill" data-agency="Agência Iberika" tabindex="0" role="button">Agência Iberika</span><span class="pill" data-agency="Agência Ionz" tabindex="0" role="button">Agência Ionz</span><span class="pill" data-agency="Agência Propeg" tabindex="0" role="button">Agência Propeg</span><span class="pill" data-agency="Agência PROS" tabindex="0" role="button">Agência PROS</span><span class="pill" data-agency="Agência Skript" tabindex="0" role="button">Agência Skript</span><span class="pill" data-agency="Agência Yellow Melon" tabindex="0" role="button">Agência Yellow Melon</span><span class="pill" data-agency="Agogô Promo" tabindex="0" role="button">Agogô Promo</span><span class="pill" data-agency="Águas de Ipanema" tabindex="0" role="button">Águas de Ipanema</span><span class="pill" data-agency="AM Company" tabindex="0" role="button">AM Company</span><span class="pill" data-agency="Arabesco Agência" tabindex="0" role="button">Arabesco Agência</span><span class="pill" data-agency="Ativa Eventos" tabindex="0" role="button">Ativa Eventos</span><span class="pill" data-agency="Beauty Buzz Lab" tabindex="0" role="button">Beauty Buzz Lab</span><span class="pill" data-agency="Cris Moraes Comunicação" tabindex="0" role="button">Cris Moraes Comunicação</span><span class="pill" data-agency="Fluxxo Comunicação" tabindex="0" role="button">Fluxxo Comunicação</span><span class="pill" data-agency="Mandala Marketing" tabindex="0" role="button">Mandala Marketing</span><span class="pill" data-agency="Márcia Stival Assessoria" tabindex="0" role="button">Márcia Stival Assessoria</span><span class="pill" data-agency="MD Assessoria" tabindex="0" role="button">MD Assessoria</span><span class="pill" data-agency="Morya Comunicação" tabindex="0" role="button">Morya Comunicação</span><span class="pill" data-agency="Nerdweb" tabindex="0" role="button">Nerdweb</span><span class="pill" data-agency="Novelo Produções" tabindex="0" role="button">Novelo Produções</span><span class="pill" data-agency="Weber Shandwick" tabindex="0" role="button">Weber Shandwick</span><span class="pill" data-agency="Wet'n Wild PR" tabindex="0" role="button">Wet'n Wild PR</span><span class="pill" data-agency="it's digital" tabindex="0" role="button">it's digital</span></div></div><div data-live-surface="true" data-live-state="consolidated" class="card span5"><div class="ey">Como ler esta frente</div><div class="title">Marca direta × agência</div><div class="evidenceList"><div class="evidence"><b>Marca direta</b>A Mundinho constrói aderência para uma empresa específica.<small>Ex.: Salon Line, Fluency, LATAM.</small></div><div class="evidence"><b>Agência parceira</b>Gabriella entra no radar de quem recebe briefings de diferentes clientes.<small>O valor é multiplicador, por isso a frente é medida separadamente.</small></div><div class="evidence"><b>Resultado esperado</b>Convites para casting, budget, briefing, shortlist ou indicação.<small>O simples envio do mídia kit é cobertura, não fechamento.</small></div></div></div><div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Leitura de valor</div><div class="title">Por que 52 relações importam?</div><p class="explain">A frente de agências cria distribuição comercial indireta. Em vez de depender apenas de a Mundinho descobrir cada oportunidade depois que ela aparece, Gabriella passa a existir no repertório de profissionais que montam castings e recomendam talentos. Quando uma dessas relações gerar briefing, shortlist ou budget, o evento deve migrar para a evolução comercial sem perder a origem agência.</p><div class="flow"><div><b>52</b>parceiros</div><div><b>✓</b>mídia kit enviado</div><div><b>→</b>repertório</div><div><b>→</b>briefing</div><div><b>→</b>casting</div><div><b>→</b>oportunidade</div></div><div class="call"><b>Evidência recuperada:</b> a busca histórica de julho/agosto encontrou a onda de e-mails de apresentação da Gabriella e confirma o envio do material para a rede de agências. O assunto recorrente em 12/08 foi “GABRIELLA SARAIVAH | OPORTUNIDADE PARA MARCAS”.</div><div class="title" style="margin-top:18px">Agências com contexto + rede social já resolvida</div><div class="agencyNet"><div class="agencyCard"><b>Combo Comunicação</b><a href="https://www.instagram.com/combocomunicacao/" target="_blank" rel="noopener noreferrer">@combocomunicacao ↗</a><small>Mídia kit enviado em 12/08 para mais de um contato da agência.</small></div><div class="agencyCard"><b>Grapa Digital</b><a href="https://www.instagram.com/grapadigital/" target="_blank" rel="noopener noreferrer">@grapadigital ↗</a><small>Mídia kit enviado em 12/08; a relação também aparece em rotas comerciais posteriores.</small></div><div class="agencyCard"><b>DNA360</b><a href="https://www.instagram.com/dna360.ag/" target="_blank" rel="noopener noreferrer">@dna360.ag ↗</a><small>Mídia kit enviado em 12/08 para entrada da Gabi no radar de oportunidades.</small></div><div class="agencyCard"><b>Keepgo</b><a href="https://www.instagram.com/keepgo/" target="_blank" rel="noopener noreferrer">@keepgo ↗</a><small>Mídia kit enviado em 12/08 como apresentação comercial da Gabriella.</small></div><div class="agencyCard"><b>Publination</b><a href="https://www.instagram.com/publination/" target="_blank" rel="noopener noreferrer">@publination ↗</a><small>Mídia kit enviado e relação preservada como parceiro de influência/casting.</small></div><div class="agencyCard"><b>Spark</b><a href="https://www.instagram.com/spark/" target="_blank" rel="noopener noreferrer">@spark ↗</a><small>Mídia kit enviado para ampliar presença em castings e projetos de influência.</small></div><div class="agencyCard"><b>Weber Shandwick</b><a href="https://www.instagram.com/webershandwick/" target="_blank" rel="noopener noreferrer">@webershandwick ↗</a><small>Mídia kit enviado; parceiro relevante de comunicação e PR.</small></div><div class="agencyCard"><b>Approach</b><a href="https://www.instagram.com/approachcom/" target="_blank" rel="noopener noreferrer">@approachcom ↗</a><small>Mídia kit enviado; relação de comunicação/PR preservada no radar.</small></div><div class="agencyCard"><b>4even Casting</b><a href="https://www.instagram.com/4evencasting/" target="_blank" rel="noopener noreferrer">@4evencasting ↗</a><small>Mídia kit enviado; frente diretamente ligada a casting.</small></div><div class="agencyCard"><b>Press à Porter</b><a href="https://www.instagram.com/pressaporter/" target="_blank" rel="noopener noreferrer">@pressaporter ↗</a><small>Mídia kit enviado para repertório de comunicação e oportunidades.</small></div><div class="agencyCard"><b>Beauty Buzz Lab</b><a href="https://www.instagram.com/beautybuzzlab/" target="_blank" rel="noopener noreferrer">@beautybuzzlab ↗</a><small>Mídia kit enviado; aderência especial a beauty/influência.</small></div><div class="agencyCard"><b>Teia</b><a href="https://www.instagram.com/teia.ag/" target="_blank" rel="noopener noreferrer">@teia.ag ↗</a><small>Mídia kit enviado como porta de entrada para oportunidades de clientes.</small></div></div><p class="mini">A lista completa continua com 52 parceiros. O @ só é publicado quando o perfil oficial está resolvido com segurança; isso evita atribuir uma rede errada a uma agência de nome semelhante.</p></div></div></section>
+<section id="pr" class="panel"><div class="grid"><div data-live-surface="true" data-live-state="consolidated" class="card span5"><div class="ey">Relação com imprensa</div><div class="big">2</div><div class="title">releases já trabalhados</div><p class="explain">Release é uma pauta preparada para ajudar jornalistas a enxergarem uma história interessante sobre sua carreira. Ele não garante matéria, mas cria uma oportunidade editorial.</p><div class="call">Mais 2 motes editoriais estão sendo estruturados e só entram aqui quando estiverem formalizados.</div></div><div data-live-surface="true" data-live-state="consolidated" class="card span7"><div class="ey">Resultado visível</div><div class="big">13</div><div class="title">registros de imprensa já conciliados desde agosto</div><p class="explain">Aqui acompanhamos onde sua trajetória ganhou espaço. Antes de aumentar esse número, matérias republicadas pela mesma fonte serão deduplicadas para não inflar o resultado.</p><div class="flow" style="grid-template-columns:1fr 1fr"><div class="step"><b>+</b><span>Imagem positiva</span><p>matérias que ajudam a atualizar e fortalecer sua trajetória</p></div><div class="step"><b>1</b><span>Intervenção documentada</span><p>caso em que a Mundinho pediu correção de enquadramento/informação</p></div></div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Matérias e links</div><div class="title">Clipping que já conseguimos reconciliar</div><p class="explain">Abra as matérias para ver a cobertura original. O painel separa cobertura conquistada, histórico e republicações para não inflar resultado.</p><div class="pressGrid">
+<div class="pressItem"><div class="pressThumb" style="background-image:url('https://entrete1.com.br/wp-content/uploads/2026/08/gabriella-saraivah.jpg');background-size:cover;background-position:center"></div><div class="pressBody"><b>Entrete1</b><p>Gabriella × Bruna Marquezine</p><a href="https://entrete1.com.br/nao-era-ela-fas-voltam-a-comparar-gabriella-saraivah-e-bruna-marquezine-apos-video-de-avenida-brasil/" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div>
+<div class="pressItem"><div class="pressThumb">📺</div><div class="pressBody"><b>Observatório da TV</b><p>Comparação e carreira internacional</p><a href="https://observatoriodatv.com.br/colunistas/gabriella-saraivah-volta-a-ser-comparada-com-bruna-marquezine-e-revela-inspiracao-na-carreira-internacional" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div>
+<div class="pressItem"><div class="pressThumb">🌎</div><div class="pressBody"><b>Terra</b><p>Fãs pedem retorno de Miluce</p><a href="https://www.terra.com.br/diversao/gente/fas-pedem-volta-de-miluce-em-avenida-brasil-2-apos-video-nostalgico%2C90b7646809a8bb39a5d7a52e01d42371sjs9tyb8.html" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div>
+<div class="pressItem"><div class="pressThumb">✨</div><div class="pressBody"><b>Vogue Business</b><p>It Kids of Brazil · crescimento 800,1% · MIV US$ 1,7M</p><a href="https://www.vogue.com/article/the-it-kids-of-brazil" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div>
+<div class="pressItem"><div class="pressThumb" style="background-image:url('https://caras.com.br/media/_versions/2026/09/gabriella-saraivah_widelg.jpg');background-size:cover;background-position:center"></div><div class="pressBody"><b>CARAS</b><p>Bastidores da entrada em Avenida Brasil</p><a href="https://caras.com.br/atualidades/a-historia-da-atriz-mirim-de-avenida-brasil-que-aos-7-anos-quase-ficou-fora-da-novela-por-causa-da-mae.phtml" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div>
+<div class="pressItem"><div class="pressThumb">⚠️</div><div class="pressBody"><b>Alô Alô Bahia</b><p>Intervenção de imagem documentada</p><a href="https://aloalobahia.com/noticias/2026/09/17/aos-22-anos-ex-estrela-mirim-de-avenida-brasil-constroi-vida-no-exterior-como-baba/" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div>
+<div class="pressItem"><div class="pressThumb">🌐</div><div class="pressBody"><b>Correio 24 Horas</b><p>Onde estão as crianças do lixão</p><a href="https://www.correio24horas.com.br/em-alta/um-virou-rapper-e-cantor-gospel-outra-foi-morar-nos-eua-e-outra-chegou-a-final-de-um-reality-onde-estao-as-criancas-do-lixao-de-avenida-brasil-0926" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div><div class="pressItem"><div class="pressThumb">📺</div><div class="pressBody"><b>Gshow</b><p>Carreira internacional</p><a href="https://gshow.globo.com/cultura-pop/famosos/noticia/uma-das-criancas-do-lixao-de-avenida-brasil-gabriella-saraivah-estreia-carreira-internacional.ghtml" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div><div class="pressItem"><div class="pressThumb">📺</div><div class="pressBody"><b>Gshow</b><p>Comparação com Bruna Marquezine · 2017</p><a href="https://gshow.globo.com/Bastidores/noticia/estrela-do-dancinha-dos-famosos-comenta-semelhanca-com-bruna-marquezine.ghtml" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div><div class="pressItem"><div class="pressThumb">🗞️</div><div class="pressBody"><b>Tribuna do Sertão</b><p>Elenco infantil de Avenida Brasil</p><a href="https://www.tribunadosertao.com.br/cultura-pop/2026/09/17/980429-saiba-como-estao-hoje-os-atores-mirins-do-lixao-de-avenida-brasil-segunda-parte-estreia-em-janeiro" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div><div class="pressItem"><div class="pressThumb">📰</div><div class="pressBody"><b>Nave Criativa</b><p>Avenida Brasil 2 · trajetória atual</p><a href="https://www.navecriativa.com/avenida-brasil-2-veja-como-estao-hoje-os-atores-mirins-do-lixao/" target="_blank" rel="noopener noreferrer">Abrir matéria ↗</a></div></div></div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Intervenção documentada</div><div class="title">Quando a gestão de imagem também significa corrigir contexto</div><p class="explain">Uma matéria recente transformou uma experiência passada da Gabriella em uma descrição que poderia ser entendida como sua ocupação atual. A Mundinho acionou a redação para contextualizar a fase atual da carreira e encaminhou o caso para acompanhamento. Isso também é PR: não apenas conquistar espaço, mas cuidar de como a trajetória é apresentada.</p><div class="call"><b>O que estamos protegendo:</b> a leitura atual da Gabriella como atriz, estudante de Psicologia e talento em transição adulta, sem apagar experiências legítimas da trajetória.</div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Arquivo visual de imprensa</div><div class="title">Capas das matérias</div><p class="explain">Cada capa é uma captura visual da publicação original e abre a matéria correspondente. O arquivo separa matérias conquistadas, históricas e republicações sem apagar a cadeia de origem.</p><div class="pressGrid"><div class="pressItem"><a href="https://entrete1.com.br/nao-era-ela-fas-voltam-a-comparar-gabriella-saraivah-e-bruna-marquezine-apos-video-de-avenida-brasil/" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://entrete1.com.br/nao-era-ela-fas-voltam-a-comparar-gabriella-saraivah-e-bruna-marquezine-apos-video-de-avenida-brasil/" alt="Capa da matéria Entrete1"><h4>Não era ela? Fãs voltam a comparar Gabriella Saraivah e Bruna Marquezine</h4><small>Entrete1 · 23/08/2026</small></a></div><div class="pressItem"><a href="https://observatoriodatv.com.br/colunistas/gabriella-saraivah-volta-a-ser-comparada-com-bruna-marquezine-e-revela-inspiracao-na-carreira-internacional" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://observatoriodatv.com.br/colunistas/gabriella-saraivah-volta-a-ser-comparada-com-bruna-marquezine-e-revela-inspiracao-na-carreira-internacional" alt="Capa da matéria Observatório da TV"><h4>Gabriella volta a ser comparada com Bruna Marquezine</h4><small>Observatório da TV · 24/08/2026</small></a></div><div class="pressItem"><a href="https://www.terra.com.br/diversao/gente/fas-pedem-volta-de-miluce-em-avenida-brasil-2-apos-video-nostalgico%2C90b7646809a8bb39a5d7a52e01d42371sjs9tyb8.html" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://www.terra.com.br/diversao/gente/fas-pedem-volta-de-miluce-em-avenida-brasil-2-apos-video-nostalgico%2C90b7646809a8bb39a5d7a52e01d42371sjs9tyb8.html" alt="Capa da matéria Terra"><h4>Fãs pedem volta de Miluce em Avenida Brasil 2</h4><small>Terra · 24/08/2026</small></a></div><div class="pressItem"><a href="https://aloalobahia.com/noticias/2026/09/17/aos-22-anos-ex-estrela-mirim-de-avenida-brasil-constroi-vida-no-exterior-como-baba/" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://aloalobahia.com/noticias/2026/09/17/aos-22-anos-ex-estrela-mirim-de-avenida-brasil-constroi-vida-no-exterior-como-baba/" alt="Capa da matéria Alô Alô Bahia"><h4>Trajetória de Gabriella no exterior</h4><small>Alô Alô Bahia · 17/09/2026</small></a></div><div class="pressItem"><a href="https://caras.com.br/atualidades/a-historia-da-atriz-mirim-de-avenida-brasil-que-aos-7-anos-quase-ficou-fora-da-novela-por-causa-da-mae.phtml" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://caras.com.br/atualidades/a-historia-da-atriz-mirim-de-avenida-brasil-que-aos-7-anos-quase-ficou-fora-da-novela-por-causa-da-mae.phtml" alt="Capa da matéria CARAS Brasil"><h4>A história da atriz mirim de Avenida Brasil</h4><small>CARAS Brasil · 16/09/2026</small></a></div><div class="pressItem"><a href="https://www.correio24horas.com.br/em-alta/um-virou-rapper-e-cantor-gospel-outra-foi-morar-nos-eua-e-outra-chegou-a-final-de-um-reality-onde-estao-as-criancas-do-lixao-de-avenida-brasil-0926" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://www.correio24horas.com.br/em-alta/um-virou-rapper-e-cantor-gospel-outra-foi-morar-nos-eua-e-outra-chegou-a-final-de-um-reality-onde-estao-as-criancas-do-lixao-de-avenida-brasil-0926" alt="Capa da matéria Correio 24 Horas"><h4>Onde estão as crianças do lixão de Avenida Brasil</h4><small>Correio 24 Horas · 17/09/2026</small></a></div><div class="pressItem"><a href="https://gshow.globo.com/cultura-pop/famosos/noticia/uma-das-criancas-do-lixao-de-avenida-brasil-gabriella-saraivah-estreia-carreira-internacional.ghtml" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://gshow.globo.com/cultura-pop/famosos/noticia/uma-das-criancas-do-lixao-de-avenida-brasil-gabriella-saraivah-estreia-carreira-internacional.ghtml" alt="Capa da matéria Gshow"><h4>Gabriella Saraivah estreia carreira internacional</h4><small>Gshow · 05/09/2024</small></a></div><div class="pressItem"><a href="https://gshow.globo.com/Bastidores/noticia/estrela-do-dancinha-dos-famosos-comenta-semelhanca-com-bruna-marquezine.ghtml" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://gshow.globo.com/Bastidores/noticia/estrela-do-dancinha-dos-famosos-comenta-semelhanca-com-bruna-marquezine.ghtml" alt="Capa da matéria Gshow"><h4>Comparação histórica com Bruna Marquezine</h4><small>Gshow · 05/01/2017</small></a></div><div class="pressItem"><a href="https://www.diarioflip.com.br/variedades/id-693592/veja_como_estao_hoje_as_criancas_do_lixao_de_e_39avenida_brasile_39__que_volta_em_janeiro" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://www.diarioflip.com.br/variedades/id-693592/veja_como_estao_hoje_as_criancas_do_lixao_de_e_39avenida_brasile_39__que_volta_em_janeiro" alt="Capa da matéria Diário Flip / Agência O Globo"><h4>Onda sobre os atores mirins de Avenida Brasil</h4><small>Diário Flip / Agência O Globo · 17/09/2026</small></a></div><div class="pressItem"><a href="https://francesnews.com.br/post/2026/09/26/39462-saiba-por-onde-andam-os-atores-mirins-do-lixao-de-avenida-brasil-segunda-parte-estreia-em-janeiro" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://francesnews.com.br/post/2026/09/26/39462-saiba-por-onde-andam-os-atores-mirins-do-lixao-de-avenida-brasil-segunda-parte-estreia-em-janeiro" alt="Capa da matéria Francês News"><h4>Por onde andam os atores mirins do lixão</h4><small>Francês News · 17/09/2026</small></a></div><div class="pressItem"><a href="https://www.tribunadosertao.com.br/cultura-pop/2026/09/17/980429-saiba-como-estao-hoje-os-atores-mirins-do-lixao-de-avenida-brasil-segunda-parte-estreia-em-janeiro" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://www.tribunadosertao.com.br/cultura-pop/2026/09/17/980429-saiba-como-estao-hoje-os-atores-mirins-do-lixao-de-avenida-brasil-segunda-parte-estreia-em-janeiro" alt="Capa da matéria Tribuna do Sertão"><h4>Como estão hoje os atores mirins do lixão</h4><small>Tribuna do Sertão · 17/09/2026</small></a></div><div class="pressItem"><a href="https://www.navecriativa.com/avenida-brasil-2-veja-como-estao-hoje-os-atores-mirins-do-lixao/" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://www.navecriativa.com/avenida-brasil-2-veja-como-estao-hoje-os-atores-mirins-do-lixao/" alt="Capa da matéria Nave Criativa"><h4>Avenida Brasil 2: atores mirins do lixão</h4><small>Nave Criativa · 17/09/2026</small></a></div><div class="pressItem"><a href="https://caras.com.br/atualidades/avenida-brasil-saiba-como-estao-os-atores-mirins-14-anos-apos-a-estreia-da-novela.phtml" target="_blank" rel="noopener noreferrer"><img class="pressCover" loading="lazy" src="https://image.thum.io/get/width/1000/crop/650/noanimate/https://caras.com.br/atualidades/avenida-brasil-saiba-como-estao-os-atores-mirins-14-anos-apos-a-estreia-da-novela.phtml" alt="Capa da matéria CARAS Brasil"><h4>Avenida Brasil: atores mirins 14 anos depois</h4><small>CARAS Brasil · 08/04/2026</small></a></div></div></div><div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Índice proprietário · últimos 12 meses</div><div class="title">IBI · Índice de Branding na Imprensa</div><p class="explain">Índice interno da Mundinho para acompanhar se a cobertura ajuda a construir a marca Gabriella, e não apenas quantas matérias saíram. Escala 0–100. Meses sem base reconciliada aparecem como ausência de leitura, não como zero.</p><div class="ibiChart"><div class="ibiCol"><div class="ibiVal">—</div><div class="ibiBar" style="height:4px"></div><span class="ibiMonth">out</span></div><div class="ibiCol"><div class="ibiVal">78</div><div class="ibiBar" style="height:78%"></div><span class="ibiMonth">nov</span></div><div class="ibiCol"><div class="ibiVal">—</div><div class="ibiBar" style="height:4px"></div><span class="ibiMonth">dez</span></div><div class="ibiCol"><div class="ibiVal">—</div><div class="ibiBar" style="height:4px"></div><span class="ibiMonth">jan</span></div><div class="ibiCol"><div class="ibiVal">—</div><div class="ibiBar" style="height:4px"></div><span class="ibiMonth">fev</span></div><div class="ibiCol"><div class="ibiVal">—</div><div class="ibiBar" style="height:4px"></div><span class="ibiMonth">mar</span></div><div class="ibiCol"><div class="ibiVal">64</div><div class="ibiBar" style="height:64%"></div><span class="ibiMonth">abr</span></div><div class="ibiCol"><div class="ibiVal">58</div><div class="ibiBar" style="height:58%"></div><span class="ibiMonth">mai</span></div><div class="ibiCol"><div class="ibiVal">—</div><div class="ibiBar" style="height:4px"></div><span class="ibiMonth">jun</span></div><div class="ibiCol"><div class="ibiVal">—</div><div class="ibiBar" style="height:4px"></div><span class="ibiMonth">jul</span></div><div class="ibiCol"><div class="ibiVal">76</div><div class="ibiBar" style="height:76%"></div><span class="ibiMonth">ago</span></div><div class="ibiCol"><div class="ibiVal">72</div><div class="ibiBar" style="height:72%"></div><span class="ibiMonth">set</span></div></div><div class="statusline" style="margin-top:14px"><span class="pill">↑ maior construção de marca</span><span class="pill">— sem base suficiente</span><span class="pill">escala 0–100</span></div><div class="formula"><div><b>25%</b>Autoridade do veículo</div><div><b>25%</b>Aderência aos pilares atuais</div><div><b>20%</b>Protagonismo da Gabi</div><div><b>15%</b>Atualização factual</div><div><b>15%</b>Valor de marca/comercial</div></div><div class="call"><b>Leitura atual:</b> o pico recente de agosto combina cobertura conquistada sobre Avenida Brasil com retomada de narrativa pública. Setembro mantém intensidade e diversidade de veículos, mas sofre desconto por enquadramentos desatualizados sobre a vida profissional nos EUA. A intervenção de imagem entra no índice como correção, não como matéria positiva.</div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Navegação analítica</div><div class="title">Explore o Radar por dimensão</div><div class="areaHub"><div class="call" data-open="radar"><b>Comercial →</b><br>universo, abordagens, respostas, propostas e negociação</div><div class="call" data-open="biblioteca"><b>Propostas →</b><br>territórios criativos e materiais reconciliados</div><div class="call" data-open="pr"><b>Imprensa →</b><br>clipping, IBI, trajetória e gestão de imagem</div></div></div>
+<div data-live-surface="true" data-live-state="consolidated" class="card span12"><div class="ey">Evolução da imagem</div><div class="title">Uma trajetória que ganhou novas camadas</div><p class="explain">Este rastro organiza momentos públicos da carreira. Ele não é um “score” de reputação: mostra como os assuntos associados à Gabriella ficaram mais amplos ao longo do tempo.</p><div style="display:grid;gap:8px;margin-top:20px"><div class="step" style="width:38%"><b>2012</b><span>Avenida Brasil</span><p>atriz mirim e reconhecimento nacional</p></div><div class="step" style="width:52%"><b>2013–15</b><span>Chiquititas</span><p>personagem, público jovem e vínculo afetivo</p></div><div class="step" style="width:68%"><b>Disney+</b><span>Tudo Igual... SQN</span><p>nova fase artística e audiência digital</p></div><div class="step" style="width:84%"><b>Brasil ↔ EUA</b><span>vida internacional + estudos</span><p>novos territórios de narrativa e marcas</p></div><div class="step" style="width:100%"><b>2026</b><span>transição adulta + imprensa + mercado</span><p>reposicionamento comercial e construção de imagem adulta</p></div></div></div></div></section>
+
+<section id="studio" class="panel">
+  <div class="grid">
+    <div class="card span12 studioHero">
+      <div class="ey">DIVA · sua parceira criativa</div>
+      <div class="title" style="font-size:34px;margin-top:6px">Da ideia ao vídeo: a DIVA te ajuda a criar e gravar.</div>
+      <p class="explain">Você não precisa montar briefing. Conte o que está pensando — ou só diga que quer uma ideia — e a DIVA organiza o caminho.</p>
+      <div class="studioIntroGrid" aria-label="O que a DIVA faz">
+        <div class="studioCapability"><b>✨ Cria ideias</b><span>parte do seu momento e encontra um caminho de conteúdo</span></div>
+        <div class="studioCapability"><b>✍️ Faz roteiros</b><span>estrutura gancho, fala, cenas e fechamento</span></div>
+        <div class="studioCapability"><b>🎬 Planeja a gravação</b><span>transforma a ideia em cenas simples de executar</span></div>
+        <div class="studioCapability"><b>🔭 Busca referências</b><span>traz direções visuais e de vídeo para inspirar</span></div>
+      </div>
+      <!-- GABI_RADAR_PUBLIC_SAFE_V3 -->
+    </div>
+    <div class="card span12">
+      <div class="ey">Como usar</div>
+      <div class="studioHow">
+        <div class="studioStep"><strong><i>1</i>Escolha seu ponto de partida</strong><span>Quer uma ideia nova, gravar agora, desenvolver algo seu ou partir de uma referência?</span></div>
+        <div class="studioStep"><strong><i>2</i>Conte o contexto</strong><span>Pode escrever ou falar. Diga só o que souber: assunto, lugar, tempo, humor ou objetivo.</span></div>
+        <div class="studioStep"><strong><i>3</i>Receba o plano pronto</strong><span>A DIVA devolve ideia, roteiro, cenas, legenda e referências para você usar ou ajustar.</span></div>
+      </div>
+      <div class="ey">1 · O que você quer fazer agora?</div>
+      <div class="studioModes" id="gabiStudioModes">
+        <button class="studioMode active" data-studio-intent="surprise"><b>✨ Criar uma ideia do zero</b><span>Não sei o que postar. Quero que a DIVA proponha um caminho.</span></button>
+        <button class="studioMode" data-studio-intent="record_now"><b>🎬 Montar algo para gravar agora</b><span>Eu digo onde estou e quanto tempo tenho; a DIVA monta algo executável.</span></button>
+        <button class="studioMode" data-studio-intent="seed"><b>💡 Desenvolver uma ideia que já tenho</b><span>Eu trago a semente e a DIVA transforma em roteiro, cenas e variações.</span></button>
+        <button class="studioMode" data-studio-intent="reference"><b>🔭 Criar a partir de uma referência</b><span>Eu conto a referência ou o tema e a DIVA traduz para uma ideia original.</span></button>
+      </div>
+      <div class="studioComposerLabel"><b>2 · Conte um pouco do contexto</b><span>Não precisa preencher tudo. Uma frase já basta.</span></div>
+      <div class="studioCoach">
+        <div style="font-size:22px">✨</div>
+        <div><strong>Dica da DIVA</strong><span>Fala comigo como falaria com uma pessoa. Eu organizo o resto.</span>
+          <div class="studioExamples">
+            <button type="button" data-studio-example="Não sei o que postar hoje. Me dá uma ideia que combine comigo.">Não sei o que postar</button>
+            <button type="button" data-studio-example="Tenho 15 minutos e quero gravar alguma coisa agora.">Tenho 15 minutos</button>
+            <button type="button" data-studio-example="Tenho uma referência e quero transformar a linguagem em algo meu.">Tenho uma referência</button>
+          </div>
+        </div>
+      </div>
+      <div class="studioComposer" id="gabiStudioComposer">
+        <textarea id="gabiStudioBrief" placeholder="Ex.: tô em casa, tenho 20 minutos e quero gravar algo espontâneo sobre minha rotina entre Brasil e EUA."></textarea>
+        <button class="studioBtn secondary" id="gabiStudioMic" type="button">🎙️ Falar com a DIVA</button>
+        <button class="studioBtn" id="gabiStudioGenerate" type="button">Criar ideia + roteiro →</button>
+      </div>
+      <div class="studioVoiceRow">
+        <button id="gabiStudioVoiceToggle" type="button">🔊 Voz automática: ligada</button>
+        <button id="gabiStudioStop" type="button">⏹ Parar voz</button>
+        <button id="gabiStudioContinue" type="button">▶ Continuar voz</button>
+        <span class="studioVoiceStatus" id="gabiStudioVoiceStatus">Fale normalmente. A DIVA responde em voz alta e também deixa tudo escrito.</span>
+      </div>
+      <div class="studioTip"><b>Depois, é só conversar.</b> Você pode pedir: “mais curto”, “mais engraçado”, “troca o gancho”, “quero outra ideia” ou “faz uma versão para Reels”.</div>
+    </div>
+    <div class="card span12 studioResult" id="gabiStudioResult" aria-live="polite">
+      <div class="studioResultHead">
+        <div><div class="ey">3 · A DIVA preparou isso para você</div><div class="title" style="font-size:24px;margin-top:4px">Uma direção clara para começar.</div></div>
+        <button class="studioReplay" id="gabiStudioReplay" type="button">🔊 Ouvir de novo</button>
+      </div>
+      <div class="studioResultPrimary" id="gabiStudioResultPrimary"></div>
+      <div class="studioQuickActions" aria-label="Ajustar resposta da DIVA">
+        <button type="button" data-studio-refine="another">✨ Quero outra ideia</button>
+        <button type="button" data-studio-refine="shorter">✂️ Mais curto</button>
+        <button type="button" data-studio-refine="funny">🙂 Mais leve</button>
+        <button type="button" data-studio-refine="caption">✍️ Faz a legenda</button>
+      </div>
+      <details class="studioDetails" id="gabiStudioResultDetails">
+        <summary>Ver cenas, produção, legenda e referências ↓</summary>
+        <div class="studioResultGrid" id="gabiStudioResultGrid"></div>
+        <div class="studioRefs" id="gabiStudioRefs"></div>
+      </details>
+    </div>
+  </div>
+</section>
+<div class="foot">Painel executivo da Gabriella. O painel mostra apenas informações selecionadas para acompanhamento da Gabriella.</div></main>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true"><div class="modalBox"><button class="close">×</button><div class="ey">Contexto comercial</div><h2 id="modalTitle"></h2><div id="modalBody" class="context"></div></div></div>
+<script>
+const proposalCatalog=[
+{brand:"Fluency Academy",angle:"Vida adulta",front:"Educação / credibilidade",status:"Proposta atualizada em 24/09 · em avaliação",updatedAt:"24/09/2026",url:"https://docs.google.com/presentation/d/1OVPq5qUyHDBSQ9ogCfYjt5_iJKeuQe_L/edit?usp=drivesdk&ouid=108727720996210614304&rtpof=true&sd=true"},
+{brand:"BAIMS",angle:"Cachos & beleza",front:"Beauty / makeup",status:"Aprovada · contato de marketing validado",updatedAt:"",url:""},
+{brand:"Águia Branca",angle:"Verão",front:"Mobilidade / viagem",status:"Aprovada · material solicitado pela marca",updatedAt:"",url:""},
+{brand:"Meu Sapato Preto",angle:"Vida adulta",front:"Moda / calçados",status:"Aprovada · pronta para continuidade",updatedAt:"",url:""},
+{brand:"Constance",angle:"Vida adulta",front:"Moda / calçados",status:"Aprovada · material solicitado pela marca",updatedAt:"",url:""},
+{brand:"Amissima",angle:"Vida adulta",front:"Moda",status:"Aprovada · outbound realizado",updatedAt:"",url:""},
+{brand:"Airbnb",angle:"Brasil ↔ EUA",front:"Viagem internacional",status:"Aprovada · a prospectar",updatedAt:"16/09/2026",url:"https://www.canva.com/d/XOoKtgWtmQiKTH7"},
+{brand:"Canva",angle:"Vida adulta",front:"Tecnologia / criação",status:"Aprovada",updatedAt:"15/09/2026",url:"https://www.canva.com/d/Eo8xzMng3IFFpY-"},
+{brand:"CVC",angle:"Verão",front:"Viagens pelo Brasil",status:"Aprovada / salva",updatedAt:"15/09/2026",url:"https://www.canva.com/d/H8dtwJZLoWZkyP8"},
+{brand:"WeMobi",angle:"Verão",front:"Mobilidade / verão",status:"Resposta humana · canal de marketing indicado",updatedAt:"15/09/2026",url:"https://www.canva.com/d/6WAeYVkoIMK96yG"},
+{brand:"Buser",angle:"Verão",front:"Mobilidade / verão",status:"Aprovada / salva · conversa aberta",updatedAt:"15/09/2026",url:"https://www.canva.com/d/PRcliIR2yrwukoW"},
+{brand:"Australian Gold",angle:"Verão",front:"Beleza / solar",status:"Aprovada / salva",updatedAt:"",url:"https://www.canva.com/d/frS0moHvTXkhDOr"},
+{brand:"Tinder",angle:"Vida adulta",front:"Lifestyle / relacionamento",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/9ahIAetMj42nndT"},
+{brand:"Quem Disse, Berenice?",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/4-CvYwiYZF290yR"},
+{brand:"iFood",angle:"Vida adulta",front:"Consumo / rotina",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/IJfWj3uOOdjZkH5"},
+{brand:"Reformation",angle:"Vida adulta",front:"Moda / transição adulta",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/zCLOl8e9Q_i3g2z"},
+{brand:"Catharine Hill",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/wX0HPmVVDuNBJEV"},
+{brand:"Nestlé Brasil",angle:"Vida adulta",front:"Consumo / rotina",status:"Aprovada",updatedAt:"",url:"https://www.canva.com/d/yt4DIZZJn9qlozO"},
+{brand:"Skence",angle:"Cachos & beleza",front:"Hair care",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/uiRICc6Gnhmt4o7"},
+{brand:"Curly Care",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada · a prospectar",updatedAt:"",url:"https://www.canva.com/d/YZhsVpTXyQyQIh0"},
+{brand:"Dapop",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada · material solicitado",updatedAt:"",url:"https://www.canva.com/d/CKnc6IbekaKOIB-"},
+{brand:"Nick Vick",angle:"Cachos & beleza",front:"Hair care",status:"Aprovada · contato localizado",updatedAt:"",url:"https://www.canva.com/d/GJB9seHhqJOH2pR"},
+{brand:"Widi Care",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada · material enviado",updatedAt:"",url:"https://www.canva.com/d/MDtEbBbs36OxGhu"},
+{brand:"Risqué",angle:"Cachos & beleza",front:"Beauty / unhas",status:"Aprovada · material solicitado · atualizada em 24/09",updatedAt:"24/09/2026",url:"https://www.canva.com/d/8XJYt_5F8lG-sN3"},
+{brand:"Soft Hair + Bio Soft",angle:"Cachos & beleza",front:"Hair care",status:"Aprovada · material solicitado",updatedAt:"",url:"https://www.canva.com/d/98A0zrYqy0ACyBm"},
+{brand:"Revolut",angle:"Brasil ↔ EUA",front:"Vida Brasil–EUA",status:"Histórico preservado · prospecção pausada",updatedAt:"",url:"https://www.canva.com/d/QDpTjl6SVxScyNJ"},
+{brand:"Phytoderm",angle:"Cachos & beleza",front:"Beauty / fragrância",status:"Aprovada · contato validado",updatedAt:"",url:"https://www.canva.com/d/9Aftsb-y0_tQe12"},
+{brand:"Bela Berê",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada · material solicitado",updatedAt:"",url:"https://www.canva.com/d/nZjC4eEtyxHMOyV"},
+{brand:"Oficial Nutri",angle:"Vida adulta",front:"Wellness / rotina",status:"Aprovada / salva · pronta para envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/COjdIjKdbFVGRM2"},
+{brand:"Ynayê",angle:"Vida adulta",front:"Lifestyle",status:"Aprovada / salva · pronta para envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/Ae3NtfZ_GqaNv4a"},
+{brand:"Alyne",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada / salva · continuidade aberta",updatedAt:"17/09/2026",url:"https://www.canva.com/d/Tl_7L7D6Ppz45uo"},
+{brand:"Bella Jasmin",angle:"Vida adulta",front:"Lifestyle / beleza",status:"Aprovada / salva · pronta para envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/49svYOCTaskBIZn"},
+{brand:"Freck Beauty",angle:"Cachos & beleza",front:"Beauty",status:"Aprovada / salva · conversa em andamento",updatedAt:"17/09/2026",url:"https://www.canva.com/d/w_zN-90-8mN1LuN"},
+{brand:"Adaptogen Science",angle:"Vida adulta",front:"Wellness",status:"Aprovada / salva · preparar envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/n0_GpFqBX6OV-KD"},
+{brand:"Baggio Café",angle:"Vida adulta",front:"Lifestyle / rotina",status:"Aprovada / salva · preparar envio",updatedAt:"17/09/2026",url:"https://www.canva.com/d/keM3GnmRM1S3z3k"},
+{brand:"Authentic Beauty Concept",angle:"Cachos & beleza",front:"Hair care / cachos",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/PobjMaEReOW7NOU"},
+{brand:"Açaí da Barra",angle:"Verão",front:"Verão no Brasil",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/5MO89_dbBiyKVJf"},
+{brand:"Klauterre",angle:"Vida adulta",front:"Lifestyle / beleza natural",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/NYNnp2APSuRbCgu"},
+{brand:"Avène",angle:"Cachos & beleza",front:"Skincare / verão",status:"Aprovada / salva · preparar envio",updatedAt:"18/09/2026",url:"https://www.canva.com/d/I1DhnKCFcZu9bV7"}
+];
+const proposalLinks=Object.fromEntries(proposalCatalog.filter(p=>p.url).map(p=>[p.brand,p.url]));
+proposalLinks.Fluency=proposalLinks["Fluency Academy"];;const categories={"Beleza & Hair care":["Salon Line","Widi Care","Bela Berê","Curly Care","Nazca","Catharine Hill","Skence","Dapop","Kiss New York"],"Moda":["Riachuelo","Amissima","Constance","Reformation","Meu Sapato Preto"],"Viagem & Mobilidade":["LATAM","Buser","WeMobi","CVC","Airbnb","Bagaggio","Águia Branca"],"Financeiro":["Revolut","Wise","PicPay"],"Educação":["Fluency","EBAC","Cambridge English","Duolingo"],"Tecnologia":["Canva","CapCut","Stickerly"],"Lifestyle":["Baggio Café","Appel Home","Kitsch"],"Wellness":["TotalPass","Dark Lab"],"Consumo":["iFood","Nestlé","Shopee","AliExpress"]};const catMeaning={"Beleza & Hair care":"É um dos territórios mais aderentes à imagem da Gabriella porque transforma uma característica reconhecível — seus cachos — em conversa de produto, cuidado e identidade.","Moda":"Ajuda a consolidar a transição para uma imagem adulta e amplia a leitura da Gabi para além de entretenimento e beleza.","Viagem & Mobilidade":"É sustentado pela vida Brasil–Estados Unidos, pelos deslocamentos reais e pelo potencial de transformar viagens em capítulos de conteúdo.","Financeiro":"Conecta vida internacional, pagamentos, viagem e autonomia adulta sem exigir que a Gabi se torne uma criadora de finanças.","Educação":"A experiência de aprender inglês, estudar Psicologia nos EUA e construir carreira internacional cria credibilidade para educação e idiomas.","Tecnologia":"Ferramentas e plataformas podem entrar quando fazem parte do processo real de criação, comunicação ou rotina digital.","Lifestyle":"Abre espaço para marcas presentes na rotina e na fase adulta, desde que exista situação real de uso.","Wellness":"Rotina, Pilates, atividade física e autocuidado entram como parte da vida adulta e não como performance fitness.","Consumo":"Marcas de grande alcance podem usar momentos de compra, entretenimento, viagem e rotina para construir escala."};const proposals=proposalCatalog;
+const contexts={
+
+"BAIMS":"A marca compartilhou o canal oficial de marketing. O material atual foi aprovado para continuidade comercial, sem publicar contatos privados.",
+"Águia Branca":"A marca solicitou proposta e mídia kit. O material atual foi aprovado para continuidade.",
+"Meu Sapato Preto":"Material comercial aprovado para a frente de moda e calçados; o Radar aguarda novo movimento externo reconciliado.",
+"Constance":"A marca solicitou mídia kit e proposta para avaliação. O material atual foi aprovado para continuidade.",
+"Amissima":"Material comercial aprovado e outbound registrado. O Radar preserva apenas o estado atual desta frente.",
+
+"Fluency":"A proposta aprovada “O inglês que a Gabi ainda não sabe” transforma a experiência real de viver nos Estados Unidos em conteúdo sobre idioma, atuação e descobertas culturais. A marca respondeu positivamente e a conversa avançou para reunião. Status: oportunidade quente com continuidade concreta.",
+"Nazca":"A relação avançou e a marca pediu ampliação do escopo inicialmente apresentado. Existe contexto de testes com possibilidade de squad em 2027.",
+"LATAM":"A ativação de Rock in Rio foi construída sobre a narrativa Califórnia → LATAM → Rio → festival. O timing daquele ciclo não encaixou na agenda da Gabriella, mas a conversa permaneceu aberta para uma nova janela, idealmente com cerca de 45 dias de planejamento. A oportunidade continua no radar para um momento futuro. A proposta daquele ciclo previa GRWM do voo internacional, conteúdo de embarque, cobertura da ativação no festival e conteúdo de fechamento.",
+"Bagaggio":"A marca demonstrou interesse no perfil e chegou a discutir formatos e contraproposta. Houve oferta de permuta e existe possibilidade de encaixar uma proposta em uma narrativa maior de viagem. É uma porta comercial aberta, embora ainda dependa de novo avanço.",
+"Salon Line":"A conversa está aberta pelo território de cabelo/cachos. A marca demonstrou interesse nesse aspecto da imagem da Gabriella e pediu endereço para envio de produto. Como o envio não atende Los Angeles, o produto será recebido pela operação da Mundinho em São Paulo e encaminhado à Gabi. Status: aguardando continuidade logística e oportunidade de aprofundar a relação comercial.",
+"Buser":"A proposta “Black da Buser + Verão” foi desenvolvida para conectar deslocamentos pelo Brasil, férias e verão à rotina da Gabriella. Houve resposta e discussão de vouchers. Status: conversa aberta, com material aprovado já existente.",
+"Revolut":"A proposta explorou a vida Brasil–Estados Unidos da Gabriella e avançou até envio de material. O histórico comercial foi preservado no radar, mesmo sem ser uma prioridade ativa neste momento.",
+"Lola From Rio":"A apresentação avançou para envio de produto. É uma resposta humana concreta e cria uma relação inicial com uma marca de hair care aderente ao território de cachos.",
+"Nick Vick":"Existe material/proposta localizada, mas o histórico também registra uma negativa. Por isso a marca aparece fria até que exista uma nova abertura comercial documentada."
+};
+const contextCardRules={
+home:{title:"Visão geral",target:"home",terms:[],now:"A leitura reúne comercial, agências e imagem em uma única superfície.",changed:"Novas atualizações entram como movimento vivo sem apagar a base consolidada.",why:"Separa novidade, histórico e ausência de evidência para não transformar silêncio em fato.",next:"Abra a frente que quer entender e compare o movimento recente com a leitura consolidada."},
+marcas:{title:"Marcas",target:"marcas",terms:["comercial","marca","proposta"],now:"O Radar separa universo mapeado, marcas apresentadas, propostas e avanços reais.",changed:"Respostas e novos movimentos atualizam as marcas envolvidas; totais estruturais só mudam após reconciliação.",why:"Acesso a uma marca não é o mesmo que abordagem, resposta ou oportunidade concreta.",next:"Abra as marcas em movimento e depois confronte o status com a proposta correspondente."},
+agencias:{title:"Agências parceiras",target:"agencias",terms:["agência","agencia","casting","briefing"],now:"Agências e parceiros são medidos fora do total de marcas porque funcionam como portas 1→N.",changed:"A leitura só avança quando surge relação validada, briefing, casting, shortlist ou outro movimento documentado.",why:"Misturar agências e marcas no mesmo funil inflaria artificialmente a operação.",next:"Priorize relações com entidade resolvida e contexto público suficiente para entender o caminho de entrada."},
+pr:{title:"Imprensa & imagem",target:"pr",terms:["pr","imprensa","press","imagem","clipping","matéria","materia"],now:"Clipping, releases e intervenções de imagem são camadas diferentes da mesma frente de reputação.",changed:"Novas matérias entram deduplicadas; correções de enquadramento aparecem como intervenção, não como resultado positivo.",why:"PR mede como a trajetória é enquadrada e quanto a cobertura constrói marca, não apenas volume.",next:"Leia clipping, IBI e intervenções antes de concluir se houve ganho de imagem."},
+movimento:{title:"Movimento comercial",target:"movimento",terms:["comercial","proposta","avaliação","avaliacao","continuidade"],now:"O caminho comercial é lido como radar → apresentação → proposta → avanço.",changed:"O principal movimento acontece no estado de cada marca, não apenas nos totais do funil.",why:"É o status e sua consequência que mostram onde existe oportunidade real.",next:"Abra Propostas ou Marcas para entender quais casos mudaram de estado."},
+radar:{title:"Radar de marcas",target:"radar",terms:["comercial","marca","proposta"],now:"A base comercial reúne camadas com denominadores diferentes e preserva histórico.",changed:"Eventos recentes atualizam somente as entidades relacionadas e não reescrevem o passado.",why:"Isso evita transformar sinais diferentes em um funil artificial.",next:"Cruze categoria, marca, histórico e estado atual antes de interpretar oportunidade."},
+biblioteca:{title:"Biblioteca de propostas",target:"biblioteca",terms:["comercial","proposta","avaliação","avaliacao"],now:"A biblioteca mostra materiais vigentes ou aprovados reconciliados com o estado comercial conhecido.",changed:"Um novo evento pode atualizar o status, mas não altera o material ou afirma envio sem evidência.",why:"Aprovação, envio, avaliação e histórico pausado são estados diferentes.",next:"Abra o material vigente e compare-o com a ficha e o movimento recente da marca."},
+propostas:{title:"Propostas atuais",target:"biblioteca",terms:["comercial","proposta","avaliação","avaliacao"],now:"Propostas aprovadas, enviadas e em avaliação convivem na mesma biblioteca com status explícito.",changed:"O feed vivo atualiza status apenas quando existe movimento reconciliado.",why:"Evita confundir material pronto com proposta já enviada ou oportunidade em avaliação.",next:"Comece pelos itens com movimento recente e valide a consequência comercial antes da próxima ação."},
+apresentadas:{title:"Marcas apresentadas",target:"movimento",terms:["comercial","marca"],now:"Uma marca entra nesta camada quando há evidência de abordagem e deduplicação por entidade.",changed:"Novos contatos não aumentam automaticamente o total se forem da mesma marca.",why:"A métrica precisa representar marcas únicas, não volume de mensagens.",next:"Procure quais apresentações viraram resposta, proposta ou continuidade."},
+categorias:{title:"Categorias comerciais",target:"categoria",terms:["comercial","marca"],now:"Categorias organizam aderência e histórico por território comercial.",changed:"Uma categoria ganha relevância quando novas marcas ou movimentos reforçam aquele território.",why:"Ajuda a enxergar concentração de portas sem transformar afinidade em garantia de campanha.",next:"Abra as marcas da categoria e compare temperatura, proposta e contexto."},
+angulos:{title:"Ângulos criativos",target:"biblioteca",terms:["proposta","comercial"],now:"Ângulos organizam a lógica criativa usada para conectar a história da Gabi às marcas.",changed:"Só entram novos materiais quando a proposta aprovada ou vigente foi reconciliada.",why:"Mantém a leitura criativa ligada a um artefato comercial real, não a ideias soltas.",next:"Abra o território e compare quais marcas receberam materiais dentro dele."}
+,
+studio:{title:"DIVA Studio",target:"studio",terms:["social","conteudo","conteúdo","imagem","pr"],now:"A DIVA transforma sinais do Radar em matéria-prima criativa.",changed:"Novos sinais aprovados passam a enriquecer ideias, roteiros e referências.",why:"A criatividade fica conectada ao momento real sem abrir o bastidor interno da agência.",next:"Escolha uma entrada, fale com a DIVA ou escreva um briefing."}};
+let latestClientSafeRows=[];
+function contextCardHit(key,rows){
+  const rule=contextCardRules[key]||contextCardRules.home;
+  if(!rows.length)return null;
+  if(!rule.terms.length)return rows[0]||null;
+  return rows.find(row=>{
+    const d=row.data||row;
+    const hay=normalizedLiveText([d.category,d.status,d.title,d.summary].filter(Boolean).join(' '));
+    return rule.terms.some(term=>hay.includes(normalizedLiveText(term)));
+  })||null;
+}
+function showContextCard(key,sourceCard=null){
+  const rule=contextCardRules[key]||contextCardRules.home;
+  const rail=document.getElementById('contextCardRail');
+  if(!rail)return false;
+  const target=document.getElementById(rule.target)||document.getElementById('home');
+  if(target&&rail.parentElement!==target)target.prepend(rail);
+  rail.hidden=false;rail.dataset.contextSource=key;rail.dataset.contextLive='false';
+  const cardTitle=sourceCard?.querySelector?.('.title')?.textContent?.trim();
+  document.getElementById('contextCardTitle').textContent=cardTitle||rule.title;
+  document.getElementById('contextNow').textContent=rule.now;
+  document.getElementById('contextChanged').textContent=rule.changed;
+  document.getElementById('contextWhy').textContent=rule.why;
+  document.getElementById('contextNext').textContent=rule.next;
+  document.getElementById('contextCardSource').textContent='base consolidada';
+  const contextLive=document.getElementById('contextLive');
+  contextLive.textContent='Base consolidada · aguardando novo movimento.';
+  updateContextCardFromFeed(latestClientSafeRows);
+  return true;
+}
+function updateContextCardFromFeed(rows){
+  const rail=document.getElementById('contextCardRail');
+  if(!rail||rail.hidden)return;
+  const key=rail.dataset.contextSource||'home';
+  const hit=contextCardHit(key,safeRadarRows(rows));
+  const contextLive=document.getElementById('contextLive');
+  const source=document.getElementById('contextCardSource');
+  if(hit){
+    const d=hit.data||hit;
+    rail.dataset.contextLive='true';
+    source.textContent='ao vivo';
+    contextLive.textContent=['Novo movimento',feedText(d.status,70),feedText(d.title,160),feedText(d.summary,360),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+  }else{
+    rail.dataset.contextLive='false';
+    source.textContent='base consolidada';
+    contextLive.textContent='Base consolidada · nenhuma atualização nova altera esta leitura.';
+  }
+}
+
+function openPanel(id){
+  const p=document.getElementById(id);
+  if(!p)return false;
+  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+  p.classList.add('active');
+  const t=document.querySelector('.tab[data-tab="'+id+'"]');
+  if(t)t.classList.add('active');
+  requestAnimationFrame(()=>p.scrollIntoView({behavior:'smooth',block:'start'}));
+  return true;
+}
+function handlePanelNavigation(e){
+  const trigger=e.target?.closest?.('[data-open]');
+  if(!trigger)return;
+  const nested=e.target?.closest?.('a,button');
+  if(nested&&nested!==trigger)return;
+  const target=trigger.dataset.open;
+  if(!target||!document.getElementById(target))return;
+  e.preventDefault();
+  showContextCard(target,trigger);
+  openPanel(target);
+}
+function activatePanelNavigation(){
+  document.querySelectorAll('[data-open]').forEach(el=>{
+    el.setAttribute('tabindex','0');
+    el.setAttribute('role','button');
+    el.setAttribute('aria-controls',el.dataset.open);
+  });
+  document.addEventListener('click',handlePanelNavigation);
+  document.addEventListener('keydown',e=>{
+    const trigger=e.target?.closest?.('[data-open]');
+    if(trigger&&(e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      if(document.getElementById(trigger.dataset.open)){showContextCard(trigger.dataset.open,trigger);openPanel(trigger.dataset.open);}
+    }
+  });
+}
+activatePanelNavigation();
+const stageText={radar:["Radar de marcas","Universo de marcas mapeadas pela Mundinho. Use as categorias e a Word Cloud para explorar as relações já identificadas."],apresentadas:["Marcas apresentadas","Uma marca entra aqui quando existe evidência de que a Gabriella foi efetivamente apresentada. O mesmo nome é deduplicado para que diferentes interações não inflem o total."],propostas:["Propostas comprovadas","Aqui ficam as oportunidades que avançaram até proposta com evidência de envio. A abertura completa conecta marca, categoria, ângulo criativo e situação da conversa."],categorias:["Categorias comerciais","A visão por categoria ajuda a entender em quais territórios a carreira da Gabriella já está ganhando mais portas: beleza, viagem, mobilidade, financeiro, educação, moda, tecnologia, lifestyle e outros."],angulos:["Ângulos criativos","Esta área organiza as propostas aprovadas pelo território criativo usado: qual aspecto da vida e imagem da Gabriella foi transformado em oportunidade para uma marca."]};
+const socials={"Salon Line":["@salonlinebrasil","https://www.instagram.com/salonlinebrasil/"],"Widi Care":["@widicare","https://www.instagram.com/widicare/"],"Bela Berê":["@belabere","https://www.instagram.com/belabere/"],"Nazca":["@nazcacosmeticos","https://www.instagram.com/nazcacosmeticos/"],"Catharine Hill":["@catharinehilloficial","https://www.instagram.com/catharinehilloficial/"],"Dapop":["@dapopmakeup","https://www.instagram.com/dapopmakeup/"],"Kiss New York":["@kissnybrasil","https://www.instagram.com/kissnybrasil/"],"Riachuelo":["@riachuelo","https://www.instagram.com/riachuelo/"],"Amissima":["@amissima","https://www.instagram.com/amissima/"],"Constance":["@constancecalcados","https://www.instagram.com/constancecalcados/"],"Reformation":["@reformation","https://www.instagram.com/reformation/"],"Meu Sapato Preto":["@meusapatopreto","https://www.instagram.com/meusapatopreto/"],"LATAM":["@latambrasil","https://www.instagram.com/latambrasil/"],"Buser":["@buserbrasil","https://www.instagram.com/buserbrasil/"],"WeMobi":["@wemobi","https://www.instagram.com/wemobi/"],"CVC":["@cvcviagens","https://www.instagram.com/cvcviagens/"],"Airbnb":["@airbnb","https://www.instagram.com/airbnb/"],"Bagaggio":["@bagaggio","https://www.instagram.com/bagaggio/"],"Águia Branca":["@viacaoaguiabranca","https://www.instagram.com/viacaoaguiabranca/"],"Revolut":["@revolutapp","https://www.instagram.com/revolutapp/"],"Wise":["@wise","https://www.instagram.com/wise/"],"PicPay":["@picpay","https://www.instagram.com/picpay/"],"Fluency":["@fluencytv","https://www.instagram.com/fluencytv/"],"Fluency Academy":["@fluencytv","https://www.instagram.com/fluencytv/"],"EBAC":["@ebaconline","https://www.instagram.com/ebaconline/"],"Duolingo":["@duolingo","https://www.instagram.com/duolingo/"],"Canva":["@canva","https://www.instagram.com/canva/"],"CapCut":["@capcutapp","https://www.instagram.com/capcutapp/"],"Stickerly":["@stickerly","https://www.instagram.com/stickerly/"],"TotalPass":["@totalpass","https://www.instagram.com/totalpass/"],"iFood":["@ifoodbrasil","https://www.instagram.com/ifoodbrasil/"],"Shopee":["@shopee_br","https://www.instagram.com/shopee_br/"],"AliExpress":["@aliexpressbr","https://www.instagram.com/aliexpressbr/"]};const brandLinks={"Salon Line":"https://www.instagram.com/salonlinebrasil/","Fluency":"https://www.instagram.com/fluencytv/","LATAM":"https://www.instagram.com/latambrasil/","Buser":"https://www.instagram.com/buserbrasil/","Revolut":"https://www.instagram.com/revolutapp/"};const reconciled={"Fluency Academy":"Resposta positiva e proposta enviada. A oportunidade conecta a adaptação da Gabi ao inglês, vida acadêmica e carreira nos EUA.","Fluency":"Resposta positiva e proposta enviada. A oportunidade conecta a adaptação da Gabi ao inglês, vida acadêmica e carreira nos EUA.","Revolut":"Proposta enviada em 16/09. O histórico comercial permanece no Radar mesmo quando a prospecção deixa de ser prioridade.","Alyne Cosméticos":"A marca respondeu e abriu continuidade para a conversa.","Freck Beauty":"A marca respondeu e pediu detalhes, datas-chave e entregáveis para revisão.","Chocolate Lugano":"A marca abriu espaço para continuidade da conversa.","Parachute":"A marca informou não ter oportunidade ativa agora e deixou aberta a possibilidade de contato futuro.","Amaéco":"A marca respondeu e compartilhou o canal institucional de Marketing para continuidade."};const brandDossier={"Salon Line":"Marca brasileira de hair care com forte histórico em cabelos cacheados e crespos e comunidade própria de creators. Para a Gabi, o ponto de aderência é a assinatura visual dos cachos e a abertura concreta já criada por produto.","Fluency":"Escola digital de idiomas. O território construído para a Gabi conecta inglês, adaptação aos EUA, atuação e vida universitária. A conversa já avançou além do primeiro contato.","LATAM":"Companhia aérea e território central para a narrativa Brasil ↔ EUA. O primeiro ciclo foi Rock in Rio; o valor agora está em preservar a relação para uma janela de planejamento mais confortável.","Buser":"Mobilidade rodoviária e viagens pelo Brasil. A proposta conecta Black Friday, verão e deslocamentos reais da Gabi no país.","Revolut":"Fintech internacional. A proposta explorou a vida financeira e cotidiana entre Brasil e Estados Unidos; o histórico permanece preservado mesmo com a prospecção pausada."};const advice={"Fluency":"Como você pode ajudar: publique conteúdos sobre aprendizado de inglês, diferenças culturais, gírias e situações reais de viver em outro idioma. Isso reforça, de forma orgânica, o território que já apresentamos à marca.","Salon Line":"Como você pode ajudar: manter os cachos visíveis em conteúdos de rotina e cuidado fortalece a associação imediata entre sua imagem e hair care. Acompanhar a marca também ajuda você a reconhecer lançamentos e conversas em que possa participar.","LATAM":"Como você pode ajudar: conteúdos sobre deslocamentos Brasil–EUA, volta ao Brasil, destinos e rotina de viagem ajudam a tornar o território de mobilidade ainda mais evidente.","Salon Line":"Como você pode ajudar: acompanhar a marca e manter conteúdos em que seus cachos apareçam como parte da rotina fortalece o território que já despertou interesse comercial."};
+document.querySelectorAll('[data-cat]').forEach(x=>x.onclick=()=>{showContextCard('categorias',x);openPanel('categoria');const c=x.dataset.cat,a=[...new Set(categories[c]||[])];document.getElementById('catTitle').textContent=c;document.getElementById('catCount').textContent=a.length;document.getElementById('catMeaning').textContent=catMeaning[c]||'';document.getElementById('catBrands').innerHTML=a.map((n,i)=>'<span class="brand '+(i<2?'hot':'cool')+' s'+(i<2?'3':'1')+'" data-brand="'+n+'" tabindex="0" role="button">'+n+'</span>').join('')});
+function renderProposalLibrary(angle=null){const g=document.getElementById('libGrid');g.replaceChildren();const rows=angle?proposals.filter(p=>p.angle===angle):proposals;rows.forEach(p=>{const d=document.createElement('article');d.className='card span4';d.dataset.liveSurface='true';d.dataset.liveState='consolidated';const liveStatus=proposalStatusFor(p.brand,p.status);const l=proposalLinks[p.brand];d.innerHTML='<div class="ey">'+p.front+'</div><div class="title">'+p.brand+'</div><p class="explain">'+liveStatus+'</p>'+(p.updatedAt?'<div class="mini">Proposta vigente · '+p.updatedAt+'</div>':'')+(l?'<a class="call" href="'+l+'" target="_blank" rel="noopener noreferrer"><b>Abrir proposta vigente ↗</b><br><span class="mini">Material reconciliado no acervo da Mundinho.</span></a>':'<div class="call"><b>Material aprovado registrado.</b><br><span class="mini">O Radar não publica link até o artefato final estar reconciliado com segurança.</span></div>');g.appendChild(d)});hydrateLiveCards([]);activateLiveCharts()}
+function openProposalLibrary(){const x=document.querySelector('[data-stage="propostas"]');showContextCard('propostas',x);openPanel('biblioteca');document.getElementById('libTitle').textContent='Propostas atuais aprovadas';renderProposalLibrary()}
+document.querySelectorAll('[data-angle]').forEach(x=>x.onclick=e=>{e.stopPropagation();showContextCard('angulos',x);openPanel('biblioteca');document.getElementById('libTitle').textContent=x.dataset.angle;renderProposalLibrary(x.dataset.angle)});
+document.querySelectorAll('[data-stage]').forEach(x=>x.onclick=()=>{if(x.dataset.stage==='propostas'){openProposalLibrary();return}showContextCard(x.dataset.stage,x);const v=stageText[x.dataset.stage];if(!v)return;document.getElementById('modalTitle').textContent=v[0];document.getElementById('modalBody').textContent=v[1];setModalState(true)});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{showContextCard(b.dataset.tab,b);openPanel(b.dataset.tab)});
+const agencyVerified={"Digital UOW":["confirmada","Marketing + tecnologia; operação pública ativa desde 2018.","https://digitaluow.com.br/"],"Agência Digital UOW":["confirmada","Marketing + tecnologia; operação pública ativa desde 2018.","https://digitaluow.com.br/"],"Grapa Digital":["confirmada","Agência com atuação pública em influência, conteúdo e produção.","https://grapadigital.com.br/"],"Agência Grapa Digital":["confirmada","Agência com atuação pública em influência, conteúdo e produção.","https://grapadigital.com.br/"],"Keepgo":["confirmada","Agência especializada em marketing de influência.","https://keepgo.com.br/"],"Agência Keepgo":["confirmada","Agência especializada em marketing de influência.","https://keepgo.com.br/"],"Agência SoWhat":["confirmada","Agência de publicidade com atuação pública em social, conteúdo e influência.","https://www.sowhat.com.br/"],"Publination":["confirmada","Ecossistema brasileiro de marketing de influência com operação pública ativa.","https://publination.com.br/"],"Agência Publination":["confirmada","Ecossistema brasileiro de marketing de influência com operação pública ativa.","https://publination.com.br/"],"Approach":["confirmada","Agência de comunicação 360° com PR, publicidade e marketing de influência.","https://approach.com.br/"],"Agência Approach":["confirmada","Agência de comunicação 360° com PR, publicidade e marketing de influência.","https://approach.com.br/"],"Press à Porter":["confirmada","Agência de comunicação corporativa e relações públicas fundada em 2001.","https://pressaporter.com.br/"],"4even Casting":["confirmada","Empresa de casting e eventos com operação pública desde 2013.","https://4evencasting.com.br/"],"4Even Casting":["confirmada","Empresa de casting e eventos com operação pública desde 2013.","https://4evencasting.com.br/"],"Combo Comunicação":["confirmada","Agência de comunicação estratégica, mídia, influência e reputação.","https://www.linkedin.com/company/combo-comunica%C3%A7%C3%A3o/"],"Agência Combo Comunicação":["confirmada","Agência de comunicação estratégica, mídia, influência e reputação.","https://www.linkedin.com/company/combo-comunica%C3%A7%C3%A3o/"],"Agência DNA360":["confirmada","Agência com operação pública voltada a crescimento e e-commerce.","https://dna360.ag/"]};
+function openAgencyFicha(n){if(!n)return;const key=n.replace(/^Agência\s+/,'');const v=agencyVerified[n]||agencyVerified[key];document.getElementById('modalTitle').textContent=n;document.getElementById('modalBody').innerHTML=v?'<p><b>Entidade pública confirmada.</b> '+v[1]+'</p><div class="brandActions"><a href="'+v[2]+'" target="_blank" rel="noopener noreferrer">Abrir presença oficial ↗</a></div><p class="mini">Rede publicada somente após resolução de entidade.</p>':'<p><b>Entidade em verificação.</b> Esta ocorrência existe na base comercial, mas o FOFOQUEIRO ainda não encontrou evidência pública suficiente para atribuir site ou rede social com segurança.</p><p class="mini">Nenhum perfil semelhante é publicado por aproximação de nome.</p>';setModalState(true)}
+// GABI_SAFE_PUBLIC_SOCIAL v1 CANONICAL: public official @handles/social profiles are client-safe.
+// Public social platforms are publication-safe after entity resolution.
+// If identity is ambiguous, withhold only the unresolved public URL; sensitive-channel rules remain governed outside client HTML.
+const modal=document.getElementById('modal');
+function openBrandFicha(n){if(!n)return;document.getElementById('modalTitle').textContent=n;const social=socials[n];document.getElementById('modalBody').innerHTML='<p>'+(reconciled[n]||contexts[n]||'Marca mapeada no Radar. O contexto comercial disponível está sendo enriquecido conforme novas evidências são reconciliadas.')+'</p>'+(brandDossier[n]?'<div class="dossier"><b>Dossiê da marca</b>'+brandDossier[n]+'</div>':'')+(advice[n]?'<div class="dossier"><b>Como a Gabi pode ajudar</b>'+advice[n].replace('Como você pode ajudar: ','')+'</div>':'')+(proposalLinks[n]?'<div class="brandActions"><a href="'+proposalLinks[n]+'" target="_blank" rel="noopener noreferrer">Ver proposta ↗</a></div>':'')+(social?'<div class="brandActions"><a href="'+social[1]+'" target="_blank" rel="noopener noreferrer">'+social[0]+' ↗</a></div>':'');setModalState(true)}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-brand]');if(el)openBrandFicha(el.dataset.brand)});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-agency]');if(el)openAgencyFicha(el.dataset.agency)});
+document.addEventListener('keydown',e=>{const el=e.target.closest&&e.target.closest('[data-brand]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openBrandFicha(el.dataset.brand)}});
+document.addEventListener('keydown',e=>{const el=e.target.closest&&e.target.closest('[data-agency]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openAgencyFicha(el.dataset.agency)}});
+document.querySelectorAll('[data-brand]').forEach(el=>{el.setAttribute('tabindex','0');el.setAttribute('role','button')});
+document.querySelector('.close').onclick=()=>setModalState(false);modal.onclick=e=>{if(e.target===modal)setModalState(false)};
+
+// Persistent interaction contract: anything that looks clickable must work by mouse + keyboard.
+function setModalState(open){modal.classList.toggle('open',open);modal.setAttribute('aria-hidden',open?'false':'true')}
+document.querySelectorAll('.clickable').forEach(el=>{el.setAttribute('tabindex','0');el.setAttribute('role','button');el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}})});
+document.querySelectorAll('a[target="_blank"]').forEach(a=>a.setAttribute('rel','noopener noreferrer'));
+document.querySelector('.close').onclick=()=>setModalState(false);
+modal.addEventListener('click',e=>{if(e.target===modal)setModalState(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))setModalState(false)});
+const modalObserver=new MutationObserver(()=>modal.setAttribute('aria-hidden',modal.classList.contains('open')?'false':'true'));modalObserver.observe(modal,{attributes:true,attributeFilter:['class']});
+
+const GABI_RADAR_CLIENT_ID='97cc208c-a172-4f52-8427-1f301aa42049';
+const GABI_RADAR_COLLECTION_ID='GabiRadarFeed';
+const GABI_RADAR_TOKEN_KEY='gabiRadarVisitorTokenV1';
+const GABI_RADAR_TOKEN_EXP_KEY='gabiRadarVisitorTokenExpV1';
+function feedText(v,max=1200){return String(v??'').replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,max)}
+function feedDate(v){const d=new Date(v);if(Number.isNaN(d.getTime()))return'';return d.toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace('.','')}
+function safePublicUrl(v){try{const u=new URL(String(v||''));return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}}
+
+const LIVE_CARD_RULES=[
+  {terms:['imprensa','imagem','pr','clipping','ibi'],categories:['pr','imprensa','imagem']},
+  {terms:['agência','agencias','agências','casting'],categories:['agencia','agência','agencias','agências','parceiro']},
+  {terms:['proposta','movimento comercial','marcas','marca','lead','radar de marcas'],categories:['comercial','pipeline','proposta','marca','oportunidade']},
+  {terms:['conteúdo','social','digital','instagram','tiktok','youtube'],categories:['social','conteudo','conteúdo','digital']}
+];
+function normalizedLiveText(v){return feedText(v,2400).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
+const liveProposalStatusByBrand=new Map();
+function updateProposalStatusFromFeed(rows){
+  safeRadarRows(rows).forEach(row=>{
+    const d=row.data||row;
+    const key=normalizedLiveText(d.title);
+    const proposal=proposalCatalog.find(p=>normalizedLiveText(p.brand)===key);
+    if(!proposal)return;
+    const status=[feedText(d.status,80),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+    if(status)liveProposalStatusByBrand.set(key,status);
+  });
+}
+function proposalStatusFor(brand,fallback){
+  return liveProposalStatusByBrand.get(normalizedLiveText(brand))||fallback||'Estado reconciliado';
+}
+function safeRadarRows(rows){
+  return (Array.isArray(rows)?rows:[]).filter(x=>x?.data?.clientSafe===true&&!['sistema','system','bootstrap'].includes(String(x?.data?.category||'').toLowerCase()));
+}
+function liveRowForCard(card,rows){
+  const cardText=normalizedLiveText(card.innerText+' '+(card.dataset.open||'')+' '+(card.dataset.stage||''));
+  const rule=LIVE_CARD_RULES.find(r=>r.terms.some(t=>cardText.includes(normalizedLiveText(t))));
+  if(!rule)return null;
+  return rows.find(row=>{
+    const d=row.data||row;
+    const hay=normalizedLiveText([d.category,d.status,d.title,d.summary].filter(Boolean).join(' '));
+    return rule.categories.some(c=>hay.includes(normalizedLiveText(c)));
+  })||null;
+}
+function ensureLiveCardChrome(card){
+  let meta=card.querySelector(':scope > .liveCardMeta');
+  if(!meta){meta=document.createElement('div');meta.className='liveCardMeta';card.prepend(meta)}
+  let signal=card.querySelector(':scope > .liveCardSignal');
+  if(!signal){signal=document.createElement('div');signal.className='liveCardSignal';card.appendChild(signal)}
+  return{meta,signal};
+}
+function hydrateLiveCards(rows){
+  const safeRows=safeRadarRows(rows);
+  document.querySelectorAll('.card[data-live-surface="true"]').forEach(card=>{
+    const {meta,signal}=ensureLiveCardChrome(card);
+    const hit=liveRowForCard(card,safeRows);
+    if(hit){
+      const d=hit.data||hit;
+      card.dataset.liveState='updated';
+      meta.textContent=['ao vivo',feedText(d.status,60),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+      signal.textContent='Último movimento: '+(feedText(d.summary,420)||feedText(d.title,180)||'Atualização reconciliada.');
+    }else{
+      card.dataset.liveState='consolidated';
+      meta.textContent='base consolidada · aguardando novo movimento';
+      signal.textContent='';
+    }
+  });
+  document.querySelectorAll('.chartLiveBadge').forEach(badge=>{
+    const card=badge.closest('.card');
+    badge.textContent=card?.dataset.liveState==='updated'?'gráfico vivo · novo movimento no Radar':'gráfico vivo · base consolidada';
+  });
+}
+function activateLiveCharts(){
+  if(!document.getElementById('liveChartTip')){
+    const tip=document.createElement('div');tip.id='liveChartTip';tip.className='liveChartTip';tip.setAttribute('role','status');document.body.appendChild(tip);
+  }
+  const tip=document.getElementById('liveChartTip');
+  const charts=[...document.querySelectorAll('.donut,.barrow,.ibiCol,.flow>div,.metricBox,.track')];
+  const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('isSeen')}),{threshold:.18}):null;
+  charts.forEach(el=>{
+    if(el.dataset.liveChartReady==='true')return;
+    el.dataset.liveChartReady='true';el.classList.add('liveChart');
+    if(el.matches('.barrow,.ibiCol,.track'))el.dataset.chartMotion='bar';
+    el.setAttribute('tabindex','0');el.setAttribute('role','group');
+    const label=feedText(el.innerText||el.closest('.card')?.querySelector('.title')?.textContent||'Gráfico do Radar',220);
+    el.setAttribute('aria-label',label);
+    const show=e=>{
+      tip.textContent=label+' · '+(el.closest('.card')?.dataset.liveState==='updated'?'há novo movimento':'base consolidada');
+      tip.style.left=Math.min(window.innerWidth-280,(e.clientX||el.getBoundingClientRect().left)+12)+'px';
+      tip.style.top=Math.min(window.innerHeight-80,(e.clientY||el.getBoundingClientRect().bottom)+10)+'px';
+      tip.classList.add('show');
+    };
+    const hide=()=>tip.classList.remove('show');
+    el.addEventListener('mousemove',show);el.addEventListener('mouseenter',show);el.addEventListener('mouseleave',hide);
+    el.addEventListener('focus',()=>show({clientX:el.getBoundingClientRect().left,clientY:el.getBoundingClientRect().bottom}));el.addEventListener('blur',hide);
+    if(observer)observer.observe(el);else el.classList.add('isSeen');
+  });
+  document.querySelectorAll('.card[data-live-surface="true"]').forEach(card=>{
+    if(card.querySelector(':scope > .chartLiveBadge'))return;
+    if(card.querySelector('.donut,.barrow,.ibiChart,.flow,.metricBox,.track')){
+      const badge=document.createElement('div');badge.className='chartLiveBadge';badge.textContent='gráfico vivo · base consolidada';
+      const firstChart=card.querySelector('.donutWrap,.ibiChart,.flow,.barrow,.metricBox,.track');
+      if(firstChart)firstChart.insertAdjacentElement('afterend',badge);
+    }
+  });
+}
+
+async function visitorToken(){
+  const cached=localStorage.getItem(GABI_RADAR_TOKEN_KEY);
+  const exp=Number(localStorage.getItem(GABI_RADAR_TOKEN_EXP_KEY)||0);
+  if(cached&&Date.now()<exp-60000)return cached;
+  const res=await fetch('https://www.wixapis.com/oauth2/token',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({clientId:GABI_RADAR_CLIENT_ID,grantType:'anonymous'})});
+  if(!res.ok)throw new Error('visitor_token_'+res.status);
+  const data=await res.json();
+  if(!data.access_token)throw new Error('visitor_token_missing');
+  localStorage.setItem(GABI_RADAR_TOKEN_KEY,data.access_token);
+  localStorage.setItem(GABI_RADAR_TOKEN_EXP_KEY,String(Date.now()+Math.max(300,Number(data.expires_in||14400))*1000));
+  return data.access_token;
+}
+function renderLiveFeed(rows){
+  latestClientSafeRows=safeRadarRows(rows);
+  updateProposalStatusFromFeed(rows);
+  hydrateLiveCards(rows);activateLiveCharts();updateContextCardFromFeed(latestClientSafeRows);
+  const grid=document.getElementById('liveFeedGrid'),status=document.getElementById('feedStatus'),updated=document.getElementById('radarUpdatedAt');
+  if(updated)updated.textContent='Atualizado '+feedDate(new Date());
+  grid.replaceChildren();
+  if(!rows.length){
+    const empty=document.createElement('div');empty.className='liveFeedEmpty';empty.textContent='Nenhuma atualização nova. A leitura consolidada abaixo continua válida.';grid.appendChild(empty);
+    status.textContent='ao vivo · sem novidades';return;
+  }
+  rows.forEach(row=>{
+    const d=row.data||row;
+    const card=document.createElement('article');card.className='liveFeedCard';
+    const meta=document.createElement('small');meta.textContent=[feedText(d.category,40),feedText(d.status,60),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+    const title=document.createElement('b');title.textContent=feedText(d.title,180)||'Atualização';
+    const summary=document.createElement('p');summary.textContent=feedText(d.summary,900);
+    card.append(meta,title);if(summary.textContent)card.appendChild(summary);
+    const url=safePublicUrl(d.sourceUrl);if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir fonte ↗';card.appendChild(a)}
+    grid.appendChild(card);
+  });
+  status.textContent='ao vivo · '+rows.length+' atualizações';
+}
+async function loadLiveFeed(){
+  const status=document.getElementById('feedStatus');
+  try{
+    const token=await visitorToken();
+    const res=await fetch('https://www.wixapis.com/wix-data/v2/items/query',{method:'POST',headers:{'content-type':'application/json','authorization':token},body:JSON.stringify({dataCollectionId:GABI_RADAR_COLLECTION_ID,query:{paging:{limit:100,offset:0}}})});
+    if(!res.ok)throw new Error('feed_query_'+res.status);
+    const data=await res.json();
+    const rows=(Array.isArray(data.dataItems)?data.dataItems:[]).filter(x=>x?.data?.clientSafe===true&&!['sistema','system','bootstrap'].includes(String(x?.data?.category||'').toLowerCase())).sort((a,b)=>new Date(b?.data?.occurredAt||0)-new Date(a?.data?.occurredAt||0)).slice(0,6);
+    renderLiveFeed(rows);
+  }catch(error){
+    console.error('GABI_RADAR_LIVE_FEED',error);
+    status.textContent='leitura consolidada';status.classList.add('error');
+    const grid=document.getElementById('liveFeedGrid');grid.replaceChildren();
+    const empty=document.createElement('div');empty.className='liveFeedEmpty';empty.textContent='A atualização ao vivo está temporariamente indisponível. O restante do painel continua usando a última leitura reconciliada.';grid.appendChild(empty);
+  }
+}
+
+const GABI_DIVA_STUDIO_ENDPOINT='https://os.mundinhocomunicacao.com/api/gabi-diva-studio';
+let gabiStudioIntent='surprise',gabiStudioVoiceEnabled=true,gabiStudioRecognition=null,gabiStudioLastSpeech='',gabiStudioLastResult=null,gabiStudioLastBrief='';
+function gabiStudioPublicContext(){
+  return safeRadarRows(latestClientSafeRows).slice(0,12).map(row=>{
+    const d=row.data||row;
+    return{
+      title:feedText(d.title,180),
+      summary:feedText(d.summary,900),
+      category:feedText(d.category,60),
+      status:feedText(d.status,80),
+      occurredAt:feedText(d.occurredAt,80),
+      sourceLabel:feedText(d.sourceLabel,100),
+      sourceUrl:safePublicUrl(d.sourceUrl)
+    };
+  });
+}
+function gabiStudioSetVoiceStatus(text){const el=document.getElementById('gabiStudioVoiceStatus');if(el)el.textContent=text}
+function gabiStudioPublicText(value,n=1600){
+  return feedText(value,n)
+    .replace(/\bclient[- ]?safe\b/gi,'')
+    .replace(/\bmodo local\b\s*[:.-]?/gi,'')
+    .replace(/\b(provider|policy|backend|pacote (?:mínimo )?de dados|segunda inspeção)\b/gi,'')
+    .replace(/\s{2,}/g,' ')
+    .replace(/\s+([,.;:!?])/g,'$1')
+    .trim();
+}
+function gabiStudioSpeak(text){
+  gabiStudioLastSpeech=gabiStudioPublicText(text,4200);
+  if(!gabiStudioVoiceEnabled||!gabiStudioLastSpeech||!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(gabiStudioLastSpeech.replace(/[`*_#>]/g,' '));
+  u.lang='pt-BR';u.rate=.96;u.pitch=1.02;u.volume=1;
+  const voices=window.speechSynthesis.getVoices();
+  const preferred=voices.find(v=>/pt-BR/i.test(v.lang)&&/female|maria|luciana|fernanda|leticia|camila/i.test(v.name))||voices.find(v=>/pt-BR/i.test(v.lang));
+  if(preferred)u.voice=preferred;
+  u.onstart=()=>gabiStudioSetVoiceStatus('DIVA está falando… diga “pare” para interromper.');
+  u.onend=()=>gabiStudioSetVoiceStatus('Pronta para continuar.');
+  u.onerror=()=>gabiStudioSetVoiceStatus('Não consegui falar esta resposta. O texto continua disponível.');
+  window.speechSynthesis.speak(u);
+}
+function gabiStudioLocalVoiceCommand(value){
+  const normalized=normalizedLiveText(value).replace(/^diva\s*/,'').trim();
+  if(normalized.includes('pare')){
+    if('speechSynthesis' in window)window.speechSynthesis.cancel();
+    gabiStudioSetVoiceStatus('Parei. Diga “continue” quando quiser.');
+    return true;
+  }
+  if(normalized.includes('continue')){
+    if('speechSynthesis' in window&&window.speechSynthesis.paused)window.speechSynthesis.resume();
+    else if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech);
+    gabiStudioSetVoiceStatus('Continuando.');
+    return true;
+  }
+  if(normalized.includes('repete')||normalized.includes('repita')){
+    if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech);
+    return true;
+  }
+  return false;
+}
+function gabiStudioBlock(title,value,full=false,list=false){
+  const box=document.createElement('div');box.className='studioResultBlock'+(full?' full':'');
+  const label=document.createElement('b');label.textContent=title;box.appendChild(label);
+  if(list){
+    const ul=document.createElement('ul');(Array.isArray(value)?value:[]).forEach(item=>{const li=document.createElement('li');li.textContent=feedText(item,700);ul.appendChild(li)});box.appendChild(ul);
+  }else if(title==='IDEIA'){
+    const h=document.createElement('h3');h.textContent=feedText(value,1200);box.appendChild(h);
+  }else{
+    const p=document.createElement('p');p.textContent=feedText(value,1600);box.appendChild(p);
+  }
+  return box;
+}
+function renderGabiStudioResult(payload){
+  const raw=payload?.result||{},proposalMode=raw.mode==='proposal'||!!raw.proposal;
+  const result={
+    mode:proposalMode?'proposal':'content',
+    headline:gabiStudioPublicText(raw.headline,220),
+    idea:gabiStudioPublicText(raw.idea||raw.headline,1200),
+    hook:gabiStudioPublicText(raw.hook,500),
+    script:(Array.isArray(raw.script)?raw.script:[]).map(x=>gabiStudioPublicText(x,600)).filter(Boolean),
+    shotList:(Array.isArray(raw.shotList)?raw.shotList:[]).map(x=>gabiStudioPublicText(x,320)).filter(Boolean),
+    production:gabiStudioPublicText(raw.production,900),
+    caption:gabiStudioPublicText(raw.caption,800)
+  };
+  if(proposalMode){
+    const p=raw.proposal||{};
+    result.proposal={
+      opportunity:gabiStudioPublicText(p.opportunity,1200),
+      talentFit:gabiStudioPublicText(p.talentFit,1200),
+      ideaName:gabiStudioPublicText(p.ideaName,220),
+      concept:gabiStudioPublicText(p.concept,1600),
+      execution:(Array.isArray(p.execution)?p.execution:[]).map(x=>gabiStudioPublicText(x,700)).filter(Boolean),
+      brandRole:gabiStudioPublicText(p.brandRole,1200),
+      proof:(Array.isArray(p.proof)?p.proof:[]).map(x=>gabiStudioPublicText(x,500)).filter(Boolean),
+      extensions:(Array.isArray(p.extensions)?p.extensions:[]).map(x=>gabiStudioPublicText(x,500)).filter(Boolean),
+      nextStep:gabiStudioPublicText(p.nextStep,900)
+    };
+  }
+  gabiStudioLastResult=result;
+  const panel=document.getElementById('gabiStudioResult'),primary=document.getElementById('gabiStudioResultPrimary'),grid=document.getElementById('gabiStudioResultGrid'),refs=document.getElementById('gabiStudioRefs'),details=document.getElementById('gabiStudioResultDetails');
+  primary.replaceChildren();grid.replaceChildren();refs.replaceChildren();details.open=false;
+  if(proposalMode){
+    const p=result.proposal;
+    primary.append(
+      gabiStudioBlock('OPORTUNIDADE',p.opportunity||result.idea,true),
+      gabiStudioBlock('POR QUE GABI',p.talentFit||''),
+      gabiStudioBlock('IDEIA CENTRAL',[p.ideaName,p.concept].filter(Boolean).join(' — '),true),
+      gabiStudioBlock('COMO ACONTECE',p.execution||[],true,true)
+    );
+    grid.append(
+      gabiStudioBlock('PAPEL DA MARCA',p.brandRole||'',true),
+      gabiStudioBlock('PROVAS',p.proof||[],false,true),
+      gabiStudioBlock('DESDOBRAMENTOS',p.extensions||[],false,true),
+      gabiStudioBlock('PRÓXIMO PASSO',p.nextStep||'',true)
+    );
+  }else{
+    primary.append(
+      gabiStudioBlock('IDEIA',result.idea,true),
+      gabiStudioBlock('GANCHO',result.hook||''),
+      gabiStudioBlock('ROTEIRO',result.script.slice(0,4),false,true)
+    );
+    grid.append(
+      gabiStudioBlock('CENAS',result.shotList||[],false,true),
+      gabiStudioBlock('PRODUÇÃO',result.production||''),
+      gabiStudioBlock('LEGENDA',result.caption||'',true)
+    );
+  }
+  (Array.isArray(payload?.references)?payload.references:[]).forEach(ref=>{
+    const url=safePublicUrl(ref.url);if(!url)return;
+    const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=gabiStudioPublicText(ref.label,120);refs.appendChild(a);
+  });
+  panel.classList.add('ready');
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+  const spoken=proposalMode
+    ?['Gabi, montei uma proposta pra você.',result.proposal.opportunity,result.proposal.ideaName?('A ideia central é '+result.proposal.ideaName):result.proposal.concept,'Se quiser, eu posso deixar mais comercial, mais criativa ou mais curta.']
+    :['Gabi, pensei em uma direção pra você.',result.idea,result.hook?'O gancho pode ser: '+result.hook:'','Se quiser, eu ajusto com você.'];
+  gabiStudioSpeak(spoken.filter(Boolean).join(' '));
+}
+function gabiStudioLocalFallback(intent,brief,context=[]){
+  const cleanBrief=feedText(brief,700);
+  const ctx=(Array.isArray(context)?context:[]).slice(0,4).map(x=>feedText([x.title,x.summary,x.status].filter(Boolean).join(' · '),240)).filter(Boolean);
+  const seed=cleanBrief||ctx[0]||'rotina criativa entre Brasil e Estados Unidos';
+  const headline=intent==='record_now'?'Uma cena simples que já existe na sua rotina':intent==='reference'?'Pegue a linguagem, não copie a ideia':intent==='idea'?'Sua ideia, com uma virada visual':'Brasil ↔ EUA em um detalhe que só você percebe';
+  const asksProposal=/\b(proposta|parceria|campanha|branded content)\b/i.test(cleanBrief);
+  const idea=asksProposal
+    ? 'A proposta precisa ligar a marca a uma situação concreta da sua vida e dar a ela uma função que realmente mude o que acontece.'
+    : intent==='record_now'
+      ? 'Tenho um caminho simples para gravar agora: escolha um detalhe real do momento, comece já dentro da situação e deixe a história acontecer sem introdução longa.'
+      : intent==='reference'
+        ? 'Vamos usar a referência só como linguagem — ritmo, enquadramento ou sensação — e reconstruir tudo a partir de uma situação verdadeira da sua rotina.'
+        : 'Vamos pegar o tema que você trouxe e transformar em uma observação pessoal, simples de entender e fácil de gravar.';
+  const hook=intent==='record_now'?'“Eu ia gravar outra coisa, mas isso acabou de acontecer…”':'“Tem uma parte de viver entre dois lugares que ninguém me contou.”';
+  const script=[
+    '0–3s · Abra já dentro da situação, sem introdução longa.',
+    '3–10s · Mostre o detalhe concreto e conte o que você pensava antes.',
+    '10–20s · Faça a virada: o que mudou na prática, com uma reação ou exemplo real.',
+    '20–30s · Feche com uma pergunta simples para puxar identificação nos comentários.'
+  ];
+  const shotList=['Close espontâneo falando com a câmera','Plano detalhe do objeto/ambiente que prova a história','Plano médio em movimento para dar respiro','Último close com a pergunta final'];
+  const production='Vertical 9:16 · luz natural · 20–35s · edição leve · som ambiente preservado quando ajudar a sensação de rotina.';
+  const caption='Tem coisas que só fazem sentido quando a gente vive entre dois mundos. Qual detalhe da sua rotina mudou sem você perceber?';
+  const query=encodeURIComponent((cleanBrief||'rotina Brasil Estados Unidos creator vlog').slice(0,180));
+  const proposal=asksProposal?{
+    opportunity:'Existe uma oportunidade de transformar o pedido em uma história específica para a marca, sem depender de uma ideia genérica de influência.',
+    talentFit:'A Gabi entra pela parte real da vida, trajetória ou comportamento que torna essa parceria diferente de simplesmente contratar alcance.',
+    ideaName:'A MARCA MUDA O QUE ACONTECE',
+    concept:'A ideia começa numa situação concreta e faz a marca provocar uma decisão, acesso, transformação ou solução dentro da história.',
+    execution:['Começar por uma situação real da Gabi.','Fazer a marca entrar quando algo precisa acontecer.','Mostrar a consequência dessa entrada.','Fechar com um desdobramento que amplie a ideia sem virar lista de formatos.'],
+    brandRole:'A marca ocupa uma função clara na narrativa e não aparece apenas como product placement.',
+    proof:ctx.length?ctx:['Usar apenas dados e credenciais que provem esta oportunidade específica.'],
+    extensions:['Conteúdo principal','Desdobramentos sociais','PR quando existir uma pauta real'],
+    nextStep:'Definir produto, objetivo e momento da marca para fechar a versão pronta para apresentação.'
+  }:null;
+  return{
+    ok:true,fallback:true,
+    result:asksProposal
+      ?{mode:'proposal',headline:'Uma proposta que dá função real para a marca',idea,whyNow:'O pedido pode virar uma proposta específica sem inventar fatos.',hook:'A marca entra porque faz alguma coisa acontecer.',proposal,searchTerms:{visual:seed+' campaign visual creator',video:seed+' branded content creator'}}
+      :{mode:'content',headline,idea,whyNow:'A ideia parte do momento que você trouxe e pode ser ajustada até ficar com a sua cara.',hook,script,shotList,production,caption},
+    references:[
+      {type:'visual',label:'Referências visuais no Pinterest',url:'https://www.pinterest.com/search/pins/?q='+query},
+      {type:'video',label:'Referências de vídeo no YouTube',url:'https://www.youtube.com/results?search_query='+query},
+      {type:'video',label:'Referências de linguagem no TikTok',url:'https://www.tiktok.com/search?q='+query}
+    ]
+  };
+}
+
+async function gabiStudioGenerate(intent=gabiStudioIntent,overrideBrief=''){
+  const composer=document.getElementById('gabiStudioComposer'),button=document.getElementById('gabiStudioGenerate'),brief=(overrideBrief||document.getElementById('gabiStudioBrief').value).trim();
+  gabiStudioLastBrief=brief;
+  if(gabiStudioLocalVoiceCommand(brief))return;
+  composer.classList.add('studioLoading');button.textContent='Criando…';gabiStudioSetVoiceStatus('DIVA está criando com o contexto do Radar…');
+  try{
+    const res=await fetch(GABI_DIVA_STUDIO_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({intent,brief,context:gabiStudioPublicContext()})});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.message||'Não consegui criar agora.');
+    renderGabiStudioResult(data);
+  }catch(error){
+    renderGabiStudioResult(gabiStudioLocalFallback(intent,brief,gabiStudioPublicContext()));
+    gabiStudioSetVoiceStatus('Tenho uma alternativa pronta para você.');
+  }finally{composer.classList.remove('studioLoading');button.textContent='Criar ideia + roteiro →'}
+}
+function gabiStudioRefine(kind){
+  const map={
+    another:'Crie uma direção completamente diferente da anterior, mantendo o mesmo objetivo.',
+    shorter:'Faça uma versão mais curta, direta e fácil de gravar.',
+    funny:'Deixe a ideia mais leve, espontânea e divertida, sem forçar humor.',
+    caption:'Priorize uma legenda forte e curta para acompanhar a ideia.'
+  };
+  const instruction=map[kind];if(!instruction)return;
+  const previous=gabiStudioLastResult?.idea?('Ideia anterior: '+gabiStudioLastResult.idea):'';
+  const base=document.getElementById('gabiStudioBrief')?.value.trim()||gabiStudioLastBrief||'';
+  gabiStudioGenerate(gabiStudioIntent,[base,previous,instruction].filter(Boolean).join('\n'));
+}
+function startGabiStudioMic(){
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Recognition){gabiStudioSetVoiceStatus('Este navegador não liberou reconhecimento de voz. Você ainda pode escrever o briefing.');return}
+  if(gabiStudioRecognition){try{gabiStudioRecognition.stop()}catch{}}
+  const mic=document.getElementById('gabiStudioMic'),brief=document.getElementById('gabiStudioBrief');
+  const rec=new Recognition();gabiStudioRecognition=rec;rec.lang='pt-BR';rec.interimResults=false;rec.continuous=false;
+  rec.onstart=()=>{mic.classList.add('listening');mic.textContent='■ Ouvindo';gabiStudioSetVoiceStatus('Ouvindo você…')};
+  rec.onresult=e=>{
+    const text=[...e.results].map(r=>r[0]?.transcript||'').join(' ').trim();
+    if(gabiStudioLocalVoiceCommand(text))return;
+    brief.value=text;brief.dispatchEvent(new Event('input',{bubbles:true}));
+    gabiStudioSetVoiceStatus('Entendi. Criando a partir do que você falou…');gabiStudioGenerate('voice');
+  };
+  rec.onerror=()=>gabiStudioSetVoiceStatus('Não consegui ouvir. Tente novamente ou escreva o briefing.');
+  rec.onend=()=>{mic.classList.remove('listening');mic.textContent='🎙️ Falar com a DIVA';gabiStudioRecognition=null};
+  rec.start();
+}
+function activateGabiStudio(){
+  document.querySelectorAll('[data-studio-intent]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-studio-intent]').forEach(x=>x.classList.remove('active'));btn.classList.add('active');gabiStudioIntent=btn.dataset.studioIntent||'surprise';
+  }));
+  document.getElementById('gabiStudioGenerate')?.addEventListener('click',()=>gabiStudioGenerate());
+  document.querySelectorAll('[data-studio-example]').forEach(btn=>btn.addEventListener('click',()=>{
+    const brief=document.getElementById('gabiStudioBrief');brief.value=btn.dataset.studioExample||'';brief.focus();
+  }));
+  document.querySelectorAll('[data-studio-refine]').forEach(btn=>btn.addEventListener('click',()=>gabiStudioRefine(btn.dataset.studioRefine)));
+  document.getElementById('gabiStudioReplay')?.addEventListener('click',()=>{if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech)});
+  document.getElementById('gabiStudioMic')?.addEventListener('click',startGabiStudioMic);
+  document.getElementById('gabiStudioVoiceToggle')?.addEventListener('click',e=>{
+    gabiStudioVoiceEnabled=!gabiStudioVoiceEnabled;e.currentTarget.textContent=gabiStudioVoiceEnabled?'🔊 Voz automática: ligada':'🔇 Voz automática: desligada';
+    if(!gabiStudioVoiceEnabled&&'speechSynthesis' in window)window.speechSynthesis.cancel();
+    gabiStudioSetVoiceStatus(gabiStudioVoiceEnabled?'Pronto. Vou falar minhas respostas em voz alta.':'Tudo bem. Vou responder só por texto.');
+  });
+  document.getElementById('gabiStudioStop')?.addEventListener('click',()=>gabiStudioLocalVoiceCommand('pare'));
+  document.getElementById('gabiStudioContinue')?.addEventListener('click',()=>gabiStudioLocalVoiceCommand('continue'));
+  document.getElementById('gabiStudioBrief')?.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();gabiStudioGenerate()}});
+}
+activateGabiStudio();
+
+showContextCard('home');hydrateLiveCards([]);activateLiveCharts();loadLiveFeed();setInterval(loadLiveFeed,120000);
+
+</script><!-- RELEASE_ROUTE_GITHUB_ACTIONS_V1 · canonical free release rail -->
+</body></html>
