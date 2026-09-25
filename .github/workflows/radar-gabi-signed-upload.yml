@@ -72,9 +72,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(wc -c < deploy/radar-gabi/index.html | tr -d ' ')" = "150922"
-          test "$(md5sum deploy/radar-gabi/index.html | awk '{print $1}')" = "b0768fa6b33b181ab8b456a97aea9132"
-          curl --fail --silent --show-error             -X PUT             -H "Content-Type: text/html"             --data-binary @deploy/radar-gabi/index.html             "$(cat /tmp/radar-relay/upload-url.txt)"
+          cat relay-v3/chunk-*.txt > /tmp/radar-v3.html
+          test "$(wc -c < /tmp/radar-v3.html | tr -d ' ')" = "157884"
+          test "$(md5sum /tmp/radar-v3.html | awk '{print $1}')" = "2b7ffebfc858918126fe72fdc354b8dc"
+          curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-v3.html "$(cat /tmp/radar-relay/upload-url.txt)"
           echo "RADAR_SIGNED_UPLOAD=PASS"
 
       - name: Record result without secret material
