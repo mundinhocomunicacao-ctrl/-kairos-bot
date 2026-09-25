@@ -1,0 +1,127 @@
+urface="true"]').forEach(card=>{
+    const {meta,signal}=ensureLiveCardChrome(card);
+    const hit=liveRowForCard(card,safeRows);
+    if(hit){
+      const d=hit.data||hit;
+      card.dataset.liveState='updated';
+      meta.textContent=['ao vivo',feedText(d.status,60),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+      signal.textContent='Último movimento: '+(feedText(d.summary,420)||feedText(d.title,180)||'Atualização reconciliada.');
+    }else{
+      card.dataset.liveState='consolidated';
+      meta.textContent='base consolidada · aguardando novo movimento';
+      signal.textContent='';
+    }
+  });
+  document.querySelectorAll('.chartLiveBadge').forEach(badge=>{
+    const card=badge.closest('.card');
+    badge.textContent=card?.dataset.liveState==='updated'?'gráfico vivo · novo movimento no Radar':'gráfico vivo · base consolidada';
+  });
+}
+function activateLiveCharts(){
+  if(!document.getElementById('liveChartTip')){
+    const tip=document.createElement('div');tip.id='liveChartTip';tip.className='liveChartTip';tip.setAttribute('role','status');document.body.appendChild(tip);
+  }
+  const tip=document.getElementById('liveChartTip');
+  const charts=[...document.querySelectorAll('.donut,.barrow,.ibiCol,.flow>div,.metricBox,.track')];
+  const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('isSeen')}),{threshold:.18}):null;
+  charts.forEach(el=>{
+    if(el.dataset.liveChartReady==='true')return;
+    el.dataset.liveChartReady='true';el.classList.add('liveChart');
+    if(el.matches('.barrow,.ibiCol,.track'))el.dataset.chartMotion='bar';
+    el.setAttribute('tabindex','0');el.setAttribute('role','group');
+    const label=feedText(el.innerText||el.closest('.card')?.querySelector('.title')?.textContent||'Gráfico do Radar',220);
+    el.setAttribute('aria-label',label);
+    const show=e=>{
+      tip.textContent=label+' · '+(el.closest('.card')?.dataset.liveState==='updated'?'há novo movimento':'base consolidada');
+      tip.style.left=Math.min(window.innerWidth-280,(e.clientX||el.getBoundingClientRect().left)+12)+'px';
+      tip.style.top=Math.min(window.innerHeight-80,(e.clientY||el.getBoundingClientRect().bottom)+10)+'px';
+      tip.classList.add('show');
+    };
+    const hide=()=>tip.classList.remove('show');
+    el.addEventListener('mousemove',show);el.addEventListener('mouseenter',show);el.addEventListener('mouseleave',hide);
+    el.addEventListener('focus',()=>show({clientX:el.getBoundingClientRect().left,clientY:el.getBoundingClientRect().bottom}));el.addEventListener('blur',hide);
+    if(observer)observer.observe(el);else el.classList.add('isSeen');
+  });
+  document.querySelectorAll('.card[data-live-surface="true"]').forEach(card=>{
+    if(card.querySelector(':scope > .chartLiveBadge'))return;
+    if(card.querySelector('.donut,.barrow,.ibiChart,.flow,.metricBox,.track')){
+      const badge=document.createElement('div');badge.className='chartLiveBadge';badge.textContent='gráfico vivo · base consolidada';
+      const firstChart=card.querySelector('.donutWrap,.ibiChart,.flow,.barrow,.metricBox,.track');
+      if(firstChart)firstChart.insertAdjacentElement('afterend',badge);
+    }
+  });
+}
+
+async function visitorToken(){
+  const cached=localStorage.getItem(GABI_RADAR_TOKEN_KEY);
+  const exp=Number(localStorage.getItem(GABI_RADAR_TOKEN_EXP_KEY)||0);
+  if(cached&&Date.now()<exp-60000)return cached;
+  const res=await fetch('https://www.wixapis.com/oauth2/token',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({clientId:GABI_RADAR_CLIENT_ID,grantType:'anonymous'})});
+  if(!res.ok)throw new Error('visitor_token_'+res.status);
+  const data=await res.json();
+  if(!data.access_token)throw new Error('visitor_token_missing');
+  localStorage.setItem(GABI_RADAR_TOKEN_KEY,data.access_token);
+  localStorage.setItem(GABI_RADAR_TOKEN_EXP_KEY,String(Date.now()+Math.max(300,Number(data.expires_in||14400))*1000));
+  return data.access_token;
+}
+function renderLiveFeed(rows){
+  latestClientSafeRows=safeRadarRows(rows);
+  updateProposalStatusFromFeed(rows);
+  hydrateLiveCards(rows);activateLiveCharts();updateContextCardFromFeed(latestClientSafeRows);
+  const grid=document.getElementById('liveFeedGrid'),status=document.getElementById('feedStatus'),updated=document.getElementById('radarUpdatedAt');
+  if(updated)updated.textContent='Atualizado '+feedDate(new Date());
+  grid.replaceChildren();
+  if(!rows.length){
+    const empty=document.createElement('div');empty.className='liveFeedEmpty';empty.textContent='Nenhuma atualização nova. A leitura consolidada abaixo continua válida.';grid.appendChild(empty);
+    status.textContent='ao vivo · sem novidades';return;
+  }
+  rows.forEach(row=>{
+    const d=row.data||row;
+    const card=document.createElement('article');card.className='liveFeedCard';
+    const meta=document.createElement('small');meta.textContent=[feedText(d.category,40),feedText(d.status,60),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+    const title=document.createElement('b');title.textContent=feedText(d.title,180)||'Atualização';
+    const summary=document.createElement('p');summary.textContent=feedText(d.summary,900);
+    card.append(meta,title);if(summary.textContent)card.appendChild(summary);
+    const url=safePublicUrl(d.sourceUrl);if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir fonte ↗';card.appendChild(a)}
+    grid.appendChild(card);
+  });
+  status.textContent='ao vivo · '+rows.length+' atualizações';
+}
+async function loadLiveFeed(){
+  const status=document.getElementById('feedStatus');
+  try{
+    const token=await visitorToken();
+    const res=await fetch('https://www.wixapis.com/wix-data/v2/items/query',{method:'POST',headers:{'content-type':'application/json','authorization':token},body:JSON.stringify({dataCollectionId:GABI_RADAR_COLLECTION_ID,query:{paging:{limit:100,offset:0}}})});
+    if(!res.ok)throw new Error('feed_query_'+res.status);
+    const data=await res.json();
+    const rows=(Array.isArray(data.dataItems)?data.dataItems:[]).filter(x=>x?.data?.clientSafe===true&&!['sistema','system','bootstrap'].includes(String(x?.data?.category||'').toLowerCase())).sort((a,b)=>new Date(b?.data?.occurredAt||0)-new Date(a?.data?.occurredAt||0)).slice(0,6);
+    renderLiveFeed(rows);
+  }catch(error){
+    console.error('GABI_RADAR_LIVE_FEED',error);
+    status.textContent='leitura consolidada';status.classList.add('error');
+    const grid=document.getElementById('liveFeedGrid');grid.replaceChildren();
+    const empty=document.createElement('div');empty.className='liveFeedEmpty';empty.textContent='A atualização ao vivo está temporariamente indisponível. O restante do painel continua usando a última leitura reconciliada.';grid.appendChild(empty);
+  }
+}
+
+const GABI_DIVA_STUDIO_ENDPOINT='https://os.mundinhocomunicacao.com/api/gabi-diva-studio';
+let gabiStudioIntent='surprise',gabiStudioVoiceEnabled=true,gabiStudioRecognition=null,gabiStudioLastSpeech='',gabiStudioLastResult=null,gabiStudioLastBrief='';
+function gabiStudioPublicContext(){
+  return safeRadarRows(latestClientSafeRows).slice(0,12).map(row=>{
+    const d=row.data||row;
+    return{
+      title:feedText(d.title,180),
+      summary:feedText(d.summary,900),
+      category:feedText(d.category,60),
+      status:feedText(d.status,80),
+      occurredAt:feedText(d.occurredAt,80),
+      sourceLabel:feedText(d.sourceLabel,100),
+      sourceUrl:safePublicUrl(d.sourceUrl)
+    };
+  });
+}
+function gabiStudioSetVoiceStatus(text){const el=document.getElementById('gabiStudioVoiceStatus');if(el)el.textContent=text}
+function gabiStudioSetPresenceState(state='idle'){
+  const el=document.querySelector('[data-diva-3d]'),label=document.getElementById('gabiStudioPresenceLabel');
+  const safeState=['idle','listening','thinking','speaking'].includes(state)?state:'idle';
+  if(el){el.dataset.state=safeState;el.setAttribute(
