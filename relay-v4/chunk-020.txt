@@ -1,0 +1,9 @@
+' in window)window.speechSynthesis.onvoiceschanged=()=>gabiStudioPickVoice(window.speechSynthesis.getVoices());
+  gabiStudioSmartPreset(gabiStudioIntent,'');gabiStudioSetPresenceState('idle');
+}
+activateGabiStudio();
+
+showContextCard('home');renderRadarCommercialCharts();renderRadarIbiChart();hydrateLiveCards([]);activateLiveCharts();loadLiveFeed();setInterval(loadLiveFeed,120000);
+
+</script><!-- RELEASE_ROUTE_GITHUB_ACTIONS_V1 · canonical free release rail -->
+</body></html>
