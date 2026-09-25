@@ -24,6 +24,10 @@ const DIVA_GATEWAY_PATH = '/api/diva-gateway/execute';
 const DIVA_GATEWAY_INSTALLATION_ID = String(process.env.DIVA_GATEWAY_INSTALLATION_ID || 'fernando-whatsapp').trim();
 const DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP = String(process.env.DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP || '').trim();
 const DIVA_GATEWAY_VERSION = 'diva-universal-private-gateway-v0.1';
+const DIVA_LOCAL_RELAY_SECRET = String(process.env.DIVA_LOCAL_RELAY_SECRET || '').trim();
+const DIVA_LOCAL_RELAY_PATH = '/diva/local-relay';
+const DIVA_LOCAL_RELAY_NONCES = new Map();
+const DIVA_LOCAL_RELAY_TTL_MS = 5 * 60 * 1000;
 const BASE_URL = 'https://proxy.whatsscale.com';
 const TEST_TEXT = '🧪 TESTE TÉCNICO KAIROS — rota cloud WhatsApp em validação. Não é uma edição KAIROS.';
 let testSent = false;
@@ -297,6 +301,41 @@ function sha256Hex(value){
   return crypto.createHash('sha256').update(String(value||'')).digest('hex');
 }
 
+function cleanupDivaLocalRelayNonces(now=Date.now()){
+  for(const [nonce,expiresAt] of DIVA_LOCAL_RELAY_NONCES){
+    if(expiresAt<=now)DIVA_LOCAL_RELAY_NONCES.delete(nonce);
+  }
+}
+
+function verifyDivaLocalRelaySignature({req,body,now=Date.now()}={}){
+  if(!DIVA_LOCAL_RELAY_SECRET)return{ok:false,error:'local_relay_not_configured'};
+  const installationId=String(req?.headers?.['x-diva-installation-id']||'').trim();
+  const timestamp=String(req?.headers?.['x-diva-timestamp']||'').trim();
+  const nonce=String(req?.headers?.['x-diva-nonce']||'').trim();
+  const supplied=String(req?.headers?.['x-diva-signature']||'').trim();
+  const version=String(req?.headers?.['x-diva-gateway-version']||'').trim();
+  if(installationId!==DIVA_GATEWAY_INSTALLATION_ID)return{ok:false,error:'local_relay_installation_denied'};
+  if(version!==DIVA_GATEWAY_VERSION)return{ok:false,error:'local_relay_version_denied'};
+  const timestampMs=Date.parse(timestamp);
+  if(!timestamp||!Number.isFinite(timestampMs)||Math.abs(now-timestampMs)>300000)return{ok:false,error:'local_relay_timestamp_invalid'};
+  if(!nonce||nonce.length>256)return{ok:false,error:'local_relay_nonce_invalid'};
+  cleanupDivaLocalRelayNonces(now);
+  if(DIVA_LOCAL_RELAY_NONCES.has(nonce))return{ok:false,error:'local_relay_replay'};
+  const material=[
+    DIVA_GATEWAY_VERSION,
+    DIVA_GATEWAY_INSTALLATION_ID,
+    timestamp,
+    nonce,
+    'POST',
+    DIVA_LOCAL_RELAY_PATH,
+    sha256Hex(stableStringify(body))
+  ].join('\n');
+  const expected=crypto.createHmac('sha256',DIVA_LOCAL_RELAY_SECRET).update(material).digest('hex');
+  if(!safeEqual(supplied,expected))return{ok:false,error:'local_relay_signature_invalid'};
+  DIVA_LOCAL_RELAY_NONCES.set(nonce,now+DIVA_LOCAL_RELAY_TTL_MS);
+  return{ok:true};
+}
+
 function divaGatewayHeaders(body){
   if(!DIVA_GATEWAY_INSTALLATION_ID)throw new Error('DIVA_GATEWAY_INSTALLATION_ID is not configured');
   if(!DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP)throw new Error('DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP is not configured');
@@ -362,9 +401,8 @@ function buildDivaGatewayBody(providerEvent={}){
   };
 }
 
-async function invokeDivaGatewayDirect(providerEvent={}){
+async function invokeDivaGatewayBody(body={}){
   if(!DIVA_GATEWAY_URL)throw new Error('DIVA_GATEWAY_URL is not configured');
-  const body=buildDivaGatewayBody(providerEvent);
   bridgeStats.gatewayAttempts+=1;
   const response=await fetch(DIVA_GATEWAY_URL,{
     method:'POST',
@@ -390,6 +428,10 @@ async function invokeDivaGatewayDirect(providerEvent={}){
     answerChars:answer.length
   });
   return{answer,data,status:response.status};
+}
+
+async function invokeDivaGatewayDirect(providerEvent={}){
+  return invokeDivaGatewayBody(buildDivaGatewayBody(providerEvent));
 }
 
 async function runDivaGatewayCanary(){
@@ -529,6 +571,7 @@ const server = http.createServer(async (req, res) => {
         groupConfigured: Boolean(GROUP_JID),
         divaGroupConfigured: Boolean(DIVA_WHATSAPP_GROUP_JID),
         divaGatewayConfigured: Boolean(DIVA_GATEWAY_URL && DIVA_GATEWAY_INSTALLATION_ID && DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP),
+        divaLocalRelayConfigured: Boolean(DIVA_LOCAL_RELAY_SECRET && DIVA_GATEWAY_URL && DIVA_GATEWAY_INSTALLATION_ID && DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP),
         whatsScaleWebhookSecretConfigured: Boolean(WHATSSCALE_WEBHOOK_SECRET),
         activeWebhookSecretConfigured: Boolean(activeWebhookSecret),
         activeSubscriptionId: activeSubscriptionId || null,
@@ -600,6 +643,43 @@ const server = http.createServer(async (req, res) => {
         outboundSent:bridgeStats.outboundSent
       });
       return json(res, 200, normalize(upstream));
+    }
+
+    if (req.method === 'POST' && url.pathname === DIVA_LOCAL_RELAY_PATH) {
+      const directGatewayReady=Boolean(DIVA_GATEWAY_URL&&DIVA_GATEWAY_INSTALLATION_ID&&DIVA_GATEWAY_SECRET_FERNANDO_WHATSAPP);
+      if(!DIVA_LOCAL_RELAY_SECRET||!directGatewayReady){
+        return json(res,503,{ok:false,error:'local_relay_not_configured'});
+      }
+      const body=await readBody(req);
+      const auth=verifyDivaLocalRelaySignature({req,body});
+      if(!auth.ok)return json(res,401,{ok:false,error:auth.error});
+      if(String(body?.surface_id||'')!=='whatsapp'){
+        return json(res,403,{ok:false,error:'local_relay_surface_denied'});
+      }
+      const groupId=String(body?.native_adapter_metadata?.whatsapp_group_id||'').trim();
+      const conversationRef=String(body?.conversation_ref||'').trim();
+      if(groupId!==DIVA_WHATSAPP_GROUP_JID||conversationRef!=='whatsapp://'+DIVA_WHATSAPP_GROUP_JID){
+        return json(res,403,{ok:false,error:'local_relay_unauthorized_group'});
+      }
+      if(extractDivaPrompt(body?.message||'')===null){
+        return json(res,202,{ok:true,accepted:false,reason:'without_diva_wake_word'});
+      }
+      try{
+        const gateway=await invokeDivaGatewayBody(body);
+        console.log('DIVA_LOCAL_RELAY_OK',{
+          group:DIVA_WHATSAPP_GROUP_JID,
+          answerChars:gateway.answer.length
+        });
+        return json(res,200,{
+          ok:true,
+          answer:gateway.answer,
+          mission_id:gateway.data?.mission_id||gateway.data?.envelope?.mission_id||null,
+          runtime:'diva_universal_private_gateway'
+        });
+      }catch(error){
+        console.error('DIVA_LOCAL_RELAY_FAILED',{message:String(error?.message||error).slice(0,300)});
+        return json(res,502,{ok:false,error:'diva_gateway_failed'});
+      }
     }
 
     if (req.method === 'POST' && url.pathname === '/webhooks/whatsscale') {
