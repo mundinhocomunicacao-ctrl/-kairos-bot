@@ -45,6 +45,7 @@ async function loadLiveFeed(){
 }
 
 const GABI_DIVA_STUDIO_ENDPOINT='https://os.mundinhocomunicacao.com/api/gabi-diva-studio';
+const GABI_DIVA_MODEL_URL='https://static.wixstatic.com/3d/f447cd_31ad20addd514017a0297318f193c80a.glb';
 let gabiStudioIntent='surprise',gabiStudioVoiceEnabled=true,gabiStudioRecognition=null,gabiStudioLastSpeech='',gabiStudioLastResult=null,gabiStudioLastBrief='';
 function gabiStudioPublicContext(){
   return safeRadarRows(latestClientSafeRows).slice(0,12).map(row=>{
@@ -61,10 +62,22 @@ function gabiStudioPublicContext(){
   });
 }
 function gabiStudioSetVoiceStatus(text){const el=document.getElementById('gabiStudioVoiceStatus');if(el)el.textContent=text}
+function gabiStudioInitReal3d(){
+  const presence=document.querySelector('[data-diva-3d]'),model=document.getElementById('gabiDivaModel');
+  if(!presence||!model)return;
+  if(model.getAttribute('src')!==GABI_DIVA_MODEL_URL)model.setAttribute('src',GABI_DIVA_MODEL_URL);
+  const ready=()=>{presence.dataset.modelReady='true';presence.dataset.modelSource='wix-glb';};
+  const fallback=()=>{presence.dataset.modelReady='false';presence.dataset.modelSource='css-fallback';};
+  model.addEventListener('load',ready,{once:true});
+  model.addEventListener('error',fallback);
+  if(model.loaded)ready();
+}
 function gabiStudioSetPresenceState(state='idle'){
   const el=document.querySelector('[data-diva-3d]'),label=document.getElementById('gabiStudioPresenceLabel');
   const safeState=['idle','listening','thinking','speaking'].includes(state)?state:'idle';
   if(el){el.dataset.state=safeState;el.setAttribute('aria-label',safeState==='listening'?'DIVA 3D ouvindo':safeState==='thinking'?'DIVA 3D criando':safeState==='speaking'?'DIVA 3D falando':'DIVA 3D pronta para criar')}
+  const model=document.getElementById('gabiDivaModel');
+  if(model){model.dataset.state=safeState;model.setAttribute('data-presence-state',safeState)}
   if(label)label.textContent=safeState==='listening'?'Estou ouvindo você':safeState==='thinking'?'Organizando a melhor direção':safeState==='speaking'?'Te contando a ideia':'Pronta para criar com você';
 }
 function gabiStudioSmartPreset(intent=gabiStudioIntent,brief=''){
