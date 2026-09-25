@@ -1,0 +1,75 @@
+.com.br/"],"Agência Approach":["confirmada","Agência de comunicação 360° com PR, publicidade e marketing de influência.","https://approach.com.br/"],"Press à Porter":["confirmada","Agência de comunicação corporativa e relações públicas fundada em 2001.","https://pressaporter.com.br/"],"4even Casting":["confirmada","Empresa de casting e eventos com operação pública desde 2013.","https://4evencasting.com.br/"],"4Even Casting":["confirmada","Empresa de casting e eventos com operação pública desde 2013.","https://4evencasting.com.br/"],"Combo Comunicação":["confirmada","Agência de comunicação estratégica, mídia, influência e reputação.","https://www.linkedin.com/company/combo-comunica%C3%A7%C3%A3o/"],"Agência Combo Comunicação":["confirmada","Agência de comunicação estratégica, mídia, influência e reputação.","https://www.linkedin.com/company/combo-comunica%C3%A7%C3%A3o/"],"Agência DNA360":["confirmada","Agência com operação pública voltada a crescimento e e-commerce.","https://dna360.ag/"]};
+function openAgencyFicha(n){if(!n)return;const key=n.replace(/^Agência\s+/,'');const v=agencyVerified[n]||agencyVerified[key];document.getElementById('modalTitle').textContent=n;document.getElementById('modalBody').innerHTML=v?'<p><b>Entidade pública confirmada.</b> '+v[1]+'</p><div class="brandActions"><a href="'+v[2]+'" target="_blank" rel="noopener noreferrer">Abrir presença oficial ↗</a></div><p class="mini">Rede publicada somente após resolução de entidade.</p>':'<p><b>Entidade em verificação.</b> Esta ocorrência existe na base comercial, mas o FOFOQUEIRO ainda não encontrou evidência pública suficiente para atribuir site ou rede social com segurança.</p><p class="mini">Nenhum perfil semelhante é publicado por aproximação de nome.</p>';setModalState(true)}
+// GABI_SAFE_PUBLIC_SOCIAL v1 CANONICAL: public official @handles/social profiles are client-safe.
+// Public social platforms are publication-safe after entity resolution.
+// If identity is ambiguous, withhold only the unresolved public URL; sensitive-channel rules remain governed outside client HTML.
+const modal=document.getElementById('modal');
+function openBrandFicha(n){if(!n)return;document.getElementById('modalTitle').textContent=n;const social=socials[n];document.getElementById('modalBody').innerHTML='<p>'+(reconciled[n]||contexts[n]||'Marca mapeada no Radar. O contexto comercial disponível está sendo enriquecido conforme novas evidências são reconciliadas.')+'</p>'+(brandDossier[n]?'<div class="dossier"><b>Dossiê da marca</b>'+brandDossier[n]+'</div>':'')+(advice[n]?'<div class="dossier"><b>Como a Gabi pode ajudar</b>'+advice[n].replace('Como você pode ajudar: ','')+'</div>':'')+(proposalLinks[n]?'<div class="brandActions"><a href="'+proposalLinks[n]+'" target="_blank" rel="noopener noreferrer">Ver proposta ↗</a></div>':'')+(social?'<div class="brandActions"><a href="'+social[1]+'" target="_blank" rel="noopener noreferrer">'+social[0]+' ↗</a></div>':'');setModalState(true)}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-brand]');if(el)openBrandFicha(el.dataset.brand)});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-agency]');if(el)openAgencyFicha(el.dataset.agency)});
+document.addEventListener('keydown',e=>{const el=e.target.closest&&e.target.closest('[data-brand]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openBrandFicha(el.dataset.brand)}});
+document.addEventListener('keydown',e=>{const el=e.target.closest&&e.target.closest('[data-agency]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openAgencyFicha(el.dataset.agency)}});
+document.querySelectorAll('[data-brand]').forEach(el=>{el.setAttribute('tabindex','0');el.setAttribute('role','button')});
+document.querySelector('.close').onclick=()=>setModalState(false);modal.onclick=e=>{if(e.target===modal)setModalState(false)};
+
+// Persistent interaction contract: anything that looks clickable must work by mouse + keyboard.
+function setModalState(open){modal.classList.toggle('open',open);modal.setAttribute('aria-hidden',open?'false':'true')}
+document.querySelectorAll('.clickable').forEach(el=>{el.setAttribute('tabindex','0');el.setAttribute('role','button');el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}})});
+document.querySelectorAll('a[target="_blank"]').forEach(a=>a.setAttribute('rel','noopener noreferrer'));
+document.querySelector('.close').onclick=()=>setModalState(false);
+modal.addEventListener('click',e=>{if(e.target===modal)setModalState(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))setModalState(false)});
+const modalObserver=new MutationObserver(()=>modal.setAttribute('aria-hidden',modal.classList.contains('open')?'false':'true'));modalObserver.observe(modal,{attributes:true,attributeFilter:['class']});
+
+const GABI_RADAR_CLIENT_ID='97cc208c-a172-4f52-8427-1f301aa42049';
+const GABI_RADAR_COLLECTION_ID='GabiRadarFeed';
+const GABI_RADAR_TOKEN_KEY='gabiRadarVisitorTokenV1';
+const GABI_RADAR_TOKEN_EXP_KEY='gabiRadarVisitorTokenExpV1';
+function feedText(v,max=1200){return String(v??'').replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,max)}
+function feedDate(v){const d=new Date(v);if(Number.isNaN(d.getTime()))return'';return d.toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace('.','')}
+function safePublicUrl(v){try{const u=new URL(String(v||''));return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}}
+
+const LIVE_CARD_RULES=[
+  {terms:['imprensa','imagem','pr','clipping','ibi'],categories:['pr','imprensa','imagem']},
+  {terms:['agência','agencias','agências','casting'],categories:['agencia','agência','agencias','agências','parceiro']},
+  {terms:['proposta','movimento comercial','marcas','marca','lead','radar de marcas'],categories:['comercial','pipeline','proposta','marca','oportunidade']},
+  {terms:['conteúdo','social','digital','instagram','tiktok','youtube'],categories:['social','conteudo','conteúdo','digital']}
+];
+function normalizedLiveText(v){return feedText(v,2400).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
+const liveProposalStatusByBrand=new Map();
+function updateProposalStatusFromFeed(rows){
+  safeRadarRows(rows).forEach(row=>{
+    const d=row.data||row;
+    const key=normalizedLiveText(d.title);
+    const proposal=proposalCatalog.find(p=>normalizedLiveText(p.brand)===key);
+    if(!proposal)return;
+    const status=[feedText(d.status,80),feedDate(d.occurredAt)].filter(Boolean).join(' · ');
+    if(status)liveProposalStatusByBrand.set(key,status);
+  });
+}
+function proposalStatusFor(brand,fallback){
+  return liveProposalStatusByBrand.get(normalizedLiveText(brand))||fallback||'Estado atual';
+}
+function safeRadarRows(rows){
+  return (Array.isArray(rows)?rows:[]).filter(x=>x?.data?.clientSafe===true&&!['sistema','system','bootstrap'].includes(String(x?.data?.category||'').toLowerCase()));
+}
+function liveRowForCard(card,rows){
+  const cardText=normalizedLiveText(card.innerText+' '+(card.dataset.open||'')+' '+(card.dataset.stage||''));
+  const rule=LIVE_CARD_RULES.find(r=>r.terms.some(t=>cardText.includes(normalizedLiveText(t))));
+  if(!rule)return null;
+  return rows.find(row=>{
+    const d=row.data||row;
+    const hay=normalizedLiveText([d.category,d.status,d.title,d.summary].filter(Boolean).join(' '));
+    return rule.categories.some(c=>hay.includes(normalizedLiveText(c)));
+  })||null;
+}
+function ensureLiveCardChrome(card){
+  let meta=card.querySelector(':scope > .liveCardMeta');
+  if(!meta){meta=document.createElement('div');meta.className='liveCardMeta';card.prepend(meta)}
+  let signal=card.querySelector(':scope > .liveCardSignal');
+  if(!signal){signal=document.createElement('div');signal.className='liveCardSignal';card.appendChild(signal)}
+  return{meta,signal};
+}
+function hydrateLiveCards(rows){
+  const safeRows=safeRadarRows(rows);
+  document.querySelectorAll('.card[data-live-s
