@@ -13,7 +13,7 @@ const DIVA_LOCAL_RELAY_PATH="/diva/local-relay";
 const DIVA_AUTH_VAULT_URL=process.env.DIVA_AUTH_VAULT_URL||"";
 const DIVA_AUTH_VAULT_SECRET=process.env.DIVA_AUTH_VAULT_SECRET||"";
 const DIVA_AUTH_INSTANCE=process.env.DIVA_AUTH_INSTANCE||"diva-whatsapp-main";
-let sock=null,qrDataUrl=null,connection="booting",lastError=null;
+let sock=null,qrDataUrl=null,connection="booting",lastError=null,bootInProgress=false;
 const sentMessageIds=new Set(); // fromMe messages from linked phone are valid commands
 const processedMessageIds=new Set();
 const DIVA_MESSAGE_MAX_AGE_MS=300000;
@@ -99,17 +99,18 @@ async function relay(message,eventId){
 }
 
 async function connect(){
+ if(bootInProgress)return;bootInProgress=true;
  const {state,saveCreds}=await createVaultAuthState();
  const {version}=await fetchLatestBaileysVersion();
  sock=makeWASocket({auth:state,version,printQRInTerminal:false,syncFullHistory:false,markOnlineOnConnect:false});
  sock.ev.on("creds.update",saveCreds);
  sock.ev.on("connection.update",async u=>{
    if(u.qr){qrDataUrl=await QRCode.toDataURL(u.qr);connection="pairing"}
-   if(u.connection==="open"){qrDataUrl=null;connection="open";lastError=null;flowObserved=false;clearTimeout(flowWatchdog);setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000);flowWatchdog=setTimeout(()=>{if(connection==="open"&&!flowObserved){console.log("DIVA_FLOW_WATCHDOG_RECYCLE");try{sock?.end?.(new Error("DIVA flow watchdog"))}catch{};setTimeout(connect,2500)}},DIVA_FLOW_WATCHDOG_MS)}
+   if(u.connection==="open"){bootInProgress=false;qrDataUrl=null;connection="open";lastError=null;flowObserved=false;clearTimeout(flowWatchdog);setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000);flowWatchdog=setTimeout(()=>{if(connection==="open"&&!flowObserved){console.log("DIVA_FLOW_WATCHDOG_RECYCLE");console.log("DIVA_SUPERVISED_RESTART");process.exit(1)}},DIVA_FLOW_WATCHDOG_MS)}
    if(u.connection==="close"){
      clearTimeout(flowWatchdog);connection="closed";
      const status=u.lastDisconnect?.error?.output?.statusCode;
-     if(status!==DisconnectReason.loggedOut)setTimeout(connect,2500);
+     if(status!==DisconnectReason.loggedOut){console.log("DIVA_SUPERVISED_RESTART");process.exit(1)}
    }
  });
  sock.ev.on("messages.upsert",async({messages,type})=>{
