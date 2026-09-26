@@ -3271,3 +3271,2981 @@ package/build/PreviewCommand-VUNW5CP4.js-120-        onSubmit
 1833-  PreviewCommand
 1834-};
 1835-//# sourceMappingURL=chunk-UXLEQMZC.js.map
+
+## DevCenter override client exact
+565-  WebhookIdentityType3["WIX_USER"] = "WIX_USER";
+566-  WebhookIdentityType3["APP"] = "APP";
+567-})(WebhookIdentityType || (WebhookIdentityType = {}));
+568-
+569-// ../../node_modules/@wix/ambassador-devcenter-components-overrides-v1-components-override/es/build/http.impl.js
+570-init_esm_shims();
+571-var __Array = {
+572-  checkboxGroupOptions: "_checkboxGroup",
+573-  tagsOptions: "_tags",
+574-  validation: "_arrayType"
+575-};
+576-var __Boolean = { checkboxOptions: "_checkbox" };
+577-var __Number = {
+578-  numberInputOptions: "_numberInput",
+579-  ratingInputOptions: "_ratingInput",
+580-  validation: "_numberType"
+581-};
+582-var __Object = { validation: "_objectType" };
+583-var __String = {
+584-  textInputOptions: "_textInput",
+585-  radioGroupOptions: "_radioGroup",
+586-  dropdownOptions: "_dropdown",
+587-  dateTimeOptions: "_dateTimeInput",
+588-  phoneInputOptions: "_phoneInput",
+589-  dateInputOptions: "_dateInput",
+590-  timeInputOptions: "_timeInput",
+591-  datePickerOptions: "_datePicker",
+592-  passwordOptions: "_password"
+593-};
+594-var _actionProviderSPIConfig = { actionConfig: "_actionSPIConfig" };
+595-var _actionSPIConfig = { icon: "_commonImage" };
+596-var _address = { multilineAddressOptions: "_multilineAddress" };
+597-var _adminConfigurableTextInput = {
+598-  requiredSettings: "google.protobuf.FieldMask",
+599-  adminConfigurableSettings: "google.protobuf.FieldMask"
+600-};
+601-var _andCondition = { conditions: "_conditionNode" };
+602-var _api_Number = {
+603-  minimum: "google.protobuf.FloatValue",
+604-  maximum: "google.protobuf.FloatValue",
+605-  multipleOf: "google.protobuf.FloatValue"
+606-};
+607-var _apiArrayItems = { data: "_dataItems", dataItem: "_dataItem" };
+608-var _apiContext = { items: "Map#_contextItem" };
+609-var _appEmbedData = { image: "_media" };
+610-var _appointment = { description: "_richContent" };
+611-var _arrayItems = {
+612-  numberOptions: "_numberType",
+613-  objectOptions: "_objectType"
+614-};
+615-var _arrayOptions = {
+616-  objectOptions: "_objectOptions",
+617-  arrayOptions: "_arrayOptions"
+618-};
+619-var _arrayType = { items: "_arrayItems" };
+620-var _audioData = { audio: "_media", coverImage: "_media" };
+621-var _authenticatorConfig = { expectedInputs: "_expectedInputs" };
+622-var _backdrop = { gradient: "_v1Gradient" };
+623-var _background = { image: "_media" };
+624-var _backgroundImage = { media: "_media" };
+625-var _breakPoint = { items: "_itemLayout" };
+626-var _breakpointPresetStyleOverrides = {
+627-  default: "_presetStyleOverrides",
+628-  small: "_presetStyleOverrides"
+629-};
+630-var _buttonData = { styles: "_styles" };
+631-var _cardData = {
+632-  background: "_cardDataBackground",
+633-  backgroundImage: "_cardDataBackgroundImage"
+634-};
+635-var _cardDataBackground = { gradient: "_v1Gradient" };
+636-var _cardDataBackgroundImage = { media: "_media" };
+637-var _checkbox = { label: "_richContent" };
+638-var _checkboxGroup = {
+639-  description: "_richContent",
+640-  options: "_option",
+641-  media: "_mediaItem"
+642-};
+643-var _collection = { fields: "_dataComponentField" };
+644-var _commitOverrideRequest = {};
+645-var _commitOverrideResponse = {};
+646-var _commonImage = {
+647-  urlExpirationDate: "google.protobuf.Timestamp",
+648-  focalPoint: "_focalPoint"
+649-};
+650-var _componentData = {
+651-  widgetComponentData: "_widgetComponentData",
+652-  widgetOutOfIframeData: "_widgetOutOfIframeComponentData",
+653-  studioWidgetComponentData: "_studioWidgetComponentData",
+654-  dataComponent: "_dataComponent",
+655-  shippingLabelCarrier: "_shippingLabelCarrierSpiConfig",
+656-  fictionalShippingProvider: "_shippingProviderConfig",
+657-  automationsActionProvider: "_actionProviderSPIConfig",
+658-  identityAuthenticator: "_authenticatorConfig",
+659-  devCenterTestingComponent: "_devCenterTestingComponentData",
+660-  multilingualTranslationSchema: "_multilingualTranslationSchema",
+661-  formTemplate: "_formTemplate",
+662-  functionsShopPriceProvider: "_functionsShopPriceSpiConfig",
+663-  function: "_function",
+664-  papiProvider: "_pluginConfig",
+665-  multilingualTranslationSchemaGroup: "_schemaGroup",
+666-  editorReactComponent: "_editorReactComponent",
+667-  editorContextProvider: "_editorContextProvider",
+668-  editorFunctionLibrary: "_editorFunctionLibrary"
+669-};
+670-var _componentExperiment = { updateComponentOptions: "_updateComponent" };
+671-var _componentFieldMask = { fieldMask: "google.protobuf.FieldMask" };
+672-var _componentsOverride = {
+673-  createdDate: "google.protobuf.Timestamp",
+674-  modifiedComponents: "_modifiedComponent",
+675-  experiments: "_componentExperiment"
+676-};
+677-var _conditionNode = { and: "_andCondition", or: "_orCondition" };
+678-var _contextArrayItems = { item: "_contextItem" };
+679-var _contextDataItems = { items: "Map#_contextItem" };
+680-var _contextItem = {
+681-  arrayItems: "_contextArrayItems",
+682-  data: "_contextDataItems",
+683-  function: "_editorFunction"
+684-};
+685:var _createComponentsOverrideRequest = {
+686-  componentsOverride: "_componentsOverride"
+687-};
+688:var _createComponentsOverrideResponse = {
+689-  componentsOverride: "_componentsOverride"
+690-};
+691-var _cssCustomPropertyItem = { number: "_cssNumber" };
+692-var _cssNumber = {
+693-  minimum: "google.protobuf.FloatValue",
+694-  maximum: "google.protobuf.FloatValue",
+695-  multipleOf: "google.protobuf.FloatValue"
+696-};
+697-var _dataComponent = { collections: "_collection" };
+698-var _dataComponentField = {
+699-  objectOptions: "_objectOptions",
+700-  arrayOptions: "_arrayOptions"
+701-};
+702-var _dataItem = {
+703-  number: "_api_Number",
+704-  arrayItems: "_apiArrayItems",
+705-  data: "_dataItems",
+706-  function: "_editorFunction"
+707-};
+708-var _dataItems = { items: "Map#_dataItem" };
+709-var _dateInput = { description: "_richContent", media: "_mediaItem" };
+710-var _datePicker = { description: "_richContent", media: "_mediaItem" };
+711-var _dateTimeInput = { description: "_richContent", media: "_mediaItem" };
+712-var _description = { representativeImage: "_commonImage" };
+713-var _design = { poll: "_pollDesign" };
+714-var _devCenterTestingComponentData = {
+715-  translatableMessageInOneOf: "_messageContainingTranslatables",
+716-  translatableMessage: "_messageContainingTranslatables",
+717-  mapOfTranslatableMessages: "Map#_messageContainingTranslatables",
+718-  translatableRichContent: "_richContent",
+719-  nonTranslatableRichContent: "_richContent",
+720-  richContentMap: "Map#_richContent"
+721-};
+722-var _displayField = { richContentOptions: "_richContentOptions" };
+723-var _donationInput = { description: "_richContent", media: "_mediaItem" };
+724-var _dropdown = { description: "_richContent", media: "_mediaItem" };
+725-var _editorContextProvider = {
+726-  context: "_apiContext",
+727-  data: "Map#_dataItem"
+728-};
+729-var _editorElement = {
+730-  data: "Map#_dataItem",
+731-  contexts: "Map#_apiContext",
+732-  elements: "Map#_elementItem",
+733-  presets: "Map#_presetItem",
+734-  cssCustomProperties: "Map#_cssCustomPropertyItem"
+735-};
+736-var _editorFunction = {
+737-  parameters: "_functionParameter",
+738-  returns: "_functionReturnType"
+739-};
+740-var _editorFunctionLibrary = { functions: "Map#_editorFunction" };
+741-var _editorPresence = { presetsEditorPresence: "_presetEditorPresence" };
+742-var _editorReactComponent = { editorElement: "_editorElement" };
+743-var _elementItem = {
+744-  inlineElement: "_inlineElement",
+745-  refElement: "_refElement"
+746-};
+747-var _elementStyleOverrides = { elements: "Map#_elementStyleOverrides" };
+748-var _expectedInputs = {
+749-  expectedStartInputs: "_predefinedExpectedInput",
+750-  expectedVerifyInputs: "_predefinedExpectedInput"
+751-};
+752-var _field = { inputOptions: "_inputField", displayOptions: "_displayField" };
+753-var _fileUpload = { description: "_richContent", media: "_mediaItem" };
+754-var _fixedPayment = { description: "_richContent", media: "_mediaItem" };
+755-var _focalPoint = { x: "DOUBLE", y: "DOUBLE" };
+756-var _formLayout = {
+757-  large: "_breakPoint",
+758-  medium: "_breakPoint",
+759-  small: "_breakPoint"
+760-};
+761-var _formTemplate = {
+762-  createdDate: "google.protobuf.Timestamp",
+763-  updatedDate: "google.protobuf.Timestamp",
+764-  fields: "_field",
+765-  deletedFields: "_field",
+766-  steps: "_step",
+767-  rules: "_v2Rule",
+768-  submitSettings: "_submitSettings"
+769-};
+770-var _function = { description: "_description" };
+771-var _functionParameter = {
+772-  arrayItems: "_functionParameterArrayItems",
+773-  data: "_functionParameterItems",
+774-  function: "_editorFunction"
+775-};
+776-var _functionParameterArrayItems = { item: "_functionParameter" };
+777-var _functionParameterItems = { items: "Map#_functionParameter" };
+778-var _functionReturnType = {
+779-  arrayItems: "_functionParameterArrayItems",
+780-  data: "_functionParameterItems"
+781-};
+782-var _functionsShopPriceSpiConfig = {
+783-  shopNumber: "google.protobuf.DoubleValue"
+784-};
+785-var _galleryData = { items: "_item", options: "_galleryOptions" };
+786-var _galleryOptions = { item: "_itemStyle" };
+787-var _group = { items: "_itemLayout" };
+788-var _image = { urlExpirationDate: "google.protobuf.Timestamp" };
+789-var _imageData = { image: "_media" };
+790-var _inlineElement = {
+791-  style: "Map#_styleItem",
+792-  data: "Map#_dataItem",
+793-  elements: "Map#_elementItem",
+794-  presets: "Map#_presetItem",
+795-  cssCustomProperties: "Map#_cssCustomPropertyItem"
+796-};
+797-var _inputField = {
+798-  stringOptions: "__String",
+799-  numberOptions: "__Number",
+800-  booleanOptions: "__Boolean",
+801-  arrayOptions: "__Array",
+802-  objectOptions: "__Object",
+803-  wixFileOptions: "_wixFile",
+804-  paymentOptions: "_payment",
+805-  multilineAddressOptions: "_address",
+806-  schedulingOptions: "_scheduling",
+807-  addressOptions: "_address"
+808-};
+--
+856-  minimum: "google.protobuf.DoubleValue",
+857-  multipleOf: "google.protobuf.DoubleValue",
+858-  enum: "google.protobuf.DoubleValue"
+859-};
+860-var _objectField = {
+861-  objectOptions: "_objectOptions",
+862-  arrayOptions: "_arrayOptions"
+863-};
+864-var _objectOptions = { fields: "_objectField" };
+865-var _objectType = { properties: "Map#_propertiesType" };
+866-var _option = { media: "_mediaItem" };
+867-var _orCondition = { conditions: "_conditionNode" };
+868-var _packageDimension = {
+869-  width: "DOUBLE",
+870-  length: "DOUBLE",
+871-  height: "google.protobuf.DoubleValue"
+872-};
+873-var _packageType = { dimension: "_packageDimension", image: "_image" };
+874-var _password = { description: "_richContent", media: "_mediaItem" };
+875-var _payment = {
+876-  checkboxGroupOptions: "_productCheckboxGroup",
+877-  donationInputOptions: "_donationInput",
+878-  paymentInputOptions: "_paymentInput",
+879-  fixedPaymentOptions: "_fixedPayment"
+880-};
+881-var _paymentInput = {
+882-  default: "google.protobuf.DoubleValue",
+883-  description: "_richContent",
+884-  media: "_mediaItem"
+885-};
+886-var _phoneInput = { description: "_richContent", media: "_mediaItem" };
+887-var _pluginConfig = { startingEnforcementDate: "google.protobuf.Timestamp" };
+888-var _poll = { image: "_media", options: "_pollOption" };
+889-var _pollData = { poll: "_poll", design: "_design" };
+890-var _pollDesign = { background: "_background" };
+891-var _pollOption = { image: "_media" };
+892-var _predefinedExpectedInput = {
+893-  configuration: "_predefinedExpectedInputConfiguration"
+894-};
+895-var _predefinedExpectedInputConfiguration = {
+896-  textInput: "_adminConfigurableTextInput"
+897-};
+898-var _presetEditorPresence = { wixMediaThumbnail: "_commonImage" };
+899-var _presetElementDefaults = { elements: "Map#_presetInnerElementDefaults" };
+900-var _presetInnerElementDefaults = {
+901-  elements: "Map#_presetInnerElementDefaults"
+902-};
+903-var _presetItem = {
+904-  styleOverrides: "_breakpointPresetStyleOverrides",
+905-  presetDefaults: "_presetElementDefaults"
+906-};
+907-var _presetStyleOverrides = { elements: "Map#_elementStyleOverrides" };
+908-var _productCheckboxGroup = {
+909-  description: "_richContent",
+910-  options: "_productCheckboxGroupOption",
+911-  media: "_mediaItem"
+912-};
+913-var _productCheckboxGroupOption = { media: "_mediaItem" };
+914-var _propertiesType = {
+915-  numberOptions: "_numberType",
+916-  arrayOptions: "_arrayType"
+917-};
+918-var _radioGroup = { description: "_richContent", media: "_mediaItem" };
+919-var _ratingInput = { description: "_richContent", media: "_mediaItem" };
+920-var _refElement = {
+921-  resolvedElement: "_inlineElement",
+922-  elements: "Map#_refInnerElementDefaults"
+923-};
+924-var _refInnerElementDefaults = { elements: "Map#_refInnerElementDefaults" };
+925-var _richContent = { nodes: "_node", metadata: "_v1Metadata" };
+926-var _richContentOptions = { richContent: "_richContent" };
+927-var _scheduling = { appointmentOptions: "_appointment" };
+928-var _schema = {
+929-  createdDate: "google.protobuf.Timestamp",
+930-  updatedDate: "google.protobuf.Timestamp",
+931-  fields: "Map#_v1SchemaField"
+932-};
+933-var _schemaGroup = {
+934-  createdDate: "google.protobuf.Timestamp",
+935-  updatedDate: "google.protobuf.Timestamp"
+936-};
+937-var _shapeData = { shape: "_media" };
+938-var _shippingLabelCarrierSpiConfig = { packageTypes: "_packageType" };
+939-var _shippingProviderConfig = { shippingPrice: "DOUBLE" };
+940-var _signature = { description: "_richContent", media: "_mediaItem" };
+941-var _smartBlockCellData = { shape: "_media" };
+942-var _step = { layout: "_formLayout" };
+943-var _stop = { position: "google.protobuf.DoubleValue" };
+944-var _studioWidgetComponentData = {
+945-  widgetDisplay: "_widgetDisplay",
+946-  editorPresence: "_editorPresence"
+947-};
+948-var _styleItem = { number: "_cssNumber" };
+949-var _styles = {
+950-  background: "_stylesBackground",
+951-  backgroundHover: "_stylesBackground"
+952-};
+953-var _stylesBackground = { gradient: "_v1Gradient" };
+954-var _submitSettings = { thankYouMessageOptions: "_thankYouMessageOptions" };
+955-var _tags = {
+956-  description: "_richContent",
+957-  options: "_tagsOption",
+958-  media: "_mediaItem"
+959-};
+960-var _tagsOption = { media: "_mediaItem" };
+961-var _textInput = { description: "_richContent", media: "_mediaItem" };
+962-var _thankYouMessageOptions = { richContent: "_richContent" };
+963-var _timeInput = { description: "_richContent", media: "_mediaItem" };
+964-var _tocData = {
+965-  fontSize: "google.protobuf.DoubleValue",
+966-  itemSpacing: "google.protobuf.DoubleValue"
+967-};
+968-var _updateComponent = { data: "_componentData" };
+969-var _updateComponentsOverrideRequest = {
+970-  fieldMask: "google.protobuf.FieldMask",
+971-  componentsOverride: "_componentsOverride"
+972-};
+973-var _updateComponentsOverrideResponse = {
+974-  componentsOverride: "_componentsOverride"
+975-};
+976:var _updateOverrideWithNoSideEffectsRequest = {
+977-  componentsOverride: "_componentsOverride",
+978-  componentFieldMasks: "_componentFieldMask"
+979-};
+980:var _updateOverrideWithNoSideEffectsResponse = {
+981-  componentsOverride: "_componentsOverride"
+982-};
+983-var _upstreamWixCommonImage = {
+984-  urlExpirationDate: "google.protobuf.Timestamp"
+985-};
+986-var _v1Gradient = {
+987-  centerX: "google.protobuf.DoubleValue",
+988-  centerY: "google.protobuf.DoubleValue",
+989-  stops: "_stop"
+990-};
+991-var _v1Metadata = {
+992-  createdTimestamp: "google.protobuf.Timestamp",
+993-  updatedTimestamp: "google.protobuf.Timestamp"
+994-};
+995-var _v1SchemaField = { index: "google.protobuf.DoubleValue" };
+996-var _v2Rule = { expression: "_conditionNode" };
+997-var _video = { media: "_media", thumbnail: "_media" };
+998-var _videoData = { video: "_media", thumbnail: "_media" };
+999-var _widgetComponentData = { widgetDisplay: "_widgetDisplay" };
+1000-var _widgetDisplay = { price: "google.protobuf.FloatValue" };
+1001-var _widgetOutOfIframeComponentData = { widgetData: "_widgetComponentData" };
+1002-var _wixFile = {
+1003-  fileUploadOptions: "_fileUpload",
+1004-  signatureOptions: "_signature"
+1005-};
+1006-function resolveWixDevcenterComponentsOverridesV1ComponentsOverridesServiceUrl(opts) {
+1007-  var domainToMappings = {
+1008-    "editor._base_domain_": [
+1009-      {
+1010-        srcPath: "/_api/components-overrides",
+1011-        destPath: ""
+1012-      }
+1013-    ],
+1014-    "blocks._base_domain_": [
+1015-      {
+1016-        srcPath: "/_api/components-overrides",
+1017-        destPath: ""
+1018-      }
+1019-    ],
+1020-    "create.editorx": [
+1021-      {
+1022-        srcPath: "/_api/components-overrides",
+1023-        destPath: ""
+1024-      }
+1025-    ],
+1026-    "www.wixapis.com": [
+1027-      {
+1028-        srcPath: "/apps/components-overrides/v1/components-override",
+1029-        destPath: ""
+1030-      }
+1031-    ],
+1032-    "*.dev.wix-code.com": [
+1033-      {
+1034-        srcPath: "/apps/components-overrides/v1/components-override",
+1035-        destPath: ""
+1036-      }
+1037-    ],
+1038-    "manage._base_domain_": [
+1039-      {
+1040-        srcPath: "/_api/components-overrides",
+1041-        destPath: ""
+1042-      }
+1043-    ]
+1044-  };
+1045-  return resolveUrl(Object.assign(opts, { domainToMappings }));
+1046-}
+1047:function createComponentsOverride(payload) {
+1048:  var _a = serializer(_createComponentsOverrideRequest, {
+1049-    __Array,
+1050-    __Boolean,
+1051-    __Number,
+1052-    __Object,
+1053-    __String,
+1054-    _actionProviderSPIConfig,
+1055-    _actionSPIConfig,
+1056-    _address,
+1057-    _adminConfigurableTextInput,
+1058-    _andCondition,
+1059-    _apiArrayItems,
+1060-    _apiContext,
+1061-    _api_Number,
+1062-    _appEmbedData,
+1063-    _appointment,
+1064-    _arrayItems,
+1065-    _arrayOptions,
+1066-    _arrayType,
+1067-    _audioData,
+1068-    _authenticatorConfig,
+1069-    _backdrop,
+1070-    _background,
+1071-    _backgroundImage,
+1072-    _breakPoint,
+1073-    _breakpointPresetStyleOverrides,
+1074-    _buttonData,
+1075-    _cardData,
+1076-    _cardDataBackground,
+1077-    _cardDataBackgroundImage,
+1078-    _checkbox,
+1079-    _checkboxGroup,
+1080-    _collection,
+1081-    _commonImage,
+1082-    _componentData,
+1083-    _componentExperiment,
+1084-    _componentsOverride,
+1085-    _conditionNode,
+1086-    _contextArrayItems,
+1087-    _contextDataItems,
+1088-    _contextItem,
+1089-    _cssCustomPropertyItem,
+1090-    _cssNumber,
+1091-    _dataComponent,
+1092-    _dataComponentField,
+1093-    _dataItem,
+1094-    _dataItems,
+1095-    _dateInput,
+1096-    _datePicker,
+1097-    _dateTimeInput,
+1098-    _description,
+1099-    _design,
+1100-    _devCenterTestingComponentData,
+1101-    _displayField,
+1102-    _donationInput,
+1103-    _dropdown,
+1104-    _editorContextProvider,
+1105-    _editorElement,
+1106-    _editorFunction,
+1107-    _editorFunctionLibrary,
+1108-    _editorPresence,
+1109-    _editorReactComponent,
+1110-    _elementItem,
+1111-    _elementStyleOverrides,
+1112-    _expectedInputs,
+1113-    _field,
+1114-    _fileUpload,
+1115-    _fixedPayment,
+1116-    _focalPoint,
+1117-    _formLayout,
+1118-    _formTemplate,
+1119-    _function,
+1120-    _functionParameter,
+1121-    _functionParameterArrayItems,
+1122-    _functionParameterItems,
+1123-    _functionReturnType,
+1124-    _functionsShopPriceSpiConfig,
+1125-    _galleryData,
+1126-    _galleryOptions,
+1127-    _group,
+1128-    _image,
+1129-    _imageData,
+1130-    _inlineElement,
+1131-    _inputField,
+1132-    _item,
+1133-    _itemImage,
+1134-    _itemLayout,
+1135-    _itemStyle,
+1136-    _layoutData,
+1137-    _layoutDataBackground,
+1138-    _mapData,
+1139-    _mapSettings,
+1140-    _media,
+1141-    _mediaItem,
+1142-    _messageContainingTranslatables,
+1143-    _modifiedComponent,
+1144-    _multilineAddress,
+1145-    _multilingualTranslationSchema,
+1146-    _node,
+1147-    _numberInput,
+1148-    _numberType,
+1149-    _objectField,
+1150-    _objectOptions,
+1151-    _objectType,
+1152-    _option,
+1153-    _orCondition,
+1154-    _packageDimension,
+1155-    _packageType,
+1156-    _password,
+1157-    _payment,
+1158-    _paymentInput,
+1159-    _phoneInput,
+1160-    _pluginConfig,
+1161-    _poll,
+1162-    _pollData,
+1163-    _pollDesign,
+1164-    _pollOption,
+1165-    _predefinedExpectedInput,
+1166-    _predefinedExpectedInputConfiguration,
+1167-    _presetEditorPresence,
+1168-    _presetElementDefaults,
+1169-    _presetInnerElementDefaults,
+1170-    _presetItem,
+1171-    _presetStyleOverrides,
+1172-    _productCheckboxGroup,
+1173-    _productCheckboxGroupOption,
+1174-    _propertiesType,
+1175-    _radioGroup,
+1176-    _ratingInput,
+1177-    _refElement,
+1178-    _refInnerElementDefaults,
+1179-    _richContent,
+1180-    _richContentOptions,
+1181-    _scheduling,
+1182-    _schema,
+1183-    _schemaGroup,
+1184-    _shapeData,
+1185-    _shippingLabelCarrierSpiConfig,
+1186-    _shippingProviderConfig,
+1187-    _signature,
+1188-    _smartBlockCellData,
+1189-    _step,
+1190-    _stop,
+1191-    _studioWidgetComponentData,
+1192-    _styleItem,
+1193-    _styles,
+1194-    _stylesBackground,
+1195-    _submitSettings,
+1196-    _tags,
+1197-    _tagsOption,
+1198-    _textInput,
+1199-    _thankYouMessageOptions,
+1200-    _timeInput,
+1201-    _tocData,
+1202-    _updateComponent,
+1203-    _upstreamWixCommonImage,
+1204-    _v1Gradient,
+1205-    _v1Metadata,
+1206-    _v1SchemaField,
+1207-    _v2Rule,
+1208-    _video,
+1209-    _videoData,
+1210-    _widgetComponentData,
+1211-    _widgetDisplay,
+1212-    _widgetOutOfIframeComponentData,
+1213-    _wixFile
+1214-  }), toReq = _a.toJSON, fromReq = _a.fromJSON;
+1215:  var fromRes = serializer(_createComponentsOverrideResponse, {
+1216-    __Array,
+1217-    __Boolean,
+1218-    __Number,
+1219-    __Object,
+1220-    __String,
+1221-    _actionProviderSPIConfig,
+1222-    _actionSPIConfig,
+1223-    _address,
+1224-    _adminConfigurableTextInput,
+1225-    _andCondition,
+1226-    _apiArrayItems,
+1227-    _apiContext,
+1228-    _api_Number,
+1229-    _appEmbedData,
+1230-    _appointment,
+1231-    _arrayItems,
+1232-    _arrayOptions,
+1233-    _arrayType,
+1234-    _audioData,
+1235-    _authenticatorConfig,
+1236-    _backdrop,
+1237-    _background,
+1238-    _backgroundImage,
+1239-    _breakPoint,
+1240-    _breakpointPresetStyleOverrides,
+1241-    _buttonData,
+1242-    _cardData,
+1243-    _cardDataBackground,
+1244-    _cardDataBackgroundImage,
+1245-    _checkbox,
+1246-    _checkboxGroup,
+1247-    _collection,
+1248-    _commonImage,
+1249-    _componentData,
+1250-    _componentExperiment,
+1251-    _componentsOverride,
+1252-    _conditionNode,
+1253-    _contextArrayItems,
+1254-    _contextDataItems,
+1255-    _contextItem,
+1256-    _cssCustomPropertyItem,
+1257-    _cssNumber,
+1258-    _dataComponent,
+1259-    _dataComponentField,
+1260-    _dataItem,
+1261-    _dataItems,
+1262-    _dateInput,
+1263-    _datePicker,
+1264-    _dateTimeInput,
+1265-    _description,
+1266-    _design,
+1267-    _devCenterTestingComponentData,
+1268-    _displayField,
+1269-    _donationInput,
+1270-    _dropdown,
+1271-    _editorContextProvider,
+1272-    _editorElement,
+1273-    _editorFunction,
+1274-    _editorFunctionLibrary,
+1275-    _editorPresence,
+1276-    _editorReactComponent,
+1277-    _elementItem,
+1278-    _elementStyleOverrides,
+1279-    _expectedInputs,
+1280-    _field,
+1281-    _fileUpload,
+1282-    _fixedPayment,
+1283-    _focalPoint,
+1284-    _formLayout,
+1285-    _formTemplate,
+1286-    _function,
+1287-    _functionParameter,
+1288-    _functionParameterArrayItems,
+1289-    _functionParameterItems,
+1290-    _functionReturnType,
+1291-    _functionsShopPriceSpiConfig,
+1292-    _galleryData,
+1293-    _galleryOptions,
+1294-    _group,
+1295-    _image,
+1296-    _imageData,
+1297-    _inlineElement,
+1298-    _inputField,
+1299-    _item,
+1300-    _itemImage,
+1301-    _itemLayout,
+1302-    _itemStyle,
+1303-    _layoutData,
+1304-    _layoutDataBackground,
+1305-    _mapData,
+1306-    _mapSettings,
+1307-    _media,
+1308-    _mediaItem,
+1309-    _messageContainingTranslatables,
+1310-    _modifiedComponent,
+1311-    _multilineAddress,
+1312-    _multilingualTranslationSchema,
+1313-    _node,
+1314-    _numberInput,
+1315-    _numberType,
+1316-    _objectField,
+1317-    _objectOptions,
+1318-    _objectType,
+1319-    _option,
+1320-    _orCondition,
+1321-    _packageDimension,
+1322-    _packageType,
+1323-    _password,
+1324-    _payment,
+1325-    _paymentInput,
+1326-    _phoneInput,
+1327-    _pluginConfig,
+1328-    _poll,
+1329-    _pollData,
+1330-    _pollDesign,
+1331-    _pollOption,
+1332-    _predefinedExpectedInput,
+1333-    _predefinedExpectedInputConfiguration,
+1334-    _presetEditorPresence,
+1335-    _presetElementDefaults,
+1336-    _presetInnerElementDefaults,
+1337-    _presetItem,
+1338-    _presetStyleOverrides,
+1339-    _productCheckboxGroup,
+1340-    _productCheckboxGroupOption,
+1341-    _propertiesType,
+1342-    _radioGroup,
+1343-    _ratingInput,
+1344-    _refElement,
+1345-    _refInnerElementDefaults,
+1346-    _richContent,
+1347-    _richContentOptions,
+1348-    _scheduling,
+1349-    _schema,
+1350-    _schemaGroup,
+1351-    _shapeData,
+1352-    _shippingLabelCarrierSpiConfig,
+1353-    _shippingProviderConfig,
+1354-    _signature,
+1355-    _smartBlockCellData,
+1356-    _step,
+1357-    _stop,
+1358-    _studioWidgetComponentData,
+1359-    _styleItem,
+1360-    _styles,
+1361-    _stylesBackground,
+1362-    _submitSettings,
+1363-    _tags,
+1364-    _tagsOption,
+1365-    _textInput,
+1366-    _thankYouMessageOptions,
+1367-    _timeInput,
+1368-    _tocData,
+1369-    _updateComponent,
+1370-    _upstreamWixCommonImage,
+1371-    _v1Gradient,
+1372-    _v1Metadata,
+1373-    _v1SchemaField,
+1374-    _v2Rule,
+1375-    _video,
+1376-    _videoData,
+1377-    _widgetComponentData,
+1378-    _widgetDisplay,
+1379-    _widgetOutOfIframeComponentData,
+1380-    _wixFile
+1381-  }).fromJSON;
+1382:  function __createComponentsOverride(_a2) {
+1383-    var host = _a2.host;
+1384-    var serializedData = toReq(payload);
+1385-    var metadata = {
+1386-      entityFqdn: "wix.devcenter.components_overrides.v1.components_override",
+1387-      method: "POST",
+1388-      methodFqn: "wix.devcenter.components.overrides.v1.ComponentsOverridesService.CreateComponentsOverride",
+1389-      migrationOptions: {
+1390-        optInTransformResponse: true
+1391-      },
+1392-      url: resolveWixDevcenterComponentsOverridesV1ComponentsOverridesServiceUrl({ protoPath: "/v1/components-override", data: serializedData, host }),
+1393-      data: serializedData,
+1394-      transformResponse: fromRes
+1395-    };
+1396-    return metadata;
+1397-  }
+1398:  __createComponentsOverride.fromReq = fromReq;
+1399:  __createComponentsOverride.__isAmbassador = true;
+1400:  return __createComponentsOverride;
+1401-}
+1402:function updateComponentsOverrides(payload) {
+1403-  var _a = serializer(_updateComponentsOverrideRequest, {
+1404-    __Array,
+1405-    __Boolean,
+1406-    __Number,
+1407-    __Object,
+1408-    __String,
+1409-    _actionProviderSPIConfig,
+1410-    _actionSPIConfig,
+1411-    _address,
+1412-    _adminConfigurableTextInput,
+1413-    _andCondition,
+1414-    _apiArrayItems,
+1415-    _apiContext,
+1416-    _api_Number,
+1417-    _appEmbedData,
+1418-    _appointment,
+1419-    _arrayItems,
+1420-    _arrayOptions,
+1421-    _arrayType,
+1422-    _audioData,
+1423-    _authenticatorConfig,
+1424-    _backdrop,
+1425-    _background,
+1426-    _backgroundImage,
+1427-    _breakPoint,
+1428-    _breakpointPresetStyleOverrides,
+1429-    _buttonData,
+1430-    _cardData,
+1431-    _cardDataBackground,
+1432-    _cardDataBackgroundImage,
+1433-    _checkbox,
+1434-    _checkboxGroup,
+1435-    _collection,
+1436-    _commonImage,
+1437-    _componentData,
+1438-    _componentExperiment,
+1439-    _componentsOverride,
+1440-    _conditionNode,
+1441-    _contextArrayItems,
+1442-    _contextDataItems,
+1443-    _contextItem,
+1444-    _cssCustomPropertyItem,
+1445-    _cssNumber,
+1446-    _dataComponent,
+1447-    _dataComponentField,
+1448-    _dataItem,
+1449-    _dataItems,
+1450-    _dateInput,
+1451-    _datePicker,
+1452-    _dateTimeInput,
+1453-    _description,
+1454-    _design,
+1455-    _devCenterTestingComponentData,
+1456-    _displayField,
+1457-    _donationInput,
+1458-    _dropdown,
+1459-    _editorContextProvider,
+1460-    _editorElement,
+1461-    _editorFunction,
+1462-    _editorFunctionLibrary,
+1463-    _editorPresence,
+1464-    _editorReactComponent,
+1465-    _elementItem,
+1466-    _elementStyleOverrides,
+1467-    _expectedInputs,
+1468-    _field,
+1469-    _fileUpload,
+1470-    _fixedPayment,
+1471-    _focalPoint,
+1472-    _formLayout,
+1473-    _formTemplate,
+1474-    _function,
+1475-    _functionParameter,
+1476-    _functionParameterArrayItems,
+1477-    _functionParameterItems,
+1478-    _functionReturnType,
+1479-    _functionsShopPriceSpiConfig,
+1480-    _galleryData,
+1481-    _galleryOptions,
+1482-    _group,
+1483-    _image,
+1484-    _imageData,
+1485-    _inlineElement,
+1486-    _inputField,
+1487-    _item,
+1488-    _itemImage,
+1489-    _itemLayout,
+1490-    _itemStyle,
+1491-    _layoutData,
+1492-    _layoutDataBackground,
+1493-    _mapData,
+1494-    _mapSettings,
+1495-    _media,
+1496-    _mediaItem,
+1497-    _messageContainingTranslatables,
+1498-    _modifiedComponent,
+1499-    _multilineAddress,
+1500-    _multilingualTranslationSchema,
+1501-    _node,
+1502-    _numberInput,
+1503-    _numberType,
+1504-    _objectField,
+1505-    _objectOptions,
+1506-    _objectType,
+1507-    _option,
+1508-    _orCondition,
+1509-    _packageDimension,
+1510-    _packageType,
+1511-    _password,
+1512-    _payment,
+1513-    _paymentInput,
+1514-    _phoneInput,
+1515-    _pluginConfig,
+1516-    _poll,
+1517-    _pollData,
+1518-    _pollDesign,
+1519-    _pollOption,
+1520-    _predefinedExpectedInput,
+1521-    _predefinedExpectedInputConfiguration,
+1522-    _presetEditorPresence,
+--
+1617-    _dateInput,
+1618-    _datePicker,
+1619-    _dateTimeInput,
+1620-    _description,
+1621-    _design,
+1622-    _devCenterTestingComponentData,
+1623-    _displayField,
+1624-    _donationInput,
+1625-    _dropdown,
+1626-    _editorContextProvider,
+1627-    _editorElement,
+1628-    _editorFunction,
+1629-    _editorFunctionLibrary,
+1630-    _editorPresence,
+1631-    _editorReactComponent,
+1632-    _elementItem,
+1633-    _elementStyleOverrides,
+1634-    _expectedInputs,
+1635-    _field,
+1636-    _fileUpload,
+1637-    _fixedPayment,
+1638-    _focalPoint,
+1639-    _formLayout,
+1640-    _formTemplate,
+1641-    _function,
+1642-    _functionParameter,
+1643-    _functionParameterArrayItems,
+1644-    _functionParameterItems,
+1645-    _functionReturnType,
+1646-    _functionsShopPriceSpiConfig,
+1647-    _galleryData,
+1648-    _galleryOptions,
+1649-    _group,
+1650-    _image,
+1651-    _imageData,
+1652-    _inlineElement,
+1653-    _inputField,
+1654-    _item,
+1655-    _itemImage,
+1656-    _itemLayout,
+1657-    _itemStyle,
+1658-    _layoutData,
+1659-    _layoutDataBackground,
+1660-    _mapData,
+1661-    _mapSettings,
+1662-    _media,
+1663-    _mediaItem,
+1664-    _messageContainingTranslatables,
+1665-    _modifiedComponent,
+1666-    _multilineAddress,
+1667-    _multilingualTranslationSchema,
+1668-    _node,
+1669-    _numberInput,
+1670-    _numberType,
+1671-    _objectField,
+1672-    _objectOptions,
+1673-    _objectType,
+1674-    _option,
+1675-    _orCondition,
+1676-    _packageDimension,
+1677-    _packageType,
+1678-    _password,
+1679-    _payment,
+1680-    _paymentInput,
+1681-    _phoneInput,
+1682-    _pluginConfig,
+1683-    _poll,
+1684-    _pollData,
+1685-    _pollDesign,
+1686-    _pollOption,
+1687-    _predefinedExpectedInput,
+1688-    _predefinedExpectedInputConfiguration,
+1689-    _presetEditorPresence,
+1690-    _presetElementDefaults,
+1691-    _presetInnerElementDefaults,
+1692-    _presetItem,
+1693-    _presetStyleOverrides,
+1694-    _productCheckboxGroup,
+1695-    _productCheckboxGroupOption,
+1696-    _propertiesType,
+1697-    _radioGroup,
+1698-    _ratingInput,
+1699-    _refElement,
+1700-    _refInnerElementDefaults,
+1701-    _richContent,
+1702-    _richContentOptions,
+1703-    _scheduling,
+1704-    _schema,
+1705-    _schemaGroup,
+1706-    _shapeData,
+1707-    _shippingLabelCarrierSpiConfig,
+1708-    _shippingProviderConfig,
+1709-    _signature,
+1710-    _smartBlockCellData,
+1711-    _step,
+1712-    _stop,
+1713-    _studioWidgetComponentData,
+1714-    _styleItem,
+1715-    _styles,
+1716-    _stylesBackground,
+1717-    _submitSettings,
+1718-    _tags,
+1719-    _tagsOption,
+1720-    _textInput,
+1721-    _thankYouMessageOptions,
+1722-    _timeInput,
+1723-    _tocData,
+1724-    _updateComponent,
+1725-    _upstreamWixCommonImage,
+1726-    _v1Gradient,
+1727-    _v1Metadata,
+1728-    _v1SchemaField,
+1729-    _v2Rule,
+1730-    _video,
+1731-    _videoData,
+1732-    _widgetComponentData,
+1733-    _widgetDisplay,
+1734-    _widgetOutOfIframeComponentData,
+1735-    _wixFile
+1736-  }).fromJSON;
+1737:  function __updateComponentsOverrides(_a2) {
+1738-    var host = _a2.host;
+1739-    var serializedData = toReq(payload);
+1740-    var metadata = {
+1741-      entityFqdn: "wix.devcenter.components_overrides.v1.components_override",
+1742-      method: "PATCH",
+1743-      methodFqn: "wix.devcenter.components.overrides.v1.ComponentsOverridesService.UpdateComponentsOverrides",
+1744-      migrationOptions: {
+1745-        optInTransformResponse: true
+1746-      },
+1747-      url: resolveWixDevcenterComponentsOverridesV1ComponentsOverridesServiceUrl({
+1748-        protoPath: "/v1/components-override/{componentsOverride.id}",
+1749-        data: serializedData,
+1750-        host
+1751-      }),
+1752-      data: serializedData,
+1753-      transformResponse: fromRes
+1754-    };
+1755-    return metadata;
+1756-  }
+1757:  __updateComponentsOverrides.fromReq = fromReq;
+1758:  __updateComponentsOverrides.__isAmbassador = true;
+1759:  return __updateComponentsOverrides;
+1760-}
+1761-function commitOverride(payload) {
+1762-  var _a = serializer(_commitOverrideRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+1763-  var fromRes = serializer(_commitOverrideResponse, {}).fromJSON;
+1764-  function __commitOverride(_a2) {
+1765-    var host = _a2.host;
+1766-    var serializedData = toReq(payload);
+1767-    var metadata = {
+1768-      entityFqdn: "wix.devcenter.components_overrides.v1.components_override",
+1769-      method: "POST",
+1770-      methodFqn: "wix.devcenter.components.overrides.v1.ComponentsOverridesService.CommitOverride",
+1771-      migrationOptions: {
+1772-        optInTransformResponse: true
+1773-      },
+1774-      url: resolveWixDevcenterComponentsOverridesV1ComponentsOverridesServiceUrl({
+1775-        protoPath: "/v1/components-override/commit",
+1776-        data: serializedData,
+1777-        host
+1778-      }),
+1779-      data: serializedData,
+1780-      transformResponse: fromRes
+1781-    };
+1782-    return metadata;
+1783-  }
+1784-  __commitOverride.fromReq = fromReq;
+1785-  __commitOverride.__isAmbassador = true;
+1786-  return __commitOverride;
+1787-}
+1788:function updateOverrideWithNoSideEffects(payload) {
+1789:  var _a = serializer(_updateOverrideWithNoSideEffectsRequest, {
+1790-    __Array,
+1791-    __Boolean,
+1792-    __Number,
+1793-    __Object,
+1794-    __String,
+1795-    _actionProviderSPIConfig,
+1796-    _actionSPIConfig,
+1797-    _address,
+1798-    _adminConfigurableTextInput,
+1799-    _andCondition,
+1800-    _apiArrayItems,
+1801-    _apiContext,
+1802-    _api_Number,
+1803-    _appEmbedData,
+1804-    _appointment,
+1805-    _arrayItems,
+1806-    _arrayOptions,
+1807-    _arrayType,
+1808-    _audioData,
+1809-    _authenticatorConfig,
+1810-    _backdrop,
+1811-    _background,
+1812-    _backgroundImage,
+1813-    _breakPoint,
+1814-    _breakpointPresetStyleOverrides,
+1815-    _buttonData,
+1816-    _cardData,
+1817-    _cardDataBackground,
+1818-    _cardDataBackgroundImage,
+1819-    _checkbox,
+1820-    _checkboxGroup,
+1821-    _collection,
+1822-    _commonImage,
+1823-    _componentData,
+1824-    _componentExperiment,
+1825-    _componentFieldMask,
+1826-    _componentsOverride,
+1827-    _conditionNode,
+1828-    _contextArrayItems,
+1829-    _contextDataItems,
+1830-    _contextItem,
+1831-    _cssCustomPropertyItem,
+1832-    _cssNumber,
+1833-    _dataComponent,
+1834-    _dataComponentField,
+1835-    _dataItem,
+1836-    _dataItems,
+1837-    _dateInput,
+1838-    _datePicker,
+1839-    _dateTimeInput,
+1840-    _description,
+1841-    _design,
+1842-    _devCenterTestingComponentData,
+1843-    _displayField,
+1844-    _donationInput,
+1845-    _dropdown,
+1846-    _editorContextProvider,
+1847-    _editorElement,
+1848-    _editorFunction,
+1849-    _editorFunctionLibrary,
+1850-    _editorPresence,
+1851-    _editorReactComponent,
+1852-    _elementItem,
+1853-    _elementStyleOverrides,
+1854-    _expectedInputs,
+1855-    _field,
+1856-    _fileUpload,
+1857-    _fixedPayment,
+1858-    _focalPoint,
+1859-    _formLayout,
+1860-    _formTemplate,
+1861-    _function,
+1862-    _functionParameter,
+1863-    _functionParameterArrayItems,
+1864-    _functionParameterItems,
+1865-    _functionReturnType,
+1866-    _functionsShopPriceSpiConfig,
+1867-    _galleryData,
+1868-    _galleryOptions,
+1869-    _group,
+1870-    _image,
+1871-    _imageData,
+1872-    _inlineElement,
+1873-    _inputField,
+1874-    _item,
+1875-    _itemImage,
+1876-    _itemLayout,
+1877-    _itemStyle,
+1878-    _layoutData,
+1879-    _layoutDataBackground,
+1880-    _mapData,
+1881-    _mapSettings,
+1882-    _media,
+1883-    _mediaItem,
+1884-    _messageContainingTranslatables,
+1885-    _modifiedComponent,
+1886-    _multilineAddress,
+1887-    _multilingualTranslationSchema,
+1888-    _node,
+1889-    _numberInput,
+1890-    _numberType,
+1891-    _objectField,
+1892-    _objectOptions,
+1893-    _objectType,
+1894-    _option,
+1895-    _orCondition,
+1896-    _packageDimension,
+1897-    _packageType,
+1898-    _password,
+1899-    _payment,
+1900-    _paymentInput,
+1901-    _phoneInput,
+1902-    _pluginConfig,
+1903-    _poll,
+1904-    _pollData,
+1905-    _pollDesign,
+1906-    _pollOption,
+1907-    _predefinedExpectedInput,
+1908-    _predefinedExpectedInputConfiguration,
+1909-    _presetEditorPresence,
+1910-    _presetElementDefaults,
+1911-    _presetInnerElementDefaults,
+1912-    _presetItem,
+1913-    _presetStyleOverrides,
+1914-    _productCheckboxGroup,
+1915-    _productCheckboxGroupOption,
+1916-    _propertiesType,
+1917-    _radioGroup,
+1918-    _ratingInput,
+1919-    _refElement,
+1920-    _refInnerElementDefaults,
+1921-    _richContent,
+1922-    _richContentOptions,
+1923-    _scheduling,
+1924-    _schema,
+1925-    _schemaGroup,
+1926-    _shapeData,
+1927-    _shippingLabelCarrierSpiConfig,
+1928-    _shippingProviderConfig,
+1929-    _signature,
+1930-    _smartBlockCellData,
+1931-    _step,
+1932-    _stop,
+1933-    _studioWidgetComponentData,
+1934-    _styleItem,
+1935-    _styles,
+1936-    _stylesBackground,
+1937-    _submitSettings,
+1938-    _tags,
+1939-    _tagsOption,
+1940-    _textInput,
+1941-    _thankYouMessageOptions,
+1942-    _timeInput,
+1943-    _tocData,
+1944-    _updateComponent,
+1945-    _upstreamWixCommonImage,
+1946-    _v1Gradient,
+1947-    _v1Metadata,
+1948-    _v1SchemaField,
+1949-    _v2Rule,
+1950-    _video,
+1951-    _videoData,
+1952-    _widgetComponentData,
+1953-    _widgetDisplay,
+1954-    _widgetOutOfIframeComponentData,
+1955-    _wixFile
+1956-  }), toReq = _a.toJSON, fromReq = _a.fromJSON;
+1957:  var fromRes = serializer(_updateOverrideWithNoSideEffectsResponse, {
+1958-    __Array,
+1959-    __Boolean,
+1960-    __Number,
+1961-    __Object,
+1962-    __String,
+1963-    _actionProviderSPIConfig,
+1964-    _actionSPIConfig,
+1965-    _address,
+1966-    _adminConfigurableTextInput,
+1967-    _andCondition,
+1968-    _apiArrayItems,
+1969-    _apiContext,
+1970-    _api_Number,
+1971-    _appEmbedData,
+1972-    _appointment,
+1973-    _arrayItems,
+1974-    _arrayOptions,
+1975-    _arrayType,
+1976-    _audioData,
+1977-    _authenticatorConfig,
+1978-    _backdrop,
+1979-    _background,
+1980-    _backgroundImage,
+1981-    _breakPoint,
+1982-    _breakpointPresetStyleOverrides,
+1983-    _buttonData,
+1984-    _cardData,
+1985-    _cardDataBackground,
+1986-    _cardDataBackgroundImage,
+1987-    _checkbox,
+1988-    _checkboxGroup,
+1989-    _collection,
+1990-    _commonImage,
+1991-    _componentData,
+1992-    _componentExperiment,
+1993-    _componentsOverride,
+1994-    _conditionNode,
+1995-    _contextArrayItems,
+1996-    _contextDataItems,
+1997-    _contextItem,
+1998-    _cssCustomPropertyItem,
+1999-    _cssNumber,
+2000-    _dataComponent,
+2001-    _dataComponentField,
+2002-    _dataItem,
+2003-    _dataItems,
+2004-    _dateInput,
+2005-    _datePicker,
+2006-    _dateTimeInput,
+2007-    _description,
+2008-    _design,
+2009-    _devCenterTestingComponentData,
+2010-    _displayField,
+2011-    _donationInput,
+2012-    _dropdown,
+2013-    _editorContextProvider,
+2014-    _editorElement,
+2015-    _editorFunction,
+2016-    _editorFunctionLibrary,
+2017-    _editorPresence,
+2018-    _editorReactComponent,
+2019-    _elementItem,
+2020-    _elementStyleOverrides,
+2021-    _expectedInputs,
+2022-    _field,
+2023-    _fileUpload,
+2024-    _fixedPayment,
+2025-    _focalPoint,
+2026-    _formLayout,
+2027-    _formTemplate,
+2028-    _function,
+2029-    _functionParameter,
+2030-    _functionParameterArrayItems,
+2031-    _functionParameterItems,
+2032-    _functionReturnType,
+2033-    _functionsShopPriceSpiConfig,
+2034-    _galleryData,
+2035-    _galleryOptions,
+2036-    _group,
+2037-    _image,
+2038-    _imageData,
+2039-    _inlineElement,
+2040-    _inputField,
+2041-    _item,
+2042-    _itemImage,
+2043-    _itemLayout,
+2044-    _itemStyle,
+2045-    _layoutData,
+2046-    _layoutDataBackground,
+2047-    _mapData,
+2048-    _mapSettings,
+2049-    _media,
+2050-    _mediaItem,
+2051-    _messageContainingTranslatables,
+2052-    _modifiedComponent,
+2053-    _multilineAddress,
+2054-    _multilingualTranslationSchema,
+2055-    _node,
+2056-    _numberInput,
+2057-    _numberType,
+2058-    _objectField,
+2059-    _objectOptions,
+2060-    _objectType,
+2061-    _option,
+2062-    _orCondition,
+2063-    _packageDimension,
+2064-    _packageType,
+2065-    _password,
+2066-    _payment,
+2067-    _paymentInput,
+2068-    _phoneInput,
+2069-    _pluginConfig,
+2070-    _poll,
+2071-    _pollData,
+2072-    _pollDesign,
+2073-    _pollOption,
+2074-    _predefinedExpectedInput,
+2075-    _predefinedExpectedInputConfiguration,
+2076-    _presetEditorPresence,
+2077-    _presetElementDefaults,
+2078-    _presetInnerElementDefaults,
+2079-    _presetItem,
+2080-    _presetStyleOverrides,
+2081-    _productCheckboxGroup,
+2082-    _productCheckboxGroupOption,
+2083-    _propertiesType,
+2084-    _radioGroup,
+2085-    _ratingInput,
+2086-    _refElement,
+2087-    _refInnerElementDefaults,
+2088-    _richContent,
+2089-    _richContentOptions,
+2090-    _scheduling,
+2091-    _schema,
+2092-    _schemaGroup,
+2093-    _shapeData,
+2094-    _shippingLabelCarrierSpiConfig,
+2095-    _shippingProviderConfig,
+2096-    _signature,
+2097-    _smartBlockCellData,
+2098-    _step,
+2099-    _stop,
+2100-    _studioWidgetComponentData,
+2101-    _styleItem,
+2102-    _styles,
+2103-    _stylesBackground,
+2104-    _submitSettings,
+2105-    _tags,
+2106-    _tagsOption,
+2107-    _textInput,
+2108-    _thankYouMessageOptions,
+2109-    _timeInput,
+2110-    _tocData,
+2111-    _updateComponent,
+2112-    _upstreamWixCommonImage,
+2113-    _v1Gradient,
+2114-    _v1Metadata,
+2115-    _v1SchemaField,
+2116-    _v2Rule,
+2117-    _video,
+2118-    _videoData,
+2119-    _widgetComponentData,
+2120-    _widgetDisplay,
+2121-    _widgetOutOfIframeComponentData,
+2122-    _wixFile
+2123-  }).fromJSON;
+2124:  function __updateOverrideWithNoSideEffects(_a2) {
+2125-    var host = _a2.host;
+2126-    var serializedData = toReq(payload);
+2127-    var metadata = {
+2128-      entityFqdn: "wix.devcenter.components_overrides.v1.components_override",
+2129-      method: "POST",
+2130-      methodFqn: "wix.devcenter.components.overrides.v1.ComponentsOverridesService.UpdateOverrideWithNoSideEffects",
+2131-      migrationOptions: {
+2132-        optInTransformResponse: true
+2133-      },
+2134-      url: resolveWixDevcenterComponentsOverridesV1ComponentsOverridesServiceUrl({
+2135-        protoPath: "/v1/components-override/{componentsOverride.id}/update-with-no-side-effects",
+2136-        data: serializedData,
+2137-        host
+2138-      }),
+2139-      data: serializedData,
+2140-      transformResponse: fromRes
+2141-    };
+2142-    return metadata;
+2143-  }
+2144:  __updateOverrideWithNoSideEffects.fromReq = fromReq;
+2145:  __updateOverrideWithNoSideEffects.__isAmbassador = true;
+2146:  return __updateOverrideWithNoSideEffects;
+2147-}
+2148-
+2149-// ../dev-center-overrides-client/src/client.ts
+2150-var import_variant = __toESM(require_lib(), 1);
+2151-
+2152-// ../dev-center-overrides-client/src/schemas.ts
+2153-init_esm_shims();
+2154-var nullToUndefined = external_exports.string().nullish().transform((v) => v ?? void 0);
+2155-var suggestNextVersionsResponseSchema = external_exports.object({
+2156-  nextMajor: external_exports.string().default(""),
+2157-  nextMinor: nullToUndefined
+2158-});
+2159-var promoteAppVersionFromDraftResponseSchema = external_exports.object({
+2160-  appVersion: external_exports.object({
+2161-    fullVersion: external_exports.string().nullish()
+2162-  })
+2163-});
+2164-var getLatestProductionVersionResponseSchema = external_exports.object({
+2165-  appVersion: external_exports.object({
+2166-    version: external_exports.number()
+2167-  }).optional()
+2168-});
+2169-var overrideIdResponseSchema = external_exports.object({
+2170-  componentsOverride: external_exports.object({
+2171-    id: external_exports.string()
+2172-  })
+2173-});
+2174-
+2175-// ../dev-center-overrides-client/src/utils.ts
+2176-init_esm_shims();
+2177-
+2178-// ../../node_modules/@wix/ambassador-devcenter-components-overrides-v1-components-override/es/build/types.impl.js
+2179-init_esm_shims();
+2180-var SortOrder2;
+2181-(function(SortOrder3) {
+2182-  SortOrder3["ASC"] = "ASC";
+2183-  SortOrder3["DESC"] = "DESC";
+2184-})(SortOrder2 || (SortOrder2 = {}));
+2185-var A11yAttributes;
+2186-(function(A11yAttributes2) {
+2187-  A11yAttributes2["Unknown_AriaAttributes"] = "Unknown_AriaAttributes";
+2188-  A11yAttributes2["tabIndex"] = "tabIndex";
+2189-  A11yAttributes2["ariaLevel"] = "ariaLevel";
+2190-  A11yAttributes2["ariaExpanded"] = "ariaExpanded";
+2191-  A11yAttributes2["ariaDisabled"] = "ariaDisabled";
+2192-  A11yAttributes2["ariaAtomic"] = "ariaAtomic";
+2193-  A11yAttributes2["ariaHidden"] = "ariaHidden";
+2194-  A11yAttributes2["ariaBusy"] = "ariaBusy";
+2195-  A11yAttributes2["multiline"] = "multiline";
+2196-  A11yAttributes2["ariaAutocomplete"] = "ariaAutocomplete";
+2197-  A11yAttributes2["ariaPressed"] = "ariaPressed";
+2198-  A11yAttributes2["ariaHaspopup"] = "ariaHaspopup";
+2199-  A11yAttributes2["ariaRelevant"] = "ariaRelevant";
+2200-  A11yAttributes2["role"] = "role";
+2201-  A11yAttributes2["ariaLive"] = "ariaLive";
+2202-  A11yAttributes2["ariaCurrent"] = "ariaCurrent";
+2203-  A11yAttributes2["ariaLabel"] = "ariaLabel";
+2204-  A11yAttributes2["ariaRoledescription"] = "ariaRoledescription";
+2205-  A11yAttributes2["ariaDescribedby"] = "ariaDescribedby";
+2206-  A11yAttributes2["ariaLabelledby"] = "ariaLabelledby";
+2207-  A11yAttributes2["ariaErrormessage"] = "ariaErrormessage";
+2208-  A11yAttributes2["ariaOwns"] = "ariaOwns";
+2209-  A11yAttributes2["ariaControls"] = "ariaControls";
+2210-  A11yAttributes2["tag"] = "tag";
+2211-  A11yAttributes2["ariaMultiline"] = "ariaMultiline";
+2212-  A11yAttributes2["ariaInvalid"] = "ariaInvalid";
+2213-})(A11yAttributes || (A11yAttributes = {}));
+2214-var ActionName;
+2215-(function(ActionName2) {
+2216-  ActionName2["UNKNOWN_ActionName"] = "UNKNOWN_ActionName";
+2217-  ActionName2["settings"] = "settings";
+2218-  ActionName2["design"] = "design";
+2219-  ActionName2["media"] = "media";
+2220-  ActionName2["manageItems"] = "manageItems";
+2221-  ActionName2["dashboard"] = "dashboard";
+2222-  ActionName2["custom"] = "custom";
+2223-  ActionName2["manageMenu"] = "manageMenu";
+2224-  ActionName2["container"] = "container";
+2225-})(ActionName || (ActionName = {}));
+2226-var ActionTypeEnumActionType;
+2227-(function(ActionTypeEnumActionType2) {
+2228-  ActionTypeEnumActionType2["UNKNOWN_ActionType"] = "UNKNOWN_ActionType";
+2229-  ActionTypeEnumActionType2["data"] = "data";
+2230-  ActionTypeEnumActionType2["event"] = "event";
+2231-  ActionTypeEnumActionType2["panel"] = "panel";
+2232-  ActionTypeEnumActionType2["forward"] = "forward";
+2233-  ActionTypeEnumActionType2["style"] = "style";
+2234-  ActionTypeEnumActionType2["displayGroup"] = "displayGroup";
+2235-  ActionTypeEnumActionType2["cssProperty"] = "cssProperty";
+2236-  ActionTypeEnumActionType2["cssCustomProperty"] = "cssCustomProperty";
+2237-})(ActionTypeEnumActionType || (ActionTypeEnumActionType = {}));
+2238-var AppExecutionType;
+2239-(function(AppExecutionType2) {
+2240-  AppExecutionType2["UNKNOWN_APP_EXECUTION_TYPE"] = "UNKNOWN_APP_EXECUTION_TYPE";
+2241-  AppExecutionType2["MODAL"] = "MODAL";
+2242-  AppExecutionType2["DASHBOARD"] = "DASHBOARD";
+2243-  AppExecutionType2["EXTERNAL_LINK"] = "EXTERNAL_LINK";
+2244-  AppExecutionType2["DEEPLINK"] = "DEEPLINK";
+2245-})(AppExecutionType || (AppExecutionType = {}));
+2246-var Archetype;
+2247-(function(Archetype2) {
+2248-  Archetype2["UNKNOWN_Archetype"] = "UNKNOWN_Archetype";
+2249-  Archetype2["Button"] = "Button";
+2250-  Archetype2["LoginButton"] = "LoginButton";
+2251-  Archetype2["Image"] = "Image";
+2252-  Archetype2["Gallery"] = "Gallery";
+2253-  Archetype2["Video"] = "Video";
+2254-  Archetype2["Audio"] = "Audio";
+2255-  Archetype2["Text"] = "Text";
+2256-  Archetype2["TextInput"] = "TextInput";
+2257-  Archetype2["RichTextEditor"] = "RichTextEditor";
+2258-  Archetype2["SignatureInput"] = "SignatureInput";
+2259-  Archetype2["Checkbox"] = "Checkbox";
+2260-  Archetype2["RadioGroup"] = "RadioGroup";
+2261-  Archetype2["Switch"] = "Switch";
+2262-  Archetype2["Dropdown"] = "Dropdown";
+2263-  Archetype2["DatePicker"] = "DatePicker";
+2264-  Archetype2["TimePicker"] = "TimePicker";
+2265-  Archetype2["Ratings"] = "Ratings";
+2266-  Archetype2["RatingInput"] = "RatingInput";
+--
+4578-})(ScriptType || (ScriptType = {}));
+4579-var CustomElementScriptType2;
+4580-(function(CustomElementScriptType3) {
+4581-  CustomElementScriptType3["NONE"] = "NONE";
+4582-  CustomElementScriptType3["COMMON_JS"] = "COMMON_JS";
+4583-  CustomElementScriptType3["ES_MODULE"] = "ES_MODULE";
+4584-})(CustomElementScriptType2 || (CustomElementScriptType2 = {}));
+4585-var WidgetHorizontal;
+4586-(function(WidgetHorizontal2) {
+4587-  WidgetHorizontal2["NONE_HORIZONTAL"] = "NONE_HORIZONTAL";
+4588-  WidgetHorizontal2["LEFT"] = "LEFT";
+4589-  WidgetHorizontal2["CENTER_HORIZONTAL"] = "CENTER_HORIZONTAL";
+4590-  WidgetHorizontal2["RIGHT"] = "RIGHT";
+4591-})(WidgetHorizontal || (WidgetHorizontal = {}));
+4592-var RegionType2;
+4593-(function(RegionType3) {
+4594-  RegionType3["HEADER"] = "HEADER";
+4595-  RegionType3["BODY"] = "BODY";
+4596-  RegionType3["FOOTER"] = "FOOTER";
+4597-})(RegionType2 || (RegionType2 = {}));
+4598-var HeightMode2;
+4599-(function(HeightMode3) {
+4600-  HeightMode3["UNKNOWN"] = "UNKNOWN";
+4601-  HeightMode3["AUTO"] = "AUTO";
+4602-  HeightMode3["FIXED"] = "FIXED";
+4603-})(HeightMode2 || (HeightMode2 = {}));
+4604-var WidgetVertical;
+4605-(function(WidgetVertical2) {
+4606-  WidgetVertical2["NONE_VERTICAL"] = "NONE_VERTICAL";
+4607-  WidgetVertical2["TOP"] = "TOP";
+4608-  WidgetVertical2["CENTER_VERTICAL"] = "CENTER_VERTICAL";
+4609-  WidgetVertical2["BOTTOM"] = "BOTTOM";
+4610-})(WidgetVertical || (WidgetVertical = {}));
+4611-var WidgetWidthType;
+4612-(function(WidgetWidthType2) {
+4613-  WidgetWidthType2["NONE_TYPE"] = "NONE_TYPE";
+4614-  WidgetWidthType2["CUSTOM"] = "CUSTOM";
+4615-  WidgetWidthType2["FULL"] = "FULL";
+4616-})(WidgetWidthType || (WidgetWidthType = {}));
+4617-var WritingModeValue;
+4618-(function(WritingModeValue2) {
+4619-  WritingModeValue2["UNKNOWN_WritingModeValue"] = "UNKNOWN_WritingModeValue";
+4620-  WritingModeValue2["horizontalTb"] = "horizontalTb";
+4621-  WritingModeValue2["verticalRl"] = "verticalRl";
+4622-  WritingModeValue2["verticalLr"] = "verticalLr";
+4623-  WritingModeValue2["sidewaysRl"] = "sidewaysRl";
+4624-  WritingModeValue2["sidewaysLr"] = "sidewaysLr";
+4625-})(WritingModeValue || (WritingModeValue = {}));
+4626-var WebhookIdentityType2;
+4627-(function(WebhookIdentityType3) {
+4628-  WebhookIdentityType3["UNKNOWN"] = "UNKNOWN";
+4629-  WebhookIdentityType3["ANONYMOUS_VISITOR"] = "ANONYMOUS_VISITOR";
+4630-  WebhookIdentityType3["MEMBER"] = "MEMBER";
+4631-  WebhookIdentityType3["WIX_USER"] = "WIX_USER";
+4632-  WebhookIdentityType3["APP"] = "APP";
+4633-})(WebhookIdentityType2 || (WebhookIdentityType2 = {}));
+4634-var ValidationTargetMethod;
+4635-(function(ValidationTargetMethod2) {
+4636-  ValidationTargetMethod2["UNKNOWN_METHOD"] = "UNKNOWN_METHOD";
+4637-  ValidationTargetMethod2["RESCHEDULE"] = "RESCHEDULE";
+4638-  ValidationTargetMethod2["CREATE"] = "CREATE";
+4639-  ValidationTargetMethod2["CANCEL"] = "CANCEL";
+4640-  ValidationTargetMethod2["CREATE_MULTI_SERVICE"] = "CREATE_MULTI_SERVICE";
+4641-  ValidationTargetMethod2["CANCEL_MULTI_SERVICE"] = "CANCEL_MULTI_SERVICE";
+4642-  ValidationTargetMethod2["RESCHEDULE_MULTI_SERVICE"] = "RESCHEDULE_MULTI_SERVICE";
+4643-})(ValidationTargetMethod || (ValidationTargetMethod = {}));
+4644-var AssetType;
+4645-(function(AssetType2) {
+4646-  AssetType2["UNKNOWN"] = "UNKNOWN";
+4647-  AssetType2["IMAGE"] = "IMAGE";
+4648-  AssetType2["VIDEO"] = "VIDEO";
+4649-  AssetType2["LOGO"] = "LOGO";
+4650-  AssetType2["EVENT"] = "EVENT";
+4651-  AssetType2["FORM"] = "FORM";
+4652-  AssetType2["PDF"] = "PDF";
+4653-  AssetType2["RICOS"] = "RICOS";
+4654-  AssetType2["DOC"] = "DOC";
+4655-  AssetType2["SLIDE"] = "SLIDE";
+4656-  AssetType2["WIDGET"] = "WIDGET";
+4657-  AssetType2["FONT"] = "FONT";
+4658-  AssetType2["ICONS"] = "ICONS";
+4659-})(AssetType || (AssetType = {}));
+4660-var FileMediaType;
+4661-(function(FileMediaType2) {
+4662-  FileMediaType2["UNKNOWN_FILE_MEDIA_TYPE"] = "UNKNOWN_FILE_MEDIA_TYPE";
+4663-  FileMediaType2["IMAGE_MEDIA_TYPE"] = "IMAGE_MEDIA_TYPE";
+4664-  FileMediaType2["VIDEO_MEDIA_TYPE"] = "VIDEO_MEDIA_TYPE";
+4665-  FileMediaType2["DOCUMENT_MEDIA_TYPE"] = "DOCUMENT_MEDIA_TYPE";
+4666-  FileMediaType2["VECTOR_MEDIA_TYPE"] = "VECTOR_MEDIA_TYPE";
+4667-  FileMediaType2["ICON_MEDIA_TYPE"] = "ICON_MEDIA_TYPE";
+4668-  FileMediaType2["FONT_MEDIA_TYPE"] = "FONT_MEDIA_TYPE";
+4669-})(FileMediaType || (FileMediaType = {}));
+4670-var CreatedBy;
+4671-(function(CreatedBy2) {
+4672-  CreatedBy2["UNKNOWN"] = "UNKNOWN";
+4673-  CreatedBy2["BLOCKS"] = "BLOCKS";
+4674-  CreatedBy2["CLI"] = "CLI";
+4675-  CreatedBy2["CODE_GEN"] = "CODE_GEN";
+4676-  CreatedBy2["ONE_CLI"] = "ONE_CLI";
+4677-})(CreatedBy || (CreatedBy = {}));
+4678-var ExperimentActionType;
+4679-(function(ExperimentActionType2) {
+4680-  ExperimentActionType2["UNKNOWN_ACTION"] = "UNKNOWN_ACTION";
+4681-  ExperimentActionType2["CREATE_COMPONENT"] = "CREATE_COMPONENT";
+4682-  ExperimentActionType2["UPDATE_COMPONENT"] = "UPDATE_COMPONENT";
+4683-  ExperimentActionType2["DELETE_COMPONENT"] = "DELETE_COMPONENT";
+4684-})(ExperimentActionType || (ExperimentActionType = {}));
+4685-var ActionType;
+4686-(function(ActionType2) {
+4687-  ActionType2["UNKNOWN_ACTION"] = "UNKNOWN_ACTION";
+4688-  ActionType2["OVERRIDE_PROMOTED"] = "OVERRIDE_PROMOTED";
+4689-  ActionType2["OVERRIDE_COMMITTED"] = "OVERRIDE_COMMITTED";
+4690-})(ActionType || (ActionType = {}));
+4691-var LifecycleState;
+4692-(function(LifecycleState2) {
+4693-  LifecycleState2["LIFECYCLE_STATE_UNSPECIFIED_WITH_ENRICHMENT"] = "LIFECYCLE_STATE_UNSPECIFIED_WITH_ENRICHMENT";
+4694-  LifecycleState2["DRAFT"] = "DRAFT";
+4695-  LifecycleState2["SEALED"] = "SEALED";
+4696-  LifecycleState2["SEALED_WITH_ENRICHMENT"] = "SEALED_WITH_ENRICHMENT";
+4697-})(LifecycleState || (LifecycleState = {}));
+4698:var OverrideType;
+4699:(function(OverrideType2) {
+4700:  OverrideType2["UNKNOWN"] = "UNKNOWN";
+4701:  OverrideType2["DEV"] = "DEV";
+4702:  OverrideType2["DEV_PREVIEW"] = "DEV_PREVIEW";
+4703:  OverrideType2["USER"] = "USER";
+4704:  OverrideType2["INTERNAL_BUILD"] = "INTERNAL_BUILD";
+4705:  OverrideType2["INTERNAL_RC"] = "INTERNAL_RC";
+4706:})(OverrideType || (OverrideType = {}));
+4707-var AppType2;
+4708-(function(AppType3) {
+4709-  AppType3["PRODUCT"] = "PRODUCT";
+4710-  AppType3["EVENT"] = "EVENT";
+4711-  AppType3["BOOKING"] = "BOOKING";
+4712-})(AppType2 || (AppType2 = {}));
+4713-var CardStylesAlignment;
+4714-(function(CardStylesAlignment2) {
+4715-  CardStylesAlignment2["START"] = "START";
+4716-  CardStylesAlignment2["CENTER"] = "CENTER";
+4717-  CardStylesAlignment2["END"] = "END";
+4718-})(CardStylesAlignment || (CardStylesAlignment = {}));
+4719-var CardStylesLayout;
+4720-(function(CardStylesLayout2) {
+4721-  CardStylesLayout2["STACKED"] = "STACKED";
+4722-  CardStylesLayout2["SIDE_BY_SIDE"] = "SIDE_BY_SIDE";
+4723-})(CardStylesLayout || (CardStylesLayout = {}));
+4724-var CardStylesType;
+4725-(function(CardStylesType2) {
+4726-  CardStylesType2["CONTAINED"] = "CONTAINED";
+4727-  CardStylesType2["FRAMELESS"] = "FRAMELESS";
+4728-})(CardStylesType || (CardStylesType = {}));
+4729-var AspectRatio;
+4730-(function(AspectRatio2) {
+4731-  AspectRatio2["SQUARE"] = "SQUARE";
+4732-  AspectRatio2["RECTANGLE"] = "RECTANGLE";
+4733-})(AspectRatio || (AspectRatio = {}));
+4734-var ImageStylesPosition;
+4735-(function(ImageStylesPosition2) {
+4736-  ImageStylesPosition2["START"] = "START";
+4737-  ImageStylesPosition2["END"] = "END";
+4738-  ImageStylesPosition2["TOP"] = "TOP";
+4739-})(ImageStylesPosition || (ImageStylesPosition = {}));
+4740-var Resizing;
+4741-(function(Resizing2) {
+4742-  Resizing2["FILL"] = "FILL";
+4743-  Resizing2["FIT"] = "FIT";
+4744-})(Resizing || (Resizing = {}));
+4745-var Placement;
+4746-(function(Placement2) {
+4747-  Placement2["IMAGE"] = "IMAGE";
+4748-  Placement2["PRODUCT_INFO"] = "PRODUCT_INFO";
+4749-})(Placement || (Placement = {}));
+4750-var StylesBackgroundType;
+4751-(function(StylesBackgroundType2) {
+4752-  StylesBackgroundType2["COLOR"] = "COLOR";
+4753-  StylesBackgroundType2["GRADIENT"] = "GRADIENT";
+4754-})(StylesBackgroundType || (StylesBackgroundType = {}));
+4755-var ButtonDataType;
+4756-(function(ButtonDataType2) {
+4757-  ButtonDataType2["LINK"] = "LINK";
+4758-  ButtonDataType2["ACTION"] = "ACTION";
+4759-})(ButtonDataType || (ButtonDataType = {}));
+4760-var CardDataBackgroundType;
+4761-(function(CardDataBackgroundType2) {
+4762-  CardDataBackgroundType2["COLOR"] = "COLOR";
+4763-  CardDataBackgroundType2["GRADIENT"] = "GRADIENT";
+4764-})(CardDataBackgroundType || (CardDataBackgroundType = {}));
+4765-var ImagePositionPosition;
+4766-(function(ImagePositionPosition2) {
+4767-  ImagePositionPosition2["CENTER"] = "CENTER";
+4768-  ImagePositionPosition2["CENTER_LEFT"] = "CENTER_LEFT";
+4769-  ImagePositionPosition2["CENTER_RIGHT"] = "CENTER_RIGHT";
+4770-  ImagePositionPosition2["TOP"] = "TOP";
+4771-  ImagePositionPosition2["TOP_LEFT"] = "TOP_LEFT";
+4772-  ImagePositionPosition2["TOP_RIGHT"] = "TOP_RIGHT";
+4773-  ImagePositionPosition2["BOTTOM"] = "BOTTOM";
+4774-  ImagePositionPosition2["BOTTOM_LEFT"] = "BOTTOM_LEFT";
+4775-  ImagePositionPosition2["BOTTOM_RIGHT"] = "BOTTOM_RIGHT";
+4776-})(ImagePositionPosition || (ImagePositionPosition = {}));
+4777-var ImageScalingScaling;
+4778-(function(ImageScalingScaling2) {
+4779-  ImageScalingScaling2["AUTO"] = "AUTO";
+4780-  ImageScalingScaling2["CONTAIN"] = "CONTAIN";
+4781-  ImageScalingScaling2["COVER"] = "COVER";
+4782-})(ImageScalingScaling || (ImageScalingScaling = {}));
+4783-var Direction;
+4784-(function(Direction2) {
+4785-  Direction2["LTR"] = "LTR";
+4786-  Direction2["RTL"] = "RTL";
+4787-})(Direction || (Direction = {}));
+4788-var InitialExpandedItems;
+4789-(function(InitialExpandedItems2) {
+4790-  InitialExpandedItems2["FIRST"] = "FIRST";
+4791-  InitialExpandedItems2["ALL"] = "ALL";
+4792-  InitialExpandedItems2["NONE"] = "NONE";
+4793-})(InitialExpandedItems || (InitialExpandedItems = {}));
+4794-var DecorationType;
+4795-(function(DecorationType2) {
+4796-  DecorationType2["BOLD"] = "BOLD";
+4797-  DecorationType2["ITALIC"] = "ITALIC";
+4798-  DecorationType2["UNDERLINE"] = "UNDERLINE";
+4799-  DecorationType2["SPOILER"] = "SPOILER";
+4800-  DecorationType2["ANCHOR"] = "ANCHOR";
+4801-  DecorationType2["MENTION"] = "MENTION";
+4802-  DecorationType2["LINK"] = "LINK";
+4803-  DecorationType2["COLOR"] = "COLOR";
+4804-  DecorationType2["FONT_SIZE"] = "FONT_SIZE";
+4805-  DecorationType2["EXTERNAL"] = "EXTERNAL";
+4806-  DecorationType2["STRIKETHROUGH"] = "STRIKETHROUGH";
+4807-  DecorationType2["SUPERSCRIPT"] = "SUPERSCRIPT";
+4808-  DecorationType2["SUBSCRIPT"] = "SUBSCRIPT";
+4809-  DecorationType2["FONT_FAMILY"] = "FONT_FAMILY";
+4810-  DecorationType2["SKETCH"] = "SKETCH";
+4811-})(DecorationType || (DecorationType = {}));
+4812-var Alignment;
+4813-(function(Alignment2) {
+4814-  Alignment2["CENTER"] = "CENTER";
+4815-  Alignment2["LEFT"] = "LEFT";
+4816-  Alignment2["RIGHT"] = "RIGHT";
+4817-})(Alignment || (Alignment = {}));
+4818-var LineStyle;
+4819-(function(LineStyle2) {
+4820-  LineStyle2["SINGLE"] = "SINGLE";
+4821-  LineStyle2["DOUBLE"] = "DOUBLE";
+4822-  LineStyle2["DASHED"] = "DASHED";
+4823-  LineStyle2["DOTTED"] = "DOTTED";
+4824-})(LineStyle || (LineStyle = {}));
+4825-var DividerDataWidth;
+4826-(function(DividerDataWidth2) {
+--
+5094-(function(VerticalAlignment2) {
+5095-  VerticalAlignment2["TOP"] = "TOP";
+5096-  VerticalAlignment2["MIDDLE"] = "MIDDLE";
+5097-  VerticalAlignment2["BOTTOM"] = "BOTTOM";
+5098-})(VerticalAlignment || (VerticalAlignment = {}));
+5099-var TextAlignment;
+5100-(function(TextAlignment2) {
+5101-  TextAlignment2["AUTO"] = "AUTO";
+5102-  TextAlignment2["LEFT"] = "LEFT";
+5103-  TextAlignment2["RIGHT"] = "RIGHT";
+5104-  TextAlignment2["CENTER"] = "CENTER";
+5105-  TextAlignment2["JUSTIFY"] = "JUSTIFY";
+5106-})(TextAlignment || (TextAlignment = {}));
+5107-var Indentation;
+5108-(function(Indentation2) {
+5109-  Indentation2["NESTED"] = "NESTED";
+5110-  Indentation2["FLAT"] = "FLAT";
+5111-})(Indentation || (Indentation = {}));
+5112-var ListStyle;
+5113-(function(ListStyle2) {
+5114-  ListStyle2["PLAIN"] = "PLAIN";
+5115-  ListStyle2["NUMBERED"] = "NUMBERED";
+5116-  ListStyle2["LETTERS"] = "LETTERS";
+5117-  ListStyle2["ROMAN"] = "ROMAN";
+5118-  ListStyle2["BULLETED"] = "BULLETED";
+5119-  ListStyle2["ALPHABETICAL_INDEX"] = "ALPHABETICAL_INDEX";
+5120-  ListStyle2["ALPHABETICAL_INDEX_COMPACT"] = "ALPHABETICAL_INDEX_COMPACT";
+5121-})(ListStyle || (ListStyle = {}));
+5122-
+5123-// ../dev-center-overrides-client/src/isTrustedInternalErr.ts
+5124-init_esm_shims();
+5125-function isTrustedInternalErr(e) {
+5126-  if (isHttpError(e)) {
+5127-    const appError = e.response?.data?.details?.applicationError;
+5128-    if (appError?.description) {
+5129-      let errDescription;
+5130-      try {
+5131-        errDescription = JSON.parse(appError.description);
+5132-      } catch {
+5133-      }
+5134-      return errDescription?.results?.some(
+5135-        (result) => result.error?.startsWith("scriptAsset is not supported")
+5136-      );
+5137-    }
+5138-  }
+5139-  return false;
+5140-}
+5141-
+5142-// ../dev-center-overrides-client/src/utils.ts
+5143-var { AppPermissionDenied } = CliErrorCode;
+5144-function toModifiedComponents(components) {
+5145-  return components.map((comp) => ({
+5146-    componentId: comp.compId,
+5147-    data: comp.compData,
+5148-    name: comp.compName,
+5149-    type: comp.compType,
+5150-    createdBy: comp.createdBy,
+5151-    createdByVersion: comp.createdByVersion
+5152-  }));
+5153-}
+5154-function toComponentExperiments(components) {
+5155-  return components.flatMap(
+5156-    (comp) => comp.experiments?.enabledBy ? [
+5157-      {
+5158-        componentId: comp.compId,
+5159-        spec: comp.experiments.enabledBy,
+5160-        variantValue: "true",
+5161-        experimentActionType: ExperimentActionType.CREATE_COMPONENT,
+5162-        createComponentOptions: { experimentVersion: 1 }
+5163-      }
+5164-    ] : []
+5165-  );
+5166-}
+5167-function handleReleaseError(e, appId, fallbackCode) {
+5168-  if (isHttpError(e)) {
+5169-    if (e.response?.status === 403) {
+5170-      throw new CliError({
+5171-        cause: e,
+5172-        code: AppPermissionDenied({ appId })
+5173-      });
+5174-    }
+5175-    if (e.response?.status === 400 && isHttpValidationError(e)) {
+5176-      throw new CliError({
+5177-        cause: e,
+5178-        code: CliErrorCode.AppReleaseConfigViolations()
+5179-      });
+5180-    }
+5181-  }
+5182-  if (isTrustedInternalErr(e)) {
+5183-    throw new CliError({
+5184-      cause: e,
+5185-      code: CliErrorCode.TrustedAppIsNotMarkedAsInternal()
+5186-    });
+5187-  }
+5188-  throw new CliError({ cause: e, code: fallbackCode });
+5189-}
+5190-
+5191-// ../dev-center-overrides-client/src/client.ts
+5192-var UpdateComponentsOverridesData = (0, import_variant.variant)({
+5193-  NotFound: (0, import_variant.fields)(),
+5194-  Updated: {}
+5195-});
+5196-var DevCenterOverridesClient = class {
+5197-  constructor(httpClient) {
+5198-    this.httpClient = httpClient;
+5199-  }
+5200-  getAppLatestVersion = async (appId) => {
+5201-    try {
+5202-      const { data } = await this.httpClient.request(
+5203-        getLatestProductionVersion({ appId })
+5204-      );
+5205-      const { appVersion } = getLatestProductionVersionResponseSchema.parse(data);
+5206-      return appVersion?.version ?? 0;
+5207-    } catch (e) {
+5208-      throw new CliError({
+5209-        cause: e,
+5210-        code: CliErrorCode.FailedToFetchLatestProductionVersion()
+5211-      });
+5212-    }
+5213-  };
+5214:  createComponentsOverride = async ({
+5215-    type,
+5216-    appManifest: { appId, components },
+5217-    lifecycleState,
+5218-    projectId,
+5219-    experiments
+5220-  }) => {
+5221-    try {
+5222-      const appVersion = await this.getAppLatestVersion(appId);
+5223-      const { data } = await this.httpClient.request(
+5224:        createComponentsOverride({
+5225-          componentsOverride: {
+5226-            id: randomUUID(),
+5227-            type,
+5228-            appId,
+5229-            appVersion,
+5230-            lifecycleState,
+5231-            externalId: projectId,
+5232-            modifiedComponents: toModifiedComponents(components),
+5233-            experiments
+5234-          }
+5235-        })
+5236-      );
+5237-      return overrideIdResponseSchema.parse(data).componentsOverride.id;
+5238-    } catch (e) {
+5239-      handleReleaseError(e, appId, CliErrorCode.FailedToCreateAppRelease());
+5240-    }
+5241-  };
+5242:  updateComponentsOverrides = async ({
+5243-    id,
+5244-    type,
+5245-    appManifest: { appId, components },
+5246-    projectId
+5247-  }) => {
+5248-    try {
+5249-      const appVersion = await this.getAppLatestVersion(appId);
+5250-      await this.httpClient.request(
+5251:        updateComponentsOverrides({
+5252-          componentsOverride: {
+5253-            id,
+5254-            type,
+5255-            appId,
+5256-            appVersion,
+5257-            externalId: projectId,
+5258-            modifiedComponents: toModifiedComponents(components)
+5259-          },
+5260-          fieldMask: ["type", "appVersion", "modifiedComponents"]
+5261-        })
+5262-      );
+5263-      return UpdateComponentsOverridesData.Updated();
+5264-    } catch (e) {
+5265-      if (isHttpError(e) && e.response?.status === 404) {
+5266-        return UpdateComponentsOverridesData.NotFound({ cause: e });
+5267-      }
+5268-      handleReleaseError(e, appId, CliErrorCode.FailedToUpdateAppRelease());
+5269-    }
+5270-  };
+5271:  updateOverrideWithNoSideEffects = async ({
+5272-    id,
+5273-    appManifest: { appId, components },
+5274-    componentFieldMasks,
+5275-    projectId
+5276-  }) => {
+5277-    try {
+5278-      await this.httpClient.request(
+5279:        updateOverrideWithNoSideEffects({
+5280-          componentsOverride: {
+5281-            id,
+5282-            appId,
+5283-            externalId: projectId,
+5284-            modifiedComponents: toModifiedComponents(components)
+5285-          },
+5286-          componentFieldMasks
+5287-        })
+5288-      );
+5289-      return id;
+5290-    } catch (e) {
+5291-      handleReleaseError(
+5292-        e,
+5293-        appId,
+5294-        CliErrorCode.FailedToUpdateOverrideWithNoSideEffects()
+5295-      );
+5296-    }
+5297-  };
+5298-  createDraftVersion = async (appId, componentsOverrideId) => {
+5299-    try {
+5300-      await this.httpClient.request(
+5301-        commitOverride({ componentsOverrideId, onlyEmitEvent: false })
+5302-      );
+5303-      const { data } = await this.httpClient.request(
+5304-        suggestNextVersions({ appId })
+5305-      );
+5306-      const { nextMajor, nextMinor } = suggestNextVersionsResponseSchema.parse(data);
+5307-      return { nextMajor, nextMinor };
+5308-    } catch (cause) {
+5309-      throw new CliError({
+5310-        cause,
+5311-        code: CliErrorCode.FailedToCreateDraftVersion()
+5312-      });
+5313-    }
+5314-  };
+5315-  releaseDraftVersion = async (appId, options) => {
+5316-    try {
+5317-      const { data } = await this.httpClient.request(
+5318-        promoteAppVersionFromDraftToProduction({
+5319-          appId,
+5320-          createNewMajor: options.createNewMajor,
+5321-          notes: options.notes,
+5322-          promoteStrategy: PromoteStrategy.ENTIRE_APP,
+5323-          version: options.latestMajor
+5324-        })
+5325-      );
+5326-      const { appVersion } = promoteAppVersionFromDraftResponseSchema.parse(data);
+5327-      return { releasedVersion: appVersion.fullVersion ?? "" };
+5328-    } catch (cause) {
+5329-      throw new CliError({
+5330-        cause,
+5331-        code: CliErrorCode.FailedToReleaseDraftVersion()
+5332-      });
+5333-    }
+5334-  };
+5335-};
+5336-
+5337-// ../dev-center-overrides-client/src/useDevCenterOverridesClient.ts
+5338-function useDevCenterOverridesClient({
+5339-  siteId
+5340-} = {}) {
+5341-  const httpClient = useHttpClient({ type: "backoffice", siteId });
+5342-  const client = (0, import_react.useMemo)(
+5343-    () => new DevCenterOverridesClient(httpClient),
+5344-    [httpClient]
+5345-  );
+5346-  return usePanoramaMethodLogger(client);
+5347-}
+5348-
+5349-// ../dev-center-overrides-client/src/index.ts
+5350-init_esm_shims();
+5351-
+5352-// ../cli-astro-commands/src/hooks/useUpdateDeploymentTopology.ts
+5353-init_esm_shims();
+5354-var import_react3 = __toESM(require_react(), 1);
+5355-
+5356-// ../cli-astro-commands/src/platform-links/resolve.ts
+5357-init_esm_shims();
+5358-var import_react2 = __toESM(require_react(), 1);
+5359-var ENVIRONMENT_COMMANDS = {
+5360-  development: "dev",
+5361-  preview: "preview",
+5362-  production: "release"
+5363-};
+5364-function getPlatformLinkCommand(environment) {
+5365-  return ENVIRONMENT_COMMANDS[environment];
+5366-}
+5367-function defaultLink(platform, url) {
+5368-  return { platform, label: DEFAULT_PLATFORM_LABELS[platform], url };
+5369-}
+5370-function resolvePlatformLinks(model, input, links) {
+5371-  if (model.pluginsInterface === void 0) {
+5372-    return links;
+5373-  }
+5374-  return model.pluginsInterface.resolvePlatformLinks({
+5375-    ...input,
+5376-    appId: model.config.appId,
+5377-    links
+5378-  });
+5379-}
+5380-function resolveSiteLinks(model, { cmd, siteId, overrideId, siteUrl }) {
+5381-  return resolvePlatformLinks(model, { cmd, overrideId, siteId }, [
+5382-    defaultLink("site", siteUrl),
+5383-    defaultLink("dashboard", getSiteDashboardUrl(siteId, overrideId)),
+5384-    defaultLink("editor", getSiteEditorUrl(siteId))
+5385-  ]);
+5386-}
+5387-function resolveAppLinks(model, { cmd, siteId, overrideId }) {
+5388-  const redirect = (platform) => createRedirectLink({
+5389-    platform,
+5390-    appId: model.config.appId,
+5391-    versionOverrideId: overrideId,
+5392-    siteId
+5393-  });
+5394-  return resolvePlatformLinks(model, { cmd, overrideId, siteId }, [
+5395-    defaultLink("site", redirect("site")),
+5396-    defaultLink("editor", redirect("editor")),
+5397-    defaultLink("dashboard", redirect("dashboard"))
+5398-  ]);
+5399-}
+--
+6459-    compData: external_exports.object({
+6460-      bookingsPricingProvider: external_exports.object({
+6461-        deploymentUri: external_exports.string(),
+6462-        pricingProviderName: external_exports.string()
+6463-      })
+6464-    }),
+6465-    compType: external_exports.literal(ComponentType.BOOKINGS_PRICING_PROVIDER)
+6466-  })
+6467-);
+6468-var looseRealtimePermissionsProviderSchema = looseBaseComponentSchema.merge(
+6469-  external_exports.object({
+6470-    compData: external_exports.object({
+6471-      realtimePermissionsProvider: external_exports.object({
+6472-        deploymentUri: external_exports.object({
+6473-          baseUri: external_exports.string()
+6474-        }),
+6475-        providerName: external_exports.string().optional()
+6476-      })
+6477-    }),
+6478-    compType: external_exports.literal(ComponentType.REALTIME_PERMISSIONS_PROVIDER)
+6479-  })
+6480-);
+6481-var looseTopologySchema = looseBaseComponentSchema.merge(
+6482-  external_exports.object({
+6483-    compData: external_exports.object({
+6484-      topology: external_exports.object({
+6485-        topology: external_exports.object({
+6486-          backendApiUrl: external_exports.string().url()
+6487-        })
+6488-      })
+6489-    }),
+6490-    compType: external_exports.literal(ComponentType.TOPOLOGY)
+6491-  })
+6492-);
+6493-var looseComponentSchema = external_exports.discriminatedUnion("compType", [
+6494-  looseBackofficePageSchema,
+6495-  looseBackofficeExtensionWidgetSchema,
+6496-  looseBackofficeExtensionMenuPluginSchema,
+6497-  looseBackofficeModalSchema,
+6498-  looseWebhookSchema,
+6499-  looseEcomAdditionalFeesSchema,
+6500-  looseStaffSortingProviderSchema,
+6501-  looseBookingsPricingProviderSchema,
+6502-  looseEcomShippingRatesSchema,
+6503-  looseEcomDiscountsTriggerSchema,
+6504-  looseEcomValidationsSchema,
+6505-  looseEcomPaymentSettingsSchema,
+6506-  looseEcomGiftCardsProviderSchema,
+6507-  looseRealtimePermissionsProviderSchema,
+6508-  looseTopologySchema
+6509-]);
+6510-var looseAppManifestSchema = external_exports.object({
+6511-  appId: external_exports.string(),
+6512-  components: external_exports.array(looseBaseComponentSchema)
+6513-});
+6514-var looseAppManifestModelSchema = external_exports.object({
+6515-  appId: external_exports.string(),
+6516-  components: external_exports.array(looseComponentSchema),
+6517-  unknownComponents: external_exports.array(looseBaseComponentSchema)
+6518-});
+6519-function stripTrailingSlash(value) {
+6520-  return value.endsWith("/") ? value.slice(0, -1) : value;
+6521-}
+6522-function parseLooseAppManifest(manifest, placeholders = /* @__PURE__ */ new Map()) {
+6523-  if (placeholders.size === 0) {
+6524-    return looseAppManifestSchema.parse(JSON.parse(manifest));
+6525-  }
+6526-  let replacedManifest = manifest;
+6527-  for (const [key, value] of placeholders.entries()) {
+6528-    replacedManifest = replacedManifest.replaceAll(
+6529-      stripTrailingSlash(key),
+6530-      stripTrailingSlash(value)
+6531-    );
+6532-  }
+6533-  return looseAppManifestSchema.parse(JSON.parse(replacedManifest));
+6534-}
+6535-function findPlaceholderPaths(value, placeholderMarkers, path) {
+6536-  if (value != null && typeof value === "object" && !Array.isArray(value)) {
+6537-    return Object.entries(value).flatMap(
+6538-      ([key, child]) => findPlaceholderPaths(
+6539-        child,
+6540-        placeholderMarkers,
+6541-        path ? `${path}.${key}` : key
+6542-      )
+6543-    );
+6544-  }
+6545-  if (typeof value === "string") {
+6546-    const hasPlaceholder = placeholderMarkers.some(
+6547-      (marker) => value.includes(marker)
+6548-    );
+6549-    return hasPlaceholder ? [path] : [];
+6550-  }
+6551-  return [];
+6552-}
+6553-function getComponentPlaceholderFieldMasks(manifest, placeholders) {
+6554-  const placeholderMarkers = [...placeholders].map(stripTrailingSlash);
+6555-  if (placeholderMarkers.length === 0) {
+6556-    return [];
+6557-  }
+6558-  const { components } = parseLooseAppManifest(manifest);
+6559-  const masks = [];
+6560-  for (const component of components) {
+6561-    const fieldMask = [
+6562-      ...new Set(
+6563-        findPlaceholderPaths(component.compData, placeholderMarkers, "")
+6564-      )
+6565-    ];
+6566-    if (fieldMask.length > 0) {
+6567-      masks.push({ componentId: component.compId, fieldMask });
+6568-    }
+6569-  }
+6570-  return masks;
+6571-}
+6572-var cloneDeep = (0, import_rfdc.default)();
+6573-var cloneDeep2 = (0, import_rfdc2.default)();
+6574-var cloneDeep3 = (0, import_rfdc3.default)();
+6575-var cloneDeep4 = (0, import_rfdc4.default)();
+6576-
+6577-export {
+6578-  LifecycleState,
+6579:  OverrideType,
+6580-  toComponentExperiments,
+6581-  useDevCenterOverridesClient,
+6582-  looseComponentSchema,
+6583-  parseLooseAppManifest,
+6584-  getComponentPlaceholderFieldMasks,
+6585-  PlatformLinksSection,
+6586-  getPlatformLinkCommand,
+6587-  useSiteLinks,
+6588-  useAppLinks,
+6589-  useUpdateDeploymentTopologyForSite,
+6590-  useUpdateDeploymentTopologyForApp
+6591-};
+6592-//# sourceMappingURL=chunk-D7ORRBCE.js.map
+
+## Manifest processing exact
+2457-  ComponentType3["PREMIUM_CUSTOM_CHARGES"] = "PREMIUM_CUSTOM_CHARGES";
+2458-  ComponentType3["ECOM_VALIDATIONS"] = "ECOM_VALIDATIONS";
+2459-  ComponentType3["COMPONENT_REFERENCE_DATA_PROVIDER"] = "COMPONENT_REFERENCE_DATA_PROVIDER";
+2460-  ComponentType3["WIX_REVIEWS_PRODUCT_CATALOG"] = "WIX_REVIEWS_PRODUCT_CATALOG";
+2461-  ComponentType3["SOCIAL_MARKETING_DESIGNS_PROVIDER"] = "SOCIAL_MARKETING_DESIGNS_PROVIDER";
+2462-  ComponentType3["GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER"] = "GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER";
+2463-  ComponentType3["COMMENTS_FILTER_PROVIDER"] = "COMMENTS_FILTER_PROVIDER";
+2464-  ComponentType3["BILLING_TAX_ID_VALIDATOR"] = "BILLING_TAX_ID_VALIDATOR";
+2465-  ComponentType3["PING_SETTINGS_GROUP"] = "PING_SETTINGS_GROUP";
+2466-  ComponentType3["FORMS_SPAM_SUBMISSIONS_PROVIDER"] = "FORMS_SPAM_SUBMISSIONS_PROVIDER";
+2467-  ComponentType3["EDITOR_ADDON"] = "EDITOR_ADDON";
+2468-  ComponentType3["EXTERNAL_DATABASE_PROVIDER"] = "EXTERNAL_DATABASE_PROVIDER";
+2469-  ComponentType3["ECOM_PAYMENT_SETTINGS"] = "ECOM_PAYMENT_SETTINGS";
+2470-  ComponentType3["NOTIFICATION_TOPIC"] = "NOTIFICATION_TOPIC";
+2471-  ComponentType3["NOTIFICATION_PREFERENCES_FILTER_PROVIDER"] = "NOTIFICATION_PREFERENCES_FILTER_PROVIDER";
+2472-  ComponentType3["BOOKINGS_RESOURCE_TYPES_PROVIDER"] = "BOOKINGS_RESOURCE_TYPES_PROVIDER";
+2473-  ComponentType3["PRICING_PLANS_FORM_CONFIGURATION"] = "PRICING_PLANS_FORM_CONFIGURATION";
+2474-  ComponentType3["USER_NOTIFICATION"] = "USER_NOTIFICATION";
+2475-  ComponentType3["CONTACT_NOTIFICATION"] = "CONTACT_NOTIFICATION";
+2476-  ComponentType3["UNIFIED_PAGE"] = "UNIFIED_PAGE";
+2477-  ComponentType3["AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER";
+2478-  ComponentType3["PROPOSAL_EDITOR_PROVIDER"] = "PROPOSAL_EDITOR_PROVIDER";
+2479-  ComponentType3["CUSTOM_TABLE_RESERVATIONS_PROVIDER"] = "CUSTOM_TABLE_RESERVATIONS_PROVIDER";
+2480-  ComponentType3["COMMENTS_CONTEXT_PROVIDER"] = "COMMENTS_CONTEXT_PROVIDER";
+2481-  ComponentType3["FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER"] = "FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER";
+2482-  ComponentType3["AUTOMATIONS_VELO_ACTION_PROVIDER"] = "AUTOMATIONS_VELO_ACTION_PROVIDER";
+2483-  ComponentType3["CALENDAR_EVENT_TYPE_PROVIDER"] = "CALENDAR_EVENT_TYPE_PROVIDER";
+2484-  ComponentType3["RESERVED"] = "RESERVED";
+2485-  ComponentType3["SMS_ACTION_MESSAGE"] = "SMS_ACTION_MESSAGE";
+2486-  ComponentType3["BOOKING_POLICY_PROVIDER"] = "BOOKING_POLICY_PROVIDER";
+2487-  ComponentType3["MULTI_SERVICE_BOOKING_POLICY_PROVIDER"] = "MULTI_SERVICE_BOOKING_POLICY_PROVIDER";
+2488-  ComponentType3["AI_ASSISTANT"] = "AI_ASSISTANT";
+2489-  ComponentType3["FORMS_SUBMISSIONS_EXTENSION_PROVIDER"] = "FORMS_SUBMISSIONS_EXTENSION_PROVIDER";
+2490-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA"] = "MULTILINGUAL_TRANSLATION_SCHEMA";
+2491-  ComponentType3["TAX_CALCULATION_PROVIDER"] = "TAX_CALCULATION_PROVIDER";
+2492-  ComponentType3["TAX_GROUPS_PROVIDER"] = "TAX_GROUPS_PROVIDER";
+2493-  ComponentType3["BACK_OFFICE_MODAL"] = "BACK_OFFICE_MODAL";
+2494-  ComponentType3["DEPLOYMENT_PIPELINE_PROVIDER"] = "DEPLOYMENT_PIPELINE_PROVIDER";
+2495-  ComponentType3["CUSTOM_ELEMENT_WIDGET"] = "CUSTOM_ELEMENT_WIDGET";
+2496-  ComponentType3["BACK_OFFICE_EXTENSION_WIDGET"] = "BACK_OFFICE_EXTENSION_WIDGET";
+2497-  ComponentType3["BACK_OFFICE_EXTENSION_MENU_ITEM"] = "BACK_OFFICE_EXTENSION_MENU_ITEM";
+2498-  ComponentType3["FORM_TEMPLATE"] = "FORM_TEMPLATE";
+2499-  ComponentType3["NOTIFICATION_CONTENT"] = "NOTIFICATION_CONTENT";
+2500-  ComponentType3["BROADCAST_LIST"] = "BROADCAST_LIST";
+2501-  ComponentType3["PARTNERS_PAYOUTS"] = "PARTNERS_PAYOUTS";
+2502-  ComponentType3["WIX_REVIEWS_ENTITY_CATALOG"] = "WIX_REVIEWS_ENTITY_CATALOG";
+2503-  ComponentType3["VELO_PUBLISH_PIPELINE_TASK_PROVIDER"] = "VELO_PUBLISH_PIPELINE_TASK_PROVIDER";
+2504-  ComponentType3["FUNCTIONS_SHOP_PRICE_PROVIDER"] = "FUNCTIONS_SHOP_PRICE_PROVIDER";
+2505-  ComponentType3["FUNCTION"] = "FUNCTION";
+2506-  ComponentType3["ECOM_CHECKOUT_CONTENT"] = "ECOM_CHECKOUT_CONTENT";
+2507-  ComponentType3["COMMUNICATION_CHANNEL_PROVIDER"] = "COMMUNICATION_CHANNEL_PROVIDER";
+2508-  ComponentType3["WEBHOOK"] = "WEBHOOK";
+2509-  ComponentType3["TOPOLOGY"] = "TOPOLOGY";
+2510-  ComponentType3["LOYALTY_CUSTOM_REWARDS"] = "LOYALTY_CUSTOM_REWARDS";
+2511-  ComponentType3["FUNCTION_RECIPE"] = "FUNCTION_RECIPE";
+2512-  ComponentType3["BACK_OFFICE_EXTERNAL_URL"] = "BACK_OFFICE_EXTERNAL_URL";
+2513-  ComponentType3["IDENTITY_FACTOR"] = "IDENTITY_FACTOR";
+2514-  ComponentType3["ECOM_DISCOUNTS"] = "ECOM_DISCOUNTS";
+2515-  ComponentType3["VELO_CUSTOM_CSS"] = "VELO_CUSTOM_CSS";
+2516-  ComponentType3["DEALER_ADAPTIVE_COMPONENT_PROVIDER"] = "DEALER_ADAPTIVE_COMPONENT_PROVIDER";
+2517-  ComponentType3["AI_ASSISTANT_ACTION"] = "AI_ASSISTANT_ACTION";
+2518-  ComponentType3["ECOM_INVENTORY"] = "ECOM_INVENTORY";
+2519-  ComponentType3["MONITORING"] = "MONITORING";
+2520-  ComponentType3["PAPI_PROVIDER"] = "PAPI_PROVIDER";
+2521-  ComponentType3["UNIFIED_LIGHTBOX"] = "UNIFIED_LIGHTBOX";
+2522-  ComponentType3["FORMS_EXTENSION_PROVIDER"] = "FORMS_EXTENSION_PROVIDER";
+2523-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA_GROUP"] = "MULTILINGUAL_TRANSLATION_SCHEMA_GROUP";
+2524-  ComponentType3["PANEL"] = "PANEL";
+2525-  ComponentType3["PREMIUM_PURCHASE_VALIDATIONS"] = "PREMIUM_PURCHASE_VALIDATIONS";
+2526-  ComponentType3["BROWSER_STORAGE"] = "BROWSER_STORAGE";
+2527-  ComponentType3["SDK_DEFINITION"] = "SDK_DEFINITION";
+2528-  ComponentType3["SITE_WIDGET_SLOT"] = "SITE_WIDGET_SLOT";
+2529-  ComponentType3["CALENDAR_EVENT_VALIDATION_PROVIDER"] = "CALENDAR_EVENT_VALIDATION_PROVIDER";
+2530-  ComponentType3["CLIENT_SIDE_SERVICE"] = "CLIENT_SIDE_SERVICE";
+2531-  ComponentType3["BILLING_SETTINGS"] = "BILLING_SETTINGS";
+2532-  ComponentType3["PATTERNS_WIZARD"] = "PATTERNS_WIZARD";
+2533-  ComponentType3["APPLICATION_PROFILE"] = "APPLICATION_PROFILE";
+2534-  ComponentType3["TEXT_TO_SPEECH_ACTION_MESSAGE"] = "TEXT_TO_SPEECH_ACTION_MESSAGE";
+2535-  ComponentType3["AUDIENCE_PROVIDER"] = "AUDIENCE_PROVIDER";
+2536-  ComponentType3["PRICING_PLANS_PRICE"] = "PRICING_PLANS_PRICE";
+2537-  ComponentType3["PRICING_PLAN_START_DATE_LIMITS"] = "PRICING_PLAN_START_DATE_LIMITS";
+2538-  ComponentType3["PRICING_PLAN_START_DATE_RULES"] = "PRICING_PLAN_START_DATE_RULES";
+2539-  ComponentType3["EVENTS_TICKET_RESERVATIONS"] = "EVENTS_TICKET_RESERVATIONS";
+2540-  ComponentType3["PAYMENTS_DISPUTE_SERVICE_PLUGIN"] = "PAYMENTS_DISPUTE_SERVICE_PLUGIN";
+2541-  ComponentType3["PRICING_PLANS_FEES"] = "PRICING_PLANS_FEES";
+2542-  ComponentType3["EDITOR_REACT_COMPONENT"] = "EDITOR_REACT_COMPONENT";
+2543-  ComponentType3["SUPPLIERS_HUB_MARKETPLACE"] = "SUPPLIERS_HUB_MARKETPLACE";
+2544-  ComponentType3["FORM_SCHEMA_DYNAMIC_VALUES"] = "FORM_SCHEMA_DYNAMIC_VALUES";
+2545-  ComponentType3["BLOG_PAYWALL_PROVIDER"] = "BLOG_PAYWALL_PROVIDER";
+2546-  ComponentType3["LOYALTY_CUSTOM_REWARDS_V2"] = "LOYALTY_CUSTOM_REWARDS_V2";
+2547-  ComponentType3["STORES_PRODUCT_RESTRICTIONS"] = "STORES_PRODUCT_RESTRICTIONS";
+2548-  ComponentType3["FORM_SUBMISSION_MODERATION"] = "FORM_SUBMISSION_MODERATION";
+2549-  ComponentType3["EVENTS_EVENT_BADGES"] = "EVENTS_EVENT_BADGES";
+2550-  ComponentType3["BILLING_OPERATION"] = "BILLING_OPERATION";
+2551-  ComponentType3["BACK_OFFICE_CUSTOMIZATION"] = "BACK_OFFICE_CUSTOMIZATION";
+2552-  ComponentType3["COMPONENT_ENRICHER_PROVIDER"] = "COMPONENT_ENRICHER_PROVIDER";
+2553-  ComponentType3["BACK_OFFICE_RESTRICTED_CUSTOMIZATION"] = "BACK_OFFICE_RESTRICTED_CUSTOMIZATION";
+2554-  ComponentType3["EDITOR_APP_PREVIEWS_POC"] = "EDITOR_APP_PREVIEWS_POC";
+2555-  ComponentType3["LEGENDS_PERSONA_CONFIGURATION"] = "LEGENDS_PERSONA_CONFIGURATION";
+2556-  ComponentType3["WIX_HOSTING_APP_DEPLOYMENT_PROVIDER"] = "WIX_HOSTING_APP_DEPLOYMENT_PROVIDER";
+2557:  ComponentType3["BACKEND_WORKER"] = "BACKEND_WORKER";
+2558-  ComponentType3["EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER";
+2559-  ComponentType3["WIX_HOSTING_APP_ENVIRONMENT_PROVIDER"] = "WIX_HOSTING_APP_ENVIRONMENT_PROVIDER";
+2560-  ComponentType3["SDK_EXPORTS"] = "SDK_EXPORTS";
+2561-  ComponentType3["VIEWER_SERVICE"] = "VIEWER_SERVICE";
+2562-  ComponentType3["WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN"] = "WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN";
+2563-  ComponentType3["CONTACTS_SEGMENTS_V2_FILTER_PROVIDER"] = "CONTACTS_SEGMENTS_V2_FILTER_PROVIDER";
+2564-  ComponentType3["ANALYTICS_PRODUCT_CATALOG"] = "ANALYTICS_PRODUCT_CATALOG";
+2565-  ComponentType3["SITE_MIGRATION"] = "SITE_MIGRATION";
+2566-  ComponentType3["RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN"] = "RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN";
+2567-  ComponentType3["WIX_VIBE_CODING_INSTRUCTIONS"] = "WIX_VIBE_CODING_INSTRUCTIONS";
+2568-  ComponentType3["TAX_EXEMPT_GROUPS_PROVIDER"] = "TAX_EXEMPT_GROUPS_PROVIDER";
+2569-  ComponentType3["BOOKING_AUTOMATIONS_CONFIGURATION"] = "BOOKING_AUTOMATIONS_CONFIGURATION";
+2570-  ComponentType3["WIX_VIBE_COMPONENT"] = "WIX_VIBE_COMPONENT";
+2571-  ComponentType3["WIXEL"] = "WIXEL";
+2572-  ComponentType3["STAFF_SORTING_PROVIDER"] = "STAFF_SORTING_PROVIDER";
+2573-  ComponentType3["FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER"] = "FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER";
+2574-  ComponentType3["FUNCTIONS_ASSISTANT_TOOLS"] = "FUNCTIONS_ASSISTANT_TOOLS";
+2575-  ComponentType3["SITE_MAP_INFO_PROVIDER"] = "SITE_MAP_INFO_PROVIDER";
+2576-  ComponentType3["WIX_AI_GATEWAY_CALLBACK"] = "WIX_AI_GATEWAY_CALLBACK";
+2577-  ComponentType3["URL_MAPPER_PROVIDER"] = "URL_MAPPER_PROVIDER";
+2578-  ComponentType3["PROVIDER_SUPPRESSION_SERVICE_PLUGIN"] = "PROVIDER_SUPPRESSION_SERVICE_PLUGIN";
+2579-  ComponentType3["ECOM_FORMS"] = "ECOM_FORMS";
+2580-  ComponentType3["EDITOR_CONTEXT_PROVIDER"] = "EDITOR_CONTEXT_PROVIDER";
+2581-  ComponentType3["EDITOR_FUNCTION_LIBRARY"] = "EDITOR_FUNCTION_LIBRARY";
+2582-  ComponentType3["BOOKINGS_PLATFORM_CONFIGURATION"] = "BOOKINGS_PLATFORM_CONFIGURATION";
+2583-  ComponentType3["BOOKINGS_VALIDATION_PROVIDER"] = "BOOKINGS_VALIDATION_PROVIDER";
+2584-  ComponentType3["APP_ROUTER"] = "APP_ROUTER";
+2585-  ComponentType3["WIXEL_BINDING"] = "WIXEL_BINDING";
+2586-  ComponentType3["SHUB_MARKETPLACE_PROVIDER"] = "SHUB_MARKETPLACE_PROVIDER";
+2587-  ComponentType3["BOOKING_ACTION_URLS_PROVIDER"] = "BOOKING_ACTION_URLS_PROVIDER";
+2588-  ComponentType3["CALENDAR_CONFERENCING_PROVIDER"] = "CALENDAR_CONFERENCING_PROVIDER";
+2589-  ComponentType3["BASS_VALIDATE_CANCEL_ACTION"] = "BASS_VALIDATE_CANCEL_ACTION";
+2590-  ComponentType3["WIXEL_VIEWER_ROUTER_PROVIDER"] = "WIXEL_VIEWER_ROUTER_PROVIDER";
+2591-  ComponentType3["PREMIUM_ACTION"] = "PREMIUM_ACTION";
+2592-  ComponentType3["AUTOMATION_TEMPLATE"] = "AUTOMATION_TEMPLATE";
+2593-  ComponentType3["AGENT_MAKER_APPROVAL_PROVIDER"] = "AGENT_MAKER_APPROVAL_PROVIDER";
+2594-  ComponentType3["SERVICE_TAGS_CONFIGURATION"] = "SERVICE_TAGS_CONFIGURATION";
+2595-  ComponentType3["LOYALTY_POINTS_ADJUSTMENT"] = "LOYALTY_POINTS_ADJUSTMENT";
+2596-  ComponentType3["LOYALTY_EARN_POINTS_LIMIT"] = "LOYALTY_EARN_POINTS_LIMIT";
+2597-  ComponentType3["REALTIME_PERMISSIONS_PROVIDER"] = "REALTIME_PERMISSIONS_PROVIDER";
+2598-  ComponentType3["CALENDAR_SEARCH_PROVIDER"] = "CALENDAR_SEARCH_PROVIDER";
+2599-  ComponentType3["EDITOR_INSTALLATION"] = "EDITOR_INSTALLATION";
+2600-  ComponentType3["APP_ACTIONS"] = "APP_ACTIONS";
+2601-  ComponentType3["ROLLOUT_STEP_EXECUTOR"] = "ROLLOUT_STEP_EXECUTOR";
+2602-  ComponentType3["BOOKINGS_PLATFORM_PREMIUM_VALIDATION"] = "BOOKINGS_PLATFORM_PREMIUM_VALIDATION";
+2603-})(ComponentType2 || (ComponentType2 = {}));
+2604-var InitiatorType;
+2605-(function(InitiatorType2) {
+2606-  InitiatorType2["UNKNOWN_TYPE"] = "UNKNOWN_TYPE";
+2607-  InitiatorType2["CONTACT"] = "CONTACT";
+2608-  InitiatorType2["SITE_MEMBER"] = "SITE_MEMBER";
+2609-})(InitiatorType || (InitiatorType = {}));
+2610-var RecipientFilterType;
+2611-(function(RecipientFilterType2) {
+2612-  RecipientFilterType2["UNKNOWN_TYPE"] = "UNKNOWN_TYPE";
+2613-  RecipientFilterType2["CONTACTS"] = "CONTACTS";
+2614-})(RecipientFilterType || (RecipientFilterType = {}));
+2615-var ContainerType;
+2616-(function(ContainerType2) {
+2617-  ContainerType2["UNKNOWN_CONTAINER_TYPE"] = "UNKNOWN_CONTAINER_TYPE";
+2618-  ContainerType2["simple"] = "simple";
+2619-  ContainerType2["slot"] = "slot";
+2620-  ContainerType2["placeholder"] = "placeholder";
+2621-  ContainerType2["template"] = "template";
+2622-})(ContainerType || (ContainerType = {}));
+2623-var ContentResizeDirection;
+2624-(function(ContentResizeDirection2) {
+2625-  ContentResizeDirection2["UNKNOWN_ContentResizeDirection"] = "UNKNOWN_ContentResizeDirection";
+2626-  ContentResizeDirection2["horizontal"] = "horizontal";
+2627-  ContentResizeDirection2["vertical"] = "vertical";
+2628-  ContentResizeDirection2["horizontalAndVertical"] = "horizontalAndVertical";
+2629-  ContentResizeDirection2["none"] = "none";
+2630-})(ContentResizeDirection || (ContentResizeDirection = {}));
+2631-var CssDataTypeEnumCssDataType;
+2632-(function(CssDataTypeEnumCssDataType2) {
+2633-  CssDataTypeEnumCssDataType2["UNKNOWN_CssDataType"] = "UNKNOWN_CssDataType";
+2634-  CssDataTypeEnumCssDataType2["number"] = "number";
+2635-  CssDataTypeEnumCssDataType2["string"] = "string";
+2636-  CssDataTypeEnumCssDataType2["angle"] = "angle";
+2637-  CssDataTypeEnumCssDataType2["color"] = "color";
+2638-  CssDataTypeEnumCssDataType2["length"] = "length";
+2639-  CssDataTypeEnumCssDataType2["percentage"] = "percentage";
+2640-  CssDataTypeEnumCssDataType2["lengthPercentage"] = "lengthPercentage";
+2641-  CssDataTypeEnumCssDataType2["blendMode"] = "blendMode";
+2642-  CssDataTypeEnumCssDataType2["customEnum"] = "customEnum";
+2643-  CssDataTypeEnumCssDataType2["time"] = "time";
+2644-})(CssDataTypeEnumCssDataType || (CssDataTypeEnumCssDataType = {}));
+2645-var CssPropertyEnumCssPropertyType;
+2646-(function(CssPropertyEnumCssPropertyType2) {
+2647-  CssPropertyEnumCssPropertyType2["UNKNOWN_CssPropertyType"] = "UNKNOWN_CssPropertyType";
+2648-  CssPropertyEnumCssPropertyType2["number"] = "number";
+2649-  CssPropertyEnumCssPropertyType2["string"] = "string";
+2650-  CssPropertyEnumCssPropertyType2["angle"] = "angle";
+2651-  CssPropertyEnumCssPropertyType2["length"] = "length";
+2652-  CssPropertyEnumCssPropertyType2["percentage"] = "percentage";
+2653-  CssPropertyEnumCssPropertyType2["lengthPercentage"] = "lengthPercentage";
+2654-  CssPropertyEnumCssPropertyType2["blendMode"] = "blendMode";
+2655-  CssPropertyEnumCssPropertyType2["customEnum"] = "customEnum";
+2656-  CssPropertyEnumCssPropertyType2["time"] = "time";
+2657-  CssPropertyEnumCssPropertyType2["background"] = "background";
+--
+5054-  Variant2["BOX"] = "BOX";
+5055-  Variant2["CIRCLE"] = "CIRCLE";
+5056-  Variant2["HIGHLIGHT"] = "HIGHLIGHT";
+5057-  Variant2["STRIKETHROUGH"] = "STRIKETHROUGH";
+5058-  Variant2["CROSSED_OFF"] = "CROSSED_OFF";
+5059-})(Variant || (Variant = {}));
+5060-var ColumnSize;
+5061-(function(ColumnSize2) {
+5062-  ColumnSize2["SMALL"] = "SMALL";
+5063-  ColumnSize2["MEDIUM"] = "MEDIUM";
+5064-  ColumnSize2["LARGE"] = "LARGE";
+5065-  ColumnSize2["EXTRA_LARGE"] = "EXTRA_LARGE";
+5066-})(ColumnSize || (ColumnSize = {}));
+5067-var SmartBlockDataType;
+5068-(function(SmartBlockDataType2) {
+5069-  SmartBlockDataType2["SOLID_BOXES"] = "SOLID_BOXES";
+5070-  SmartBlockDataType2["NUMBERED_BOXES"] = "NUMBERED_BOXES";
+5071-  SmartBlockDataType2["STATS"] = "STATS";
+5072-  SmartBlockDataType2["CIRCLE_STATS"] = "CIRCLE_STATS";
+5073-  SmartBlockDataType2["SOLID_BOXES_ALTERNATING"] = "SOLID_BOXES_ALTERNATING";
+5074-  SmartBlockDataType2["SOLID_JOINED_BOXES"] = "SOLID_JOINED_BOXES";
+5075-  SmartBlockDataType2["SIDE_LINE_TEXT"] = "SIDE_LINE_TEXT";
+5076-  SmartBlockDataType2["TOP_LINE_TEXT"] = "TOP_LINE_TEXT";
+5077-  SmartBlockDataType2["OUTLINE_BOXES_WITH_TOP_CIRCLE"] = "OUTLINE_BOXES_WITH_TOP_CIRCLE";
+5078-  SmartBlockDataType2["BIG_BULLETS"] = "BIG_BULLETS";
+5079-  SmartBlockDataType2["SMALL_BULLETS"] = "SMALL_BULLETS";
+5080-  SmartBlockDataType2["ARROW_BULLETS"] = "ARROW_BULLETS";
+5081-  SmartBlockDataType2["PROCESS_STEPS"] = "PROCESS_STEPS";
+5082-  SmartBlockDataType2["BAR_STATS"] = "BAR_STATS";
+5083-  SmartBlockDataType2["TIMELINE"] = "TIMELINE";
+5084-  SmartBlockDataType2["MINIMAL_TIMELINE"] = "MINIMAL_TIMELINE";
+5085-  SmartBlockDataType2["PILLS"] = "PILLS";
+5086-  SmartBlockDataType2["STAR_RATING"] = "STAR_RATING";
+5087-  SmartBlockDataType2["QUOTE_BOXES"] = "QUOTE_BOXES";
+5088-  SmartBlockDataType2["CIRCLE"] = "CIRCLE";
+5089-  SmartBlockDataType2["PYRAMID"] = "PYRAMID";
+5090-  SmartBlockDataType2["STAIRCASE"] = "STAIRCASE";
+5091-  SmartBlockDataType2["VERTICAL_FUNNEL"] = "VERTICAL_FUNNEL";
+5092-})(SmartBlockDataType || (SmartBlockDataType = {}));
+5093-var VerticalAlignment;
+5094-(function(VerticalAlignment2) {
+5095-  VerticalAlignment2["TOP"] = "TOP";
+5096-  VerticalAlignment2["MIDDLE"] = "MIDDLE";
+5097-  VerticalAlignment2["BOTTOM"] = "BOTTOM";
+5098-})(VerticalAlignment || (VerticalAlignment = {}));
+5099-var TextAlignment;
+5100-(function(TextAlignment2) {
+5101-  TextAlignment2["AUTO"] = "AUTO";
+5102-  TextAlignment2["LEFT"] = "LEFT";
+5103-  TextAlignment2["RIGHT"] = "RIGHT";
+5104-  TextAlignment2["CENTER"] = "CENTER";
+5105-  TextAlignment2["JUSTIFY"] = "JUSTIFY";
+5106-})(TextAlignment || (TextAlignment = {}));
+5107-var Indentation;
+5108-(function(Indentation2) {
+5109-  Indentation2["NESTED"] = "NESTED";
+5110-  Indentation2["FLAT"] = "FLAT";
+5111-})(Indentation || (Indentation = {}));
+5112-var ListStyle;
+5113-(function(ListStyle2) {
+5114-  ListStyle2["PLAIN"] = "PLAIN";
+5115-  ListStyle2["NUMBERED"] = "NUMBERED";
+5116-  ListStyle2["LETTERS"] = "LETTERS";
+5117-  ListStyle2["ROMAN"] = "ROMAN";
+5118-  ListStyle2["BULLETED"] = "BULLETED";
+5119-  ListStyle2["ALPHABETICAL_INDEX"] = "ALPHABETICAL_INDEX";
+5120-  ListStyle2["ALPHABETICAL_INDEX_COMPACT"] = "ALPHABETICAL_INDEX_COMPACT";
+5121-})(ListStyle || (ListStyle = {}));
+5122-
+5123-// ../dev-center-overrides-client/src/isTrustedInternalErr.ts
+5124-init_esm_shims();
+5125-function isTrustedInternalErr(e) {
+5126-  if (isHttpError(e)) {
+5127-    const appError = e.response?.data?.details?.applicationError;
+5128-    if (appError?.description) {
+5129-      let errDescription;
+5130-      try {
+5131-        errDescription = JSON.parse(appError.description);
+5132-      } catch {
+5133-      }
+5134-      return errDescription?.results?.some(
+5135-        (result) => result.error?.startsWith("scriptAsset is not supported")
+5136-      );
+5137-    }
+5138-  }
+5139-  return false;
+5140-}
+5141-
+5142-// ../dev-center-overrides-client/src/utils.ts
+5143-var { AppPermissionDenied } = CliErrorCode;
+5144-function toModifiedComponents(components) {
+5145-  return components.map((comp) => ({
+5146-    componentId: comp.compId,
+5147-    data: comp.compData,
+5148-    name: comp.compName,
+5149-    type: comp.compType,
+5150-    createdBy: comp.createdBy,
+5151-    createdByVersion: comp.createdByVersion
+5152-  }));
+5153-}
+5154:function toComponentExperiments(components) {
+5155-  return components.flatMap(
+5156-    (comp) => comp.experiments?.enabledBy ? [
+5157-      {
+5158-        componentId: comp.compId,
+5159-        spec: comp.experiments.enabledBy,
+5160-        variantValue: "true",
+5161-        experimentActionType: ExperimentActionType.CREATE_COMPONENT,
+5162-        createComponentOptions: { experimentVersion: 1 }
+5163-      }
+5164-    ] : []
+5165-  );
+5166-}
+5167-function handleReleaseError(e, appId, fallbackCode) {
+5168-  if (isHttpError(e)) {
+5169-    if (e.response?.status === 403) {
+5170-      throw new CliError({
+5171-        cause: e,
+5172-        code: AppPermissionDenied({ appId })
+5173-      });
+5174-    }
+5175-    if (e.response?.status === 400 && isHttpValidationError(e)) {
+5176-      throw new CliError({
+5177-        cause: e,
+5178-        code: CliErrorCode.AppReleaseConfigViolations()
+5179-      });
+5180-    }
+5181-  }
+5182-  if (isTrustedInternalErr(e)) {
+5183-    throw new CliError({
+5184-      cause: e,
+5185-      code: CliErrorCode.TrustedAppIsNotMarkedAsInternal()
+5186-    });
+5187-  }
+5188-  throw new CliError({ cause: e, code: fallbackCode });
+5189-}
+5190-
+5191-// ../dev-center-overrides-client/src/client.ts
+5192-var UpdateComponentsOverridesData = (0, import_variant.variant)({
+5193-  NotFound: (0, import_variant.fields)(),
+5194-  Updated: {}
+5195-});
+5196-var DevCenterOverridesClient = class {
+5197-  constructor(httpClient) {
+5198-    this.httpClient = httpClient;
+5199-  }
+5200-  getAppLatestVersion = async (appId) => {
+5201-    try {
+5202-      const { data } = await this.httpClient.request(
+5203-        getLatestProductionVersion({ appId })
+5204-      );
+5205-      const { appVersion } = getLatestProductionVersionResponseSchema.parse(data);
+5206-      return appVersion?.version ?? 0;
+5207-    } catch (e) {
+5208-      throw new CliError({
+5209-        cause: e,
+5210-        code: CliErrorCode.FailedToFetchLatestProductionVersion()
+5211-      });
+5212-    }
+5213-  };
+5214-  createComponentsOverride = async ({
+5215-    type,
+5216-    appManifest: { appId, components },
+5217-    lifecycleState,
+5218-    projectId,
+5219-    experiments
+5220-  }) => {
+5221-    try {
+5222-      const appVersion = await this.getAppLatestVersion(appId);
+5223-      const { data } = await this.httpClient.request(
+5224-        createComponentsOverride({
+5225-          componentsOverride: {
+5226-            id: randomUUID(),
+5227-            type,
+5228-            appId,
+5229-            appVersion,
+5230-            lifecycleState,
+5231-            externalId: projectId,
+5232-            modifiedComponents: toModifiedComponents(components),
+5233-            experiments
+5234-          }
+5235-        })
+5236-      );
+5237-      return overrideIdResponseSchema.parse(data).componentsOverride.id;
+5238-    } catch (e) {
+5239-      handleReleaseError(e, appId, CliErrorCode.FailedToCreateAppRelease());
+5240-    }
+5241-  };
+5242-  updateComponentsOverrides = async ({
+5243-    id,
+5244-    type,
+5245-    appManifest: { appId, components },
+5246-    projectId
+5247-  }) => {
+5248-    try {
+5249-      const appVersion = await this.getAppLatestVersion(appId);
+5250-      await this.httpClient.request(
+5251-        updateComponentsOverrides({
+5252-          componentsOverride: {
+5253-            id,
+5254-            type,
+--
+5452-function useUpdateDeploymentTopologyForSite(siteId) {
+5453-  const { model } = useProjectModel();
+5454-  return (0, import_react3.useCallback)(
+5455-    async ({
+5456-      environment,
+5457-      siteUrl,
+5458-      versionOverrideId
+5459-    }) => {
+5460-      const links = resolveSiteLinks(model, {
+5461-        cmd: getPlatformLinkCommand(environment),
+5462-        siteId,
+5463-        overrideId: versionOverrideId,
+5464-        siteUrl
+5465-      });
+5466-      await writeDeploymentTopologyEnvironment(
+5467-        model.projectFolder,
+5468-        environment,
+5469-        {
+5470-          id: versionOverrideId,
+5471-          site: toTopologyLink(links, "site"),
+5472-          dashboard: toTopologyLink(links, "dashboard")
+5473-        }
+5474-      );
+5475-    },
+5476-    [model, siteId]
+5477-  );
+5478-}
+5479-function useUpdateDeploymentTopologyForApp(siteId) {
+5480-  const { model } = useProjectModel();
+5481-  return (0, import_react3.useCallback)(
+5482-    async ({
+5483-      environment,
+5484-      versionOverrideId
+5485-    }) => {
+5486-      const links = resolveAppLinks(model, {
+5487-        cmd: getPlatformLinkCommand(environment),
+5488-        siteId,
+5489-        overrideId: versionOverrideId
+5490-      });
+5491-      await writeDeploymentTopologyEnvironment(
+5492-        model.projectFolder,
+5493-        environment,
+5494-        {
+5495-          id: versionOverrideId,
+5496-          site: toTopologyLink(links, "site"),
+5497-          editor: toTopologyLink(links, "editor"),
+5498-          dashboard: toTopologyLink(links, "dashboard")
+5499-        }
+5500-      );
+5501-    },
+5502-    [model, siteId]
+5503-  );
+5504-}
+5505-
+5506-// ../cli-astro-commands/src/components/PlatformLink/PlatformLinksSection.tsx
+5507-init_esm_shims();
+5508-var import_react5 = __toESM(require_react(), 1);
+5509-
+5510-// ../cli-astro-commands/src/components/PlatformLink/LinkClickTip.tsx
+5511-init_esm_shims();
+5512-var import_react4 = __toESM(require_react(), 1);
+5513-import process from "node:process";
+5514-var LinkClickTip = () => /* @__PURE__ */ import_react4.default.createElement(Text, { skin: "secondary" }, `Tip: click a link to open it (some terminals require ${process.platform === "darwin" ? "\u2318" : "Ctrl"}+click).`);
+5515-
+5516-// ../cli-astro-commands/src/components/PlatformLink/PlatformLinksSection.tsx
+5517-var PlatformLinksSection = ({
+5518-  links
+5519-}) => {
+5520-  if (links.length === 0) {
+5521-    return null;
+5522-  }
+5523-  return /* @__PURE__ */ import_react5.default.createElement(Box_default, { marginY: 1, flexDirection: "column", gap: 1 }, /* @__PURE__ */ import_react5.default.createElement(Text, null, "Open the preview on:"), /* @__PURE__ */ import_react5.default.createElement(Box_default, { paddingLeft: 2, flexDirection: "column" }, links.map(({ platform, url, label }) => /* @__PURE__ */ import_react5.default.createElement(PlatformLink, { key: platform, url, label }))), /* @__PURE__ */ import_react5.default.createElement(LinkClickTip, null));
+5524-};
+5525-
+5526-// ../cli-app-manifest/build/index.js
+5527-init_esm_shims();
+5528-var import_rfdc = __toESM(require_rfdc(), 1);
+5529-var import_rfdc2 = __toESM(require_rfdc(), 1);
+5530-var import_rfdc3 = __toESM(require_rfdc(), 1);
+5531-var import_rfdc4 = __toESM(require_rfdc(), 1);
+5532-var errorReportingSchema = external_exports.object({
+5533-  errorReporting: external_exports.object({
+5534-    url: external_exports.string().optional(),
+5535-    // optional because of yoshi
+5536-    artifact: external_exports.object({
+5537-      fullArtifactId: external_exports.string().max(255).min(1),
+5538-      version: external_exports.string().max(255).min(1)
+5539-    }).optional()
+5540-  }).optional()
+5541-});
+5542-var componentSourceSchema = external_exports.object({
+5543-  iframeUrl: external_exports.string().optional(),
+5544-  scriptAsset: external_exports.object({
+5545-    exportedName: external_exports.string(),
+5546-    containerId: external_exports.string(),
+5547-    url: external_exports.string(),
+5548-    scriptType: external_exports.string().optional()
+5549-  }).optional()
+5550-});
+5551-var backendWorkerSchema = external_exports.object({
+5552:  compType: external_exports.literal(ComponentType.BACKEND_WORKER),
+5553-  compId: external_exports.string(),
+5554-  compName: external_exports.string().optional(),
+5555-  createdBy: external_exports.string().optional(),
+5556-  createdByVersion: external_exports.string().optional(),
+5557-  compData: external_exports.object({
+5558-    backendWorker: external_exports.object({
+5559-      deploymentId: external_exports.string().uuid(),
+5560-      deploymentUrl: external_exports.string().url().optional(),
+5561-      label: external_exports.string().max(200).optional(),
+5562-      commitHash: external_exports.string().max(40).optional()
+5563-    })
+5564-  })
+5565-});
+5566-var aiContextSchema = external_exports.object({
+5567-  description: external_exports.string().min(20).max(1e4)
+5568-}).nullish();
+5569-var backofficePageCompDataSchema = external_exports.object({
+5570-  hostingPlatform: external_exports.string(),
+5571-  fullPage: external_exports.boolean().nullish(),
+5572-  hideInSidebar: external_exports.boolean().nullish(),
+5573-  mobileCompatible: external_exports.boolean().nullish(),
+5574-  priority: external_exports.number().nullish(),
+5575-  routePath: external_exports.string().nullish(),
+5576-  title: external_exports.string(),
+5577-  pageCategoryId: external_exports.string().uuid().nullish(),
+5578-  activeSidebarPageId: external_exports.string().nullish(),
+5579-  requiredPermission: external_exports.string().nullish(),
+5580-  previousRoutePaths: external_exports.array(external_exports.string()).nullish()
+5581-}).merge(errorReportingSchema).merge(componentSourceSchema).passthrough();
+5582-var widgetCompDataSchema = external_exports.object({
+5583-  width: external_exports.number().nullish(),
+5584-  height: external_exports.number().nullish()
+5585-}).merge(componentSourceSchema).passthrough();
+5586-var componentExperimentSchema = external_exports.object({
+5587-  appId: external_exports.string(),
+5588-  componentId: external_exports.string().uuid(),
+5589-  spec: external_exports.string().min(1),
+5590-  variantValue: external_exports.string()
+5591-}).passthrough().optional();
+5592-var backofficePageSchema = external_exports.object({
+5593-  compId: external_exports.string(),
+5594-  compType: external_exports.literal(ComponentType.BACK_OFFICE_PAGE),
+5595-  compData: external_exports.object({
+5596-    backOfficePage: backofficePageCompDataSchema
+5597-  }),
+5598-  compName: external_exports.string().optional(),
+5599-  createdBy: external_exports.string().optional(),
+5600-  createdByVersion: external_exports.string().optional(),
+5601-  experiment: componentExperimentSchema
+5602-}).passthrough();
+5603-var backofficeExtensionSchema = external_exports.object({
+5604-  compId: external_exports.string(),
+5605-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION),
+5606-  compData: external_exports.object({
+5607-    backOfficeExtension: external_exports.object({
+5608-      hostingPlatform: external_exports.string(),
+5609-      extends: external_exports.string(),
+5610-      title: external_exports.string().nullish(),
+5611-      extensionType: external_exports.literal(
+5612-        ExtendingComponentType.BACK_OFFICE_EXTENSION_WIDGET
+5613-      ),
+5614-      requiredPermission: external_exports.string().nullish(),
+5615-      widget: widgetCompDataSchema
+5616-    }).merge(errorReportingSchema).passthrough()
+5617-  }),
+5618-  compName: external_exports.string().optional(),
+5619-  createdBy: external_exports.string().optional(),
+5620-  createdByVersion: external_exports.string().optional(),
+5621-  experiment: componentExperimentSchema
+5622-}).passthrough();
+5623-var backofficeExtensionWidgetSchema = external_exports.object({
+5624-  compId: external_exports.string(),
+5625-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION_WIDGET),
+5626-  compData: external_exports.object({
+5627-    backOfficeExtensionWidget: external_exports.object({
+5628-      hostingPlatform: external_exports.string(),
+5629-      extends: external_exports.string(),
+5630-      title: external_exports.string().nullish(),
+5631-      description: external_exports.string().optional(),
+5632-      requiredPermission: external_exports.string().nullish(),
+5633-      width: external_exports.number().nullish(),
+5634-      height: external_exports.number().nullish(),
+5635-      aiContext: aiContextSchema
+5636-    }).merge(componentSourceSchema).merge(errorReportingSchema).passthrough()
+5637-  }),
+5638-  compName: external_exports.string().optional(),
+5639-  createdBy: external_exports.string().optional(),
+5640-  createdByVersion: external_exports.string().optional(),
+5641-  experiment: componentExperimentSchema
+5642-}).passthrough();
+5643-var backofficeExtensionMenuPluginSchema = external_exports.object({
+5644-  compId: external_exports.string(),
+5645-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION_MENU_ITEM),
+5646-  compData: external_exports.object({
+5647-    backOfficeExtensionMenuItem: external_exports.object({
+5648-      id: external_exports.string().uuid(),
+5649-      title: external_exports.string().min(1),
+5650-      subtitle: external_exports.string().max(200).optional(),
+5651-      iconKey: external_exports.string().min(3).max(50).optional(),
+5652-      extends: external_exports.string().uuid(),
+--
+6480-);
+6481-var looseTopologySchema = looseBaseComponentSchema.merge(
+6482-  external_exports.object({
+6483-    compData: external_exports.object({
+6484-      topology: external_exports.object({
+6485-        topology: external_exports.object({
+6486-          backendApiUrl: external_exports.string().url()
+6487-        })
+6488-      })
+6489-    }),
+6490-    compType: external_exports.literal(ComponentType.TOPOLOGY)
+6491-  })
+6492-);
+6493-var looseComponentSchema = external_exports.discriminatedUnion("compType", [
+6494-  looseBackofficePageSchema,
+6495-  looseBackofficeExtensionWidgetSchema,
+6496-  looseBackofficeExtensionMenuPluginSchema,
+6497-  looseBackofficeModalSchema,
+6498-  looseWebhookSchema,
+6499-  looseEcomAdditionalFeesSchema,
+6500-  looseStaffSortingProviderSchema,
+6501-  looseBookingsPricingProviderSchema,
+6502-  looseEcomShippingRatesSchema,
+6503-  looseEcomDiscountsTriggerSchema,
+6504-  looseEcomValidationsSchema,
+6505-  looseEcomPaymentSettingsSchema,
+6506-  looseEcomGiftCardsProviderSchema,
+6507-  looseRealtimePermissionsProviderSchema,
+6508-  looseTopologySchema
+6509-]);
+6510-var looseAppManifestSchema = external_exports.object({
+6511-  appId: external_exports.string(),
+6512-  components: external_exports.array(looseBaseComponentSchema)
+6513-});
+6514-var looseAppManifestModelSchema = external_exports.object({
+6515-  appId: external_exports.string(),
+6516-  components: external_exports.array(looseComponentSchema),
+6517-  unknownComponents: external_exports.array(looseBaseComponentSchema)
+6518-});
+6519-function stripTrailingSlash(value) {
+6520-  return value.endsWith("/") ? value.slice(0, -1) : value;
+6521-}
+6522-function parseLooseAppManifest(manifest, placeholders = /* @__PURE__ */ new Map()) {
+6523-  if (placeholders.size === 0) {
+6524-    return looseAppManifestSchema.parse(JSON.parse(manifest));
+6525-  }
+6526-  let replacedManifest = manifest;
+6527-  for (const [key, value] of placeholders.entries()) {
+6528-    replacedManifest = replacedManifest.replaceAll(
+6529-      stripTrailingSlash(key),
+6530-      stripTrailingSlash(value)
+6531-    );
+6532-  }
+6533-  return looseAppManifestSchema.parse(JSON.parse(replacedManifest));
+6534-}
+6535-function findPlaceholderPaths(value, placeholderMarkers, path) {
+6536-  if (value != null && typeof value === "object" && !Array.isArray(value)) {
+6537-    return Object.entries(value).flatMap(
+6538-      ([key, child]) => findPlaceholderPaths(
+6539-        child,
+6540-        placeholderMarkers,
+6541-        path ? `${path}.${key}` : key
+6542-      )
+6543-    );
+6544-  }
+6545-  if (typeof value === "string") {
+6546-    const hasPlaceholder = placeholderMarkers.some(
+6547-      (marker) => value.includes(marker)
+6548-    );
+6549-    return hasPlaceholder ? [path] : [];
+6550-  }
+6551-  return [];
+6552-}
+6553-function getComponentPlaceholderFieldMasks(manifest, placeholders) {
+6554-  const placeholderMarkers = [...placeholders].map(stripTrailingSlash);
+6555-  if (placeholderMarkers.length === 0) {
+6556-    return [];
+6557-  }
+6558-  const { components } = parseLooseAppManifest(manifest);
+6559-  const masks = [];
+6560-  for (const component of components) {
+6561-    const fieldMask = [
+6562-      ...new Set(
+6563-        findPlaceholderPaths(component.compData, placeholderMarkers, "")
+6564-      )
+6565-    ];
+6566-    if (fieldMask.length > 0) {
+6567-      masks.push({ componentId: component.compId, fieldMask });
+6568-    }
+6569-  }
+6570-  return masks;
+6571-}
+6572-var cloneDeep = (0, import_rfdc.default)();
+6573-var cloneDeep2 = (0, import_rfdc2.default)();
+6574-var cloneDeep3 = (0, import_rfdc3.default)();
+6575-var cloneDeep4 = (0, import_rfdc4.default)();
+6576-
+6577-export {
+6578-  LifecycleState,
+6579-  OverrideType,
+6580:  toComponentExperiments,
+6581-  useDevCenterOverridesClient,
+6582-  looseComponentSchema,
+6583-  parseLooseAppManifest,
+6584-  getComponentPlaceholderFieldMasks,
+6585-  PlatformLinksSection,
+6586-  getPlatformLinkCommand,
+6587-  useSiteLinks,
+6588-  useAppLinks,
+6589-  useUpdateDeploymentTopologyForSite,
+6590-  useUpdateDeploymentTopologyForApp
+6591-};
+6592-//# sourceMappingURL=chunk-D7ORRBCE.js.map
