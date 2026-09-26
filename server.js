@@ -557,6 +557,11 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
 
+    if (req.method === 'GET' && url.pathname === '/') {
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control':'no-store' });
+      return res.end("<!doctype html><html lang=\"pt-BR\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>DIVA Runtime</title><style>body{font-family:system-ui,sans-serif;background:#f4f1eb;color:#171717;margin:0;padding:32px}.card{max-width:720px;margin:auto;background:white;border-radius:24px;padding:28px;box-shadow:0 10px 35px #0001}h1{font-family:Georgia,serif;font-size:42px;margin:0 0 8px}.ok{display:inline-block;padding:7px 12px;border-radius:99px;background:#e8f5e9}a{display:inline-block;margin-top:20px;color:#174ea6}</style><main class=\"card\"><div class=\"ok\">● runtime externo</div><h1>DIVA</h1><p>Corpo operacional independente de sessão ChatGPT.</p><p>DIVA → SOPRO → gateway → Malha → persistência.</p><a href=\"/health\">Abrir diagnóstico do runtime →</a></main></html>");
+    }
+
     if (req.method === 'GET' && url.pathname === '/health') {
       await refreshProviderDiagnostics();
       return json(res, 200, {
