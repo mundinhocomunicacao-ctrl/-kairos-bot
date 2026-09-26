@@ -100,7 +100,7 @@ async function connect(){
  sock.ev.on("creds.update",saveCreds);
  sock.ev.on("connection.update",async u=>{
    if(u.qr){qrDataUrl=await QRCode.toDataURL(u.qr);connection="pairing"}
-   if(u.connection==="open"){qrDataUrl=null;connection="open";lastError=null}
+   if(u.connection==="open"){qrDataUrl=null;connection="open";lastError=null;setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000)}
    if(u.connection==="close"){
      connection="closed";
      const status=u.lastDisconnect?.error?.output?.statusCode;
@@ -108,7 +108,7 @@ async function connect(){
    }
  });
  sock.ev.on("messages.upsert",async({messages,type})=>{
-   if(type!=="notify")return;
+   if(type!=="notify"&&type!=="append")return;
    for(const m of messages){
      if(m.key?.remoteJid!==GROUP_JID||sentMessageIds.has(m.key?.id))continue;
      const text=textOf(m);
