@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   release:
@@ -29,7 +29,35 @@ jobs:
             echo "WIX_RELEASE_AUTH=DEVICE_LOGIN"
           fi
       - name: Run repository Radar release
+        id: radar_release
         shell: bash
         run: |
+          set +e
           chmod +x deploy/radar-gabi/release-clean.sh
-          deploy/radar-gabi/release-clean.sh
+          deploy/radar-gabi/release-clean.sh 2>&1 | tee /tmp/radar-release.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit "$code"
+
+      - name: Persist release diagnostic
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p deploy/radar-gabi/diagnostics
+          {
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "head_sha=${GITHUB_SHA}"
+            echo "release_exit_code=${{ steps.radar_release.outputs.exit_code }}"
+            echo "---"
+            if [ -f /tmp/radar-release.log ]; then
+              sed -E 's/([A-Za-z0-9_]{20,})/[REDACTED]/g' /tmp/radar-release.log | tail -120
+            else
+              echo "NO_RELEASE_LOG"
+            fi
+          } > deploy/radar-gabi/diagnostics/latest.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/radar-gabi/diagnostics/latest.txt
+          git commit -m "diag(radar): persist latest Wix release failure" || true
+          git push origin HEAD:main || true
