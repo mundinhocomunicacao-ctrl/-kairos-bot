@@ -69,6 +69,9 @@ jobs:
             echo "## staticFilesMetadata contexts"
             cd /tmp/wix-cli-probe
             grep -R -n -C 18 'staticFilesMetadata' package/build --include='*.js' | head -1200 || true
+            echo
+            echo "## preview/component override creation contexts"
+            grep -R -n -C 70 -E 'useCreatePreview|previewId|componentOverrideId|createComponentOverride|versionOverrideId|updateDeploymentTopology' package/build --include='*.js' | head -2600 || true
           } > "$GITHUB_WORKSPACE/deploy/radar-gabi/diagnostics/wix-deploy-manifest.txt"
           cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
