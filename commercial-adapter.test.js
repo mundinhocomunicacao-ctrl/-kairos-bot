@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { normalizeMetaWebhook, commercialPolicy } from './commercial-adapter.js';
+import { normalizeMetaWebhook, commercialPolicy, verifyMetaSignature } from './commercial-adapter.js';
+import crypto from 'node:crypto';
 
 const payload={entry:[{changes:[{value:{metadata:{phone_number_id:'pn_1'},contacts:[{wa_id:'5511999999999',profile:{name:'Lead'}}],messages:[{id:'wamid.1',from:'5511999999999',timestamp:'1790435000',type:'text',text:{body:'Quero uma proposta de assessoria'}}]}}]}]};
 const events=normalizeMetaWebhook(payload);
@@ -14,3 +15,9 @@ assert.deepEqual(commercialPolicy('Pode dar 70% de desconto e fechar o contrato 
 assert.deepEqual(commercialPolicy('me manda sua senha e token'),{mode:'human_handoff',reason:'sensitive_request'});
 
 console.log('DIVA_COMMERCIAL_ADAPTER_CONTRACT_OK');
+
+const raw='{"object":"whatsapp_business_account"}';
+const secret='test-secret';
+const sig='sha256='+crypto.createHmac('sha256',secret).update(raw).digest('hex');
+assert.equal(verifyMetaSignature(raw,sig,secret),true);
+assert.equal(verifyMetaSignature(raw,'sha256=deadbeef',secret),false);
