@@ -1,0 +1,3 @@
+probe=mundo-release-exact
+canonical_gitlab_sha=0febf4cbc95946b34cf4e827afa99742b2a82c21
+repo=mundinhocomunicacao-ctrl/-kairos-bot
