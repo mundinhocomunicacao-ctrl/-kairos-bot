@@ -72,6 +72,9 @@ jobs:
             echo
             echo "## preview/component override creation contexts"
             grep -R -n -C 70 -E 'useCreatePreview|previewId|componentOverrideId|createComponentOverride|versionOverrideId|updateDeploymentTopology' package/build --include='*.js' | head -2600 || true
+            echo
+            echo "## Astro PreviewCommand core"
+            grep -n -C 140 -E 'previewId|componentOverride|deploymentBaseUrl|createAppDeployment|completeAppDeployment|onPreviewCreated' package/build/chunk-UXLEQMZC.js | head -2600 || true
           } > "$GITHUB_WORKSPACE/deploy/radar-gabi/diagnostics/wix-deploy-manifest.txt"
           cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
