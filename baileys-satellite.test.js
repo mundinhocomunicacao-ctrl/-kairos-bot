@@ -1,0 +1,16 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const src=fs.readFileSync(new URL("./baileys-satellite.js",import.meta.url),"utf8");
+assert.match(src,/makeWASocket/);
+assert.match(src,/useMultiFileAuthState/);
+assert.match(src,/messages\.upsert/);
+assert.match(src,/120363411404153606@g\.us/);
+assert.match(src,/fromMe/);
+assert.match(src,/^|\W[Dd][Ii][Vv][Aa]/);
+assert.match(src,/DIVA_RELAY_URL/);
+assert.match(src,/x-diva-local-signature/);
+assert.match(src,/conversation_ref/);
+assert.match(src,/whatsapp:\/\//);
+assert.match(src,/sock\.sendMessage/);
+assert.match(src,/\/pair/);
+console.log("DIVA_BAILEYS_SATELLITE_CONTRACT_OK");
