@@ -163,3 +163,8 @@ assert.match(source,/local_relay_unauthorized_group/,'local relay must fail clos
 assert.match(source,/invokeDivaGatewayBody/,'local relay must forward through Render-held canonical Gateway credentials');
 assert.match(source,/DIVA_LOCAL_RELAY_OK/,'local relay must emit secret-safe success evidence');
 console.log('DIVA_LOCAL_WHATSAPP_RELAY_CONTRACT_OK');
+
+assert.match(source,/url\.pathname === '\/'/,'human access root route must exist');
+assert.match(source,/DIVA Runtime/,'human access must identify the DIVA runtime');
+assert.match(source,/\/health/,'human access must expose the health route');
+console.log('DIVA_HUMAN_ACCESS_CONTRACT_OK');
