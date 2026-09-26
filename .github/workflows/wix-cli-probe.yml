@@ -34,6 +34,18 @@ jobs:
             echo
             echo "## URL-like literals around deployment code"
             grep -R -n -E 'https://[^"[:space:]]+|/[^"[:space:]]*(deployment|statics|release|override)[^"[:space:]]*' package/build --include='*.js' | head -1200 || true
+            echo
+            echo "## Selected file: src-RAK4XJCX.js"
+            sed -n '400,620p' package/build/src-RAK4XJCX.js || true
+            echo
+            echo "## Selected file: chunk-MKII26WK.js"
+            sed -n '1,180p' package/build/chunk-MKII26WK.js || true
+            echo
+            echo "## Selected file: chunk-EJB7C7MD.js"
+            sed -n '1,220p' package/build/chunk-EJB7C7MD.js || true
+            echo
+            echo "## Selected file: ReleaseCommand-HIDXLX7H.js"
+            sed -n '120,560p' package/build/ReleaseCommand-HIDXLX7H.js || true
           } > /tmp/wix-cli-probe/out/probe.txt
           cd "$GITHUB_WORKSPACE"
           mkdir -p deploy/radar-gabi/diagnostics
