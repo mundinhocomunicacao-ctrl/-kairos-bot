@@ -1,0 +1,149 @@
+index_bytes=178548
+index_md5=e7fd13c56ecc12086acb115e6ce67ea5
+index_sha1=e19a145e47df526854b317dc7b1c8d3cafe59cff
+index_sha256=db4e52013105fd3ad675603df96893c9b8646c6ec47a8fba9d669541447915ec
+content_type=text/html
+
+## staticFilesMetadata contexts
+package/build/chunk-EJB7C7MD.js-527-    try {
+package/build/chunk-EJB7C7MD.js-528-      const { data } = await this.httpClient.request(
+package/build/chunk-EJB7C7MD.js-529-        createAppProject({
+package/build/chunk-EJB7C7MD.js-530-          appProject: {
+package/build/chunk-EJB7C7MD.js-531-            ...appProjectOptions,
+package/build/chunk-EJB7C7MD.js-532-            appProjectTypeId: projectType === "HEADLESS" ? HEADLESS_PROJECT_TYPE_ID : APP_PROJECT_TYPE_ID,
+package/build/chunk-EJB7C7MD.js-533-            cloudProviderOverride: cloudProvider
+package/build/chunk-EJB7C7MD.js-534-          }
+package/build/chunk-EJB7C7MD.js-535-        })
+package/build/chunk-EJB7C7MD.js-536-      );
+package/build/chunk-EJB7C7MD.js-537-      return CreateAppProjectSchema.parse(data).appProject;
+package/build/chunk-EJB7C7MD.js-538-    } catch (e) {
+package/build/chunk-EJB7C7MD.js-539-      throw new CliError({
+package/build/chunk-EJB7C7MD.js-540-        code: CliErrorCode.FailedCreatingAppProject(),
+package/build/chunk-EJB7C7MD.js-541-        cause: e
+package/build/chunk-EJB7C7MD.js-542-      });
+package/build/chunk-EJB7C7MD.js-543-    }
+package/build/chunk-EJB7C7MD.js-544-  };
+package/build/chunk-EJB7C7MD.js:545:  createAppDeployment = async (appId, files, staticFilesMetadata, generateAppDeploymentGroupId) => {
+package/build/chunk-EJB7C7MD.js-546-    try {
+package/build/chunk-EJB7C7MD.js-547-      const { data } = await pRetry(
+package/build/chunk-EJB7C7MD.js-548-        () => this.httpClient.request(
+package/build/chunk-EJB7C7MD.js-549-          createAppDeployment({
+package/build/chunk-EJB7C7MD.js-550-            appDeployment: {
+package/build/chunk-EJB7C7MD.js-551-              appProjectId: appId,
+package/build/chunk-EJB7C7MD.js-552-              files,
+package/build/chunk-EJB7C7MD.js:553:              staticFilesMetadata,
+package/build/chunk-EJB7C7MD.js-554-              appDeploymentGroupId: generateAppDeploymentGroupId ? randomUUID() : void 0
+package/build/chunk-EJB7C7MD.js-555-            }
+package/build/chunk-EJB7C7MD.js-556-          })
+package/build/chunk-EJB7C7MD.js-557-        ),
+package/build/chunk-EJB7C7MD.js-558-        this.retryOptions
+package/build/chunk-EJB7C7MD.js-559-      );
+package/build/chunk-EJB7C7MD.js-560-      return CreateAppDeploymentSchema.parse(data);
+package/build/chunk-EJB7C7MD.js-561-    } catch (e) {
+package/build/chunk-EJB7C7MD.js-562-      throw new CliError({
+package/build/chunk-EJB7C7MD.js-563-        code: CliErrorCode.FailedCreatingAppDeployment(),
+package/build/chunk-EJB7C7MD.js-564-        cause: e
+package/build/chunk-EJB7C7MD.js-565-      });
+package/build/chunk-EJB7C7MD.js-566-    }
+package/build/chunk-EJB7C7MD.js-567-  };
+package/build/chunk-EJB7C7MD.js-568-  completeAppDeployment = async (appDeployment, staticsCompletionToken) => {
+package/build/chunk-EJB7C7MD.js-569-    try {
+package/build/chunk-EJB7C7MD.js-570-      const { data } = await pRetry(
+package/build/chunk-EJB7C7MD.js-571-        () => this.httpClient.request(
+--
+package/build/chunk-UXLEQMZC.js-1487-      const isKubernetesCloudProvider = appDeployment?.cloudProviderOverride === CloudProvider.KUBERNETES;
+package/build/chunk-UXLEQMZC.js-1488-      if (isKubernetesCloudProvider) {
+package/build/chunk-UXLEQMZC.js-1489-        const uploadPromises = staticFilesUploadUrls.map(
+package/build/chunk-UXLEQMZC.js-1490-          async (staticFileToUpload) => {
+package/build/chunk-UXLEQMZC.js-1491-            const { uploadUrl, staticFileMetadata } = staticFileToUpload;
+package/build/chunk-UXLEQMZC.js-1492-            const fileContent = await readFile(
+package/build/chunk-UXLEQMZC.js-1493-              path.join(clientDir, staticFileMetadata.path)
+package/build/chunk-UXLEQMZC.js-1494-            );
+package/build/chunk-UXLEQMZC.js-1495-            return backendAsAServiceClient.putBinaryFile(
+package/build/chunk-UXLEQMZC.js-1496-              uploadUrl,
+package/build/chunk-UXLEQMZC.js-1497-              fileContent,
+package/build/chunk-UXLEQMZC.js-1498-              staticFileMetadata.contentType
+package/build/chunk-UXLEQMZC.js-1499-            );
+package/build/chunk-UXLEQMZC.js-1500-          }
+package/build/chunk-UXLEQMZC.js-1501-        );
+package/build/chunk-UXLEQMZC.js-1502-        await Promise.all(uploadPromises);
+package/build/chunk-UXLEQMZC.js-1503-      } else if (uploadAuthToken) {
+package/build/chunk-UXLEQMZC.js-1504-        const uploadUrl = staticFilesUploadUrls[0].uploadUrl;
+package/build/chunk-UXLEQMZC.js:1505:        const staticFilesMetadata = staticFilesUploadUrls.map(
+package/build/chunk-UXLEQMZC.js-1506-          (item) => item.staticFileMetadata
+package/build/chunk-UXLEQMZC.js-1507-        );
+package/build/chunk-UXLEQMZC.js-1508-        const bucketsFormData = await buildBucketsFormData(
+package/build/chunk-UXLEQMZC.js-1509-          clientDir,
+package/build/chunk-UXLEQMZC.js-1510-          uploadBuckets ?? [],
+package/build/chunk-UXLEQMZC.js:1511:          staticFilesMetadata
+package/build/chunk-UXLEQMZC.js-1512-        );
+package/build/chunk-UXLEQMZC.js-1513-        for (const formData of bucketsFormData) {
+package/build/chunk-UXLEQMZC.js-1514-          const response = await backendAsAServiceClient.postForm(
+package/build/chunk-UXLEQMZC.js-1515-            uploadUrl,
+package/build/chunk-UXLEQMZC.js-1516-            uploadAuthToken,
+package/build/chunk-UXLEQMZC.js-1517-            formData
+package/build/chunk-UXLEQMZC.js-1518-          );
+package/build/chunk-UXLEQMZC.js-1519-          const responseUploadToken = response.result?.jwt;
+package/build/chunk-UXLEQMZC.js-1520-          if (responseUploadToken) {
+package/build/chunk-UXLEQMZC.js-1521-            completionAuthToken = responseUploadToken;
+package/build/chunk-UXLEQMZC.js-1522-          }
+package/build/chunk-UXLEQMZC.js-1523-        }
+package/build/chunk-UXLEQMZC.js-1524-      }
+package/build/chunk-UXLEQMZC.js-1525-    }
+package/build/chunk-UXLEQMZC.js-1526-    const completeAppDeployment = await backendAsAServiceClient.completeAppDeployment(
+package/build/chunk-UXLEQMZC.js-1527-      {
+package/build/chunk-UXLEQMZC.js-1528-        ...appDeployment,
+package/build/chunk-UXLEQMZC.js-1529-        files: backendFiles
+--
+package/build/chunk-UXLEQMZC.js-1536-    };
+package/build/chunk-UXLEQMZC.js-1537-  });
+package/build/chunk-UXLEQMZC.js-1538-}
+package/build/chunk-UXLEQMZC.js-1539-async function getStaticFileMetadata(file) {
+package/build/chunk-UXLEQMZC.js-1540-  const stats = await fs2.promises.stat(file.path);
+package/build/chunk-UXLEQMZC.js-1541-  const fileContent = await readFile(file.path);
+package/build/chunk-UXLEQMZC.js-1542-  const hash = crypto.createHash("md5").update(fileContent).digest("hex");
+package/build/chunk-UXLEQMZC.js-1543-  return {
+package/build/chunk-UXLEQMZC.js-1544-    size: stats.size,
+package/build/chunk-UXLEQMZC.js-1545-    hash,
+package/build/chunk-UXLEQMZC.js-1546-    contentType: src_default.getType(file.path) ?? "application/octet-stream",
+package/build/chunk-UXLEQMZC.js-1547-    path: `/${file.relativePath}`
+package/build/chunk-UXLEQMZC.js-1548-  };
+package/build/chunk-UXLEQMZC.js-1549-}
+package/build/chunk-UXLEQMZC.js-1550-async function getBackendFileData(file) {
+package/build/chunk-UXLEQMZC.js-1551-  const buffer = await readFile(file.path);
+package/build/chunk-UXLEQMZC.js-1552-  return { path: file.relativePath, content: buffer.toString("base64") };
+package/build/chunk-UXLEQMZC.js-1553-}
+package/build/chunk-UXLEQMZC.js:1554:async function buildBucketsFormData(clientDir, uploadBuckets, staticFilesMetadata) {
+package/build/chunk-UXLEQMZC.js-1555-  if (uploadBuckets.length === 0) {
+package/build/chunk-UXLEQMZC.js-1556-    return [];
+package/build/chunk-UXLEQMZC.js-1557-  }
+package/build/chunk-UXLEQMZC.js:1558:  const staticFilesMetadataByHash = new Map(
+package/build/chunk-UXLEQMZC.js:1559:    staticFilesMetadata.map((metadata) => [metadata.hash, metadata])
+package/build/chunk-UXLEQMZC.js-1560-  );
+package/build/chunk-UXLEQMZC.js-1561-  const batches = [];
+package/build/chunk-UXLEQMZC.js-1562-  for (const uploadBucket of uploadBuckets) {
+package/build/chunk-UXLEQMZC.js-1563-    if (!uploadBucket.hashes || uploadBucket.hashes.length === 0) {
+package/build/chunk-UXLEQMZC.js-1564-      continue;
+package/build/chunk-UXLEQMZC.js-1565-    }
+package/build/chunk-UXLEQMZC.js-1566-    const form = new FormData();
+package/build/chunk-UXLEQMZC.js-1567-    await Promise.all(
+package/build/chunk-UXLEQMZC.js-1568-      uploadBucket.hashes.map(async (hash) => {
+package/build/chunk-UXLEQMZC.js:1569:        const staticFileMetadata = staticFilesMetadataByHash.get(hash);
+package/build/chunk-UXLEQMZC.js-1570-        if (!staticFileMetadata) {
+package/build/chunk-UXLEQMZC.js-1571-          return;
+package/build/chunk-UXLEQMZC.js-1572-        }
+package/build/chunk-UXLEQMZC.js-1573-        const fileContents = await readFile(
+package/build/chunk-UXLEQMZC.js-1574-          path.join(clientDir, staticFileMetadata.path)
+package/build/chunk-UXLEQMZC.js-1575-        );
+package/build/chunk-UXLEQMZC.js-1576-        form.append(
+package/build/chunk-UXLEQMZC.js-1577-          hash,
+package/build/chunk-UXLEQMZC.js-1578-          new File([fileContents.toString("base64")], hash, {
+package/build/chunk-UXLEQMZC.js-1579-            type: staticFileMetadata.contentType
+package/build/chunk-UXLEQMZC.js-1580-          }),
+package/build/chunk-UXLEQMZC.js-1581-          hash
+package/build/chunk-UXLEQMZC.js-1582-        );
+package/build/chunk-UXLEQMZC.js-1583-      })
+package/build/chunk-UXLEQMZC.js-1584-    );
+package/build/chunk-UXLEQMZC.js-1585-    batches.push(form);
+package/build/chunk-UXLEQMZC.js-1586-  }
+package/build/chunk-UXLEQMZC.js-1587-  return batches;
