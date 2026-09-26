@@ -45,7 +45,16 @@ jobs:
             sed -n '1,220p' package/build/chunk-EJB7C7MD.js || true
             echo
             echo "## Selected file: ReleaseCommand-HIDXLX7H.js"
-            sed -n '120,560p' package/build/ReleaseCommand-HIDXLX7H.js || true
+            sed -n '120,980p' package/build/ReleaseCommand-HIDXLX7H.js || true
+            echo
+            echo "## Selected deep range: chunk-EJB7C7MD.js"
+            sed -n '360,640p' package/build/chunk-EJB7C7MD.js || true
+            echo
+            echo "## Selected file: chunk-WXY2WBU6.js"
+            sed -n '1,240p' package/build/chunk-WXY2WBU6.js || true
+            echo
+            echo "## Selected file: chunk-737RXJMC.js"
+            sed -n '160,340p' package/build/chunk-737RXJMC.js || true
           } > /tmp/wix-cli-probe/out/probe.txt
           cd "$GITHUB_WORKSPACE"
           mkdir -p deploy/radar-gabi/diagnostics
