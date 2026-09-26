@@ -5,9 +5,15 @@
   "type": "module",
   "scripts": {
     "start": "npm test && node server.js",
-    "test": "node bridge-contract.test.js"
+    "test": "node bridge-contract.test.js",
+    "start:satellite": "node baileys-satellite.js",
+    "test:satellite": "node baileys-satellite.test.js"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.21",
+    "qrcode": "^1.5.4"
   }
 }
