@@ -1,0 +1,45 @@
+name: Wix CLI deployment probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/wix-cli-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract Wix CLI deployment internals
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wix-cli-probe
+          mkdir -p /tmp/wix-cli-probe/out
+          cd /tmp/wix-cli-probe
+          npm pack @wix/cli@1.1.247 >/tmp/wix-cli-pack-name.txt
+          PKG="$(cat /tmp/wix-cli-pack-name.txt | tail -1)"
+          tar -xzf "$PKG"
+          {
+            echo "# Wix CLI 1.1.247 deployment internals"
+            echo
+            echo "## Direct deployment-related literals"
+            grep -R -n -E 'wixstro|STATICS_UPLOAD_PENDING|DEPLOY_SUCCESS|KUBERNETES|uploadAuthToken|staticsCompletionToken|deployment|override|release' package/build --include='*.js' | head -1200 || true
+            echo
+            echo "## URL-like literals around deployment code"
+            grep -R -n -E 'https://[^"[:space:]]+|/[^"[:space:]]*(deployment|statics|release|override)[^"[:space:]]*' package/build --include='*.js' | head -1200 || true
+          } > /tmp/wix-cli-probe/out/probe.txt
+          cd "$GITHUB_WORKSPACE"
+          mkdir -p deploy/radar-gabi/diagnostics
+          cp /tmp/wix-cli-probe/out/probe.txt deploy/radar-gabi/diagnostics/wix-cli-deployment-probe.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/radar-gabi/diagnostics/wix-cli-deployment-probe.txt
+          git commit -m "diag(wix): extract deployment internals from CLI" || true
+          git push origin HEAD:main || true
