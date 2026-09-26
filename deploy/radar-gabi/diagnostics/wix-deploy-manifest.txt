@@ -5530,722 +5530,1761 @@ package/build/PreviewCommand-VUNW5CP4.js-120-        onSubmit
 6592-//# sourceMappingURL=chunk-D7ORRBCE.js.map
 
 ## Manifest processing exact
-2457-  ComponentType3["PREMIUM_CUSTOM_CHARGES"] = "PREMIUM_CUSTOM_CHARGES";
-2458-  ComponentType3["ECOM_VALIDATIONS"] = "ECOM_VALIDATIONS";
-2459-  ComponentType3["COMPONENT_REFERENCE_DATA_PROVIDER"] = "COMPONENT_REFERENCE_DATA_PROVIDER";
-2460-  ComponentType3["WIX_REVIEWS_PRODUCT_CATALOG"] = "WIX_REVIEWS_PRODUCT_CATALOG";
-2461-  ComponentType3["SOCIAL_MARKETING_DESIGNS_PROVIDER"] = "SOCIAL_MARKETING_DESIGNS_PROVIDER";
-2462-  ComponentType3["GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER"] = "GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER";
-2463-  ComponentType3["COMMENTS_FILTER_PROVIDER"] = "COMMENTS_FILTER_PROVIDER";
-2464-  ComponentType3["BILLING_TAX_ID_VALIDATOR"] = "BILLING_TAX_ID_VALIDATOR";
-2465-  ComponentType3["PING_SETTINGS_GROUP"] = "PING_SETTINGS_GROUP";
-2466-  ComponentType3["FORMS_SPAM_SUBMISSIONS_PROVIDER"] = "FORMS_SPAM_SUBMISSIONS_PROVIDER";
-2467-  ComponentType3["EDITOR_ADDON"] = "EDITOR_ADDON";
-2468-  ComponentType3["EXTERNAL_DATABASE_PROVIDER"] = "EXTERNAL_DATABASE_PROVIDER";
-2469-  ComponentType3["ECOM_PAYMENT_SETTINGS"] = "ECOM_PAYMENT_SETTINGS";
-2470-  ComponentType3["NOTIFICATION_TOPIC"] = "NOTIFICATION_TOPIC";
-2471-  ComponentType3["NOTIFICATION_PREFERENCES_FILTER_PROVIDER"] = "NOTIFICATION_PREFERENCES_FILTER_PROVIDER";
-2472-  ComponentType3["BOOKINGS_RESOURCE_TYPES_PROVIDER"] = "BOOKINGS_RESOURCE_TYPES_PROVIDER";
-2473-  ComponentType3["PRICING_PLANS_FORM_CONFIGURATION"] = "PRICING_PLANS_FORM_CONFIGURATION";
-2474-  ComponentType3["USER_NOTIFICATION"] = "USER_NOTIFICATION";
-2475-  ComponentType3["CONTACT_NOTIFICATION"] = "CONTACT_NOTIFICATION";
-2476-  ComponentType3["UNIFIED_PAGE"] = "UNIFIED_PAGE";
-2477-  ComponentType3["AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER";
-2478-  ComponentType3["PROPOSAL_EDITOR_PROVIDER"] = "PROPOSAL_EDITOR_PROVIDER";
-2479-  ComponentType3["CUSTOM_TABLE_RESERVATIONS_PROVIDER"] = "CUSTOM_TABLE_RESERVATIONS_PROVIDER";
-2480-  ComponentType3["COMMENTS_CONTEXT_PROVIDER"] = "COMMENTS_CONTEXT_PROVIDER";
-2481-  ComponentType3["FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER"] = "FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER";
-2482-  ComponentType3["AUTOMATIONS_VELO_ACTION_PROVIDER"] = "AUTOMATIONS_VELO_ACTION_PROVIDER";
-2483-  ComponentType3["CALENDAR_EVENT_TYPE_PROVIDER"] = "CALENDAR_EVENT_TYPE_PROVIDER";
-2484-  ComponentType3["RESERVED"] = "RESERVED";
-2485-  ComponentType3["SMS_ACTION_MESSAGE"] = "SMS_ACTION_MESSAGE";
-2486-  ComponentType3["BOOKING_POLICY_PROVIDER"] = "BOOKING_POLICY_PROVIDER";
-2487-  ComponentType3["MULTI_SERVICE_BOOKING_POLICY_PROVIDER"] = "MULTI_SERVICE_BOOKING_POLICY_PROVIDER";
-2488-  ComponentType3["AI_ASSISTANT"] = "AI_ASSISTANT";
-2489-  ComponentType3["FORMS_SUBMISSIONS_EXTENSION_PROVIDER"] = "FORMS_SUBMISSIONS_EXTENSION_PROVIDER";
-2490-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA"] = "MULTILINGUAL_TRANSLATION_SCHEMA";
-2491-  ComponentType3["TAX_CALCULATION_PROVIDER"] = "TAX_CALCULATION_PROVIDER";
-2492-  ComponentType3["TAX_GROUPS_PROVIDER"] = "TAX_GROUPS_PROVIDER";
-2493-  ComponentType3["BACK_OFFICE_MODAL"] = "BACK_OFFICE_MODAL";
-2494-  ComponentType3["DEPLOYMENT_PIPELINE_PROVIDER"] = "DEPLOYMENT_PIPELINE_PROVIDER";
-2495-  ComponentType3["CUSTOM_ELEMENT_WIDGET"] = "CUSTOM_ELEMENT_WIDGET";
-2496-  ComponentType3["BACK_OFFICE_EXTENSION_WIDGET"] = "BACK_OFFICE_EXTENSION_WIDGET";
-2497-  ComponentType3["BACK_OFFICE_EXTENSION_MENU_ITEM"] = "BACK_OFFICE_EXTENSION_MENU_ITEM";
-2498-  ComponentType3["FORM_TEMPLATE"] = "FORM_TEMPLATE";
-2499-  ComponentType3["NOTIFICATION_CONTENT"] = "NOTIFICATION_CONTENT";
-2500-  ComponentType3["BROADCAST_LIST"] = "BROADCAST_LIST";
-2501-  ComponentType3["PARTNERS_PAYOUTS"] = "PARTNERS_PAYOUTS";
-2502-  ComponentType3["WIX_REVIEWS_ENTITY_CATALOG"] = "WIX_REVIEWS_ENTITY_CATALOG";
-2503-  ComponentType3["VELO_PUBLISH_PIPELINE_TASK_PROVIDER"] = "VELO_PUBLISH_PIPELINE_TASK_PROVIDER";
-2504-  ComponentType3["FUNCTIONS_SHOP_PRICE_PROVIDER"] = "FUNCTIONS_SHOP_PRICE_PROVIDER";
-2505-  ComponentType3["FUNCTION"] = "FUNCTION";
-2506-  ComponentType3["ECOM_CHECKOUT_CONTENT"] = "ECOM_CHECKOUT_CONTENT";
-2507-  ComponentType3["COMMUNICATION_CHANNEL_PROVIDER"] = "COMMUNICATION_CHANNEL_PROVIDER";
-2508-  ComponentType3["WEBHOOK"] = "WEBHOOK";
-2509-  ComponentType3["TOPOLOGY"] = "TOPOLOGY";
-2510-  ComponentType3["LOYALTY_CUSTOM_REWARDS"] = "LOYALTY_CUSTOM_REWARDS";
-2511-  ComponentType3["FUNCTION_RECIPE"] = "FUNCTION_RECIPE";
-2512-  ComponentType3["BACK_OFFICE_EXTERNAL_URL"] = "BACK_OFFICE_EXTERNAL_URL";
-2513-  ComponentType3["IDENTITY_FACTOR"] = "IDENTITY_FACTOR";
-2514-  ComponentType3["ECOM_DISCOUNTS"] = "ECOM_DISCOUNTS";
-2515-  ComponentType3["VELO_CUSTOM_CSS"] = "VELO_CUSTOM_CSS";
-2516-  ComponentType3["DEALER_ADAPTIVE_COMPONENT_PROVIDER"] = "DEALER_ADAPTIVE_COMPONENT_PROVIDER";
-2517-  ComponentType3["AI_ASSISTANT_ACTION"] = "AI_ASSISTANT_ACTION";
-2518-  ComponentType3["ECOM_INVENTORY"] = "ECOM_INVENTORY";
-2519-  ComponentType3["MONITORING"] = "MONITORING";
-2520-  ComponentType3["PAPI_PROVIDER"] = "PAPI_PROVIDER";
-2521-  ComponentType3["UNIFIED_LIGHTBOX"] = "UNIFIED_LIGHTBOX";
-2522-  ComponentType3["FORMS_EXTENSION_PROVIDER"] = "FORMS_EXTENSION_PROVIDER";
-2523-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA_GROUP"] = "MULTILINGUAL_TRANSLATION_SCHEMA_GROUP";
-2524-  ComponentType3["PANEL"] = "PANEL";
-2525-  ComponentType3["PREMIUM_PURCHASE_VALIDATIONS"] = "PREMIUM_PURCHASE_VALIDATIONS";
-2526-  ComponentType3["BROWSER_STORAGE"] = "BROWSER_STORAGE";
-2527-  ComponentType3["SDK_DEFINITION"] = "SDK_DEFINITION";
-2528-  ComponentType3["SITE_WIDGET_SLOT"] = "SITE_WIDGET_SLOT";
-2529-  ComponentType3["CALENDAR_EVENT_VALIDATION_PROVIDER"] = "CALENDAR_EVENT_VALIDATION_PROVIDER";
-2530-  ComponentType3["CLIENT_SIDE_SERVICE"] = "CLIENT_SIDE_SERVICE";
-2531-  ComponentType3["BILLING_SETTINGS"] = "BILLING_SETTINGS";
-2532-  ComponentType3["PATTERNS_WIZARD"] = "PATTERNS_WIZARD";
-2533-  ComponentType3["APPLICATION_PROFILE"] = "APPLICATION_PROFILE";
-2534-  ComponentType3["TEXT_TO_SPEECH_ACTION_MESSAGE"] = "TEXT_TO_SPEECH_ACTION_MESSAGE";
-2535-  ComponentType3["AUDIENCE_PROVIDER"] = "AUDIENCE_PROVIDER";
-2536-  ComponentType3["PRICING_PLANS_PRICE"] = "PRICING_PLANS_PRICE";
-2537-  ComponentType3["PRICING_PLAN_START_DATE_LIMITS"] = "PRICING_PLAN_START_DATE_LIMITS";
-2538-  ComponentType3["PRICING_PLAN_START_DATE_RULES"] = "PRICING_PLAN_START_DATE_RULES";
-2539-  ComponentType3["EVENTS_TICKET_RESERVATIONS"] = "EVENTS_TICKET_RESERVATIONS";
-2540-  ComponentType3["PAYMENTS_DISPUTE_SERVICE_PLUGIN"] = "PAYMENTS_DISPUTE_SERVICE_PLUGIN";
-2541-  ComponentType3["PRICING_PLANS_FEES"] = "PRICING_PLANS_FEES";
-2542-  ComponentType3["EDITOR_REACT_COMPONENT"] = "EDITOR_REACT_COMPONENT";
-2543-  ComponentType3["SUPPLIERS_HUB_MARKETPLACE"] = "SUPPLIERS_HUB_MARKETPLACE";
-2544-  ComponentType3["FORM_SCHEMA_DYNAMIC_VALUES"] = "FORM_SCHEMA_DYNAMIC_VALUES";
-2545-  ComponentType3["BLOG_PAYWALL_PROVIDER"] = "BLOG_PAYWALL_PROVIDER";
-2546-  ComponentType3["LOYALTY_CUSTOM_REWARDS_V2"] = "LOYALTY_CUSTOM_REWARDS_V2";
-2547-  ComponentType3["STORES_PRODUCT_RESTRICTIONS"] = "STORES_PRODUCT_RESTRICTIONS";
-2548-  ComponentType3["FORM_SUBMISSION_MODERATION"] = "FORM_SUBMISSION_MODERATION";
-2549-  ComponentType3["EVENTS_EVENT_BADGES"] = "EVENTS_EVENT_BADGES";
-2550-  ComponentType3["BILLING_OPERATION"] = "BILLING_OPERATION";
-2551-  ComponentType3["BACK_OFFICE_CUSTOMIZATION"] = "BACK_OFFICE_CUSTOMIZATION";
-2552-  ComponentType3["COMPONENT_ENRICHER_PROVIDER"] = "COMPONENT_ENRICHER_PROVIDER";
-2553-  ComponentType3["BACK_OFFICE_RESTRICTED_CUSTOMIZATION"] = "BACK_OFFICE_RESTRICTED_CUSTOMIZATION";
-2554-  ComponentType3["EDITOR_APP_PREVIEWS_POC"] = "EDITOR_APP_PREVIEWS_POC";
-2555-  ComponentType3["LEGENDS_PERSONA_CONFIGURATION"] = "LEGENDS_PERSONA_CONFIGURATION";
-2556-  ComponentType3["WIX_HOSTING_APP_DEPLOYMENT_PROVIDER"] = "WIX_HOSTING_APP_DEPLOYMENT_PROVIDER";
-2557:  ComponentType3["BACKEND_WORKER"] = "BACKEND_WORKER";
-2558-  ComponentType3["EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER";
-2559-  ComponentType3["WIX_HOSTING_APP_ENVIRONMENT_PROVIDER"] = "WIX_HOSTING_APP_ENVIRONMENT_PROVIDER";
-2560-  ComponentType3["SDK_EXPORTS"] = "SDK_EXPORTS";
-2561-  ComponentType3["VIEWER_SERVICE"] = "VIEWER_SERVICE";
-2562-  ComponentType3["WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN"] = "WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN";
-2563-  ComponentType3["CONTACTS_SEGMENTS_V2_FILTER_PROVIDER"] = "CONTACTS_SEGMENTS_V2_FILTER_PROVIDER";
-2564-  ComponentType3["ANALYTICS_PRODUCT_CATALOG"] = "ANALYTICS_PRODUCT_CATALOG";
-2565-  ComponentType3["SITE_MIGRATION"] = "SITE_MIGRATION";
-2566-  ComponentType3["RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN"] = "RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN";
-2567-  ComponentType3["WIX_VIBE_CODING_INSTRUCTIONS"] = "WIX_VIBE_CODING_INSTRUCTIONS";
-2568-  ComponentType3["TAX_EXEMPT_GROUPS_PROVIDER"] = "TAX_EXEMPT_GROUPS_PROVIDER";
-2569-  ComponentType3["BOOKING_AUTOMATIONS_CONFIGURATION"] = "BOOKING_AUTOMATIONS_CONFIGURATION";
-2570-  ComponentType3["WIX_VIBE_COMPONENT"] = "WIX_VIBE_COMPONENT";
-2571-  ComponentType3["WIXEL"] = "WIXEL";
-2572-  ComponentType3["STAFF_SORTING_PROVIDER"] = "STAFF_SORTING_PROVIDER";
-2573-  ComponentType3["FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER"] = "FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER";
-2574-  ComponentType3["FUNCTIONS_ASSISTANT_TOOLS"] = "FUNCTIONS_ASSISTANT_TOOLS";
-2575-  ComponentType3["SITE_MAP_INFO_PROVIDER"] = "SITE_MAP_INFO_PROVIDER";
-2576-  ComponentType3["WIX_AI_GATEWAY_CALLBACK"] = "WIX_AI_GATEWAY_CALLBACK";
-2577-  ComponentType3["URL_MAPPER_PROVIDER"] = "URL_MAPPER_PROVIDER";
-2578-  ComponentType3["PROVIDER_SUPPRESSION_SERVICE_PLUGIN"] = "PROVIDER_SUPPRESSION_SERVICE_PLUGIN";
-2579-  ComponentType3["ECOM_FORMS"] = "ECOM_FORMS";
-2580-  ComponentType3["EDITOR_CONTEXT_PROVIDER"] = "EDITOR_CONTEXT_PROVIDER";
-2581-  ComponentType3["EDITOR_FUNCTION_LIBRARY"] = "EDITOR_FUNCTION_LIBRARY";
-2582-  ComponentType3["BOOKINGS_PLATFORM_CONFIGURATION"] = "BOOKINGS_PLATFORM_CONFIGURATION";
-2583-  ComponentType3["BOOKINGS_VALIDATION_PROVIDER"] = "BOOKINGS_VALIDATION_PROVIDER";
-2584-  ComponentType3["APP_ROUTER"] = "APP_ROUTER";
-2585-  ComponentType3["WIXEL_BINDING"] = "WIXEL_BINDING";
-2586-  ComponentType3["SHUB_MARKETPLACE_PROVIDER"] = "SHUB_MARKETPLACE_PROVIDER";
-2587-  ComponentType3["BOOKING_ACTION_URLS_PROVIDER"] = "BOOKING_ACTION_URLS_PROVIDER";
-2588-  ComponentType3["CALENDAR_CONFERENCING_PROVIDER"] = "CALENDAR_CONFERENCING_PROVIDER";
-2589-  ComponentType3["BASS_VALIDATE_CANCEL_ACTION"] = "BASS_VALIDATE_CANCEL_ACTION";
-2590-  ComponentType3["WIXEL_VIEWER_ROUTER_PROVIDER"] = "WIXEL_VIEWER_ROUTER_PROVIDER";
-2591-  ComponentType3["PREMIUM_ACTION"] = "PREMIUM_ACTION";
-2592-  ComponentType3["AUTOMATION_TEMPLATE"] = "AUTOMATION_TEMPLATE";
-2593-  ComponentType3["AGENT_MAKER_APPROVAL_PROVIDER"] = "AGENT_MAKER_APPROVAL_PROVIDER";
-2594-  ComponentType3["SERVICE_TAGS_CONFIGURATION"] = "SERVICE_TAGS_CONFIGURATION";
-2595-  ComponentType3["LOYALTY_POINTS_ADJUSTMENT"] = "LOYALTY_POINTS_ADJUSTMENT";
-2596-  ComponentType3["LOYALTY_EARN_POINTS_LIMIT"] = "LOYALTY_EARN_POINTS_LIMIT";
-2597-  ComponentType3["REALTIME_PERMISSIONS_PROVIDER"] = "REALTIME_PERMISSIONS_PROVIDER";
-2598-  ComponentType3["CALENDAR_SEARCH_PROVIDER"] = "CALENDAR_SEARCH_PROVIDER";
-2599-  ComponentType3["EDITOR_INSTALLATION"] = "EDITOR_INSTALLATION";
-2600-  ComponentType3["APP_ACTIONS"] = "APP_ACTIONS";
-2601-  ComponentType3["ROLLOUT_STEP_EXECUTOR"] = "ROLLOUT_STEP_EXECUTOR";
-2602-  ComponentType3["BOOKINGS_PLATFORM_PREMIUM_VALIDATION"] = "BOOKINGS_PLATFORM_PREMIUM_VALIDATION";
-2603-})(ComponentType2 || (ComponentType2 = {}));
-2604-var InitiatorType;
-2605-(function(InitiatorType2) {
-2606-  InitiatorType2["UNKNOWN_TYPE"] = "UNKNOWN_TYPE";
-2607-  InitiatorType2["CONTACT"] = "CONTACT";
-2608-  InitiatorType2["SITE_MEMBER"] = "SITE_MEMBER";
-2609-})(InitiatorType || (InitiatorType = {}));
-2610-var RecipientFilterType;
-2611-(function(RecipientFilterType2) {
-2612-  RecipientFilterType2["UNKNOWN_TYPE"] = "UNKNOWN_TYPE";
-2613-  RecipientFilterType2["CONTACTS"] = "CONTACTS";
-2614-})(RecipientFilterType || (RecipientFilterType = {}));
-2615-var ContainerType;
-2616-(function(ContainerType2) {
-2617-  ContainerType2["UNKNOWN_CONTAINER_TYPE"] = "UNKNOWN_CONTAINER_TYPE";
-2618-  ContainerType2["simple"] = "simple";
-2619-  ContainerType2["slot"] = "slot";
-2620-  ContainerType2["placeholder"] = "placeholder";
-2621-  ContainerType2["template"] = "template";
-2622-})(ContainerType || (ContainerType = {}));
-2623-var ContentResizeDirection;
-2624-(function(ContentResizeDirection2) {
-2625-  ContentResizeDirection2["UNKNOWN_ContentResizeDirection"] = "UNKNOWN_ContentResizeDirection";
-2626-  ContentResizeDirection2["horizontal"] = "horizontal";
-2627-  ContentResizeDirection2["vertical"] = "vertical";
-2628-  ContentResizeDirection2["horizontalAndVertical"] = "horizontalAndVertical";
-2629-  ContentResizeDirection2["none"] = "none";
-2630-})(ContentResizeDirection || (ContentResizeDirection = {}));
-2631-var CssDataTypeEnumCssDataType;
-2632-(function(CssDataTypeEnumCssDataType2) {
-2633-  CssDataTypeEnumCssDataType2["UNKNOWN_CssDataType"] = "UNKNOWN_CssDataType";
-2634-  CssDataTypeEnumCssDataType2["number"] = "number";
-2635-  CssDataTypeEnumCssDataType2["string"] = "string";
-2636-  CssDataTypeEnumCssDataType2["angle"] = "angle";
-2637-  CssDataTypeEnumCssDataType2["color"] = "color";
-2638-  CssDataTypeEnumCssDataType2["length"] = "length";
-2639-  CssDataTypeEnumCssDataType2["percentage"] = "percentage";
-2640-  CssDataTypeEnumCssDataType2["lengthPercentage"] = "lengthPercentage";
-2641-  CssDataTypeEnumCssDataType2["blendMode"] = "blendMode";
-2642-  CssDataTypeEnumCssDataType2["customEnum"] = "customEnum";
-2643-  CssDataTypeEnumCssDataType2["time"] = "time";
-2644-})(CssDataTypeEnumCssDataType || (CssDataTypeEnumCssDataType = {}));
-2645-var CssPropertyEnumCssPropertyType;
-2646-(function(CssPropertyEnumCssPropertyType2) {
-2647-  CssPropertyEnumCssPropertyType2["UNKNOWN_CssPropertyType"] = "UNKNOWN_CssPropertyType";
-2648-  CssPropertyEnumCssPropertyType2["number"] = "number";
-2649-  CssPropertyEnumCssPropertyType2["string"] = "string";
-2650-  CssPropertyEnumCssPropertyType2["angle"] = "angle";
-2651-  CssPropertyEnumCssPropertyType2["length"] = "length";
-2652-  CssPropertyEnumCssPropertyType2["percentage"] = "percentage";
-2653-  CssPropertyEnumCssPropertyType2["lengthPercentage"] = "lengthPercentage";
-2654-  CssPropertyEnumCssPropertyType2["blendMode"] = "blendMode";
-2655-  CssPropertyEnumCssPropertyType2["customEnum"] = "customEnum";
-2656-  CssPropertyEnumCssPropertyType2["time"] = "time";
-2657-  CssPropertyEnumCssPropertyType2["background"] = "background";
+package/build/chunk-C7KTTYNA.js-1-import { createRequire as _createRequire } from 'node:module';
+package/build/chunk-C7KTTYNA.js-2-const require = _createRequire(import.meta.url);
+package/build/chunk-C7KTTYNA.js-3-import {
+package/build/chunk-C7KTTYNA.js-4-  GIT_IGNORED_DIR,
+package/build/chunk-C7KTTYNA.js-5-  getGitIgnoredPath
+package/build/chunk-C7KTTYNA.js-6-} from "./chunk-4UTFAKA5.js";
+package/build/chunk-C7KTTYNA.js-7-import {
+package/build/chunk-C7KTTYNA.js-8-  zod_default
+package/build/chunk-C7KTTYNA.js-9-} from "./chunk-SDLCFZRL.js";
+package/build/chunk-C7KTTYNA.js-10-import {
+package/build/chunk-C7KTTYNA.js-11-  init_esm_shims
+package/build/chunk-C7KTTYNA.js-12-} from "./chunk-EXLZF52D.js";
+package/build/chunk-C7KTTYNA.js-13-
+package/build/chunk-C7KTTYNA.js-14-// ../cli-astro-definitions/src/http-experiments.ts
+package/build/chunk-C7KTTYNA.js-15-init_esm_shims();
+package/build/chunk-C7KTTYNA.js-16-var httpExperimentTokenRegex = /^[\w.-]+$/;
+package/build/chunk-C7KTTYNA.js-17-var httpExperimentTokenSchema = zod_default.string().regex(httpExperimentTokenRegex);
+package/build/chunk-C7KTTYNA.js-18-var httpExperimentsSchema = zod_default.record(
+package/build/chunk-C7KTTYNA.js-19-  httpExperimentTokenSchema,
+package/build/chunk-C7KTTYNA.js-20-  zod_default.union([zod_default.boolean(), httpExperimentTokenSchema])
+package/build/chunk-C7KTTYNA.js-21-);
+package/build/chunk-C7KTTYNA.js-22-function createPetriOverridesCookie(experiments) {
+package/build/chunk-C7KTTYNA.js-23-  const experimentsStrings = Object.entries(experiments ?? {}).map(
+package/build/chunk-C7KTTYNA.js-24-    ([key, value]) => `${key}#${value}`
+package/build/chunk-C7KTTYNA.js-25-  );
+package/build/chunk-C7KTTYNA.js-26-  if (experimentsStrings.length === 0) {
+package/build/chunk-C7KTTYNA.js-27-    return void 0;
+package/build/chunk-C7KTTYNA.js-28-  }
+package/build/chunk-C7KTTYNA.js-29-  return { petri_ovr: experimentsStrings.join("|") };
+package/build/chunk-C7KTTYNA.js-30-}
+package/build/chunk-C7KTTYNA.js-31-
+package/build/chunk-C7KTTYNA.js-32-// ../cli-astro-definitions/src/definitions.ts
+package/build/chunk-C7KTTYNA.js-33-init_esm_shims();
+package/build/chunk-C7KTTYNA.js-34-import { join } from "node:path";
+package/build/chunk-C7KTTYNA.js-35-var wixAstroSiteConfigSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-36-  $schema: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-37-  projectType: zod_default.literal("Site").optional().default("Site"),
+package/build/chunk-C7KTTYNA.js-38-  appId: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-39-  httpExperiments: httpExperimentsSchema.optional(),
+package/build/chunk-C7KTTYNA.js-40-  siteId: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-41-  site: zod_default.object({
+package/build/chunk-C7KTTYNA.js-42-    outputDirectory: zod_default.union([
+package/build/chunk-C7KTTYNA.js-43-      zod_default.string().min(1),
+package/build/chunk-C7KTTYNA.js-44-      zod_default.union([
+package/build/chunk-C7KTTYNA.js-45-        zod_default.object({
+package/build/chunk-C7KTTYNA.js-46-          client: zod_default.string().min(1),
+package/build/chunk-C7KTTYNA.js-47-          server: zod_default.string().min(1).optional()
+package/build/chunk-C7KTTYNA.js-48-        }),
+package/build/chunk-C7KTTYNA.js-49-        zod_default.object({
+package/build/chunk-C7KTTYNA.js-50-          client: zod_default.string().min(1).optional(),
+package/build/chunk-C7KTTYNA.js-51-          server: zod_default.string().min(1)
+package/build/chunk-C7KTTYNA.js-52-        })
+package/build/chunk-C7KTTYNA.js-53-      ])
+package/build/chunk-C7KTTYNA.js-54-    ])
+package/build/chunk-C7KTTYNA.js-55-  }).optional()
+package/build/chunk-C7KTTYNA.js-56-});
+package/build/chunk-C7KTTYNA.js-57-var wixAstroAppConfigSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-58-  $schema: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-59-  projectType: zod_default.literal("App"),
+package/build/chunk-C7KTTYNA.js-60-  appId: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-61-  projectId: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-62-  codeIdentifier: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-63-  namespace: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-64-  httpExperiments: httpExperimentsSchema.optional()
+package/build/chunk-C7KTTYNA.js-65-});
+package/build/chunk-C7KTTYNA.js-66-var wixAstroConfigSchema = zod_default.discriminatedUnion("projectType", [
+package/build/chunk-C7KTTYNA.js-67-  wixAstroSiteConfigSchema,
+package/build/chunk-C7KTTYNA.js-68-  wixAstroAppConfigSchema
+package/build/chunk-C7KTTYNA.js-69-]);
+package/build/chunk-C7KTTYNA.js-70-var envSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-71-  WIX_SITE_ID: zod_default.string().uuid().optional()
+package/build/chunk-C7KTTYNA.js-72-});
+package/build/chunk-C7KTTYNA.js-73-var ENV_FILE_NAME = ".env.local";
+package/build/chunk-C7KTTYNA.js-74-var TRANSLATIONS_FILE_PATH = join("src", "translations.json");
+package/build/chunk-C7KTTYNA.js:75:var BACKEND_WORKER_COMPONENT_ID = "ed5f3d0e-7b79-4717-9c00-c4cd7bbbe906";
+package/build/chunk-C7KTTYNA.js-76-var devMetadataSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-77-  staticsUrlPlaceholder: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-78-  serverUrlPlaceholder: zod_default.string()
+package/build/chunk-C7KTTYNA.js-79-});
+package/build/chunk-C7KTTYNA.js-80-var editorReactComponentTopologySchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-81-  id: zod_default.string().uuid(),
+package/build/chunk-C7KTTYNA.js-82-  type: zod_default.literal("EDITOR_REACT_COMPONENT"),
+package/build/chunk-C7KTTYNA.js-83-  topology: zod_default.object({
+package/build/chunk-C7KTTYNA.js-84-    "resources.client.componentUrl": zod_default.object({
+package/build/chunk-C7KTTYNA.js-85-      distPath: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-86-      srcPath: zod_default.string()
+package/build/chunk-C7KTTYNA.js-87-    })
+package/build/chunk-C7KTTYNA.js-88-  })
+package/build/chunk-C7KTTYNA.js-89-});
+package/build/chunk-C7KTTYNA.js-90-var editorContextProviderTopologySchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-91-  id: zod_default.string().uuid(),
+package/build/chunk-C7KTTYNA.js-92-  type: zod_default.literal("EDITOR_CONTEXT_PROVIDER"),
+package/build/chunk-C7KTTYNA.js-93-  topology: zod_default.object({
+package/build/chunk-C7KTTYNA.js-94-    "resources.client.url": zod_default.object({
+package/build/chunk-C7KTTYNA.js-95-      distPath: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-96-      srcPath: zod_default.string()
+package/build/chunk-C7KTTYNA.js-97-    })
+package/build/chunk-C7KTTYNA.js-98-  })
+package/build/chunk-C7KTTYNA.js-99-});
+package/build/chunk-C7KTTYNA.js-100-var editorFunctionLibraryTopologySchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-101-  id: zod_default.string().uuid(),
+package/build/chunk-C7KTTYNA.js-102-  type: zod_default.literal("EDITOR_FUNCTION_LIBRARY"),
+package/build/chunk-C7KTTYNA.js-103-  topology: zod_default.object({
+package/build/chunk-C7KTTYNA.js-104-    "resources.client.url": zod_default.object({
+package/build/chunk-C7KTTYNA.js-105-      distPath: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-106-      srcPath: zod_default.string()
+package/build/chunk-C7KTTYNA.js-107-    })
+package/build/chunk-C7KTTYNA.js-108-  })
+package/build/chunk-C7KTTYNA.js-109-});
+package/build/chunk-C7KTTYNA.js-110-var supportedExtensionTopologySchemas = [
+package/build/chunk-C7KTTYNA.js-111-  editorReactComponentTopologySchema,
+package/build/chunk-C7KTTYNA.js-112-  editorContextProviderTopologySchema,
+package/build/chunk-C7KTTYNA.js-113-  editorFunctionLibraryTopologySchema
+package/build/chunk-C7KTTYNA.js-114-];
+package/build/chunk-C7KTTYNA.js-115-var rawExtensionTopologyItemSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-116-  id: zod_default.string().uuid(),
+package/build/chunk-C7KTTYNA.js-117-  type: zod_default.string()
+package/build/chunk-C7KTTYNA.js-118-});
+package/build/chunk-C7KTTYNA.js-119-var extensionsTopologySchema = zod_default.array(rawExtensionTopologyItemSchema.passthrough()).transform(
+package/build/chunk-C7KTTYNA.js-120-  (items) => items.flatMap((item) => {
+package/build/chunk-C7KTTYNA.js-121-    for (const schema of supportedExtensionTopologySchemas) {
+package/build/chunk-C7KTTYNA.js-122-      const result = schema.safeParse(item);
+package/build/chunk-C7KTTYNA.js-123-      if (result.success) {
+package/build/chunk-C7KTTYNA.js-124-        return [result.data];
+package/build/chunk-C7KTTYNA.js-125-      }
+package/build/chunk-C7KTTYNA.js-126-    }
+package/build/chunk-C7KTTYNA.js-127-    return [];
+package/build/chunk-C7KTTYNA.js-128-  })
+package/build/chunk-C7KTTYNA.js-129-);
+package/build/chunk-C7KTTYNA.js-130-var buildMetadataSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-131-  metaDataSource: zod_default.literal("BUILD_METADATA").default("BUILD_METADATA"),
+package/build/chunk-C7KTTYNA.js-132-  appManifestPath: zod_default.string(),
+package/build/chunk-C7KTTYNA.js-133-  clientDir: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-134-  serverDir: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-135-  staticsUrlPlaceholder: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-136-  serverUrlPlaceholder: zod_default.string().optional(),
+package/build/chunk-C7KTTYNA.js-137-  generateAppDeploymentGroupId: zod_default.boolean().optional(),
+package/build/chunk-C7KTTYNA.js-138-  extensionsTopology: extensionsTopologySchema.optional()
+package/build/chunk-C7KTTYNA.js-139-});
+package/build/chunk-C7KTTYNA.js-140-var extensionsBuildResultSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-141-  metadata: buildMetadataSchema
+package/build/chunk-C7KTTYNA.js-142-});
+package/build/chunk-C7KTTYNA.js-143-var staticSiteBuildMetadaSchema = buildMetadataSchema.extend({
+package/build/chunk-C7KTTYNA.js-144-  metaDataSource: zod_default.literal("WIX_CONFIG").default("WIX_CONFIG"),
+package/build/chunk-C7KTTYNA.js-145-  appManifestPath: zod_default.string().optional()
+package/build/chunk-C7KTTYNA.js-146-});
+package/build/chunk-C7KTTYNA.js-147-var deploymentTopologyEnvironmentSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-148-  id: zod_default.string().describe("Unique ARM tag identifier"),
+package/build/chunk-C7KTTYNA.js-149-  site: zod_default.object({
+package/build/chunk-C7KTTYNA.js-150-    main: zod_default.string().url().describe("Main site URL")
+package/build/chunk-C7KTTYNA.js-151-  }).describe("Site topology details").optional(),
+package/build/chunk-C7KTTYNA.js-152-  dashboard: zod_default.object({
+package/build/chunk-C7KTTYNA.js-153-    main: zod_default.string().url().describe("Main dashboard URL (link to a business manager dashboard)")
+package/build/chunk-C7KTTYNA.js-154-  }).describe("Optional dashboard topology details").optional(),
+package/build/chunk-C7KTTYNA.js-155-  editor: zod_default.object({
+package/build/chunk-C7KTTYNA.js-156-    main: zod_default.string().url().describe("Main editor URL")
+package/build/chunk-C7KTTYNA.js-157-  }).describe("Editor topology details").optional()
+package/build/chunk-C7KTTYNA.js-158-});
+package/build/chunk-C7KTTYNA.js-159-var deploymentTopologyEnvironmentTypeSchema = zod_default.enum([
+package/build/chunk-C7KTTYNA.js-160-  "production",
+package/build/chunk-C7KTTYNA.js-161-  "preview",
+package/build/chunk-C7KTTYNA.js-162-  "development"
+package/build/chunk-C7KTTYNA.js-163-]);
+package/build/chunk-C7KTTYNA.js-164-var deploymentTopologySchema = zod_default.record(
+package/build/chunk-C7KTTYNA.js-165-  deploymentTopologyEnvironmentTypeSchema,
+package/build/chunk-C7KTTYNA.js-166-  deploymentTopologyEnvironmentSchema
+package/build/chunk-C7KTTYNA.js-167-);
+package/build/chunk-C7KTTYNA.js-168-function getBuildMetadataPath(projectFolder) {
+package/build/chunk-C7KTTYNA.js-169-  return join(projectFolder, GIT_IGNORED_DIR, "build-metadata.json");
+package/build/chunk-C7KTTYNA.js-170-}
+package/build/chunk-C7KTTYNA.js-171-function getDeploymentTopologyPath(projectFolder) {
+package/build/chunk-C7KTTYNA.js-172-  return getGitIgnoredPath(projectFolder, "topology.json");
+package/build/chunk-C7KTTYNA.js-173-}
+package/build/chunk-C7KTTYNA.js-174-function getEnvFilePath(projectFolder) {
+package/build/chunk-C7KTTYNA.js-175-  return join(projectFolder, ENV_FILE_NAME);
+package/build/chunk-C7KTTYNA.js-176-}
+package/build/chunk-C7KTTYNA.js-177-function getExtensionDir(projectFolder) {
+package/build/chunk-C7KTTYNA.js-178-  return join(projectFolder, "src", "extensions");
+package/build/chunk-C7KTTYNA.js-179-}
+package/build/chunk-C7KTTYNA.js-180-var MULTILINGUAL_DIR = join(GIT_IGNORED_DIR, "multilingual");
+package/build/chunk-C7KTTYNA.js-181-var TRANSLATIONS_DIR = join(MULTILINGUAL_DIR, "translations");
+package/build/chunk-C7KTTYNA.js-182-var MULTILINGUAL_METADATA_FILENAME = "metadata.json";
+package/build/chunk-C7KTTYNA.js-183-function getTranslationsDir(projectFolder) {
+package/build/chunk-C7KTTYNA.js-184-  return join(projectFolder, TRANSLATIONS_DIR);
+package/build/chunk-C7KTTYNA.js-185-}
+package/build/chunk-C7KTTYNA.js-186-function getMultilingualMetadataPath(projectFolder) {
+package/build/chunk-C7KTTYNA.js-187-  return join(projectFolder, MULTILINGUAL_DIR, MULTILINGUAL_METADATA_FILENAME);
+package/build/chunk-C7KTTYNA.js-188-}
+package/build/chunk-C7KTTYNA.js-189-function getDebugLogPath(projectFolder) {
+package/build/chunk-C7KTTYNA.js-190-  return getGitIgnoredPath(projectFolder, "debug-logs", "cli-debug.log");
+package/build/chunk-C7KTTYNA.js-191-}
+package/build/chunk-C7KTTYNA.js-192-var ASTRO_APP_CONFIG_PATH = join(GIT_IGNORED_DIR, "app.config.json");
+package/build/chunk-C7KTTYNA.js-193-var astroAppConfigSchema = zod_default.object({
+package/build/chunk-C7KTTYNA.js-194-  siteId: zod_default.string().uuid().optional(),
+package/build/chunk-C7KTTYNA.js-195-  devArmTag: zod_default.string().optional()
+package/build/chunk-C7KTTYNA.js-196-});
+package/build/chunk-C7KTTYNA.js-197-function getAstroAppConfigPath(projectFolder) {
+package/build/chunk-C7KTTYNA.js-198-  return join(projectFolder, ASTRO_APP_CONFIG_PATH);
+package/build/chunk-C7KTTYNA.js-199-}
+package/build/chunk-C7KTTYNA.js-200-
+package/build/chunk-C7KTTYNA.js-201-export {
+package/build/chunk-C7KTTYNA.js-202-  createPetriOverridesCookie,
+package/build/chunk-C7KTTYNA.js-203-  wixAstroConfigSchema,
+package/build/chunk-C7KTTYNA.js-204-  envSchema,
+package/build/chunk-C7KTTYNA.js-205-  ENV_FILE_NAME,
+package/build/chunk-C7KTTYNA.js-206-  TRANSLATIONS_FILE_PATH,
+package/build/chunk-C7KTTYNA.js:207:  BACKEND_WORKER_COMPONENT_ID,
+package/build/chunk-C7KTTYNA.js-208-  devMetadataSchema,
+package/build/chunk-C7KTTYNA.js-209-  buildMetadataSchema,
+package/build/chunk-C7KTTYNA.js-210-  extensionsBuildResultSchema,
+package/build/chunk-C7KTTYNA.js-211-  deploymentTopologySchema,
+package/build/chunk-C7KTTYNA.js-212-  getBuildMetadataPath,
+package/build/chunk-C7KTTYNA.js-213-  getDeploymentTopologyPath,
+package/build/chunk-C7KTTYNA.js-214-  getEnvFilePath,
+package/build/chunk-C7KTTYNA.js-215-  getExtensionDir,
+package/build/chunk-C7KTTYNA.js-216-  TRANSLATIONS_DIR,
+package/build/chunk-C7KTTYNA.js-217-  MULTILINGUAL_METADATA_FILENAME,
+package/build/chunk-C7KTTYNA.js-218-  getTranslationsDir,
+package/build/chunk-C7KTTYNA.js-219-  getMultilingualMetadataPath,
+package/build/chunk-C7KTTYNA.js-220-  getDebugLogPath,
+package/build/chunk-C7KTTYNA.js-221-  ASTRO_APP_CONFIG_PATH,
+package/build/chunk-C7KTTYNA.js-222-  astroAppConfigSchema,
+package/build/chunk-C7KTTYNA.js-223-  getAstroAppConfigPath
+package/build/chunk-C7KTTYNA.js-224-};
+package/build/chunk-C7KTTYNA.js-225-//# sourceMappingURL=chunk-C7KTTYNA.js.map
 --
-5054-  Variant2["BOX"] = "BOX";
-5055-  Variant2["CIRCLE"] = "CIRCLE";
-5056-  Variant2["HIGHLIGHT"] = "HIGHLIGHT";
-5057-  Variant2["STRIKETHROUGH"] = "STRIKETHROUGH";
-5058-  Variant2["CROSSED_OFF"] = "CROSSED_OFF";
-5059-})(Variant || (Variant = {}));
-5060-var ColumnSize;
-5061-(function(ColumnSize2) {
-5062-  ColumnSize2["SMALL"] = "SMALL";
-5063-  ColumnSize2["MEDIUM"] = "MEDIUM";
-5064-  ColumnSize2["LARGE"] = "LARGE";
-5065-  ColumnSize2["EXTRA_LARGE"] = "EXTRA_LARGE";
-5066-})(ColumnSize || (ColumnSize = {}));
-5067-var SmartBlockDataType;
-5068-(function(SmartBlockDataType2) {
-5069-  SmartBlockDataType2["SOLID_BOXES"] = "SOLID_BOXES";
-5070-  SmartBlockDataType2["NUMBERED_BOXES"] = "NUMBERED_BOXES";
-5071-  SmartBlockDataType2["STATS"] = "STATS";
-5072-  SmartBlockDataType2["CIRCLE_STATS"] = "CIRCLE_STATS";
-5073-  SmartBlockDataType2["SOLID_BOXES_ALTERNATING"] = "SOLID_BOXES_ALTERNATING";
-5074-  SmartBlockDataType2["SOLID_JOINED_BOXES"] = "SOLID_JOINED_BOXES";
-5075-  SmartBlockDataType2["SIDE_LINE_TEXT"] = "SIDE_LINE_TEXT";
-5076-  SmartBlockDataType2["TOP_LINE_TEXT"] = "TOP_LINE_TEXT";
-5077-  SmartBlockDataType2["OUTLINE_BOXES_WITH_TOP_CIRCLE"] = "OUTLINE_BOXES_WITH_TOP_CIRCLE";
-5078-  SmartBlockDataType2["BIG_BULLETS"] = "BIG_BULLETS";
-5079-  SmartBlockDataType2["SMALL_BULLETS"] = "SMALL_BULLETS";
-5080-  SmartBlockDataType2["ARROW_BULLETS"] = "ARROW_BULLETS";
-5081-  SmartBlockDataType2["PROCESS_STEPS"] = "PROCESS_STEPS";
-5082-  SmartBlockDataType2["BAR_STATS"] = "BAR_STATS";
-5083-  SmartBlockDataType2["TIMELINE"] = "TIMELINE";
-5084-  SmartBlockDataType2["MINIMAL_TIMELINE"] = "MINIMAL_TIMELINE";
-5085-  SmartBlockDataType2["PILLS"] = "PILLS";
-5086-  SmartBlockDataType2["STAR_RATING"] = "STAR_RATING";
-5087-  SmartBlockDataType2["QUOTE_BOXES"] = "QUOTE_BOXES";
-5088-  SmartBlockDataType2["CIRCLE"] = "CIRCLE";
-5089-  SmartBlockDataType2["PYRAMID"] = "PYRAMID";
-5090-  SmartBlockDataType2["STAIRCASE"] = "STAIRCASE";
-5091-  SmartBlockDataType2["VERTICAL_FUNNEL"] = "VERTICAL_FUNNEL";
-5092-})(SmartBlockDataType || (SmartBlockDataType = {}));
-5093-var VerticalAlignment;
-5094-(function(VerticalAlignment2) {
-5095-  VerticalAlignment2["TOP"] = "TOP";
-5096-  VerticalAlignment2["MIDDLE"] = "MIDDLE";
-5097-  VerticalAlignment2["BOTTOM"] = "BOTTOM";
-5098-})(VerticalAlignment || (VerticalAlignment = {}));
-5099-var TextAlignment;
-5100-(function(TextAlignment2) {
-5101-  TextAlignment2["AUTO"] = "AUTO";
-5102-  TextAlignment2["LEFT"] = "LEFT";
-5103-  TextAlignment2["RIGHT"] = "RIGHT";
-5104-  TextAlignment2["CENTER"] = "CENTER";
-5105-  TextAlignment2["JUSTIFY"] = "JUSTIFY";
-5106-})(TextAlignment || (TextAlignment = {}));
-5107-var Indentation;
-5108-(function(Indentation2) {
-5109-  Indentation2["NESTED"] = "NESTED";
-5110-  Indentation2["FLAT"] = "FLAT";
-5111-})(Indentation || (Indentation = {}));
-5112-var ListStyle;
-5113-(function(ListStyle2) {
-5114-  ListStyle2["PLAIN"] = "PLAIN";
-5115-  ListStyle2["NUMBERED"] = "NUMBERED";
-5116-  ListStyle2["LETTERS"] = "LETTERS";
-5117-  ListStyle2["ROMAN"] = "ROMAN";
-5118-  ListStyle2["BULLETED"] = "BULLETED";
-5119-  ListStyle2["ALPHABETICAL_INDEX"] = "ALPHABETICAL_INDEX";
-5120-  ListStyle2["ALPHABETICAL_INDEX_COMPACT"] = "ALPHABETICAL_INDEX_COMPACT";
-5121-})(ListStyle || (ListStyle = {}));
-5122-
-5123-// ../dev-center-overrides-client/src/isTrustedInternalErr.ts
-5124-init_esm_shims();
-5125-function isTrustedInternalErr(e) {
-5126-  if (isHttpError(e)) {
-5127-    const appError = e.response?.data?.details?.applicationError;
-5128-    if (appError?.description) {
-5129-      let errDescription;
-5130-      try {
-5131-        errDescription = JSON.parse(appError.description);
-5132-      } catch {
-5133-      }
-5134-      return errDescription?.results?.some(
-5135-        (result) => result.error?.startsWith("scriptAsset is not supported")
-5136-      );
-5137-    }
-5138-  }
-5139-  return false;
-5140-}
-5141-
-5142-// ../dev-center-overrides-client/src/utils.ts
-5143-var { AppPermissionDenied } = CliErrorCode;
-5144-function toModifiedComponents(components) {
-5145-  return components.map((comp) => ({
-5146-    componentId: comp.compId,
-5147-    data: comp.compData,
-5148-    name: comp.compName,
-5149-    type: comp.compType,
-5150-    createdBy: comp.createdBy,
-5151-    createdByVersion: comp.createdByVersion
-5152-  }));
-5153-}
-5154:function toComponentExperiments(components) {
-5155-  return components.flatMap(
-5156-    (comp) => comp.experiments?.enabledBy ? [
-5157-      {
-5158-        componentId: comp.compId,
-5159-        spec: comp.experiments.enabledBy,
-5160-        variantValue: "true",
-5161-        experimentActionType: ExperimentActionType.CREATE_COMPONENT,
-5162-        createComponentOptions: { experimentVersion: 1 }
-5163-      }
-5164-    ] : []
-5165-  );
-5166-}
-5167-function handleReleaseError(e, appId, fallbackCode) {
-5168-  if (isHttpError(e)) {
-5169-    if (e.response?.status === 403) {
-5170-      throw new CliError({
-5171-        cause: e,
-5172-        code: AppPermissionDenied({ appId })
-5173-      });
-5174-    }
-5175-    if (e.response?.status === 400 && isHttpValidationError(e)) {
-5176-      throw new CliError({
-5177-        cause: e,
-5178-        code: CliErrorCode.AppReleaseConfigViolations()
-5179-      });
-5180-    }
-5181-  }
-5182-  if (isTrustedInternalErr(e)) {
-5183-    throw new CliError({
-5184-      cause: e,
-5185-      code: CliErrorCode.TrustedAppIsNotMarkedAsInternal()
-5186-    });
-5187-  }
-5188-  throw new CliError({ cause: e, code: fallbackCode });
-5189-}
-5190-
-5191-// ../dev-center-overrides-client/src/client.ts
-5192-var UpdateComponentsOverridesData = (0, import_variant.variant)({
-5193-  NotFound: (0, import_variant.fields)(),
-5194-  Updated: {}
-5195-});
-5196-var DevCenterOverridesClient = class {
-5197-  constructor(httpClient) {
-5198-    this.httpClient = httpClient;
-5199-  }
-5200-  getAppLatestVersion = async (appId) => {
-5201-    try {
-5202-      const { data } = await this.httpClient.request(
-5203-        getLatestProductionVersion({ appId })
-5204-      );
-5205-      const { appVersion } = getLatestProductionVersionResponseSchema.parse(data);
-5206-      return appVersion?.version ?? 0;
-5207-    } catch (e) {
-5208-      throw new CliError({
-5209-        cause: e,
-5210-        code: CliErrorCode.FailedToFetchLatestProductionVersion()
-5211-      });
-5212-    }
-5213-  };
-5214-  createComponentsOverride = async ({
-5215-    type,
-5216-    appManifest: { appId, components },
-5217-    lifecycleState,
-5218-    projectId,
-5219-    experiments
-5220-  }) => {
-5221-    try {
-5222-      const appVersion = await this.getAppLatestVersion(appId);
-5223-      const { data } = await this.httpClient.request(
-5224-        createComponentsOverride({
-5225-          componentsOverride: {
-5226-            id: randomUUID(),
-5227-            type,
-5228-            appId,
-5229-            appVersion,
-5230-            lifecycleState,
-5231-            externalId: projectId,
-5232-            modifiedComponents: toModifiedComponents(components),
-5233-            experiments
-5234-          }
-5235-        })
-5236-      );
-5237-      return overrideIdResponseSchema.parse(data).componentsOverride.id;
-5238-    } catch (e) {
-5239-      handleReleaseError(e, appId, CliErrorCode.FailedToCreateAppRelease());
-5240-    }
-5241-  };
-5242-  updateComponentsOverrides = async ({
-5243-    id,
-5244-    type,
-5245-    appManifest: { appId, components },
-5246-    projectId
-5247-  }) => {
-5248-    try {
-5249-      const appVersion = await this.getAppLatestVersion(appId);
-5250-      await this.httpClient.request(
-5251-        updateComponentsOverrides({
-5252-          componentsOverride: {
-5253-            id,
-5254-            type,
+package/build/chunk-OJWSCRQM.js-60483-  ComponentType3["PREMIUM_CUSTOM_CHARGES"] = "PREMIUM_CUSTOM_CHARGES";
+package/build/chunk-OJWSCRQM.js-60484-  ComponentType3["ECOM_VALIDATIONS"] = "ECOM_VALIDATIONS";
+package/build/chunk-OJWSCRQM.js-60485-  ComponentType3["COMPONENT_REFERENCE_DATA_PROVIDER"] = "COMPONENT_REFERENCE_DATA_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60486-  ComponentType3["WIX_REVIEWS_PRODUCT_CATALOG"] = "WIX_REVIEWS_PRODUCT_CATALOG";
+package/build/chunk-OJWSCRQM.js-60487-  ComponentType3["SOCIAL_MARKETING_DESIGNS_PROVIDER"] = "SOCIAL_MARKETING_DESIGNS_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60488-  ComponentType3["GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER"] = "GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60489-  ComponentType3["COMMENTS_FILTER_PROVIDER"] = "COMMENTS_FILTER_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60490-  ComponentType3["BILLING_TAX_ID_VALIDATOR"] = "BILLING_TAX_ID_VALIDATOR";
+package/build/chunk-OJWSCRQM.js-60491-  ComponentType3["PING_SETTINGS_GROUP"] = "PING_SETTINGS_GROUP";
+package/build/chunk-OJWSCRQM.js-60492-  ComponentType3["FORMS_SPAM_SUBMISSIONS_PROVIDER"] = "FORMS_SPAM_SUBMISSIONS_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60493-  ComponentType3["EDITOR_ADDON"] = "EDITOR_ADDON";
+package/build/chunk-OJWSCRQM.js-60494-  ComponentType3["EXTERNAL_DATABASE_PROVIDER"] = "EXTERNAL_DATABASE_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60495-  ComponentType3["ECOM_PAYMENT_SETTINGS"] = "ECOM_PAYMENT_SETTINGS";
+package/build/chunk-OJWSCRQM.js-60496-  ComponentType3["NOTIFICATION_TOPIC"] = "NOTIFICATION_TOPIC";
+package/build/chunk-OJWSCRQM.js-60497-  ComponentType3["NOTIFICATION_PREFERENCES_FILTER_PROVIDER"] = "NOTIFICATION_PREFERENCES_FILTER_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60498-  ComponentType3["BOOKINGS_RESOURCE_TYPES_PROVIDER"] = "BOOKINGS_RESOURCE_TYPES_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60499-  ComponentType3["PRICING_PLANS_FORM_CONFIGURATION"] = "PRICING_PLANS_FORM_CONFIGURATION";
+package/build/chunk-OJWSCRQM.js-60500-  ComponentType3["USER_NOTIFICATION"] = "USER_NOTIFICATION";
+package/build/chunk-OJWSCRQM.js-60501-  ComponentType3["CONTACT_NOTIFICATION"] = "CONTACT_NOTIFICATION";
+package/build/chunk-OJWSCRQM.js-60502-  ComponentType3["UNIFIED_PAGE"] = "UNIFIED_PAGE";
+package/build/chunk-OJWSCRQM.js-60503-  ComponentType3["AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60504-  ComponentType3["PROPOSAL_EDITOR_PROVIDER"] = "PROPOSAL_EDITOR_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60505-  ComponentType3["CUSTOM_TABLE_RESERVATIONS_PROVIDER"] = "CUSTOM_TABLE_RESERVATIONS_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60506-  ComponentType3["COMMENTS_CONTEXT_PROVIDER"] = "COMMENTS_CONTEXT_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60507-  ComponentType3["FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER"] = "FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60508-  ComponentType3["AUTOMATIONS_VELO_ACTION_PROVIDER"] = "AUTOMATIONS_VELO_ACTION_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60509-  ComponentType3["CALENDAR_EVENT_TYPE_PROVIDER"] = "CALENDAR_EVENT_TYPE_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60510-  ComponentType3["RESERVED"] = "RESERVED";
+package/build/chunk-OJWSCRQM.js-60511-  ComponentType3["SMS_ACTION_MESSAGE"] = "SMS_ACTION_MESSAGE";
+package/build/chunk-OJWSCRQM.js-60512-  ComponentType3["BOOKING_POLICY_PROVIDER"] = "BOOKING_POLICY_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60513-  ComponentType3["MULTI_SERVICE_BOOKING_POLICY_PROVIDER"] = "MULTI_SERVICE_BOOKING_POLICY_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60514-  ComponentType3["AI_ASSISTANT"] = "AI_ASSISTANT";
+package/build/chunk-OJWSCRQM.js-60515-  ComponentType3["FORMS_SUBMISSIONS_EXTENSION_PROVIDER"] = "FORMS_SUBMISSIONS_EXTENSION_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60516-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA"] = "MULTILINGUAL_TRANSLATION_SCHEMA";
+package/build/chunk-OJWSCRQM.js-60517-  ComponentType3["TAX_CALCULATION_PROVIDER"] = "TAX_CALCULATION_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60518-  ComponentType3["TAX_GROUPS_PROVIDER"] = "TAX_GROUPS_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60519-  ComponentType3["BACK_OFFICE_MODAL"] = "BACK_OFFICE_MODAL";
+package/build/chunk-OJWSCRQM.js-60520-  ComponentType3["DEPLOYMENT_PIPELINE_PROVIDER"] = "DEPLOYMENT_PIPELINE_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60521-  ComponentType3["CUSTOM_ELEMENT_WIDGET"] = "CUSTOM_ELEMENT_WIDGET";
+package/build/chunk-OJWSCRQM.js-60522-  ComponentType3["BACK_OFFICE_EXTENSION_WIDGET"] = "BACK_OFFICE_EXTENSION_WIDGET";
+package/build/chunk-OJWSCRQM.js-60523-  ComponentType3["BACK_OFFICE_EXTENSION_MENU_ITEM"] = "BACK_OFFICE_EXTENSION_MENU_ITEM";
+package/build/chunk-OJWSCRQM.js-60524-  ComponentType3["FORM_TEMPLATE"] = "FORM_TEMPLATE";
+package/build/chunk-OJWSCRQM.js-60525-  ComponentType3["NOTIFICATION_CONTENT"] = "NOTIFICATION_CONTENT";
+package/build/chunk-OJWSCRQM.js-60526-  ComponentType3["BROADCAST_LIST"] = "BROADCAST_LIST";
+package/build/chunk-OJWSCRQM.js-60527-  ComponentType3["PARTNERS_PAYOUTS"] = "PARTNERS_PAYOUTS";
+package/build/chunk-OJWSCRQM.js-60528-  ComponentType3["WIX_REVIEWS_ENTITY_CATALOG"] = "WIX_REVIEWS_ENTITY_CATALOG";
+package/build/chunk-OJWSCRQM.js-60529-  ComponentType3["VELO_PUBLISH_PIPELINE_TASK_PROVIDER"] = "VELO_PUBLISH_PIPELINE_TASK_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60530-  ComponentType3["FUNCTIONS_SHOP_PRICE_PROVIDER"] = "FUNCTIONS_SHOP_PRICE_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60531-  ComponentType3["FUNCTION"] = "FUNCTION";
+package/build/chunk-OJWSCRQM.js-60532-  ComponentType3["ECOM_CHECKOUT_CONTENT"] = "ECOM_CHECKOUT_CONTENT";
+package/build/chunk-OJWSCRQM.js-60533-  ComponentType3["COMMUNICATION_CHANNEL_PROVIDER"] = "COMMUNICATION_CHANNEL_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60534-  ComponentType3["WEBHOOK"] = "WEBHOOK";
+package/build/chunk-OJWSCRQM.js-60535-  ComponentType3["TOPOLOGY"] = "TOPOLOGY";
+package/build/chunk-OJWSCRQM.js-60536-  ComponentType3["LOYALTY_CUSTOM_REWARDS"] = "LOYALTY_CUSTOM_REWARDS";
+package/build/chunk-OJWSCRQM.js-60537-  ComponentType3["FUNCTION_RECIPE"] = "FUNCTION_RECIPE";
+package/build/chunk-OJWSCRQM.js-60538-  ComponentType3["BACK_OFFICE_EXTERNAL_URL"] = "BACK_OFFICE_EXTERNAL_URL";
+package/build/chunk-OJWSCRQM.js-60539-  ComponentType3["IDENTITY_FACTOR"] = "IDENTITY_FACTOR";
+package/build/chunk-OJWSCRQM.js-60540-  ComponentType3["ECOM_DISCOUNTS"] = "ECOM_DISCOUNTS";
+package/build/chunk-OJWSCRQM.js-60541-  ComponentType3["VELO_CUSTOM_CSS"] = "VELO_CUSTOM_CSS";
+package/build/chunk-OJWSCRQM.js-60542-  ComponentType3["DEALER_ADAPTIVE_COMPONENT_PROVIDER"] = "DEALER_ADAPTIVE_COMPONENT_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60543-  ComponentType3["AI_ASSISTANT_ACTION"] = "AI_ASSISTANT_ACTION";
+package/build/chunk-OJWSCRQM.js-60544-  ComponentType3["ECOM_INVENTORY"] = "ECOM_INVENTORY";
+package/build/chunk-OJWSCRQM.js-60545-  ComponentType3["MONITORING"] = "MONITORING";
+package/build/chunk-OJWSCRQM.js-60546-  ComponentType3["PAPI_PROVIDER"] = "PAPI_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60547-  ComponentType3["UNIFIED_LIGHTBOX"] = "UNIFIED_LIGHTBOX";
+package/build/chunk-OJWSCRQM.js-60548-  ComponentType3["FORMS_EXTENSION_PROVIDER"] = "FORMS_EXTENSION_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60549-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA_GROUP"] = "MULTILINGUAL_TRANSLATION_SCHEMA_GROUP";
+package/build/chunk-OJWSCRQM.js-60550-  ComponentType3["PANEL"] = "PANEL";
+package/build/chunk-OJWSCRQM.js-60551-  ComponentType3["PREMIUM_PURCHASE_VALIDATIONS"] = "PREMIUM_PURCHASE_VALIDATIONS";
+package/build/chunk-OJWSCRQM.js-60552-  ComponentType3["BROWSER_STORAGE"] = "BROWSER_STORAGE";
+package/build/chunk-OJWSCRQM.js-60553-  ComponentType3["SDK_DEFINITION"] = "SDK_DEFINITION";
+package/build/chunk-OJWSCRQM.js-60554-  ComponentType3["SITE_WIDGET_SLOT"] = "SITE_WIDGET_SLOT";
+package/build/chunk-OJWSCRQM.js-60555-  ComponentType3["CALENDAR_EVENT_VALIDATION_PROVIDER"] = "CALENDAR_EVENT_VALIDATION_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60556-  ComponentType3["CLIENT_SIDE_SERVICE"] = "CLIENT_SIDE_SERVICE";
+package/build/chunk-OJWSCRQM.js-60557-  ComponentType3["BILLING_SETTINGS"] = "BILLING_SETTINGS";
+package/build/chunk-OJWSCRQM.js-60558-  ComponentType3["PATTERNS_WIZARD"] = "PATTERNS_WIZARD";
+package/build/chunk-OJWSCRQM.js-60559-  ComponentType3["APPLICATION_PROFILE"] = "APPLICATION_PROFILE";
+package/build/chunk-OJWSCRQM.js-60560-  ComponentType3["TEXT_TO_SPEECH_ACTION_MESSAGE"] = "TEXT_TO_SPEECH_ACTION_MESSAGE";
+package/build/chunk-OJWSCRQM.js-60561-  ComponentType3["AUDIENCE_PROVIDER"] = "AUDIENCE_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60562-  ComponentType3["PRICING_PLANS_PRICE"] = "PRICING_PLANS_PRICE";
+package/build/chunk-OJWSCRQM.js-60563-  ComponentType3["PRICING_PLAN_START_DATE_LIMITS"] = "PRICING_PLAN_START_DATE_LIMITS";
+package/build/chunk-OJWSCRQM.js-60564-  ComponentType3["PRICING_PLAN_START_DATE_RULES"] = "PRICING_PLAN_START_DATE_RULES";
+package/build/chunk-OJWSCRQM.js-60565-  ComponentType3["EVENTS_TICKET_RESERVATIONS"] = "EVENTS_TICKET_RESERVATIONS";
+package/build/chunk-OJWSCRQM.js-60566-  ComponentType3["PAYMENTS_DISPUTE_SERVICE_PLUGIN"] = "PAYMENTS_DISPUTE_SERVICE_PLUGIN";
+package/build/chunk-OJWSCRQM.js-60567-  ComponentType3["PRICING_PLANS_FEES"] = "PRICING_PLANS_FEES";
+package/build/chunk-OJWSCRQM.js-60568-  ComponentType3["EDITOR_REACT_COMPONENT"] = "EDITOR_REACT_COMPONENT";
+package/build/chunk-OJWSCRQM.js-60569-  ComponentType3["SUPPLIERS_HUB_MARKETPLACE"] = "SUPPLIERS_HUB_MARKETPLACE";
+package/build/chunk-OJWSCRQM.js-60570-  ComponentType3["FORM_SCHEMA_DYNAMIC_VALUES"] = "FORM_SCHEMA_DYNAMIC_VALUES";
+package/build/chunk-OJWSCRQM.js-60571-  ComponentType3["BLOG_PAYWALL_PROVIDER"] = "BLOG_PAYWALL_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60572-  ComponentType3["LOYALTY_CUSTOM_REWARDS_V2"] = "LOYALTY_CUSTOM_REWARDS_V2";
+package/build/chunk-OJWSCRQM.js-60573-  ComponentType3["STORES_PRODUCT_RESTRICTIONS"] = "STORES_PRODUCT_RESTRICTIONS";
+package/build/chunk-OJWSCRQM.js-60574-  ComponentType3["FORM_SUBMISSION_MODERATION"] = "FORM_SUBMISSION_MODERATION";
+package/build/chunk-OJWSCRQM.js-60575-  ComponentType3["EVENTS_EVENT_BADGES"] = "EVENTS_EVENT_BADGES";
+package/build/chunk-OJWSCRQM.js-60576-  ComponentType3["BILLING_OPERATION"] = "BILLING_OPERATION";
+package/build/chunk-OJWSCRQM.js-60577-  ComponentType3["BACK_OFFICE_CUSTOMIZATION"] = "BACK_OFFICE_CUSTOMIZATION";
+package/build/chunk-OJWSCRQM.js-60578-  ComponentType3["COMPONENT_ENRICHER_PROVIDER"] = "COMPONENT_ENRICHER_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60579-  ComponentType3["BACK_OFFICE_RESTRICTED_CUSTOMIZATION"] = "BACK_OFFICE_RESTRICTED_CUSTOMIZATION";
+package/build/chunk-OJWSCRQM.js-60580-  ComponentType3["EDITOR_APP_PREVIEWS_POC"] = "EDITOR_APP_PREVIEWS_POC";
+package/build/chunk-OJWSCRQM.js-60581-  ComponentType3["LEGENDS_PERSONA_CONFIGURATION"] = "LEGENDS_PERSONA_CONFIGURATION";
+package/build/chunk-OJWSCRQM.js-60582-  ComponentType3["WIX_HOSTING_APP_DEPLOYMENT_PROVIDER"] = "WIX_HOSTING_APP_DEPLOYMENT_PROVIDER";
+package/build/chunk-OJWSCRQM.js:60583:  ComponentType3["BACKEND_WORKER"] = "BACKEND_WORKER";
+package/build/chunk-OJWSCRQM.js-60584-  ComponentType3["EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60585-  ComponentType3["WIX_HOSTING_APP_ENVIRONMENT_PROVIDER"] = "WIX_HOSTING_APP_ENVIRONMENT_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60586-  ComponentType3["SDK_EXPORTS"] = "SDK_EXPORTS";
+package/build/chunk-OJWSCRQM.js-60587-  ComponentType3["VIEWER_SERVICE"] = "VIEWER_SERVICE";
+package/build/chunk-OJWSCRQM.js-60588-  ComponentType3["WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN"] = "WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN";
+package/build/chunk-OJWSCRQM.js-60589-  ComponentType3["CONTACTS_SEGMENTS_V2_FILTER_PROVIDER"] = "CONTACTS_SEGMENTS_V2_FILTER_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60590-  ComponentType3["ANALYTICS_PRODUCT_CATALOG"] = "ANALYTICS_PRODUCT_CATALOG";
+package/build/chunk-OJWSCRQM.js-60591-  ComponentType3["SITE_MIGRATION"] = "SITE_MIGRATION";
+package/build/chunk-OJWSCRQM.js-60592-  ComponentType3["RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN"] = "RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN";
+package/build/chunk-OJWSCRQM.js-60593-  ComponentType3["WIX_VIBE_CODING_INSTRUCTIONS"] = "WIX_VIBE_CODING_INSTRUCTIONS";
+package/build/chunk-OJWSCRQM.js-60594-  ComponentType3["TAX_EXEMPT_GROUPS_PROVIDER"] = "TAX_EXEMPT_GROUPS_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60595-  ComponentType3["BOOKING_AUTOMATIONS_CONFIGURATION"] = "BOOKING_AUTOMATIONS_CONFIGURATION";
+package/build/chunk-OJWSCRQM.js-60596-  ComponentType3["WIX_VIBE_COMPONENT"] = "WIX_VIBE_COMPONENT";
+package/build/chunk-OJWSCRQM.js-60597-  ComponentType3["WIXEL"] = "WIXEL";
+package/build/chunk-OJWSCRQM.js-60598-  ComponentType3["STAFF_SORTING_PROVIDER"] = "STAFF_SORTING_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60599-  ComponentType3["FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER"] = "FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60600-  ComponentType3["FUNCTIONS_ASSISTANT_TOOLS"] = "FUNCTIONS_ASSISTANT_TOOLS";
+package/build/chunk-OJWSCRQM.js-60601-  ComponentType3["SITE_MAP_INFO_PROVIDER"] = "SITE_MAP_INFO_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60602-  ComponentType3["WIX_AI_GATEWAY_CALLBACK"] = "WIX_AI_GATEWAY_CALLBACK";
+package/build/chunk-OJWSCRQM.js-60603-  ComponentType3["URL_MAPPER_PROVIDER"] = "URL_MAPPER_PROVIDER";
+package/build/chunk-OJWSCRQM.js-60604-  ComponentType3["PROVIDER_SUPPRESSION_SERVICE_PLUGIN"] = "PROVIDER_SUPPRESSION_SERVICE_PLUGIN";
+package/build/chunk-OJWSCRQM.js-60605-  ComponentType3["ECOM_FORMS"] = "ECOM_FORMS";
+package/build/chunk-OJWSCRQM.js-60606-})(ComponentType2 || (ComponentType2 = {}));
+package/build/chunk-OJWSCRQM.js-60607-var ExtensionExposureExposure;
+package/build/chunk-OJWSCRQM.js-60608-(function(ExtensionExposureExposure2) {
+package/build/chunk-OJWSCRQM.js-60609-  ExtensionExposureExposure2["PRIVATE"] = "PRIVATE";
+package/build/chunk-OJWSCRQM.js-60610-  ExtensionExposureExposure2["INTERNAL"] = "INTERNAL";
+package/build/chunk-OJWSCRQM.js-60611-  ExtensionExposureExposure2["PUBLIC"] = "PUBLIC";
+package/build/chunk-OJWSCRQM.js-60612-})(ExtensionExposureExposure || (ExtensionExposureExposure = {}));
+package/build/chunk-OJWSCRQM.js-60613-var Maturity;
+package/build/chunk-OJWSCRQM.js-60614-(function(Maturity2) {
+package/build/chunk-OJWSCRQM.js-60615-  Maturity2["ALPHA"] = "ALPHA";
+package/build/chunk-OJWSCRQM.js-60616-  Maturity2["BETA"] = "BETA";
+package/build/chunk-OJWSCRQM.js-60617-  Maturity2["GA"] = "GA";
+package/build/chunk-OJWSCRQM.js-60618-  Maturity2["NOT_IMPLEMENTED"] = "NOT_IMPLEMENTED";
+package/build/chunk-OJWSCRQM.js-60619-})(Maturity || (Maturity = {}));
+package/build/chunk-OJWSCRQM.js-60620-var WidgetVertical;
+package/build/chunk-OJWSCRQM.js-60621-(function(WidgetVertical2) {
+package/build/chunk-OJWSCRQM.js-60622-  WidgetVertical2["NONE_VERTICAL"] = "NONE_VERTICAL";
+package/build/chunk-OJWSCRQM.js-60623-  WidgetVertical2["TOP"] = "TOP";
+package/build/chunk-OJWSCRQM.js-60624-  WidgetVertical2["CENTER_VERTICAL"] = "CENTER_VERTICAL";
+package/build/chunk-OJWSCRQM.js-60625-  WidgetVertical2["BOTTOM"] = "BOTTOM";
+package/build/chunk-OJWSCRQM.js-60626-})(WidgetVertical || (WidgetVertical = {}));
+package/build/chunk-OJWSCRQM.js-60627-var WidgetHorizontal;
+package/build/chunk-OJWSCRQM.js-60628-(function(WidgetHorizontal2) {
+package/build/chunk-OJWSCRQM.js-60629-  WidgetHorizontal2["NONE_HORIZONTAL"] = "NONE_HORIZONTAL";
+package/build/chunk-OJWSCRQM.js-60630-  WidgetHorizontal2["LEFT"] = "LEFT";
+package/build/chunk-OJWSCRQM.js-60631-  WidgetHorizontal2["CENTER_HORIZONTAL"] = "CENTER_HORIZONTAL";
+package/build/chunk-OJWSCRQM.js-60632-  WidgetHorizontal2["RIGHT"] = "RIGHT";
+package/build/chunk-OJWSCRQM.js-60633-})(WidgetHorizontal || (WidgetHorizontal = {}));
+package/build/chunk-OJWSCRQM.js-60634-var WidgetWidthType;
+package/build/chunk-OJWSCRQM.js-60635-(function(WidgetWidthType2) {
+package/build/chunk-OJWSCRQM.js-60636-  WidgetWidthType2["NONE_TYPE"] = "NONE_TYPE";
+package/build/chunk-OJWSCRQM.js-60637-  WidgetWidthType2["CUSTOM"] = "CUSTOM";
+package/build/chunk-OJWSCRQM.js-60638-  WidgetWidthType2["FULL"] = "FULL";
+package/build/chunk-OJWSCRQM.js-60639-})(WidgetWidthType || (WidgetWidthType = {}));
+package/build/chunk-OJWSCRQM.js-60640-var Region;
+package/build/chunk-OJWSCRQM.js-60641-(function(Region2) {
+package/build/chunk-OJWSCRQM.js-60642-  Region2["no_region"] = "no_region";
+package/build/chunk-OJWSCRQM.js-60643-  Region2["header"] = "header";
+package/build/chunk-OJWSCRQM.js-60644-  Region2["pageContainer"] = "pageContainer";
+package/build/chunk-OJWSCRQM.js-60645-  Region2["footer"] = "footer";
+package/build/chunk-OJWSCRQM.js-60646-})(Region || (Region = {}));
+package/build/chunk-OJWSCRQM.js-60647-var UnitType;
+package/build/chunk-OJWSCRQM.js-60648-(function(UnitType2) {
+package/build/chunk-OJWSCRQM.js-60649-  UnitType2["NO_UNIT"] = "NO_UNIT";
+package/build/chunk-OJWSCRQM.js-60650-  UnitType2["AUTO"] = "AUTO";
+package/build/chunk-OJWSCRQM.js-60651-  UnitType2["PX"] = "PX";
+package/build/chunk-OJWSCRQM.js-60652-  UnitType2["VH"] = "VH";
+package/build/chunk-OJWSCRQM.js-60653-  UnitType2["VW"] = "VW";
+package/build/chunk-OJWSCRQM.js-60654-  UnitType2["PERCENTAGE"] = "PERCENTAGE";
+package/build/chunk-OJWSCRQM.js-60655-})(UnitType || (UnitType = {}));
+package/build/chunk-OJWSCRQM.js-60656-var HorizontalDocking;
+package/build/chunk-OJWSCRQM.js-60657-(function(HorizontalDocking2) {
+package/build/chunk-OJWSCRQM.js-60658-  HorizontalDocking2["NO_HDOCKING"] = "NO_HDOCKING";
+package/build/chunk-OJWSCRQM.js-60659-  HorizontalDocking2["LEFT_DOCKING"] = "LEFT_DOCKING";
+package/build/chunk-OJWSCRQM.js-60660-  HorizontalDocking2["HCENTER"] = "HCENTER";
+package/build/chunk-OJWSCRQM.js-60661-  HorizontalDocking2["RIGHT_DOCKING"] = "RIGHT_DOCKING";
+package/build/chunk-OJWSCRQM.js-60662-})(HorizontalDocking || (HorizontalDocking = {}));
+package/build/chunk-OJWSCRQM.js-60663-var VerticalDocking;
+package/build/chunk-OJWSCRQM.js-60664-(function(VerticalDocking2) {
+package/build/chunk-OJWSCRQM.js-60665-  VerticalDocking2["NO_VDOCKING"] = "NO_VDOCKING";
+package/build/chunk-OJWSCRQM.js-60666-  VerticalDocking2["TOP_DOCKING"] = "TOP_DOCKING";
+package/build/chunk-OJWSCRQM.js-60667-  VerticalDocking2["VCENTER"] = "VCENTER";
+package/build/chunk-OJWSCRQM.js-60668-  VerticalDocking2["BOTTOM_DOCKING"] = "BOTTOM_DOCKING";
+package/build/chunk-OJWSCRQM.js-60669-})(VerticalDocking || (VerticalDocking = {}));
+package/build/chunk-OJWSCRQM.js-60670-var SiteMembersSsrCaching;
+package/build/chunk-OJWSCRQM.js-60671-(function(SiteMembersSsrCaching2) {
+package/build/chunk-OJWSCRQM.js-60672-  SiteMembersSsrCaching2["UNKNOWN_SITE_MEMBERS_SSR_CACHING"] = "UNKNOWN_SITE_MEMBERS_SSR_CACHING";
+package/build/chunk-OJWSCRQM.js-60673-  SiteMembersSsrCaching2["CACHING_ALLOWED"] = "CACHING_ALLOWED";
+package/build/chunk-OJWSCRQM.js-60674-  SiteMembersSsrCaching2["CACHING_NOT_ALLOWED"] = "CACHING_NOT_ALLOWED";
+package/build/chunk-OJWSCRQM.js-60675-})(SiteMembersSsrCaching || (SiteMembersSsrCaching = {}));
+package/build/chunk-OJWSCRQM.js-60676-var MpaNavigation;
+package/build/chunk-OJWSCRQM.js-60677-(function(MpaNavigation2) {
+package/build/chunk-OJWSCRQM.js-60678-  MpaNavigation2["DEFAULT"] = "DEFAULT";
+package/build/chunk-OJWSCRQM.js-60679-  MpaNavigation2["ALLOWED"] = "ALLOWED";
+package/build/chunk-OJWSCRQM.js-60680-  MpaNavigation2["NOT_ALLOWED"] = "NOT_ALLOWED";
+package/build/chunk-OJWSCRQM.js-60681-})(MpaNavigation || (MpaNavigation = {}));
+package/build/chunk-OJWSCRQM.js-60682-var ReplacementType;
+package/build/chunk-OJWSCRQM.js-60683-(function(ReplacementType2) {
 --
-5452-function useUpdateDeploymentTopologyForSite(siteId) {
-5453-  const { model } = useProjectModel();
-5454-  return (0, import_react3.useCallback)(
-5455-    async ({
-5456-      environment,
-5457-      siteUrl,
-5458-      versionOverrideId
-5459-    }) => {
-5460-      const links = resolveSiteLinks(model, {
-5461-        cmd: getPlatformLinkCommand(environment),
-5462-        siteId,
-5463-        overrideId: versionOverrideId,
-5464-        siteUrl
-5465-      });
-5466-      await writeDeploymentTopologyEnvironment(
-5467-        model.projectFolder,
-5468-        environment,
-5469-        {
-5470-          id: versionOverrideId,
-5471-          site: toTopologyLink(links, "site"),
-5472-          dashboard: toTopologyLink(links, "dashboard")
-5473-        }
-5474-      );
-5475-    },
-5476-    [model, siteId]
-5477-  );
-5478-}
-5479-function useUpdateDeploymentTopologyForApp(siteId) {
-5480-  const { model } = useProjectModel();
-5481-  return (0, import_react3.useCallback)(
-5482-    async ({
-5483-      environment,
-5484-      versionOverrideId
-5485-    }) => {
-5486-      const links = resolveAppLinks(model, {
-5487-        cmd: getPlatformLinkCommand(environment),
-5488-        siteId,
-5489-        overrideId: versionOverrideId
-5490-      });
-5491-      await writeDeploymentTopologyEnvironment(
-5492-        model.projectFolder,
-5493-        environment,
-5494-        {
-5495-          id: versionOverrideId,
-5496-          site: toTopologyLink(links, "site"),
-5497-          editor: toTopologyLink(links, "editor"),
-5498-          dashboard: toTopologyLink(links, "dashboard")
-5499-        }
-5500-      );
-5501-    },
-5502-    [model, siteId]
-5503-  );
-5504-}
-5505-
-5506-// ../cli-astro-commands/src/components/PlatformLink/PlatformLinksSection.tsx
-5507-init_esm_shims();
-5508-var import_react5 = __toESM(require_react(), 1);
-5509-
-5510-// ../cli-astro-commands/src/components/PlatformLink/LinkClickTip.tsx
-5511-init_esm_shims();
-5512-var import_react4 = __toESM(require_react(), 1);
-5513-import process from "node:process";
-5514-var LinkClickTip = () => /* @__PURE__ */ import_react4.default.createElement(Text, { skin: "secondary" }, `Tip: click a link to open it (some terminals require ${process.platform === "darwin" ? "\u2318" : "Ctrl"}+click).`);
-5515-
-5516-// ../cli-astro-commands/src/components/PlatformLink/PlatformLinksSection.tsx
-5517-var PlatformLinksSection = ({
-5518-  links
-5519-}) => {
-5520-  if (links.length === 0) {
-5521-    return null;
-5522-  }
-5523-  return /* @__PURE__ */ import_react5.default.createElement(Box_default, { marginY: 1, flexDirection: "column", gap: 1 }, /* @__PURE__ */ import_react5.default.createElement(Text, null, "Open the preview on:"), /* @__PURE__ */ import_react5.default.createElement(Box_default, { paddingLeft: 2, flexDirection: "column" }, links.map(({ platform, url, label }) => /* @__PURE__ */ import_react5.default.createElement(PlatformLink, { key: platform, url, label }))), /* @__PURE__ */ import_react5.default.createElement(LinkClickTip, null));
-5524-};
-5525-
-5526-// ../cli-app-manifest/build/index.js
-5527-init_esm_shims();
-5528-var import_rfdc = __toESM(require_rfdc(), 1);
-5529-var import_rfdc2 = __toESM(require_rfdc(), 1);
-5530-var import_rfdc3 = __toESM(require_rfdc(), 1);
-5531-var import_rfdc4 = __toESM(require_rfdc(), 1);
-5532-var errorReportingSchema = external_exports.object({
-5533-  errorReporting: external_exports.object({
-5534-    url: external_exports.string().optional(),
-5535-    // optional because of yoshi
-5536-    artifact: external_exports.object({
-5537-      fullArtifactId: external_exports.string().max(255).min(1),
-5538-      version: external_exports.string().max(255).min(1)
-5539-    }).optional()
-5540-  }).optional()
-5541-});
-5542-var componentSourceSchema = external_exports.object({
-5543-  iframeUrl: external_exports.string().optional(),
-5544-  scriptAsset: external_exports.object({
-5545-    exportedName: external_exports.string(),
-5546-    containerId: external_exports.string(),
-5547-    url: external_exports.string(),
-5548-    scriptType: external_exports.string().optional()
-5549-  }).optional()
-5550-});
-5551-var backendWorkerSchema = external_exports.object({
-5552:  compType: external_exports.literal(ComponentType.BACKEND_WORKER),
-5553-  compId: external_exports.string(),
-5554-  compName: external_exports.string().optional(),
-5555-  createdBy: external_exports.string().optional(),
-5556-  createdByVersion: external_exports.string().optional(),
-5557-  compData: external_exports.object({
-5558-    backendWorker: external_exports.object({
-5559-      deploymentId: external_exports.string().uuid(),
-5560-      deploymentUrl: external_exports.string().url().optional(),
-5561-      label: external_exports.string().max(200).optional(),
-5562-      commitHash: external_exports.string().max(40).optional()
-5563-    })
-5564-  })
-5565-});
-5566-var aiContextSchema = external_exports.object({
-5567-  description: external_exports.string().min(20).max(1e4)
-5568-}).nullish();
-5569-var backofficePageCompDataSchema = external_exports.object({
-5570-  hostingPlatform: external_exports.string(),
-5571-  fullPage: external_exports.boolean().nullish(),
-5572-  hideInSidebar: external_exports.boolean().nullish(),
-5573-  mobileCompatible: external_exports.boolean().nullish(),
-5574-  priority: external_exports.number().nullish(),
-5575-  routePath: external_exports.string().nullish(),
-5576-  title: external_exports.string(),
-5577-  pageCategoryId: external_exports.string().uuid().nullish(),
-5578-  activeSidebarPageId: external_exports.string().nullish(),
-5579-  requiredPermission: external_exports.string().nullish(),
-5580-  previousRoutePaths: external_exports.array(external_exports.string()).nullish()
-5581-}).merge(errorReportingSchema).merge(componentSourceSchema).passthrough();
-5582-var widgetCompDataSchema = external_exports.object({
-5583-  width: external_exports.number().nullish(),
-5584-  height: external_exports.number().nullish()
-5585-}).merge(componentSourceSchema).passthrough();
-5586-var componentExperimentSchema = external_exports.object({
-5587-  appId: external_exports.string(),
-5588-  componentId: external_exports.string().uuid(),
-5589-  spec: external_exports.string().min(1),
-5590-  variantValue: external_exports.string()
-5591-}).passthrough().optional();
-5592-var backofficePageSchema = external_exports.object({
-5593-  compId: external_exports.string(),
-5594-  compType: external_exports.literal(ComponentType.BACK_OFFICE_PAGE),
-5595-  compData: external_exports.object({
-5596-    backOfficePage: backofficePageCompDataSchema
-5597-  }),
-5598-  compName: external_exports.string().optional(),
-5599-  createdBy: external_exports.string().optional(),
-5600-  createdByVersion: external_exports.string().optional(),
-5601-  experiment: componentExperimentSchema
-5602-}).passthrough();
-5603-var backofficeExtensionSchema = external_exports.object({
-5604-  compId: external_exports.string(),
-5605-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION),
-5606-  compData: external_exports.object({
-5607-    backOfficeExtension: external_exports.object({
-5608-      hostingPlatform: external_exports.string(),
-5609-      extends: external_exports.string(),
-5610-      title: external_exports.string().nullish(),
-5611-      extensionType: external_exports.literal(
-5612-        ExtendingComponentType.BACK_OFFICE_EXTENSION_WIDGET
-5613-      ),
-5614-      requiredPermission: external_exports.string().nullish(),
-5615-      widget: widgetCompDataSchema
-5616-    }).merge(errorReportingSchema).passthrough()
-5617-  }),
-5618-  compName: external_exports.string().optional(),
-5619-  createdBy: external_exports.string().optional(),
-5620-  createdByVersion: external_exports.string().optional(),
-5621-  experiment: componentExperimentSchema
-5622-}).passthrough();
-5623-var backofficeExtensionWidgetSchema = external_exports.object({
-5624-  compId: external_exports.string(),
-5625-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION_WIDGET),
-5626-  compData: external_exports.object({
-5627-    backOfficeExtensionWidget: external_exports.object({
-5628-      hostingPlatform: external_exports.string(),
-5629-      extends: external_exports.string(),
-5630-      title: external_exports.string().nullish(),
-5631-      description: external_exports.string().optional(),
-5632-      requiredPermission: external_exports.string().nullish(),
-5633-      width: external_exports.number().nullish(),
-5634-      height: external_exports.number().nullish(),
-5635-      aiContext: aiContextSchema
-5636-    }).merge(componentSourceSchema).merge(errorReportingSchema).passthrough()
-5637-  }),
-5638-  compName: external_exports.string().optional(),
-5639-  createdBy: external_exports.string().optional(),
-5640-  createdByVersion: external_exports.string().optional(),
-5641-  experiment: componentExperimentSchema
-5642-}).passthrough();
-5643-var backofficeExtensionMenuPluginSchema = external_exports.object({
-5644-  compId: external_exports.string(),
-5645-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION_MENU_ITEM),
-5646-  compData: external_exports.object({
-5647-    backOfficeExtensionMenuItem: external_exports.object({
-5648-      id: external_exports.string().uuid(),
-5649-      title: external_exports.string().min(1),
-5650-      subtitle: external_exports.string().max(200).optional(),
-5651-      iconKey: external_exports.string().min(3).max(50).optional(),
-5652-      extends: external_exports.string().uuid(),
+package/build/chunk-D7ORRBCE.js-2457-  ComponentType3["PREMIUM_CUSTOM_CHARGES"] = "PREMIUM_CUSTOM_CHARGES";
+package/build/chunk-D7ORRBCE.js-2458-  ComponentType3["ECOM_VALIDATIONS"] = "ECOM_VALIDATIONS";
+package/build/chunk-D7ORRBCE.js-2459-  ComponentType3["COMPONENT_REFERENCE_DATA_PROVIDER"] = "COMPONENT_REFERENCE_DATA_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2460-  ComponentType3["WIX_REVIEWS_PRODUCT_CATALOG"] = "WIX_REVIEWS_PRODUCT_CATALOG";
+package/build/chunk-D7ORRBCE.js-2461-  ComponentType3["SOCIAL_MARKETING_DESIGNS_PROVIDER"] = "SOCIAL_MARKETING_DESIGNS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2462-  ComponentType3["GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER"] = "GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2463-  ComponentType3["COMMENTS_FILTER_PROVIDER"] = "COMMENTS_FILTER_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2464-  ComponentType3["BILLING_TAX_ID_VALIDATOR"] = "BILLING_TAX_ID_VALIDATOR";
+package/build/chunk-D7ORRBCE.js-2465-  ComponentType3["PING_SETTINGS_GROUP"] = "PING_SETTINGS_GROUP";
+package/build/chunk-D7ORRBCE.js-2466-  ComponentType3["FORMS_SPAM_SUBMISSIONS_PROVIDER"] = "FORMS_SPAM_SUBMISSIONS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2467-  ComponentType3["EDITOR_ADDON"] = "EDITOR_ADDON";
+package/build/chunk-D7ORRBCE.js-2468-  ComponentType3["EXTERNAL_DATABASE_PROVIDER"] = "EXTERNAL_DATABASE_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2469-  ComponentType3["ECOM_PAYMENT_SETTINGS"] = "ECOM_PAYMENT_SETTINGS";
+package/build/chunk-D7ORRBCE.js-2470-  ComponentType3["NOTIFICATION_TOPIC"] = "NOTIFICATION_TOPIC";
+package/build/chunk-D7ORRBCE.js-2471-  ComponentType3["NOTIFICATION_PREFERENCES_FILTER_PROVIDER"] = "NOTIFICATION_PREFERENCES_FILTER_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2472-  ComponentType3["BOOKINGS_RESOURCE_TYPES_PROVIDER"] = "BOOKINGS_RESOURCE_TYPES_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2473-  ComponentType3["PRICING_PLANS_FORM_CONFIGURATION"] = "PRICING_PLANS_FORM_CONFIGURATION";
+package/build/chunk-D7ORRBCE.js-2474-  ComponentType3["USER_NOTIFICATION"] = "USER_NOTIFICATION";
+package/build/chunk-D7ORRBCE.js-2475-  ComponentType3["CONTACT_NOTIFICATION"] = "CONTACT_NOTIFICATION";
+package/build/chunk-D7ORRBCE.js-2476-  ComponentType3["UNIFIED_PAGE"] = "UNIFIED_PAGE";
+package/build/chunk-D7ORRBCE.js-2477-  ComponentType3["AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2478-  ComponentType3["PROPOSAL_EDITOR_PROVIDER"] = "PROPOSAL_EDITOR_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2479-  ComponentType3["CUSTOM_TABLE_RESERVATIONS_PROVIDER"] = "CUSTOM_TABLE_RESERVATIONS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2480-  ComponentType3["COMMENTS_CONTEXT_PROVIDER"] = "COMMENTS_CONTEXT_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2481-  ComponentType3["FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER"] = "FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2482-  ComponentType3["AUTOMATIONS_VELO_ACTION_PROVIDER"] = "AUTOMATIONS_VELO_ACTION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2483-  ComponentType3["CALENDAR_EVENT_TYPE_PROVIDER"] = "CALENDAR_EVENT_TYPE_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2484-  ComponentType3["RESERVED"] = "RESERVED";
+package/build/chunk-D7ORRBCE.js-2485-  ComponentType3["SMS_ACTION_MESSAGE"] = "SMS_ACTION_MESSAGE";
+package/build/chunk-D7ORRBCE.js-2486-  ComponentType3["BOOKING_POLICY_PROVIDER"] = "BOOKING_POLICY_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2487-  ComponentType3["MULTI_SERVICE_BOOKING_POLICY_PROVIDER"] = "MULTI_SERVICE_BOOKING_POLICY_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2488-  ComponentType3["AI_ASSISTANT"] = "AI_ASSISTANT";
+package/build/chunk-D7ORRBCE.js-2489-  ComponentType3["FORMS_SUBMISSIONS_EXTENSION_PROVIDER"] = "FORMS_SUBMISSIONS_EXTENSION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2490-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA"] = "MULTILINGUAL_TRANSLATION_SCHEMA";
+package/build/chunk-D7ORRBCE.js-2491-  ComponentType3["TAX_CALCULATION_PROVIDER"] = "TAX_CALCULATION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2492-  ComponentType3["TAX_GROUPS_PROVIDER"] = "TAX_GROUPS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2493-  ComponentType3["BACK_OFFICE_MODAL"] = "BACK_OFFICE_MODAL";
+package/build/chunk-D7ORRBCE.js-2494-  ComponentType3["DEPLOYMENT_PIPELINE_PROVIDER"] = "DEPLOYMENT_PIPELINE_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2495-  ComponentType3["CUSTOM_ELEMENT_WIDGET"] = "CUSTOM_ELEMENT_WIDGET";
+package/build/chunk-D7ORRBCE.js-2496-  ComponentType3["BACK_OFFICE_EXTENSION_WIDGET"] = "BACK_OFFICE_EXTENSION_WIDGET";
+package/build/chunk-D7ORRBCE.js-2497-  ComponentType3["BACK_OFFICE_EXTENSION_MENU_ITEM"] = "BACK_OFFICE_EXTENSION_MENU_ITEM";
+package/build/chunk-D7ORRBCE.js-2498-  ComponentType3["FORM_TEMPLATE"] = "FORM_TEMPLATE";
+package/build/chunk-D7ORRBCE.js-2499-  ComponentType3["NOTIFICATION_CONTENT"] = "NOTIFICATION_CONTENT";
+package/build/chunk-D7ORRBCE.js-2500-  ComponentType3["BROADCAST_LIST"] = "BROADCAST_LIST";
+package/build/chunk-D7ORRBCE.js-2501-  ComponentType3["PARTNERS_PAYOUTS"] = "PARTNERS_PAYOUTS";
+package/build/chunk-D7ORRBCE.js-2502-  ComponentType3["WIX_REVIEWS_ENTITY_CATALOG"] = "WIX_REVIEWS_ENTITY_CATALOG";
+package/build/chunk-D7ORRBCE.js-2503-  ComponentType3["VELO_PUBLISH_PIPELINE_TASK_PROVIDER"] = "VELO_PUBLISH_PIPELINE_TASK_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2504-  ComponentType3["FUNCTIONS_SHOP_PRICE_PROVIDER"] = "FUNCTIONS_SHOP_PRICE_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2505-  ComponentType3["FUNCTION"] = "FUNCTION";
+package/build/chunk-D7ORRBCE.js-2506-  ComponentType3["ECOM_CHECKOUT_CONTENT"] = "ECOM_CHECKOUT_CONTENT";
+package/build/chunk-D7ORRBCE.js-2507-  ComponentType3["COMMUNICATION_CHANNEL_PROVIDER"] = "COMMUNICATION_CHANNEL_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2508-  ComponentType3["WEBHOOK"] = "WEBHOOK";
+package/build/chunk-D7ORRBCE.js-2509-  ComponentType3["TOPOLOGY"] = "TOPOLOGY";
+package/build/chunk-D7ORRBCE.js-2510-  ComponentType3["LOYALTY_CUSTOM_REWARDS"] = "LOYALTY_CUSTOM_REWARDS";
+package/build/chunk-D7ORRBCE.js-2511-  ComponentType3["FUNCTION_RECIPE"] = "FUNCTION_RECIPE";
+package/build/chunk-D7ORRBCE.js-2512-  ComponentType3["BACK_OFFICE_EXTERNAL_URL"] = "BACK_OFFICE_EXTERNAL_URL";
+package/build/chunk-D7ORRBCE.js-2513-  ComponentType3["IDENTITY_FACTOR"] = "IDENTITY_FACTOR";
+package/build/chunk-D7ORRBCE.js-2514-  ComponentType3["ECOM_DISCOUNTS"] = "ECOM_DISCOUNTS";
+package/build/chunk-D7ORRBCE.js-2515-  ComponentType3["VELO_CUSTOM_CSS"] = "VELO_CUSTOM_CSS";
+package/build/chunk-D7ORRBCE.js-2516-  ComponentType3["DEALER_ADAPTIVE_COMPONENT_PROVIDER"] = "DEALER_ADAPTIVE_COMPONENT_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2517-  ComponentType3["AI_ASSISTANT_ACTION"] = "AI_ASSISTANT_ACTION";
+package/build/chunk-D7ORRBCE.js-2518-  ComponentType3["ECOM_INVENTORY"] = "ECOM_INVENTORY";
+package/build/chunk-D7ORRBCE.js-2519-  ComponentType3["MONITORING"] = "MONITORING";
+package/build/chunk-D7ORRBCE.js-2520-  ComponentType3["PAPI_PROVIDER"] = "PAPI_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2521-  ComponentType3["UNIFIED_LIGHTBOX"] = "UNIFIED_LIGHTBOX";
+package/build/chunk-D7ORRBCE.js-2522-  ComponentType3["FORMS_EXTENSION_PROVIDER"] = "FORMS_EXTENSION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2523-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA_GROUP"] = "MULTILINGUAL_TRANSLATION_SCHEMA_GROUP";
+package/build/chunk-D7ORRBCE.js-2524-  ComponentType3["PANEL"] = "PANEL";
+package/build/chunk-D7ORRBCE.js-2525-  ComponentType3["PREMIUM_PURCHASE_VALIDATIONS"] = "PREMIUM_PURCHASE_VALIDATIONS";
+package/build/chunk-D7ORRBCE.js-2526-  ComponentType3["BROWSER_STORAGE"] = "BROWSER_STORAGE";
+package/build/chunk-D7ORRBCE.js-2527-  ComponentType3["SDK_DEFINITION"] = "SDK_DEFINITION";
+package/build/chunk-D7ORRBCE.js-2528-  ComponentType3["SITE_WIDGET_SLOT"] = "SITE_WIDGET_SLOT";
+package/build/chunk-D7ORRBCE.js-2529-  ComponentType3["CALENDAR_EVENT_VALIDATION_PROVIDER"] = "CALENDAR_EVENT_VALIDATION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2530-  ComponentType3["CLIENT_SIDE_SERVICE"] = "CLIENT_SIDE_SERVICE";
+package/build/chunk-D7ORRBCE.js-2531-  ComponentType3["BILLING_SETTINGS"] = "BILLING_SETTINGS";
+package/build/chunk-D7ORRBCE.js-2532-  ComponentType3["PATTERNS_WIZARD"] = "PATTERNS_WIZARD";
+package/build/chunk-D7ORRBCE.js-2533-  ComponentType3["APPLICATION_PROFILE"] = "APPLICATION_PROFILE";
+package/build/chunk-D7ORRBCE.js-2534-  ComponentType3["TEXT_TO_SPEECH_ACTION_MESSAGE"] = "TEXT_TO_SPEECH_ACTION_MESSAGE";
+package/build/chunk-D7ORRBCE.js-2535-  ComponentType3["AUDIENCE_PROVIDER"] = "AUDIENCE_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2536-  ComponentType3["PRICING_PLANS_PRICE"] = "PRICING_PLANS_PRICE";
+package/build/chunk-D7ORRBCE.js-2537-  ComponentType3["PRICING_PLAN_START_DATE_LIMITS"] = "PRICING_PLAN_START_DATE_LIMITS";
+package/build/chunk-D7ORRBCE.js-2538-  ComponentType3["PRICING_PLAN_START_DATE_RULES"] = "PRICING_PLAN_START_DATE_RULES";
+package/build/chunk-D7ORRBCE.js-2539-  ComponentType3["EVENTS_TICKET_RESERVATIONS"] = "EVENTS_TICKET_RESERVATIONS";
+package/build/chunk-D7ORRBCE.js-2540-  ComponentType3["PAYMENTS_DISPUTE_SERVICE_PLUGIN"] = "PAYMENTS_DISPUTE_SERVICE_PLUGIN";
+package/build/chunk-D7ORRBCE.js-2541-  ComponentType3["PRICING_PLANS_FEES"] = "PRICING_PLANS_FEES";
+package/build/chunk-D7ORRBCE.js-2542-  ComponentType3["EDITOR_REACT_COMPONENT"] = "EDITOR_REACT_COMPONENT";
+package/build/chunk-D7ORRBCE.js-2543-  ComponentType3["SUPPLIERS_HUB_MARKETPLACE"] = "SUPPLIERS_HUB_MARKETPLACE";
+package/build/chunk-D7ORRBCE.js-2544-  ComponentType3["FORM_SCHEMA_DYNAMIC_VALUES"] = "FORM_SCHEMA_DYNAMIC_VALUES";
+package/build/chunk-D7ORRBCE.js-2545-  ComponentType3["BLOG_PAYWALL_PROVIDER"] = "BLOG_PAYWALL_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2546-  ComponentType3["LOYALTY_CUSTOM_REWARDS_V2"] = "LOYALTY_CUSTOM_REWARDS_V2";
+package/build/chunk-D7ORRBCE.js-2547-  ComponentType3["STORES_PRODUCT_RESTRICTIONS"] = "STORES_PRODUCT_RESTRICTIONS";
+package/build/chunk-D7ORRBCE.js-2548-  ComponentType3["FORM_SUBMISSION_MODERATION"] = "FORM_SUBMISSION_MODERATION";
+package/build/chunk-D7ORRBCE.js-2549-  ComponentType3["EVENTS_EVENT_BADGES"] = "EVENTS_EVENT_BADGES";
+package/build/chunk-D7ORRBCE.js-2550-  ComponentType3["BILLING_OPERATION"] = "BILLING_OPERATION";
+package/build/chunk-D7ORRBCE.js-2551-  ComponentType3["BACK_OFFICE_CUSTOMIZATION"] = "BACK_OFFICE_CUSTOMIZATION";
+package/build/chunk-D7ORRBCE.js-2552-  ComponentType3["COMPONENT_ENRICHER_PROVIDER"] = "COMPONENT_ENRICHER_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2553-  ComponentType3["BACK_OFFICE_RESTRICTED_CUSTOMIZATION"] = "BACK_OFFICE_RESTRICTED_CUSTOMIZATION";
+package/build/chunk-D7ORRBCE.js-2554-  ComponentType3["EDITOR_APP_PREVIEWS_POC"] = "EDITOR_APP_PREVIEWS_POC";
+package/build/chunk-D7ORRBCE.js-2555-  ComponentType3["LEGENDS_PERSONA_CONFIGURATION"] = "LEGENDS_PERSONA_CONFIGURATION";
+package/build/chunk-D7ORRBCE.js-2556-  ComponentType3["WIX_HOSTING_APP_DEPLOYMENT_PROVIDER"] = "WIX_HOSTING_APP_DEPLOYMENT_PROVIDER";
+package/build/chunk-D7ORRBCE.js:2557:  ComponentType3["BACKEND_WORKER"] = "BACKEND_WORKER";
+package/build/chunk-D7ORRBCE.js-2558-  ComponentType3["EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2559-  ComponentType3["WIX_HOSTING_APP_ENVIRONMENT_PROVIDER"] = "WIX_HOSTING_APP_ENVIRONMENT_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2560-  ComponentType3["SDK_EXPORTS"] = "SDK_EXPORTS";
+package/build/chunk-D7ORRBCE.js-2561-  ComponentType3["VIEWER_SERVICE"] = "VIEWER_SERVICE";
+package/build/chunk-D7ORRBCE.js-2562-  ComponentType3["WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN"] = "WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN";
+package/build/chunk-D7ORRBCE.js-2563-  ComponentType3["CONTACTS_SEGMENTS_V2_FILTER_PROVIDER"] = "CONTACTS_SEGMENTS_V2_FILTER_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2564-  ComponentType3["ANALYTICS_PRODUCT_CATALOG"] = "ANALYTICS_PRODUCT_CATALOG";
+package/build/chunk-D7ORRBCE.js-2565-  ComponentType3["SITE_MIGRATION"] = "SITE_MIGRATION";
+package/build/chunk-D7ORRBCE.js-2566-  ComponentType3["RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN"] = "RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN";
+package/build/chunk-D7ORRBCE.js-2567-  ComponentType3["WIX_VIBE_CODING_INSTRUCTIONS"] = "WIX_VIBE_CODING_INSTRUCTIONS";
+package/build/chunk-D7ORRBCE.js-2568-  ComponentType3["TAX_EXEMPT_GROUPS_PROVIDER"] = "TAX_EXEMPT_GROUPS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2569-  ComponentType3["BOOKING_AUTOMATIONS_CONFIGURATION"] = "BOOKING_AUTOMATIONS_CONFIGURATION";
+package/build/chunk-D7ORRBCE.js-2570-  ComponentType3["WIX_VIBE_COMPONENT"] = "WIX_VIBE_COMPONENT";
+package/build/chunk-D7ORRBCE.js-2571-  ComponentType3["WIXEL"] = "WIXEL";
+package/build/chunk-D7ORRBCE.js-2572-  ComponentType3["STAFF_SORTING_PROVIDER"] = "STAFF_SORTING_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2573-  ComponentType3["FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER"] = "FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2574-  ComponentType3["FUNCTIONS_ASSISTANT_TOOLS"] = "FUNCTIONS_ASSISTANT_TOOLS";
+package/build/chunk-D7ORRBCE.js-2575-  ComponentType3["SITE_MAP_INFO_PROVIDER"] = "SITE_MAP_INFO_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2576-  ComponentType3["WIX_AI_GATEWAY_CALLBACK"] = "WIX_AI_GATEWAY_CALLBACK";
+package/build/chunk-D7ORRBCE.js-2577-  ComponentType3["URL_MAPPER_PROVIDER"] = "URL_MAPPER_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2578-  ComponentType3["PROVIDER_SUPPRESSION_SERVICE_PLUGIN"] = "PROVIDER_SUPPRESSION_SERVICE_PLUGIN";
+package/build/chunk-D7ORRBCE.js-2579-  ComponentType3["ECOM_FORMS"] = "ECOM_FORMS";
+package/build/chunk-D7ORRBCE.js-2580-  ComponentType3["EDITOR_CONTEXT_PROVIDER"] = "EDITOR_CONTEXT_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2581-  ComponentType3["EDITOR_FUNCTION_LIBRARY"] = "EDITOR_FUNCTION_LIBRARY";
+package/build/chunk-D7ORRBCE.js-2582-  ComponentType3["BOOKINGS_PLATFORM_CONFIGURATION"] = "BOOKINGS_PLATFORM_CONFIGURATION";
+package/build/chunk-D7ORRBCE.js-2583-  ComponentType3["BOOKINGS_VALIDATION_PROVIDER"] = "BOOKINGS_VALIDATION_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2584-  ComponentType3["APP_ROUTER"] = "APP_ROUTER";
+package/build/chunk-D7ORRBCE.js-2585-  ComponentType3["WIXEL_BINDING"] = "WIXEL_BINDING";
+package/build/chunk-D7ORRBCE.js-2586-  ComponentType3["SHUB_MARKETPLACE_PROVIDER"] = "SHUB_MARKETPLACE_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2587-  ComponentType3["BOOKING_ACTION_URLS_PROVIDER"] = "BOOKING_ACTION_URLS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2588-  ComponentType3["CALENDAR_CONFERENCING_PROVIDER"] = "CALENDAR_CONFERENCING_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2589-  ComponentType3["BASS_VALIDATE_CANCEL_ACTION"] = "BASS_VALIDATE_CANCEL_ACTION";
+package/build/chunk-D7ORRBCE.js-2590-  ComponentType3["WIXEL_VIEWER_ROUTER_PROVIDER"] = "WIXEL_VIEWER_ROUTER_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2591-  ComponentType3["PREMIUM_ACTION"] = "PREMIUM_ACTION";
+package/build/chunk-D7ORRBCE.js-2592-  ComponentType3["AUTOMATION_TEMPLATE"] = "AUTOMATION_TEMPLATE";
+package/build/chunk-D7ORRBCE.js-2593-  ComponentType3["AGENT_MAKER_APPROVAL_PROVIDER"] = "AGENT_MAKER_APPROVAL_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2594-  ComponentType3["SERVICE_TAGS_CONFIGURATION"] = "SERVICE_TAGS_CONFIGURATION";
+package/build/chunk-D7ORRBCE.js-2595-  ComponentType3["LOYALTY_POINTS_ADJUSTMENT"] = "LOYALTY_POINTS_ADJUSTMENT";
+package/build/chunk-D7ORRBCE.js-2596-  ComponentType3["LOYALTY_EARN_POINTS_LIMIT"] = "LOYALTY_EARN_POINTS_LIMIT";
+package/build/chunk-D7ORRBCE.js-2597-  ComponentType3["REALTIME_PERMISSIONS_PROVIDER"] = "REALTIME_PERMISSIONS_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2598-  ComponentType3["CALENDAR_SEARCH_PROVIDER"] = "CALENDAR_SEARCH_PROVIDER";
+package/build/chunk-D7ORRBCE.js-2599-  ComponentType3["EDITOR_INSTALLATION"] = "EDITOR_INSTALLATION";
+package/build/chunk-D7ORRBCE.js-2600-  ComponentType3["APP_ACTIONS"] = "APP_ACTIONS";
+package/build/chunk-D7ORRBCE.js-2601-  ComponentType3["ROLLOUT_STEP_EXECUTOR"] = "ROLLOUT_STEP_EXECUTOR";
+package/build/chunk-D7ORRBCE.js-2602-  ComponentType3["BOOKINGS_PLATFORM_PREMIUM_VALIDATION"] = "BOOKINGS_PLATFORM_PREMIUM_VALIDATION";
+package/build/chunk-D7ORRBCE.js-2603-})(ComponentType2 || (ComponentType2 = {}));
+package/build/chunk-D7ORRBCE.js-2604-var InitiatorType;
+package/build/chunk-D7ORRBCE.js-2605-(function(InitiatorType2) {
+package/build/chunk-D7ORRBCE.js-2606-  InitiatorType2["UNKNOWN_TYPE"] = "UNKNOWN_TYPE";
+package/build/chunk-D7ORRBCE.js-2607-  InitiatorType2["CONTACT"] = "CONTACT";
+package/build/chunk-D7ORRBCE.js-2608-  InitiatorType2["SITE_MEMBER"] = "SITE_MEMBER";
+package/build/chunk-D7ORRBCE.js-2609-})(InitiatorType || (InitiatorType = {}));
+package/build/chunk-D7ORRBCE.js-2610-var RecipientFilterType;
+package/build/chunk-D7ORRBCE.js-2611-(function(RecipientFilterType2) {
+package/build/chunk-D7ORRBCE.js-2612-  RecipientFilterType2["UNKNOWN_TYPE"] = "UNKNOWN_TYPE";
+package/build/chunk-D7ORRBCE.js-2613-  RecipientFilterType2["CONTACTS"] = "CONTACTS";
+package/build/chunk-D7ORRBCE.js-2614-})(RecipientFilterType || (RecipientFilterType = {}));
+package/build/chunk-D7ORRBCE.js-2615-var ContainerType;
+package/build/chunk-D7ORRBCE.js-2616-(function(ContainerType2) {
+package/build/chunk-D7ORRBCE.js-2617-  ContainerType2["UNKNOWN_CONTAINER_TYPE"] = "UNKNOWN_CONTAINER_TYPE";
+package/build/chunk-D7ORRBCE.js-2618-  ContainerType2["simple"] = "simple";
+package/build/chunk-D7ORRBCE.js-2619-  ContainerType2["slot"] = "slot";
+package/build/chunk-D7ORRBCE.js-2620-  ContainerType2["placeholder"] = "placeholder";
+package/build/chunk-D7ORRBCE.js-2621-  ContainerType2["template"] = "template";
+package/build/chunk-D7ORRBCE.js-2622-})(ContainerType || (ContainerType = {}));
+package/build/chunk-D7ORRBCE.js-2623-var ContentResizeDirection;
+package/build/chunk-D7ORRBCE.js-2624-(function(ContentResizeDirection2) {
+package/build/chunk-D7ORRBCE.js-2625-  ContentResizeDirection2["UNKNOWN_ContentResizeDirection"] = "UNKNOWN_ContentResizeDirection";
+package/build/chunk-D7ORRBCE.js-2626-  ContentResizeDirection2["horizontal"] = "horizontal";
+package/build/chunk-D7ORRBCE.js-2627-  ContentResizeDirection2["vertical"] = "vertical";
+package/build/chunk-D7ORRBCE.js-2628-  ContentResizeDirection2["horizontalAndVertical"] = "horizontalAndVertical";
+package/build/chunk-D7ORRBCE.js-2629-  ContentResizeDirection2["none"] = "none";
+package/build/chunk-D7ORRBCE.js-2630-})(ContentResizeDirection || (ContentResizeDirection = {}));
+package/build/chunk-D7ORRBCE.js-2631-var CssDataTypeEnumCssDataType;
+package/build/chunk-D7ORRBCE.js-2632-(function(CssDataTypeEnumCssDataType2) {
+package/build/chunk-D7ORRBCE.js-2633-  CssDataTypeEnumCssDataType2["UNKNOWN_CssDataType"] = "UNKNOWN_CssDataType";
+package/build/chunk-D7ORRBCE.js-2634-  CssDataTypeEnumCssDataType2["number"] = "number";
+package/build/chunk-D7ORRBCE.js-2635-  CssDataTypeEnumCssDataType2["string"] = "string";
+package/build/chunk-D7ORRBCE.js-2636-  CssDataTypeEnumCssDataType2["angle"] = "angle";
+package/build/chunk-D7ORRBCE.js-2637-  CssDataTypeEnumCssDataType2["color"] = "color";
+package/build/chunk-D7ORRBCE.js-2638-  CssDataTypeEnumCssDataType2["length"] = "length";
+package/build/chunk-D7ORRBCE.js-2639-  CssDataTypeEnumCssDataType2["percentage"] = "percentage";
+package/build/chunk-D7ORRBCE.js-2640-  CssDataTypeEnumCssDataType2["lengthPercentage"] = "lengthPercentage";
+package/build/chunk-D7ORRBCE.js-2641-  CssDataTypeEnumCssDataType2["blendMode"] = "blendMode";
+package/build/chunk-D7ORRBCE.js-2642-  CssDataTypeEnumCssDataType2["customEnum"] = "customEnum";
+package/build/chunk-D7ORRBCE.js-2643-  CssDataTypeEnumCssDataType2["time"] = "time";
+package/build/chunk-D7ORRBCE.js-2644-})(CssDataTypeEnumCssDataType || (CssDataTypeEnumCssDataType = {}));
+package/build/chunk-D7ORRBCE.js-2645-var CssPropertyEnumCssPropertyType;
+package/build/chunk-D7ORRBCE.js-2646-(function(CssPropertyEnumCssPropertyType2) {
+package/build/chunk-D7ORRBCE.js-2647-  CssPropertyEnumCssPropertyType2["UNKNOWN_CssPropertyType"] = "UNKNOWN_CssPropertyType";
+package/build/chunk-D7ORRBCE.js-2648-  CssPropertyEnumCssPropertyType2["number"] = "number";
+package/build/chunk-D7ORRBCE.js-2649-  CssPropertyEnumCssPropertyType2["string"] = "string";
+package/build/chunk-D7ORRBCE.js-2650-  CssPropertyEnumCssPropertyType2["angle"] = "angle";
+package/build/chunk-D7ORRBCE.js-2651-  CssPropertyEnumCssPropertyType2["length"] = "length";
+package/build/chunk-D7ORRBCE.js-2652-  CssPropertyEnumCssPropertyType2["percentage"] = "percentage";
+package/build/chunk-D7ORRBCE.js-2653-  CssPropertyEnumCssPropertyType2["lengthPercentage"] = "lengthPercentage";
+package/build/chunk-D7ORRBCE.js-2654-  CssPropertyEnumCssPropertyType2["blendMode"] = "blendMode";
+package/build/chunk-D7ORRBCE.js-2655-  CssPropertyEnumCssPropertyType2["customEnum"] = "customEnum";
+package/build/chunk-D7ORRBCE.js-2656-  CssPropertyEnumCssPropertyType2["time"] = "time";
+package/build/chunk-D7ORRBCE.js-2657-  CssPropertyEnumCssPropertyType2["background"] = "background";
 --
-6480-);
-6481-var looseTopologySchema = looseBaseComponentSchema.merge(
-6482-  external_exports.object({
-6483-    compData: external_exports.object({
-6484-      topology: external_exports.object({
-6485-        topology: external_exports.object({
-6486-          backendApiUrl: external_exports.string().url()
-6487-        })
-6488-      })
-6489-    }),
-6490-    compType: external_exports.literal(ComponentType.TOPOLOGY)
-6491-  })
-6492-);
-6493-var looseComponentSchema = external_exports.discriminatedUnion("compType", [
-6494-  looseBackofficePageSchema,
-6495-  looseBackofficeExtensionWidgetSchema,
-6496-  looseBackofficeExtensionMenuPluginSchema,
-6497-  looseBackofficeModalSchema,
-6498-  looseWebhookSchema,
-6499-  looseEcomAdditionalFeesSchema,
-6500-  looseStaffSortingProviderSchema,
-6501-  looseBookingsPricingProviderSchema,
-6502-  looseEcomShippingRatesSchema,
-6503-  looseEcomDiscountsTriggerSchema,
-6504-  looseEcomValidationsSchema,
-6505-  looseEcomPaymentSettingsSchema,
-6506-  looseEcomGiftCardsProviderSchema,
-6507-  looseRealtimePermissionsProviderSchema,
-6508-  looseTopologySchema
-6509-]);
-6510-var looseAppManifestSchema = external_exports.object({
-6511-  appId: external_exports.string(),
-6512-  components: external_exports.array(looseBaseComponentSchema)
-6513-});
-6514-var looseAppManifestModelSchema = external_exports.object({
-6515-  appId: external_exports.string(),
-6516-  components: external_exports.array(looseComponentSchema),
-6517-  unknownComponents: external_exports.array(looseBaseComponentSchema)
-6518-});
-6519-function stripTrailingSlash(value) {
-6520-  return value.endsWith("/") ? value.slice(0, -1) : value;
-6521-}
-6522-function parseLooseAppManifest(manifest, placeholders = /* @__PURE__ */ new Map()) {
-6523-  if (placeholders.size === 0) {
-6524-    return looseAppManifestSchema.parse(JSON.parse(manifest));
-6525-  }
-6526-  let replacedManifest = manifest;
-6527-  for (const [key, value] of placeholders.entries()) {
-6528-    replacedManifest = replacedManifest.replaceAll(
-6529-      stripTrailingSlash(key),
-6530-      stripTrailingSlash(value)
-6531-    );
-6532-  }
-6533-  return looseAppManifestSchema.parse(JSON.parse(replacedManifest));
-6534-}
-6535-function findPlaceholderPaths(value, placeholderMarkers, path) {
-6536-  if (value != null && typeof value === "object" && !Array.isArray(value)) {
-6537-    return Object.entries(value).flatMap(
-6538-      ([key, child]) => findPlaceholderPaths(
-6539-        child,
-6540-        placeholderMarkers,
-6541-        path ? `${path}.${key}` : key
-6542-      )
-6543-    );
-6544-  }
-6545-  if (typeof value === "string") {
-6546-    const hasPlaceholder = placeholderMarkers.some(
-6547-      (marker) => value.includes(marker)
-6548-    );
-6549-    return hasPlaceholder ? [path] : [];
-6550-  }
-6551-  return [];
-6552-}
-6553-function getComponentPlaceholderFieldMasks(manifest, placeholders) {
-6554-  const placeholderMarkers = [...placeholders].map(stripTrailingSlash);
-6555-  if (placeholderMarkers.length === 0) {
-6556-    return [];
-6557-  }
-6558-  const { components } = parseLooseAppManifest(manifest);
-6559-  const masks = [];
-6560-  for (const component of components) {
-6561-    const fieldMask = [
-6562-      ...new Set(
-6563-        findPlaceholderPaths(component.compData, placeholderMarkers, "")
-6564-      )
-6565-    ];
-6566-    if (fieldMask.length > 0) {
-6567-      masks.push({ componentId: component.compId, fieldMask });
-6568-    }
-6569-  }
-6570-  return masks;
-6571-}
-6572-var cloneDeep = (0, import_rfdc.default)();
-6573-var cloneDeep2 = (0, import_rfdc2.default)();
-6574-var cloneDeep3 = (0, import_rfdc3.default)();
-6575-var cloneDeep4 = (0, import_rfdc4.default)();
-6576-
-6577-export {
-6578-  LifecycleState,
-6579-  OverrideType,
-6580:  toComponentExperiments,
-6581-  useDevCenterOverridesClient,
-6582-  looseComponentSchema,
-6583-  parseLooseAppManifest,
-6584-  getComponentPlaceholderFieldMasks,
-6585-  PlatformLinksSection,
-6586-  getPlatformLinkCommand,
-6587-  useSiteLinks,
-6588-  useAppLinks,
-6589-  useUpdateDeploymentTopologyForSite,
-6590-  useUpdateDeploymentTopologyForApp
-6591-};
-6592-//# sourceMappingURL=chunk-D7ORRBCE.js.map
+package/build/chunk-D7ORRBCE.js-5452-function useUpdateDeploymentTopologyForSite(siteId) {
+package/build/chunk-D7ORRBCE.js-5453-  const { model } = useProjectModel();
+package/build/chunk-D7ORRBCE.js-5454-  return (0, import_react3.useCallback)(
+package/build/chunk-D7ORRBCE.js-5455-    async ({
+package/build/chunk-D7ORRBCE.js-5456-      environment,
+package/build/chunk-D7ORRBCE.js-5457-      siteUrl,
+package/build/chunk-D7ORRBCE.js-5458-      versionOverrideId
+package/build/chunk-D7ORRBCE.js-5459-    }) => {
+package/build/chunk-D7ORRBCE.js-5460-      const links = resolveSiteLinks(model, {
+package/build/chunk-D7ORRBCE.js-5461-        cmd: getPlatformLinkCommand(environment),
+package/build/chunk-D7ORRBCE.js-5462-        siteId,
+package/build/chunk-D7ORRBCE.js-5463-        overrideId: versionOverrideId,
+package/build/chunk-D7ORRBCE.js-5464-        siteUrl
+package/build/chunk-D7ORRBCE.js-5465-      });
+package/build/chunk-D7ORRBCE.js-5466-      await writeDeploymentTopologyEnvironment(
+package/build/chunk-D7ORRBCE.js-5467-        model.projectFolder,
+package/build/chunk-D7ORRBCE.js-5468-        environment,
+package/build/chunk-D7ORRBCE.js-5469-        {
+package/build/chunk-D7ORRBCE.js-5470-          id: versionOverrideId,
+package/build/chunk-D7ORRBCE.js-5471-          site: toTopologyLink(links, "site"),
+package/build/chunk-D7ORRBCE.js-5472-          dashboard: toTopologyLink(links, "dashboard")
+package/build/chunk-D7ORRBCE.js-5473-        }
+package/build/chunk-D7ORRBCE.js-5474-      );
+package/build/chunk-D7ORRBCE.js-5475-    },
+package/build/chunk-D7ORRBCE.js-5476-    [model, siteId]
+package/build/chunk-D7ORRBCE.js-5477-  );
+package/build/chunk-D7ORRBCE.js-5478-}
+package/build/chunk-D7ORRBCE.js-5479-function useUpdateDeploymentTopologyForApp(siteId) {
+package/build/chunk-D7ORRBCE.js-5480-  const { model } = useProjectModel();
+package/build/chunk-D7ORRBCE.js-5481-  return (0, import_react3.useCallback)(
+package/build/chunk-D7ORRBCE.js-5482-    async ({
+package/build/chunk-D7ORRBCE.js-5483-      environment,
+package/build/chunk-D7ORRBCE.js-5484-      versionOverrideId
+package/build/chunk-D7ORRBCE.js-5485-    }) => {
+package/build/chunk-D7ORRBCE.js-5486-      const links = resolveAppLinks(model, {
+package/build/chunk-D7ORRBCE.js-5487-        cmd: getPlatformLinkCommand(environment),
+package/build/chunk-D7ORRBCE.js-5488-        siteId,
+package/build/chunk-D7ORRBCE.js-5489-        overrideId: versionOverrideId
+package/build/chunk-D7ORRBCE.js-5490-      });
+package/build/chunk-D7ORRBCE.js-5491-      await writeDeploymentTopologyEnvironment(
+package/build/chunk-D7ORRBCE.js-5492-        model.projectFolder,
+package/build/chunk-D7ORRBCE.js-5493-        environment,
+package/build/chunk-D7ORRBCE.js-5494-        {
+package/build/chunk-D7ORRBCE.js-5495-          id: versionOverrideId,
+package/build/chunk-D7ORRBCE.js-5496-          site: toTopologyLink(links, "site"),
+package/build/chunk-D7ORRBCE.js-5497-          editor: toTopologyLink(links, "editor"),
+package/build/chunk-D7ORRBCE.js-5498-          dashboard: toTopologyLink(links, "dashboard")
+package/build/chunk-D7ORRBCE.js-5499-        }
+package/build/chunk-D7ORRBCE.js-5500-      );
+package/build/chunk-D7ORRBCE.js-5501-    },
+package/build/chunk-D7ORRBCE.js-5502-    [model, siteId]
+package/build/chunk-D7ORRBCE.js-5503-  );
+package/build/chunk-D7ORRBCE.js-5504-}
+package/build/chunk-D7ORRBCE.js-5505-
+package/build/chunk-D7ORRBCE.js-5506-// ../cli-astro-commands/src/components/PlatformLink/PlatformLinksSection.tsx
+package/build/chunk-D7ORRBCE.js-5507-init_esm_shims();
+package/build/chunk-D7ORRBCE.js-5508-var import_react5 = __toESM(require_react(), 1);
+package/build/chunk-D7ORRBCE.js-5509-
+package/build/chunk-D7ORRBCE.js-5510-// ../cli-astro-commands/src/components/PlatformLink/LinkClickTip.tsx
+package/build/chunk-D7ORRBCE.js-5511-init_esm_shims();
+package/build/chunk-D7ORRBCE.js-5512-var import_react4 = __toESM(require_react(), 1);
+package/build/chunk-D7ORRBCE.js-5513-import process from "node:process";
+package/build/chunk-D7ORRBCE.js-5514-var LinkClickTip = () => /* @__PURE__ */ import_react4.default.createElement(Text, { skin: "secondary" }, `Tip: click a link to open it (some terminals require ${process.platform === "darwin" ? "\u2318" : "Ctrl"}+click).`);
+package/build/chunk-D7ORRBCE.js-5515-
+package/build/chunk-D7ORRBCE.js-5516-// ../cli-astro-commands/src/components/PlatformLink/PlatformLinksSection.tsx
+package/build/chunk-D7ORRBCE.js-5517-var PlatformLinksSection = ({
+package/build/chunk-D7ORRBCE.js-5518-  links
+package/build/chunk-D7ORRBCE.js-5519-}) => {
+package/build/chunk-D7ORRBCE.js-5520-  if (links.length === 0) {
+package/build/chunk-D7ORRBCE.js-5521-    return null;
+package/build/chunk-D7ORRBCE.js-5522-  }
+package/build/chunk-D7ORRBCE.js-5523-  return /* @__PURE__ */ import_react5.default.createElement(Box_default, { marginY: 1, flexDirection: "column", gap: 1 }, /* @__PURE__ */ import_react5.default.createElement(Text, null, "Open the preview on:"), /* @__PURE__ */ import_react5.default.createElement(Box_default, { paddingLeft: 2, flexDirection: "column" }, links.map(({ platform, url, label }) => /* @__PURE__ */ import_react5.default.createElement(PlatformLink, { key: platform, url, label }))), /* @__PURE__ */ import_react5.default.createElement(LinkClickTip, null));
+package/build/chunk-D7ORRBCE.js-5524-};
+package/build/chunk-D7ORRBCE.js-5525-
+package/build/chunk-D7ORRBCE.js-5526-// ../cli-app-manifest/build/index.js
+package/build/chunk-D7ORRBCE.js-5527-init_esm_shims();
+package/build/chunk-D7ORRBCE.js-5528-var import_rfdc = __toESM(require_rfdc(), 1);
+package/build/chunk-D7ORRBCE.js-5529-var import_rfdc2 = __toESM(require_rfdc(), 1);
+package/build/chunk-D7ORRBCE.js-5530-var import_rfdc3 = __toESM(require_rfdc(), 1);
+package/build/chunk-D7ORRBCE.js-5531-var import_rfdc4 = __toESM(require_rfdc(), 1);
+package/build/chunk-D7ORRBCE.js-5532-var errorReportingSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5533-  errorReporting: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5534-    url: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5535-    // optional because of yoshi
+package/build/chunk-D7ORRBCE.js-5536-    artifact: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5537-      fullArtifactId: external_exports.string().max(255).min(1),
+package/build/chunk-D7ORRBCE.js-5538-      version: external_exports.string().max(255).min(1)
+package/build/chunk-D7ORRBCE.js-5539-    }).optional()
+package/build/chunk-D7ORRBCE.js-5540-  }).optional()
+package/build/chunk-D7ORRBCE.js-5541-});
+package/build/chunk-D7ORRBCE.js-5542-var componentSourceSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5543-  iframeUrl: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5544-  scriptAsset: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5545-    exportedName: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5546-    containerId: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5547-    url: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5548-    scriptType: external_exports.string().optional()
+package/build/chunk-D7ORRBCE.js-5549-  }).optional()
+package/build/chunk-D7ORRBCE.js-5550-});
+package/build/chunk-D7ORRBCE.js-5551-var backendWorkerSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js:5552:  compType: external_exports.literal(ComponentType.BACKEND_WORKER),
+package/build/chunk-D7ORRBCE.js-5553-  compId: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5554-  compName: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5555-  createdBy: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5556-  createdByVersion: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5557-  compData: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5558-    backendWorker: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5559-      deploymentId: external_exports.string().uuid(),
+package/build/chunk-D7ORRBCE.js-5560-      deploymentUrl: external_exports.string().url().optional(),
+package/build/chunk-D7ORRBCE.js-5561-      label: external_exports.string().max(200).optional(),
+package/build/chunk-D7ORRBCE.js-5562-      commitHash: external_exports.string().max(40).optional()
+package/build/chunk-D7ORRBCE.js-5563-    })
+package/build/chunk-D7ORRBCE.js-5564-  })
+package/build/chunk-D7ORRBCE.js-5565-});
+package/build/chunk-D7ORRBCE.js-5566-var aiContextSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5567-  description: external_exports.string().min(20).max(1e4)
+package/build/chunk-D7ORRBCE.js-5568-}).nullish();
+package/build/chunk-D7ORRBCE.js-5569-var backofficePageCompDataSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5570-  hostingPlatform: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5571-  fullPage: external_exports.boolean().nullish(),
+package/build/chunk-D7ORRBCE.js-5572-  hideInSidebar: external_exports.boolean().nullish(),
+package/build/chunk-D7ORRBCE.js-5573-  mobileCompatible: external_exports.boolean().nullish(),
+package/build/chunk-D7ORRBCE.js-5574-  priority: external_exports.number().nullish(),
+package/build/chunk-D7ORRBCE.js-5575-  routePath: external_exports.string().nullish(),
+package/build/chunk-D7ORRBCE.js-5576-  title: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5577-  pageCategoryId: external_exports.string().uuid().nullish(),
+package/build/chunk-D7ORRBCE.js-5578-  activeSidebarPageId: external_exports.string().nullish(),
+package/build/chunk-D7ORRBCE.js-5579-  requiredPermission: external_exports.string().nullish(),
+package/build/chunk-D7ORRBCE.js-5580-  previousRoutePaths: external_exports.array(external_exports.string()).nullish()
+package/build/chunk-D7ORRBCE.js-5581-}).merge(errorReportingSchema).merge(componentSourceSchema).passthrough();
+package/build/chunk-D7ORRBCE.js-5582-var widgetCompDataSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5583-  width: external_exports.number().nullish(),
+package/build/chunk-D7ORRBCE.js-5584-  height: external_exports.number().nullish()
+package/build/chunk-D7ORRBCE.js-5585-}).merge(componentSourceSchema).passthrough();
+package/build/chunk-D7ORRBCE.js-5586-var componentExperimentSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5587-  appId: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5588-  componentId: external_exports.string().uuid(),
+package/build/chunk-D7ORRBCE.js-5589-  spec: external_exports.string().min(1),
+package/build/chunk-D7ORRBCE.js-5590-  variantValue: external_exports.string()
+package/build/chunk-D7ORRBCE.js-5591-}).passthrough().optional();
+package/build/chunk-D7ORRBCE.js-5592-var backofficePageSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5593-  compId: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5594-  compType: external_exports.literal(ComponentType.BACK_OFFICE_PAGE),
+package/build/chunk-D7ORRBCE.js-5595-  compData: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5596-    backOfficePage: backofficePageCompDataSchema
+package/build/chunk-D7ORRBCE.js-5597-  }),
+package/build/chunk-D7ORRBCE.js-5598-  compName: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5599-  createdBy: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5600-  createdByVersion: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5601-  experiment: componentExperimentSchema
+package/build/chunk-D7ORRBCE.js-5602-}).passthrough();
+package/build/chunk-D7ORRBCE.js-5603-var backofficeExtensionSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5604-  compId: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5605-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION),
+package/build/chunk-D7ORRBCE.js-5606-  compData: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5607-    backOfficeExtension: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5608-      hostingPlatform: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5609-      extends: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5610-      title: external_exports.string().nullish(),
+package/build/chunk-D7ORRBCE.js-5611-      extensionType: external_exports.literal(
+package/build/chunk-D7ORRBCE.js-5612-        ExtendingComponentType.BACK_OFFICE_EXTENSION_WIDGET
+package/build/chunk-D7ORRBCE.js-5613-      ),
+package/build/chunk-D7ORRBCE.js-5614-      requiredPermission: external_exports.string().nullish(),
+package/build/chunk-D7ORRBCE.js-5615-      widget: widgetCompDataSchema
+package/build/chunk-D7ORRBCE.js-5616-    }).merge(errorReportingSchema).passthrough()
+package/build/chunk-D7ORRBCE.js-5617-  }),
+package/build/chunk-D7ORRBCE.js-5618-  compName: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5619-  createdBy: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5620-  createdByVersion: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5621-  experiment: componentExperimentSchema
+package/build/chunk-D7ORRBCE.js-5622-}).passthrough();
+package/build/chunk-D7ORRBCE.js-5623-var backofficeExtensionWidgetSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5624-  compId: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5625-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION_WIDGET),
+package/build/chunk-D7ORRBCE.js-5626-  compData: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5627-    backOfficeExtensionWidget: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5628-      hostingPlatform: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5629-      extends: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5630-      title: external_exports.string().nullish(),
+package/build/chunk-D7ORRBCE.js-5631-      description: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5632-      requiredPermission: external_exports.string().nullish(),
+package/build/chunk-D7ORRBCE.js-5633-      width: external_exports.number().nullish(),
+package/build/chunk-D7ORRBCE.js-5634-      height: external_exports.number().nullish(),
+package/build/chunk-D7ORRBCE.js-5635-      aiContext: aiContextSchema
+package/build/chunk-D7ORRBCE.js-5636-    }).merge(componentSourceSchema).merge(errorReportingSchema).passthrough()
+package/build/chunk-D7ORRBCE.js-5637-  }),
+package/build/chunk-D7ORRBCE.js-5638-  compName: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5639-  createdBy: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5640-  createdByVersion: external_exports.string().optional(),
+package/build/chunk-D7ORRBCE.js-5641-  experiment: componentExperimentSchema
+package/build/chunk-D7ORRBCE.js-5642-}).passthrough();
+package/build/chunk-D7ORRBCE.js-5643-var backofficeExtensionMenuPluginSchema = external_exports.object({
+package/build/chunk-D7ORRBCE.js-5644-  compId: external_exports.string(),
+package/build/chunk-D7ORRBCE.js-5645-  compType: external_exports.literal(ComponentType.BACK_OFFICE_EXTENSION_MENU_ITEM),
+package/build/chunk-D7ORRBCE.js-5646-  compData: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5647-    backOfficeExtensionMenuItem: external_exports.object({
+package/build/chunk-D7ORRBCE.js-5648-      id: external_exports.string().uuid(),
+package/build/chunk-D7ORRBCE.js-5649-      title: external_exports.string().min(1),
+package/build/chunk-D7ORRBCE.js-5650-      subtitle: external_exports.string().max(200).optional(),
+package/build/chunk-D7ORRBCE.js-5651-      iconKey: external_exports.string().min(3).max(50).optional(),
+package/build/chunk-D7ORRBCE.js-5652-      extends: external_exports.string().uuid(),
+--
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-268-      });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-269-    }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-270-  };
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-271-};
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-272-
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-273-// ../codestore-client/src/useCodestoreClient.ts
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-274-function useCodestoreClient() {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-275-  const httpClient = useHttpClient({ type: "backoffice" });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-276-  const client = (0, import_react.useMemo)(() => new CodestoreClient(httpClient), [httpClient]);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-277-  return usePanoramaMethodLogger(client);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-278-}
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-279-
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-280-// ../create-new-packages/headless-command/src/components/VibeRepositorySetupPolling.tsx
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-281-var VibeSetupResult = (0, import_variant.variant)({
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-282-  Success: (0, import_variant.fields)(),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-283-  Canceled: {},
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-284-  Failed: {}
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-285-});
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-286-function isAbortError(error) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-287-  return error && typeof error === "object" && "name" in error && error.name === "AbortError";
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-288-}
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-289-var VibeRepositorySetupPolling = ({
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-290-  projectId,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-291-  projectFolder,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-292-  onSubmit
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-293-}) => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-294-  const { getGitHubOnboardingStatus, initGitHubRepository } = useVeloClient();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-295-  const { reportError } = useErrorReporter();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-296-  const { createProject: createProject2 } = useCodestoreClient();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-297-  const { status } = useAsync(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-298-    async ({ signal }) => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-299-      const { pollInterval } = getTestOverrides();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-300-      const vibeSetupUrl = `https://manage.wix.com/_api/wix-headless-cli-github-integration-serverless?projectId=${projectId}`;
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-301-      await openBrowser(vibeSetupUrl);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-302-      try {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-303-        const repoInfo = await pWaitFor(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-304-          async () => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-305-            const result = await getGitHubOnboardingStatus(projectId);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-306-            if (result) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-307-              return pWaitFor.resolveWith(result);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-308-            }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-309-            return false;
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-310-          },
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-311-          {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-312-            interval: pollInterval ?? 1e3,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-313-            timeout: {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-314-              milliseconds: 60 * 1e3 * 5,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-315-              signal
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-316-            }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-317-          }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-318-        );
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-319-        const isGitRepo = await isInsideGitRepo(projectFolder);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-320-        if (isGitRepo) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-321-          const currentUserInfo = await gitGetUserInfo(projectFolder);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-322-          await createProject2(projectId, currentUserInfo);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-323-          await initGitHubRepository(projectId);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-324-          await gitSetRemoteUrl(projectFolder, "origin", repoInfo.htmlUrl);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-325-          await gitPush(projectFolder, "origin", { force: true });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-326-        }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-327-        return VibeSetupResult.Success(repoInfo);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-328-      } catch (error) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-329-        if (error instanceof TimeoutError) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-330-          throw new CliError({
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-331-            code: CliErrorCode.VibeRepositorySetupTimedout(),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-332-            cause: error
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-333-          });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-334-        }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-335-        if (isAbortError(error)) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-336-          return VibeSetupResult.Canceled();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-337-        }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-338-        throw error;
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-339-      }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-340-    },
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-341-    [projectFolder, projectId],
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-342-    {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-343-      onSuccess: (result) => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-344-        if ((0, import_variant.isType)(result, VibeSetupResult.Success)) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-345-          onSubmit?.();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-346-        }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-347-      },
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-348-      onError: (error) => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-349-        reportError(error);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-350-        writeCrashReport(getDebugLogFilePath(projectFolder), error, /* @__PURE__ */ new Date());
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-351-        return VibeSetupResult.Failed();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-352-      }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-353-    }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-354-  );
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-355-  return (0, import_variant.match)(status, {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-356-    Error: () => /* @__PURE__ */ import_react2.default.createElement(Box_default, { flexDirection: "column", gap: 1 }, /* @__PURE__ */ import_react2.default.createElement(Text, { skin: "error" }, "Failed to connect to Wix Vibe")),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-357-    Loading: () => /* @__PURE__ */ import_react2.default.createElement(Box_default, { flexDirection: "column", gap: 1 }, /* @__PURE__ */ import_react2.default.createElement(Spinner, { text: "Opening browser for Wix Vibe setup..." }), /* @__PURE__ */ import_react2.default.createElement(Text, { skin: "secondary" }, "Complete the setup in your browser. Waiting for you to finish...")),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-358-    Success: ({ result }) => (0, import_variant.match)(result, {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-359-      Success: ({ repoName, htmlUrl }) => /* @__PURE__ */ import_react2.default.createElement(Box_default, { marginLeft: -2, marginBottom: 1 }, /* @__PURE__ */ import_react2.default.createElement(Alert, { type: "success" }, /* @__PURE__ */ import_react2.default.createElement(Badge, { skin: "success" }, "Success"), " ", /* @__PURE__ */ import_react2.default.createElement(Text, null, "GitHub repository '", repoName, "' created and Synced.", " ", /* @__PURE__ */ import_react2.default.createElement(Link, { url: htmlUrl }, "View Repository.")))),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-360-      Canceled: () => null
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-361-    })
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-362-  });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-363-};
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-364-
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-365-// ../cli-astro-commands/src/components/ConnectWixVibeCommand/schemas.ts
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-366-init_esm_shims();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-367-var backendWorkerComponentSchema = external_exports.object({
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js:368:  compType: external_exports.literal(ComponentType.BACKEND_WORKER),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-369-  compData: external_exports.object({
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-370-    backendWorker: external_exports.object({
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-371-      deploymentUrl: external_exports.string().optional()
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-372-    })
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-373-  }).passthrough()
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-374-}).passthrough();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-375-
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-376-// ../cli-astro-commands/src/components/ConnectWixVibeCommand/ConnectWixVibeCommand.tsx
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-377-var ConnectWixVibeCommand = () => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-378-  const {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-379-    model: { projectFolder, config }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-380-  } = useProjectModel();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-381-  const { getGitHubOnboardingStatus } = useVeloClient();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-382-  const { getAppByVersion } = useDevCenterClient();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-383-  const [isConnected, setIsConnected] = (0, import_react4.useState)(false);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-384-  const { status: connectionStatus } = useAsync(async () => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-385-    if (config.projectType !== "Site") {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-386-      throw new CliError({
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-387-        code: CliErrorCode.ConnectUnsupportedForProjectType(),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-388-        cause: null
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-389-      });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-390-    }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-391-    return {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-392-      existingConnection: await getGitHubOnboardingStatus(config.appId),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-393-      siteId: config.siteId
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-394-    };
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-395-  }, []);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-396-  const getDeploymentUrl = (0, import_react4.useCallback)(async () => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-397-    const { data } = await getAppByVersion({ appId: config.appId });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-398-    const backendWorkerComponent = data.components.find(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js:399:      (component) => component.compType === ComponentType.BACKEND_WORKER
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-400-    );
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-401-    const parsedBackendWorkerComponent = backendWorkerComponentSchema.safeParse(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-402-      backendWorkerComponent
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-403-    );
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-404-    if (parsedBackendWorkerComponent.success) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-405-      return parsedBackendWorkerComponent.data.compData.backendWorker.deploymentUrl;
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-406-    }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-407-  }, [getAppByVersion, config.appId]);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-408-  const { status: deploymentUrlStatus } = useAsync(async () => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-409-    if (!isConnected) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-410-      return;
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-411-    }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-412-    const deploymentUrl = await getDeploymentUrl();
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-413-    return deploymentUrl;
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-414-  }, [isConnected, config.appId]);
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-415-  return (0, import_variant2.match)(connectionStatus, {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-416-    Error: () => null,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-417-    Loading: () => /* @__PURE__ */ import_react4.default.createElement(Spinner, { text: "Checking Wix Vibe connection status..." }),
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-418-    Success: ({ result: { existingConnection, siteId } }) => {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-419-      if (existingConnection) {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-420-        return /* @__PURE__ */ import_react4.default.createElement(Box_default, { flexDirection: "column", gap: 1, marginTop: 1 }, /* @__PURE__ */ import_react4.default.createElement(Alert, { type: "insight" }, /* @__PURE__ */ import_react4.default.createElement(Text, null, "This project is already connected to Wix Vibe.", " ", /* @__PURE__ */ import_react4.default.createElement(Link, { url: existingConnection.htmlUrl }, "View Repository"), ".")));
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-421-      }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-422-      return /* @__PURE__ */ import_react4.default.createElement(Box_default, { flexDirection: "column", marginTop: 1 }, /* @__PURE__ */ import_react4.default.createElement(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-423-        VibeRepositorySetupPolling,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-424-        {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-425-          projectId: config.appId,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-426-          projectFolder,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-427-          onSubmit: () => setIsConnected(true)
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-428-        }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-429-      ), isConnected && /* @__PURE__ */ import_react4.default.createElement(Box_default, { gap: 1, flexDirection: "column", marginBottom: 1 }, /* @__PURE__ */ import_react4.default.createElement(Text, null, "You can edit your site in the Wix Vibe Editor now."), /* @__PURE__ */ import_react4.default.createElement(Box_default, { paddingLeft: 2, flexDirection: "column" }, /* @__PURE__ */ import_react4.default.createElement(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-430-        PlatformLink,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-431-        {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-432-          url: `https://vibe.wix.com/projects/${siteId}`,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-433-          label: DEFAULT_PLATFORM_LABELS.editor
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-434-        }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-435-      ), /* @__PURE__ */ import_react4.default.createElement(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-436-        PlatformLink,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-437-        {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-438-          url: `https://manage.wix.com/dashboard/${siteId}`,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-439-          label: DEFAULT_PLATFORM_LABELS.dashboard
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-440-        }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-441-      ), (0, import_variant2.match)(deploymentUrlStatus, {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-442-        Success: ({ result }) => result ? /* @__PURE__ */ import_react4.default.createElement(
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-443-          PlatformLink,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-444-          {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-445-            url: result,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-446-            label: DEFAULT_PLATFORM_LABELS.site
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-447-          }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-448-        ) : null,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-449-        Loading: () => null,
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-450-        Error: () => null
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-451-      }))));
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-452-    }
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-453-  });
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-454-};
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-455-export {
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-456-  ConnectWixVibeCommand
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-457-};
+package/build/ConnectWixVibeCommand-M5WWJ4BR.js-458-//# sourceMappingURL=ConnectWixVibeCommand-M5WWJ4BR.js.map
+--
+package/build/chunk-7NOKHY7Z.js-2698-  ComponentType3["PREMIUM_CUSTOM_CHARGES"] = "PREMIUM_CUSTOM_CHARGES";
+package/build/chunk-7NOKHY7Z.js-2699-  ComponentType3["ECOM_VALIDATIONS"] = "ECOM_VALIDATIONS";
+package/build/chunk-7NOKHY7Z.js-2700-  ComponentType3["COMPONENT_REFERENCE_DATA_PROVIDER"] = "COMPONENT_REFERENCE_DATA_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2701-  ComponentType3["WIX_REVIEWS_PRODUCT_CATALOG"] = "WIX_REVIEWS_PRODUCT_CATALOG";
+package/build/chunk-7NOKHY7Z.js-2702-  ComponentType3["SOCIAL_MARKETING_DESIGNS_PROVIDER"] = "SOCIAL_MARKETING_DESIGNS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2703-  ComponentType3["GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER"] = "GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2704-  ComponentType3["COMMENTS_FILTER_PROVIDER"] = "COMMENTS_FILTER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2705-  ComponentType3["BILLING_TAX_ID_VALIDATOR"] = "BILLING_TAX_ID_VALIDATOR";
+package/build/chunk-7NOKHY7Z.js-2706-  ComponentType3["PING_SETTINGS_GROUP"] = "PING_SETTINGS_GROUP";
+package/build/chunk-7NOKHY7Z.js-2707-  ComponentType3["FORMS_SPAM_SUBMISSIONS_PROVIDER"] = "FORMS_SPAM_SUBMISSIONS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2708-  ComponentType3["EDITOR_ADDON"] = "EDITOR_ADDON";
+package/build/chunk-7NOKHY7Z.js-2709-  ComponentType3["EXTERNAL_DATABASE_PROVIDER"] = "EXTERNAL_DATABASE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2710-  ComponentType3["ECOM_PAYMENT_SETTINGS"] = "ECOM_PAYMENT_SETTINGS";
+package/build/chunk-7NOKHY7Z.js-2711-  ComponentType3["NOTIFICATION_TOPIC"] = "NOTIFICATION_TOPIC";
+package/build/chunk-7NOKHY7Z.js-2712-  ComponentType3["NOTIFICATION_PREFERENCES_FILTER_PROVIDER"] = "NOTIFICATION_PREFERENCES_FILTER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2713-  ComponentType3["BOOKINGS_RESOURCE_TYPES_PROVIDER"] = "BOOKINGS_RESOURCE_TYPES_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2714-  ComponentType3["PRICING_PLANS_FORM_CONFIGURATION"] = "PRICING_PLANS_FORM_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-2715-  ComponentType3["USER_NOTIFICATION"] = "USER_NOTIFICATION";
+package/build/chunk-7NOKHY7Z.js-2716-  ComponentType3["CONTACT_NOTIFICATION"] = "CONTACT_NOTIFICATION";
+package/build/chunk-7NOKHY7Z.js-2717-  ComponentType3["UNIFIED_PAGE"] = "UNIFIED_PAGE";
+package/build/chunk-7NOKHY7Z.js-2718-  ComponentType3["AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2719-  ComponentType3["PROPOSAL_EDITOR_PROVIDER"] = "PROPOSAL_EDITOR_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2720-  ComponentType3["CUSTOM_TABLE_RESERVATIONS_PROVIDER"] = "CUSTOM_TABLE_RESERVATIONS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2721-  ComponentType3["COMMENTS_CONTEXT_PROVIDER"] = "COMMENTS_CONTEXT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2722-  ComponentType3["FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER"] = "FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2723-  ComponentType3["AUTOMATIONS_VELO_ACTION_PROVIDER"] = "AUTOMATIONS_VELO_ACTION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2724-  ComponentType3["CALENDAR_EVENT_TYPE_PROVIDER"] = "CALENDAR_EVENT_TYPE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2725-  ComponentType3["RESERVED"] = "RESERVED";
+package/build/chunk-7NOKHY7Z.js-2726-  ComponentType3["SMS_ACTION_MESSAGE"] = "SMS_ACTION_MESSAGE";
+package/build/chunk-7NOKHY7Z.js-2727-  ComponentType3["BOOKING_POLICY_PROVIDER"] = "BOOKING_POLICY_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2728-  ComponentType3["MULTI_SERVICE_BOOKING_POLICY_PROVIDER"] = "MULTI_SERVICE_BOOKING_POLICY_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2729-  ComponentType3["AI_ASSISTANT"] = "AI_ASSISTANT";
+package/build/chunk-7NOKHY7Z.js-2730-  ComponentType3["FORMS_SUBMISSIONS_EXTENSION_PROVIDER"] = "FORMS_SUBMISSIONS_EXTENSION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2731-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA"] = "MULTILINGUAL_TRANSLATION_SCHEMA";
+package/build/chunk-7NOKHY7Z.js-2732-  ComponentType3["TAX_CALCULATION_PROVIDER"] = "TAX_CALCULATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2733-  ComponentType3["TAX_GROUPS_PROVIDER"] = "TAX_GROUPS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2734-  ComponentType3["BACK_OFFICE_MODAL"] = "BACK_OFFICE_MODAL";
+package/build/chunk-7NOKHY7Z.js-2735-  ComponentType3["DEPLOYMENT_PIPELINE_PROVIDER"] = "DEPLOYMENT_PIPELINE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2736-  ComponentType3["CUSTOM_ELEMENT_WIDGET"] = "CUSTOM_ELEMENT_WIDGET";
+package/build/chunk-7NOKHY7Z.js-2737-  ComponentType3["BACK_OFFICE_EXTENSION_WIDGET"] = "BACK_OFFICE_EXTENSION_WIDGET";
+package/build/chunk-7NOKHY7Z.js-2738-  ComponentType3["BACK_OFFICE_EXTENSION_MENU_ITEM"] = "BACK_OFFICE_EXTENSION_MENU_ITEM";
+package/build/chunk-7NOKHY7Z.js-2739-  ComponentType3["FORM_TEMPLATE"] = "FORM_TEMPLATE";
+package/build/chunk-7NOKHY7Z.js-2740-  ComponentType3["NOTIFICATION_CONTENT"] = "NOTIFICATION_CONTENT";
+package/build/chunk-7NOKHY7Z.js-2741-  ComponentType3["BROADCAST_LIST"] = "BROADCAST_LIST";
+package/build/chunk-7NOKHY7Z.js-2742-  ComponentType3["PARTNERS_PAYOUTS"] = "PARTNERS_PAYOUTS";
+package/build/chunk-7NOKHY7Z.js-2743-  ComponentType3["WIX_REVIEWS_ENTITY_CATALOG"] = "WIX_REVIEWS_ENTITY_CATALOG";
+package/build/chunk-7NOKHY7Z.js-2744-  ComponentType3["VELO_PUBLISH_PIPELINE_TASK_PROVIDER"] = "VELO_PUBLISH_PIPELINE_TASK_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2745-  ComponentType3["FUNCTIONS_SHOP_PRICE_PROVIDER"] = "FUNCTIONS_SHOP_PRICE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2746-  ComponentType3["FUNCTION"] = "FUNCTION";
+package/build/chunk-7NOKHY7Z.js-2747-  ComponentType3["ECOM_CHECKOUT_CONTENT"] = "ECOM_CHECKOUT_CONTENT";
+package/build/chunk-7NOKHY7Z.js-2748-  ComponentType3["COMMUNICATION_CHANNEL_PROVIDER"] = "COMMUNICATION_CHANNEL_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2749-  ComponentType3["WEBHOOK"] = "WEBHOOK";
+package/build/chunk-7NOKHY7Z.js-2750-  ComponentType3["TOPOLOGY"] = "TOPOLOGY";
+package/build/chunk-7NOKHY7Z.js-2751-  ComponentType3["LOYALTY_CUSTOM_REWARDS"] = "LOYALTY_CUSTOM_REWARDS";
+package/build/chunk-7NOKHY7Z.js-2752-  ComponentType3["FUNCTION_RECIPE"] = "FUNCTION_RECIPE";
+package/build/chunk-7NOKHY7Z.js-2753-  ComponentType3["BACK_OFFICE_EXTERNAL_URL"] = "BACK_OFFICE_EXTERNAL_URL";
+package/build/chunk-7NOKHY7Z.js-2754-  ComponentType3["IDENTITY_FACTOR"] = "IDENTITY_FACTOR";
+package/build/chunk-7NOKHY7Z.js-2755-  ComponentType3["ECOM_DISCOUNTS"] = "ECOM_DISCOUNTS";
+package/build/chunk-7NOKHY7Z.js-2756-  ComponentType3["VELO_CUSTOM_CSS"] = "VELO_CUSTOM_CSS";
+package/build/chunk-7NOKHY7Z.js-2757-  ComponentType3["DEALER_ADAPTIVE_COMPONENT_PROVIDER"] = "DEALER_ADAPTIVE_COMPONENT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2758-  ComponentType3["AI_ASSISTANT_ACTION"] = "AI_ASSISTANT_ACTION";
+package/build/chunk-7NOKHY7Z.js-2759-  ComponentType3["ECOM_INVENTORY"] = "ECOM_INVENTORY";
+package/build/chunk-7NOKHY7Z.js-2760-  ComponentType3["MONITORING"] = "MONITORING";
+package/build/chunk-7NOKHY7Z.js-2761-  ComponentType3["PAPI_PROVIDER"] = "PAPI_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2762-  ComponentType3["UNIFIED_LIGHTBOX"] = "UNIFIED_LIGHTBOX";
+package/build/chunk-7NOKHY7Z.js-2763-  ComponentType3["FORMS_EXTENSION_PROVIDER"] = "FORMS_EXTENSION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2764-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA_GROUP"] = "MULTILINGUAL_TRANSLATION_SCHEMA_GROUP";
+package/build/chunk-7NOKHY7Z.js-2765-  ComponentType3["PANEL"] = "PANEL";
+package/build/chunk-7NOKHY7Z.js-2766-  ComponentType3["PREMIUM_PURCHASE_VALIDATIONS"] = "PREMIUM_PURCHASE_VALIDATIONS";
+package/build/chunk-7NOKHY7Z.js-2767-  ComponentType3["BROWSER_STORAGE"] = "BROWSER_STORAGE";
+package/build/chunk-7NOKHY7Z.js-2768-  ComponentType3["SDK_DEFINITION"] = "SDK_DEFINITION";
+package/build/chunk-7NOKHY7Z.js-2769-  ComponentType3["SITE_WIDGET_SLOT"] = "SITE_WIDGET_SLOT";
+package/build/chunk-7NOKHY7Z.js-2770-  ComponentType3["CALENDAR_EVENT_VALIDATION_PROVIDER"] = "CALENDAR_EVENT_VALIDATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2771-  ComponentType3["CLIENT_SIDE_SERVICE"] = "CLIENT_SIDE_SERVICE";
+package/build/chunk-7NOKHY7Z.js-2772-  ComponentType3["BILLING_SETTINGS"] = "BILLING_SETTINGS";
+package/build/chunk-7NOKHY7Z.js-2773-  ComponentType3["PATTERNS_WIZARD"] = "PATTERNS_WIZARD";
+package/build/chunk-7NOKHY7Z.js-2774-  ComponentType3["APPLICATION_PROFILE"] = "APPLICATION_PROFILE";
+package/build/chunk-7NOKHY7Z.js-2775-  ComponentType3["TEXT_TO_SPEECH_ACTION_MESSAGE"] = "TEXT_TO_SPEECH_ACTION_MESSAGE";
+package/build/chunk-7NOKHY7Z.js-2776-  ComponentType3["AUDIENCE_PROVIDER"] = "AUDIENCE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2777-  ComponentType3["PRICING_PLANS_PRICE"] = "PRICING_PLANS_PRICE";
+package/build/chunk-7NOKHY7Z.js-2778-  ComponentType3["PRICING_PLAN_START_DATE_LIMITS"] = "PRICING_PLAN_START_DATE_LIMITS";
+package/build/chunk-7NOKHY7Z.js-2779-  ComponentType3["PRICING_PLAN_START_DATE_RULES"] = "PRICING_PLAN_START_DATE_RULES";
+package/build/chunk-7NOKHY7Z.js-2780-  ComponentType3["EVENTS_TICKET_RESERVATIONS"] = "EVENTS_TICKET_RESERVATIONS";
+package/build/chunk-7NOKHY7Z.js-2781-  ComponentType3["PAYMENTS_DISPUTE_SERVICE_PLUGIN"] = "PAYMENTS_DISPUTE_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-2782-  ComponentType3["PRICING_PLANS_FEES"] = "PRICING_PLANS_FEES";
+package/build/chunk-7NOKHY7Z.js-2783-  ComponentType3["EDITOR_REACT_COMPONENT"] = "EDITOR_REACT_COMPONENT";
+package/build/chunk-7NOKHY7Z.js-2784-  ComponentType3["SUPPLIERS_HUB_MARKETPLACE"] = "SUPPLIERS_HUB_MARKETPLACE";
+package/build/chunk-7NOKHY7Z.js-2785-  ComponentType3["FORM_SCHEMA_DYNAMIC_VALUES"] = "FORM_SCHEMA_DYNAMIC_VALUES";
+package/build/chunk-7NOKHY7Z.js-2786-  ComponentType3["BLOG_PAYWALL_PROVIDER"] = "BLOG_PAYWALL_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2787-  ComponentType3["LOYALTY_CUSTOM_REWARDS_V2"] = "LOYALTY_CUSTOM_REWARDS_V2";
+package/build/chunk-7NOKHY7Z.js-2788-  ComponentType3["STORES_PRODUCT_RESTRICTIONS"] = "STORES_PRODUCT_RESTRICTIONS";
+package/build/chunk-7NOKHY7Z.js-2789-  ComponentType3["FORM_SUBMISSION_MODERATION"] = "FORM_SUBMISSION_MODERATION";
+package/build/chunk-7NOKHY7Z.js-2790-  ComponentType3["EVENTS_EVENT_BADGES"] = "EVENTS_EVENT_BADGES";
+package/build/chunk-7NOKHY7Z.js-2791-  ComponentType3["BILLING_OPERATION"] = "BILLING_OPERATION";
+package/build/chunk-7NOKHY7Z.js-2792-  ComponentType3["BACK_OFFICE_CUSTOMIZATION"] = "BACK_OFFICE_CUSTOMIZATION";
+package/build/chunk-7NOKHY7Z.js-2793-  ComponentType3["COMPONENT_ENRICHER_PROVIDER"] = "COMPONENT_ENRICHER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2794-  ComponentType3["BACK_OFFICE_RESTRICTED_CUSTOMIZATION"] = "BACK_OFFICE_RESTRICTED_CUSTOMIZATION";
+package/build/chunk-7NOKHY7Z.js-2795-  ComponentType3["EDITOR_APP_PREVIEWS_POC"] = "EDITOR_APP_PREVIEWS_POC";
+package/build/chunk-7NOKHY7Z.js-2796-  ComponentType3["LEGENDS_PERSONA_CONFIGURATION"] = "LEGENDS_PERSONA_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-2797-  ComponentType3["WIX_HOSTING_APP_DEPLOYMENT_PROVIDER"] = "WIX_HOSTING_APP_DEPLOYMENT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js:2798:  ComponentType3["BACKEND_WORKER"] = "BACKEND_WORKER";
+package/build/chunk-7NOKHY7Z.js-2799-  ComponentType3["EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2800-  ComponentType3["WIX_HOSTING_APP_ENVIRONMENT_PROVIDER"] = "WIX_HOSTING_APP_ENVIRONMENT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2801-  ComponentType3["SDK_EXPORTS"] = "SDK_EXPORTS";
+package/build/chunk-7NOKHY7Z.js-2802-  ComponentType3["VIEWER_SERVICE"] = "VIEWER_SERVICE";
+package/build/chunk-7NOKHY7Z.js-2803-  ComponentType3["WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN"] = "WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-2804-  ComponentType3["CONTACTS_SEGMENTS_V2_FILTER_PROVIDER"] = "CONTACTS_SEGMENTS_V2_FILTER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2805-  ComponentType3["ANALYTICS_PRODUCT_CATALOG"] = "ANALYTICS_PRODUCT_CATALOG";
+package/build/chunk-7NOKHY7Z.js-2806-  ComponentType3["SITE_MIGRATION"] = "SITE_MIGRATION";
+package/build/chunk-7NOKHY7Z.js-2807-  ComponentType3["RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN"] = "RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-2808-  ComponentType3["WIX_VIBE_CODING_INSTRUCTIONS"] = "WIX_VIBE_CODING_INSTRUCTIONS";
+package/build/chunk-7NOKHY7Z.js-2809-  ComponentType3["TAX_EXEMPT_GROUPS_PROVIDER"] = "TAX_EXEMPT_GROUPS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2810-  ComponentType3["BOOKING_AUTOMATIONS_CONFIGURATION"] = "BOOKING_AUTOMATIONS_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-2811-  ComponentType3["WIX_VIBE_COMPONENT"] = "WIX_VIBE_COMPONENT";
+package/build/chunk-7NOKHY7Z.js-2812-  ComponentType3["WIXEL"] = "WIXEL";
+package/build/chunk-7NOKHY7Z.js-2813-  ComponentType3["STAFF_SORTING_PROVIDER"] = "STAFF_SORTING_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2814-  ComponentType3["FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER"] = "FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2815-  ComponentType3["FUNCTIONS_ASSISTANT_TOOLS"] = "FUNCTIONS_ASSISTANT_TOOLS";
+package/build/chunk-7NOKHY7Z.js-2816-  ComponentType3["SITE_MAP_INFO_PROVIDER"] = "SITE_MAP_INFO_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2817-  ComponentType3["WIX_AI_GATEWAY_CALLBACK"] = "WIX_AI_GATEWAY_CALLBACK";
+package/build/chunk-7NOKHY7Z.js-2818-  ComponentType3["URL_MAPPER_PROVIDER"] = "URL_MAPPER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-2819-  ComponentType3["PROVIDER_SUPPRESSION_SERVICE_PLUGIN"] = "PROVIDER_SUPPRESSION_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-2820-  ComponentType3["ECOM_FORMS"] = "ECOM_FORMS";
+package/build/chunk-7NOKHY7Z.js-2821-})(ComponentType || (ComponentType = {}));
+package/build/chunk-7NOKHY7Z.js-2822-var WidgetVertical;
+package/build/chunk-7NOKHY7Z.js-2823-(function(WidgetVertical3) {
+package/build/chunk-7NOKHY7Z.js-2824-  WidgetVertical3["NONE_VERTICAL"] = "NONE_VERTICAL";
+package/build/chunk-7NOKHY7Z.js-2825-  WidgetVertical3["TOP"] = "TOP";
+package/build/chunk-7NOKHY7Z.js-2826-  WidgetVertical3["CENTER_VERTICAL"] = "CENTER_VERTICAL";
+package/build/chunk-7NOKHY7Z.js-2827-  WidgetVertical3["BOTTOM"] = "BOTTOM";
+package/build/chunk-7NOKHY7Z.js-2828-})(WidgetVertical || (WidgetVertical = {}));
+package/build/chunk-7NOKHY7Z.js-2829-var WidgetHorizontal;
+package/build/chunk-7NOKHY7Z.js-2830-(function(WidgetHorizontal3) {
+package/build/chunk-7NOKHY7Z.js-2831-  WidgetHorizontal3["NONE_HORIZONTAL"] = "NONE_HORIZONTAL";
+package/build/chunk-7NOKHY7Z.js-2832-  WidgetHorizontal3["LEFT"] = "LEFT";
+package/build/chunk-7NOKHY7Z.js-2833-  WidgetHorizontal3["CENTER_HORIZONTAL"] = "CENTER_HORIZONTAL";
+package/build/chunk-7NOKHY7Z.js-2834-  WidgetHorizontal3["RIGHT"] = "RIGHT";
+package/build/chunk-7NOKHY7Z.js-2835-})(WidgetHorizontal || (WidgetHorizontal = {}));
+package/build/chunk-7NOKHY7Z.js-2836-var WidgetWidthType;
+package/build/chunk-7NOKHY7Z.js-2837-(function(WidgetWidthType3) {
+package/build/chunk-7NOKHY7Z.js-2838-  WidgetWidthType3["NONE_TYPE"] = "NONE_TYPE";
+package/build/chunk-7NOKHY7Z.js-2839-  WidgetWidthType3["CUSTOM"] = "CUSTOM";
+package/build/chunk-7NOKHY7Z.js-2840-  WidgetWidthType3["FULL"] = "FULL";
+package/build/chunk-7NOKHY7Z.js-2841-})(WidgetWidthType || (WidgetWidthType = {}));
+package/build/chunk-7NOKHY7Z.js-2842-var Region;
+package/build/chunk-7NOKHY7Z.js-2843-(function(Region3) {
+package/build/chunk-7NOKHY7Z.js-2844-  Region3["no_region"] = "no_region";
+package/build/chunk-7NOKHY7Z.js-2845-  Region3["header"] = "header";
+package/build/chunk-7NOKHY7Z.js-2846-  Region3["pageContainer"] = "pageContainer";
+package/build/chunk-7NOKHY7Z.js-2847-  Region3["footer"] = "footer";
+package/build/chunk-7NOKHY7Z.js-2848-})(Region || (Region = {}));
+package/build/chunk-7NOKHY7Z.js-2849-var UnitType;
+package/build/chunk-7NOKHY7Z.js-2850-(function(UnitType3) {
+package/build/chunk-7NOKHY7Z.js-2851-  UnitType3["NO_UNIT"] = "NO_UNIT";
+package/build/chunk-7NOKHY7Z.js-2852-  UnitType3["AUTO"] = "AUTO";
+package/build/chunk-7NOKHY7Z.js-2853-  UnitType3["PX"] = "PX";
+package/build/chunk-7NOKHY7Z.js-2854-  UnitType3["VH"] = "VH";
+package/build/chunk-7NOKHY7Z.js-2855-  UnitType3["VW"] = "VW";
+package/build/chunk-7NOKHY7Z.js-2856-  UnitType3["PERCENTAGE"] = "PERCENTAGE";
+package/build/chunk-7NOKHY7Z.js-2857-})(UnitType || (UnitType = {}));
+package/build/chunk-7NOKHY7Z.js-2858-var HorizontalDocking;
+package/build/chunk-7NOKHY7Z.js-2859-(function(HorizontalDocking3) {
+package/build/chunk-7NOKHY7Z.js-2860-  HorizontalDocking3["NO_HDOCKING"] = "NO_HDOCKING";
+package/build/chunk-7NOKHY7Z.js-2861-  HorizontalDocking3["LEFT_DOCKING"] = "LEFT_DOCKING";
+package/build/chunk-7NOKHY7Z.js-2862-  HorizontalDocking3["HCENTER"] = "HCENTER";
+package/build/chunk-7NOKHY7Z.js-2863-  HorizontalDocking3["RIGHT_DOCKING"] = "RIGHT_DOCKING";
+package/build/chunk-7NOKHY7Z.js-2864-})(HorizontalDocking || (HorizontalDocking = {}));
+package/build/chunk-7NOKHY7Z.js-2865-var VerticalDocking;
+package/build/chunk-7NOKHY7Z.js-2866-(function(VerticalDocking3) {
+package/build/chunk-7NOKHY7Z.js-2867-  VerticalDocking3["NO_VDOCKING"] = "NO_VDOCKING";
+package/build/chunk-7NOKHY7Z.js-2868-  VerticalDocking3["TOP_DOCKING"] = "TOP_DOCKING";
+package/build/chunk-7NOKHY7Z.js-2869-  VerticalDocking3["VCENTER"] = "VCENTER";
+package/build/chunk-7NOKHY7Z.js-2870-  VerticalDocking3["BOTTOM_DOCKING"] = "BOTTOM_DOCKING";
+package/build/chunk-7NOKHY7Z.js-2871-})(VerticalDocking || (VerticalDocking = {}));
+package/build/chunk-7NOKHY7Z.js-2872-var SiteMembersSsrCaching;
+package/build/chunk-7NOKHY7Z.js-2873-(function(SiteMembersSsrCaching3) {
+package/build/chunk-7NOKHY7Z.js-2874-  SiteMembersSsrCaching3["UNKNOWN_SITE_MEMBERS_SSR_CACHING"] = "UNKNOWN_SITE_MEMBERS_SSR_CACHING";
+package/build/chunk-7NOKHY7Z.js-2875-  SiteMembersSsrCaching3["CACHING_ALLOWED"] = "CACHING_ALLOWED";
+package/build/chunk-7NOKHY7Z.js-2876-  SiteMembersSsrCaching3["CACHING_NOT_ALLOWED"] = "CACHING_NOT_ALLOWED";
+package/build/chunk-7NOKHY7Z.js-2877-})(SiteMembersSsrCaching || (SiteMembersSsrCaching = {}));
+package/build/chunk-7NOKHY7Z.js-2878-var MpaNavigation;
+package/build/chunk-7NOKHY7Z.js-2879-(function(MpaNavigation3) {
+package/build/chunk-7NOKHY7Z.js-2880-  MpaNavigation3["DEFAULT"] = "DEFAULT";
+package/build/chunk-7NOKHY7Z.js-2881-  MpaNavigation3["ALLOWED"] = "ALLOWED";
+package/build/chunk-7NOKHY7Z.js-2882-  MpaNavigation3["NOT_ALLOWED"] = "NOT_ALLOWED";
+package/build/chunk-7NOKHY7Z.js-2883-})(MpaNavigation || (MpaNavigation = {}));
+package/build/chunk-7NOKHY7Z.js-2884-var ReplacementType;
+package/build/chunk-7NOKHY7Z.js-2885-(function(ReplacementType3) {
+package/build/chunk-7NOKHY7Z.js-2886-  ReplacementType3["UNKNOWN_REPLACEMENT"] = "UNKNOWN_REPLACEMENT";
+package/build/chunk-7NOKHY7Z.js-2887-  ReplacementType3["REPLACING"] = "REPLACING";
+package/build/chunk-7NOKHY7Z.js-2888-  ReplacementType3["REPLACEABLE"] = "REPLACEABLE";
+package/build/chunk-7NOKHY7Z.js-2889-})(ReplacementType || (ReplacementType = {}));
+package/build/chunk-7NOKHY7Z.js-2890-var PluginInterface;
+package/build/chunk-7NOKHY7Z.js-2891-(function(PluginInterface3) {
+package/build/chunk-7NOKHY7Z.js-2892-  PluginInterface3["NONE_INTERFACE"] = "NONE_INTERFACE";
+package/build/chunk-7NOKHY7Z.js-2893-  PluginInterface3["REVIEWS"] = "REVIEWS";
+package/build/chunk-7NOKHY7Z.js-2894-  PluginInterface3["RATINGS_SUMMARY"] = "RATINGS_SUMMARY";
+package/build/chunk-7NOKHY7Z.js-2895-  PluginInterface3["RATINGS_SUMMARY_OOI_LIST"] = "RATINGS_SUMMARY_OOI_LIST";
+package/build/chunk-7NOKHY7Z.js-2896-  PluginInterface3["BOOKINGS_SERVICE"] = "BOOKINGS_SERVICE";
+package/build/chunk-7NOKHY7Z.js-2897-  PluginInterface3["BOOKINGS_FORM"] = "BOOKINGS_FORM";
+package/build/chunk-7NOKHY7Z.js-2898-  PluginInterface3["BASE"] = "BASE";
+--
+package/build/chunk-7NOKHY7Z.js-5678-  ComponentType3["PREMIUM_CUSTOM_CHARGES"] = "PREMIUM_CUSTOM_CHARGES";
+package/build/chunk-7NOKHY7Z.js-5679-  ComponentType3["ECOM_VALIDATIONS"] = "ECOM_VALIDATIONS";
+package/build/chunk-7NOKHY7Z.js-5680-  ComponentType3["COMPONENT_REFERENCE_DATA_PROVIDER"] = "COMPONENT_REFERENCE_DATA_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5681-  ComponentType3["WIX_REVIEWS_PRODUCT_CATALOG"] = "WIX_REVIEWS_PRODUCT_CATALOG";
+package/build/chunk-7NOKHY7Z.js-5682-  ComponentType3["SOCIAL_MARKETING_DESIGNS_PROVIDER"] = "SOCIAL_MARKETING_DESIGNS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5683-  ComponentType3["GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER"] = "GOOGLE_BUSINESS_PROFILE_FEATURE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5684-  ComponentType3["COMMENTS_FILTER_PROVIDER"] = "COMMENTS_FILTER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5685-  ComponentType3["BILLING_TAX_ID_VALIDATOR"] = "BILLING_TAX_ID_VALIDATOR";
+package/build/chunk-7NOKHY7Z.js-5686-  ComponentType3["PING_SETTINGS_GROUP"] = "PING_SETTINGS_GROUP";
+package/build/chunk-7NOKHY7Z.js-5687-  ComponentType3["FORMS_SPAM_SUBMISSIONS_PROVIDER"] = "FORMS_SPAM_SUBMISSIONS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5688-  ComponentType3["EDITOR_ADDON"] = "EDITOR_ADDON";
+package/build/chunk-7NOKHY7Z.js-5689-  ComponentType3["EXTERNAL_DATABASE_PROVIDER"] = "EXTERNAL_DATABASE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5690-  ComponentType3["ECOM_PAYMENT_SETTINGS"] = "ECOM_PAYMENT_SETTINGS";
+package/build/chunk-7NOKHY7Z.js-5691-  ComponentType3["NOTIFICATION_TOPIC"] = "NOTIFICATION_TOPIC";
+package/build/chunk-7NOKHY7Z.js-5692-  ComponentType3["NOTIFICATION_PREFERENCES_FILTER_PROVIDER"] = "NOTIFICATION_PREFERENCES_FILTER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5693-  ComponentType3["BOOKINGS_RESOURCE_TYPES_PROVIDER"] = "BOOKINGS_RESOURCE_TYPES_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5694-  ComponentType3["PRICING_PLANS_FORM_CONFIGURATION"] = "PRICING_PLANS_FORM_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-5695-  ComponentType3["USER_NOTIFICATION"] = "USER_NOTIFICATION";
+package/build/chunk-7NOKHY7Z.js-5696-  ComponentType3["CONTACT_NOTIFICATION"] = "CONTACT_NOTIFICATION";
+package/build/chunk-7NOKHY7Z.js-5697-  ComponentType3["UNIFIED_PAGE"] = "UNIFIED_PAGE";
+package/build/chunk-7NOKHY7Z.js-5698-  ComponentType3["AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "AVAILABILITY_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5699-  ComponentType3["PROPOSAL_EDITOR_PROVIDER"] = "PROPOSAL_EDITOR_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5700-  ComponentType3["CUSTOM_TABLE_RESERVATIONS_PROVIDER"] = "CUSTOM_TABLE_RESERVATIONS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5701-  ComponentType3["COMMENTS_CONTEXT_PROVIDER"] = "COMMENTS_CONTEXT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5702-  ComponentType3["FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER"] = "FORMS_SPAM_SUBMISSION_REPORTS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5703-  ComponentType3["AUTOMATIONS_VELO_ACTION_PROVIDER"] = "AUTOMATIONS_VELO_ACTION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5704-  ComponentType3["CALENDAR_EVENT_TYPE_PROVIDER"] = "CALENDAR_EVENT_TYPE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5705-  ComponentType3["RESERVED"] = "RESERVED";
+package/build/chunk-7NOKHY7Z.js-5706-  ComponentType3["SMS_ACTION_MESSAGE"] = "SMS_ACTION_MESSAGE";
+package/build/chunk-7NOKHY7Z.js-5707-  ComponentType3["BOOKING_POLICY_PROVIDER"] = "BOOKING_POLICY_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5708-  ComponentType3["MULTI_SERVICE_BOOKING_POLICY_PROVIDER"] = "MULTI_SERVICE_BOOKING_POLICY_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5709-  ComponentType3["AI_ASSISTANT"] = "AI_ASSISTANT";
+package/build/chunk-7NOKHY7Z.js-5710-  ComponentType3["FORMS_SUBMISSIONS_EXTENSION_PROVIDER"] = "FORMS_SUBMISSIONS_EXTENSION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5711-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA"] = "MULTILINGUAL_TRANSLATION_SCHEMA";
+package/build/chunk-7NOKHY7Z.js-5712-  ComponentType3["TAX_CALCULATION_PROVIDER"] = "TAX_CALCULATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5713-  ComponentType3["TAX_GROUPS_PROVIDER"] = "TAX_GROUPS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5714-  ComponentType3["BACK_OFFICE_MODAL"] = "BACK_OFFICE_MODAL";
+package/build/chunk-7NOKHY7Z.js-5715-  ComponentType3["DEPLOYMENT_PIPELINE_PROVIDER"] = "DEPLOYMENT_PIPELINE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5716-  ComponentType3["CUSTOM_ELEMENT_WIDGET"] = "CUSTOM_ELEMENT_WIDGET";
+package/build/chunk-7NOKHY7Z.js-5717-  ComponentType3["BACK_OFFICE_EXTENSION_WIDGET"] = "BACK_OFFICE_EXTENSION_WIDGET";
+package/build/chunk-7NOKHY7Z.js-5718-  ComponentType3["BACK_OFFICE_EXTENSION_MENU_ITEM"] = "BACK_OFFICE_EXTENSION_MENU_ITEM";
+package/build/chunk-7NOKHY7Z.js-5719-  ComponentType3["FORM_TEMPLATE"] = "FORM_TEMPLATE";
+package/build/chunk-7NOKHY7Z.js-5720-  ComponentType3["NOTIFICATION_CONTENT"] = "NOTIFICATION_CONTENT";
+package/build/chunk-7NOKHY7Z.js-5721-  ComponentType3["BROADCAST_LIST"] = "BROADCAST_LIST";
+package/build/chunk-7NOKHY7Z.js-5722-  ComponentType3["PARTNERS_PAYOUTS"] = "PARTNERS_PAYOUTS";
+package/build/chunk-7NOKHY7Z.js-5723-  ComponentType3["WIX_REVIEWS_ENTITY_CATALOG"] = "WIX_REVIEWS_ENTITY_CATALOG";
+package/build/chunk-7NOKHY7Z.js-5724-  ComponentType3["VELO_PUBLISH_PIPELINE_TASK_PROVIDER"] = "VELO_PUBLISH_PIPELINE_TASK_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5725-  ComponentType3["FUNCTIONS_SHOP_PRICE_PROVIDER"] = "FUNCTIONS_SHOP_PRICE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5726-  ComponentType3["FUNCTION"] = "FUNCTION";
+package/build/chunk-7NOKHY7Z.js-5727-  ComponentType3["ECOM_CHECKOUT_CONTENT"] = "ECOM_CHECKOUT_CONTENT";
+package/build/chunk-7NOKHY7Z.js-5728-  ComponentType3["COMMUNICATION_CHANNEL_PROVIDER"] = "COMMUNICATION_CHANNEL_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5729-  ComponentType3["WEBHOOK"] = "WEBHOOK";
+package/build/chunk-7NOKHY7Z.js-5730-  ComponentType3["TOPOLOGY"] = "TOPOLOGY";
+package/build/chunk-7NOKHY7Z.js-5731-  ComponentType3["LOYALTY_CUSTOM_REWARDS"] = "LOYALTY_CUSTOM_REWARDS";
+package/build/chunk-7NOKHY7Z.js-5732-  ComponentType3["FUNCTION_RECIPE"] = "FUNCTION_RECIPE";
+package/build/chunk-7NOKHY7Z.js-5733-  ComponentType3["BACK_OFFICE_EXTERNAL_URL"] = "BACK_OFFICE_EXTERNAL_URL";
+package/build/chunk-7NOKHY7Z.js-5734-  ComponentType3["IDENTITY_FACTOR"] = "IDENTITY_FACTOR";
+package/build/chunk-7NOKHY7Z.js-5735-  ComponentType3["ECOM_DISCOUNTS"] = "ECOM_DISCOUNTS";
+package/build/chunk-7NOKHY7Z.js-5736-  ComponentType3["VELO_CUSTOM_CSS"] = "VELO_CUSTOM_CSS";
+package/build/chunk-7NOKHY7Z.js-5737-  ComponentType3["DEALER_ADAPTIVE_COMPONENT_PROVIDER"] = "DEALER_ADAPTIVE_COMPONENT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5738-  ComponentType3["AI_ASSISTANT_ACTION"] = "AI_ASSISTANT_ACTION";
+package/build/chunk-7NOKHY7Z.js-5739-  ComponentType3["ECOM_INVENTORY"] = "ECOM_INVENTORY";
+package/build/chunk-7NOKHY7Z.js-5740-  ComponentType3["MONITORING"] = "MONITORING";
+package/build/chunk-7NOKHY7Z.js-5741-  ComponentType3["PAPI_PROVIDER"] = "PAPI_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5742-  ComponentType3["UNIFIED_LIGHTBOX"] = "UNIFIED_LIGHTBOX";
+package/build/chunk-7NOKHY7Z.js-5743-  ComponentType3["FORMS_EXTENSION_PROVIDER"] = "FORMS_EXTENSION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5744-  ComponentType3["MULTILINGUAL_TRANSLATION_SCHEMA_GROUP"] = "MULTILINGUAL_TRANSLATION_SCHEMA_GROUP";
+package/build/chunk-7NOKHY7Z.js-5745-  ComponentType3["PANEL"] = "PANEL";
+package/build/chunk-7NOKHY7Z.js-5746-  ComponentType3["PREMIUM_PURCHASE_VALIDATIONS"] = "PREMIUM_PURCHASE_VALIDATIONS";
+package/build/chunk-7NOKHY7Z.js-5747-  ComponentType3["BROWSER_STORAGE"] = "BROWSER_STORAGE";
+package/build/chunk-7NOKHY7Z.js-5748-  ComponentType3["SDK_DEFINITION"] = "SDK_DEFINITION";
+package/build/chunk-7NOKHY7Z.js-5749-  ComponentType3["SITE_WIDGET_SLOT"] = "SITE_WIDGET_SLOT";
+package/build/chunk-7NOKHY7Z.js-5750-  ComponentType3["CALENDAR_EVENT_VALIDATION_PROVIDER"] = "CALENDAR_EVENT_VALIDATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5751-  ComponentType3["CLIENT_SIDE_SERVICE"] = "CLIENT_SIDE_SERVICE";
+package/build/chunk-7NOKHY7Z.js-5752-  ComponentType3["BILLING_SETTINGS"] = "BILLING_SETTINGS";
+package/build/chunk-7NOKHY7Z.js-5753-  ComponentType3["PATTERNS_WIZARD"] = "PATTERNS_WIZARD";
+package/build/chunk-7NOKHY7Z.js-5754-  ComponentType3["APPLICATION_PROFILE"] = "APPLICATION_PROFILE";
+package/build/chunk-7NOKHY7Z.js-5755-  ComponentType3["TEXT_TO_SPEECH_ACTION_MESSAGE"] = "TEXT_TO_SPEECH_ACTION_MESSAGE";
+package/build/chunk-7NOKHY7Z.js-5756-  ComponentType3["AUDIENCE_PROVIDER"] = "AUDIENCE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5757-  ComponentType3["PRICING_PLANS_PRICE"] = "PRICING_PLANS_PRICE";
+package/build/chunk-7NOKHY7Z.js-5758-  ComponentType3["PRICING_PLAN_START_DATE_LIMITS"] = "PRICING_PLAN_START_DATE_LIMITS";
+package/build/chunk-7NOKHY7Z.js-5759-  ComponentType3["PRICING_PLAN_START_DATE_RULES"] = "PRICING_PLAN_START_DATE_RULES";
+package/build/chunk-7NOKHY7Z.js-5760-  ComponentType3["EVENTS_TICKET_RESERVATIONS"] = "EVENTS_TICKET_RESERVATIONS";
+package/build/chunk-7NOKHY7Z.js-5761-  ComponentType3["PAYMENTS_DISPUTE_SERVICE_PLUGIN"] = "PAYMENTS_DISPUTE_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-5762-  ComponentType3["PRICING_PLANS_FEES"] = "PRICING_PLANS_FEES";
+package/build/chunk-7NOKHY7Z.js-5763-  ComponentType3["EDITOR_REACT_COMPONENT"] = "EDITOR_REACT_COMPONENT";
+package/build/chunk-7NOKHY7Z.js-5764-  ComponentType3["SUPPLIERS_HUB_MARKETPLACE"] = "SUPPLIERS_HUB_MARKETPLACE";
+package/build/chunk-7NOKHY7Z.js-5765-  ComponentType3["FORM_SCHEMA_DYNAMIC_VALUES"] = "FORM_SCHEMA_DYNAMIC_VALUES";
+package/build/chunk-7NOKHY7Z.js-5766-  ComponentType3["BLOG_PAYWALL_PROVIDER"] = "BLOG_PAYWALL_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5767-  ComponentType3["LOYALTY_CUSTOM_REWARDS_V2"] = "LOYALTY_CUSTOM_REWARDS_V2";
+package/build/chunk-7NOKHY7Z.js-5768-  ComponentType3["STORES_PRODUCT_RESTRICTIONS"] = "STORES_PRODUCT_RESTRICTIONS";
+package/build/chunk-7NOKHY7Z.js-5769-  ComponentType3["FORM_SUBMISSION_MODERATION"] = "FORM_SUBMISSION_MODERATION";
+package/build/chunk-7NOKHY7Z.js-5770-  ComponentType3["EVENTS_EVENT_BADGES"] = "EVENTS_EVENT_BADGES";
+package/build/chunk-7NOKHY7Z.js-5771-  ComponentType3["BILLING_OPERATION"] = "BILLING_OPERATION";
+package/build/chunk-7NOKHY7Z.js-5772-  ComponentType3["BACK_OFFICE_CUSTOMIZATION"] = "BACK_OFFICE_CUSTOMIZATION";
+package/build/chunk-7NOKHY7Z.js-5773-  ComponentType3["COMPONENT_ENRICHER_PROVIDER"] = "COMPONENT_ENRICHER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5774-  ComponentType3["BACK_OFFICE_RESTRICTED_CUSTOMIZATION"] = "BACK_OFFICE_RESTRICTED_CUSTOMIZATION";
+package/build/chunk-7NOKHY7Z.js-5775-  ComponentType3["EDITOR_APP_PREVIEWS_POC"] = "EDITOR_APP_PREVIEWS_POC";
+package/build/chunk-7NOKHY7Z.js-5776-  ComponentType3["LEGENDS_PERSONA_CONFIGURATION"] = "LEGENDS_PERSONA_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-5777-  ComponentType3["WIX_HOSTING_APP_DEPLOYMENT_PROVIDER"] = "WIX_HOSTING_APP_DEPLOYMENT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js:5778:  ComponentType3["BACKEND_WORKER"] = "BACKEND_WORKER";
+package/build/chunk-7NOKHY7Z.js-5779-  ComponentType3["EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER"] = "EVENT_TIME_SLOTS_CONFIGURATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5780-  ComponentType3["WIX_HOSTING_APP_ENVIRONMENT_PROVIDER"] = "WIX_HOSTING_APP_ENVIRONMENT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5781-  ComponentType3["SDK_EXPORTS"] = "SDK_EXPORTS";
+package/build/chunk-7NOKHY7Z.js-5782-  ComponentType3["VIEWER_SERVICE"] = "VIEWER_SERVICE";
+package/build/chunk-7NOKHY7Z.js-5783-  ComponentType3["WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN"] = "WIX_PAYMENTS_PROVIDER_ACCOUNT_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-5784-  ComponentType3["CONTACTS_SEGMENTS_V2_FILTER_PROVIDER"] = "CONTACTS_SEGMENTS_V2_FILTER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5785-  ComponentType3["ANALYTICS_PRODUCT_CATALOG"] = "ANALYTICS_PRODUCT_CATALOG";
+package/build/chunk-7NOKHY7Z.js-5786-  ComponentType3["SITE_MIGRATION"] = "SITE_MIGRATION";
+package/build/chunk-7NOKHY7Z.js-5787-  ComponentType3["RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN"] = "RESTAURANTS_POS_PROVIDER_SETTINGS_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-5788-  ComponentType3["WIX_VIBE_CODING_INSTRUCTIONS"] = "WIX_VIBE_CODING_INSTRUCTIONS";
+package/build/chunk-7NOKHY7Z.js-5789-  ComponentType3["TAX_EXEMPT_GROUPS_PROVIDER"] = "TAX_EXEMPT_GROUPS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5790-  ComponentType3["BOOKING_AUTOMATIONS_CONFIGURATION"] = "BOOKING_AUTOMATIONS_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-5791-  ComponentType3["WIX_VIBE_COMPONENT"] = "WIX_VIBE_COMPONENT";
+package/build/chunk-7NOKHY7Z.js-5792-  ComponentType3["WIXEL"] = "WIXEL";
+package/build/chunk-7NOKHY7Z.js-5793-  ComponentType3["STAFF_SORTING_PROVIDER"] = "STAFF_SORTING_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5794-  ComponentType3["FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER"] = "FUNCTION_ECOM_DISCOUNT_TRIGGER_ELIGIBILITY_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5795-  ComponentType3["FUNCTIONS_ASSISTANT_TOOLS"] = "FUNCTIONS_ASSISTANT_TOOLS";
+package/build/chunk-7NOKHY7Z.js-5796-  ComponentType3["SITE_MAP_INFO_PROVIDER"] = "SITE_MAP_INFO_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5797-  ComponentType3["WIX_AI_GATEWAY_CALLBACK"] = "WIX_AI_GATEWAY_CALLBACK";
+package/build/chunk-7NOKHY7Z.js-5798-  ComponentType3["URL_MAPPER_PROVIDER"] = "URL_MAPPER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5799-  ComponentType3["PROVIDER_SUPPRESSION_SERVICE_PLUGIN"] = "PROVIDER_SUPPRESSION_SERVICE_PLUGIN";
+package/build/chunk-7NOKHY7Z.js-5800-  ComponentType3["ECOM_FORMS"] = "ECOM_FORMS";
+package/build/chunk-7NOKHY7Z.js-5801-  ComponentType3["EDITOR_CONTEXT_PROVIDER"] = "EDITOR_CONTEXT_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5802-  ComponentType3["EDITOR_FUNCTION_LIBRARY"] = "EDITOR_FUNCTION_LIBRARY";
+package/build/chunk-7NOKHY7Z.js-5803-  ComponentType3["BOOKINGS_PLATFORM_CONFIGURATION"] = "BOOKINGS_PLATFORM_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-5804-  ComponentType3["BOOKINGS_VALIDATION_PROVIDER"] = "BOOKINGS_VALIDATION_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5805-  ComponentType3["APP_ROUTER"] = "APP_ROUTER";
+package/build/chunk-7NOKHY7Z.js-5806-  ComponentType3["WIXEL_BINDING"] = "WIXEL_BINDING";
+package/build/chunk-7NOKHY7Z.js-5807-  ComponentType3["SHUB_MARKETPLACE_PROVIDER"] = "SHUB_MARKETPLACE_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5808-  ComponentType3["BOOKING_ACTION_URLS_PROVIDER"] = "BOOKING_ACTION_URLS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5809-  ComponentType3["CALENDAR_CONFERENCING_PROVIDER"] = "CALENDAR_CONFERENCING_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5810-  ComponentType3["BASS_VALIDATE_CANCEL_ACTION"] = "BASS_VALIDATE_CANCEL_ACTION";
+package/build/chunk-7NOKHY7Z.js-5811-  ComponentType3["WIXEL_VIEWER_ROUTER_PROVIDER"] = "WIXEL_VIEWER_ROUTER_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5812-  ComponentType3["PREMIUM_ACTION"] = "PREMIUM_ACTION";
+package/build/chunk-7NOKHY7Z.js-5813-  ComponentType3["AUTOMATION_TEMPLATE"] = "AUTOMATION_TEMPLATE";
+package/build/chunk-7NOKHY7Z.js-5814-  ComponentType3["AGENT_MAKER_APPROVAL_PROVIDER"] = "AGENT_MAKER_APPROVAL_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5815-  ComponentType3["SERVICE_TAGS_CONFIGURATION"] = "SERVICE_TAGS_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-5816-  ComponentType3["LOYALTY_POINTS_ADJUSTMENT"] = "LOYALTY_POINTS_ADJUSTMENT";
+package/build/chunk-7NOKHY7Z.js-5817-  ComponentType3["LOYALTY_EARN_POINTS_LIMIT"] = "LOYALTY_EARN_POINTS_LIMIT";
+package/build/chunk-7NOKHY7Z.js-5818-  ComponentType3["REALTIME_PERMISSIONS_PROVIDER"] = "REALTIME_PERMISSIONS_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5819-  ComponentType3["CALENDAR_SEARCH_PROVIDER"] = "CALENDAR_SEARCH_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5820-  ComponentType3["EDITOR_INSTALLATION"] = "EDITOR_INSTALLATION";
+package/build/chunk-7NOKHY7Z.js-5821-  ComponentType3["APP_ACTIONS"] = "APP_ACTIONS";
+package/build/chunk-7NOKHY7Z.js-5822-  ComponentType3["ROLLOUT_STEP_EXECUTOR"] = "ROLLOUT_STEP_EXECUTOR";
+package/build/chunk-7NOKHY7Z.js-5823-  ComponentType3["BOOKINGS_PLATFORM_PREMIUM_VALIDATION"] = "BOOKINGS_PLATFORM_PREMIUM_VALIDATION";
+package/build/chunk-7NOKHY7Z.js-5824-  ComponentType3["GLOBAL_CSS"] = "GLOBAL_CSS";
+package/build/chunk-7NOKHY7Z.js-5825-  ComponentType3["CONNECTOR_CONFIG"] = "CONNECTOR_CONFIG";
+package/build/chunk-7NOKHY7Z.js-5826-  ComponentType3["CHANNEL_DATA_PROVIDER"] = "CHANNEL_DATA_PROVIDER";
+package/build/chunk-7NOKHY7Z.js-5827-  ComponentType3["OAUTH_CLIENT_CONFIGURATION"] = "OAUTH_CLIENT_CONFIGURATION";
+package/build/chunk-7NOKHY7Z.js-5828-  ComponentType3["EDITOR_EXPOSURE"] = "EDITOR_EXPOSURE";
+package/build/chunk-7NOKHY7Z.js-5829-  ComponentType3["TOOLS_PROVIDER_CONFIG"] = "TOOLS_PROVIDER_CONFIG";
+package/build/chunk-7NOKHY7Z.js-5830-  ComponentType3["APP_TOOLS"] = "APP_TOOLS";
+package/build/chunk-7NOKHY7Z.js-5831-  ComponentType3["ECOM_PURCHASE_RECOMMENDATIONS"] = "ECOM_PURCHASE_RECOMMENDATIONS";
+package/build/chunk-7NOKHY7Z.js-5832-})(ComponentType2 || (ComponentType2 = {}));
+package/build/chunk-7NOKHY7Z.js-5833-var AuthType;
+package/build/chunk-7NOKHY7Z.js-5834-(function(AuthType2) {
+package/build/chunk-7NOKHY7Z.js-5835-  AuthType2["UNKNOWN_AUTH_TYPE"] = "UNKNOWN_AUTH_TYPE";
+package/build/chunk-7NOKHY7Z.js-5836-  AuthType2["OAUTH2"] = "OAUTH2";
+package/build/chunk-7NOKHY7Z.js-5837-  AuthType2["API_KEY"] = "API_KEY";
+package/build/chunk-7NOKHY7Z.js-5838-})(AuthType || (AuthType = {}));
+package/build/chunk-7NOKHY7Z.js-5839-var DispatchHttpMethod;
+package/build/chunk-7NOKHY7Z.js-5840-(function(DispatchHttpMethod2) {
+package/build/chunk-7NOKHY7Z.js-5841-  DispatchHttpMethod2["UNKNOWN_DISPATCH_HTTP_METHOD"] = "UNKNOWN_DISPATCH_HTTP_METHOD";
+package/build/chunk-7NOKHY7Z.js-5842-  DispatchHttpMethod2["GET"] = "GET";
+package/build/chunk-7NOKHY7Z.js-5843-  DispatchHttpMethod2["POST"] = "POST";
+package/build/chunk-7NOKHY7Z.js-5844-  DispatchHttpMethod2["PUT"] = "PUT";
+package/build/chunk-7NOKHY7Z.js-5845-  DispatchHttpMethod2["PATCH"] = "PATCH";
+package/build/chunk-7NOKHY7Z.js-5846-  DispatchHttpMethod2["DELETE"] = "DELETE";
+package/build/chunk-7NOKHY7Z.js-5847-  DispatchHttpMethod2["HEAD"] = "HEAD";
+package/build/chunk-7NOKHY7Z.js-5848-  DispatchHttpMethod2["OPTIONS"] = "OPTIONS";
+package/build/chunk-7NOKHY7Z.js-5849-})(DispatchHttpMethod || (DispatchHttpMethod = {}));
+package/build/chunk-7NOKHY7Z.js-5850-var ResponseBodyDecoding;
+package/build/chunk-7NOKHY7Z.js-5851-(function(ResponseBodyDecoding2) {
+package/build/chunk-7NOKHY7Z.js-5852-  ResponseBodyDecoding2["UNKNOWN_RESPONSE_BODY_DECODING"] = "UNKNOWN_RESPONSE_BODY_DECODING";
+package/build/chunk-7NOKHY7Z.js-5853-  ResponseBodyDecoding2["BASE64_TEXT"] = "BASE64_TEXT";
+package/build/chunk-7NOKHY7Z.js-5854-})(ResponseBodyDecoding || (ResponseBodyDecoding = {}));
+package/build/chunk-7NOKHY7Z.js-5855-var DurableCredentialMode;
+package/build/chunk-7NOKHY7Z.js-5856-(function(DurableCredentialMode2) {
+package/build/chunk-7NOKHY7Z.js-5857-  DurableCredentialMode2["UNKNOWN_DURABLE_CREDENTIAL_MODE"] = "UNKNOWN_DURABLE_CREDENTIAL_MODE";
+package/build/chunk-7NOKHY7Z.js-5858-  DurableCredentialMode2["REFRESH_TOKEN"] = "REFRESH_TOKEN";
+package/build/chunk-7NOKHY7Z.js-5859-  DurableCredentialMode2["LONG_LIVED_ACCESS_TOKEN"] = "LONG_LIVED_ACCESS_TOKEN";
+package/build/chunk-7NOKHY7Z.js-5860-})(DurableCredentialMode || (DurableCredentialMode = {}));
+package/build/chunk-7NOKHY7Z.js-5861-var IdentityHttpMethod;
+package/build/chunk-7NOKHY7Z.js-5862-(function(IdentityHttpMethod2) {
+package/build/chunk-7NOKHY7Z.js-5863-  IdentityHttpMethod2["UNKNOWN_IDENTITY_HTTP_METHOD"] = "UNKNOWN_IDENTITY_HTTP_METHOD";
+package/build/chunk-7NOKHY7Z.js-5864-  IdentityHttpMethod2["GET"] = "GET";
+package/build/chunk-7NOKHY7Z.js-5865-  IdentityHttpMethod2["POST"] = "POST";
+package/build/chunk-7NOKHY7Z.js-5866-})(IdentityHttpMethod || (IdentityHttpMethod = {}));
+package/build/chunk-7NOKHY7Z.js-5867-var RevocationBodyStyle;
+package/build/chunk-7NOKHY7Z.js-5868-(function(RevocationBodyStyle2) {
+package/build/chunk-7NOKHY7Z.js-5869-  RevocationBodyStyle2["UNKNOWN_REVOCATION_BODY_STYLE"] = "UNKNOWN_REVOCATION_BODY_STYLE";
+package/build/chunk-7NOKHY7Z.js-5870-  RevocationBodyStyle2["FORM"] = "FORM";
+package/build/chunk-7NOKHY7Z.js-5871-  RevocationBodyStyle2["JSON"] = "JSON";
+package/build/chunk-7NOKHY7Z.js-5872-})(RevocationBodyStyle || (RevocationBodyStyle = {}));
+package/build/chunk-7NOKHY7Z.js-5873-var RevocationHttpMethod;
+package/build/chunk-7NOKHY7Z.js-5874-(function(RevocationHttpMethod2) {
+package/build/chunk-7NOKHY7Z.js-5875-  RevocationHttpMethod2["UNKNOWN_REVOCATION_HTTP_METHOD"] = "UNKNOWN_REVOCATION_HTTP_METHOD";
+package/build/chunk-7NOKHY7Z.js-5876-  RevocationHttpMethod2["POST"] = "POST";
+package/build/chunk-7NOKHY7Z.js-5877-  RevocationHttpMethod2["DELETE"] = "DELETE";
+package/build/chunk-7NOKHY7Z.js-5878-})(RevocationHttpMethod || (RevocationHttpMethod = {}));
+--
+package/build/chunk-UXLEQMZC.js-1-import { createRequire as _createRequire } from 'node:module';
+package/build/chunk-UXLEQMZC.js-2-const require = _createRequire(import.meta.url);
+package/build/chunk-UXLEQMZC.js-3-import {
+package/build/chunk-UXLEQMZC.js-4-  PlatformLinksSection,
+package/build/chunk-UXLEQMZC.js-5-  getComponentPlaceholderFieldMasks,
+package/build/chunk-UXLEQMZC.js-6-  getPlatformLinkCommand,
+package/build/chunk-UXLEQMZC.js-7-  parseLooseAppManifest,
+package/build/chunk-UXLEQMZC.js-8-  toComponentExperiments,
+package/build/chunk-UXLEQMZC.js-9-  useAppLinks,
+package/build/chunk-UXLEQMZC.js-10-  useDevCenterOverridesClient,
+package/build/chunk-UXLEQMZC.js-11-  useSiteLinks,
+package/build/chunk-UXLEQMZC.js-12-  useUpdateDeploymentTopologyForApp,
+package/build/chunk-UXLEQMZC.js-13-  useUpdateDeploymentTopologyForSite
+package/build/chunk-UXLEQMZC.js-14-} from "./chunk-D7ORRBCE.js";
+package/build/chunk-UXLEQMZC.js-15-import {
+package/build/chunk-UXLEQMZC.js-16-  assertBuildOutputExists,
+package/build/chunk-UXLEQMZC.js-17-  readBuildMetadata
+package/build/chunk-UXLEQMZC.js-18-} from "./chunk-3Y37AAE7.js";
+package/build/chunk-UXLEQMZC.js-19-import {
+package/build/chunk-UXLEQMZC.js-20-  OnboardingState,
+package/build/chunk-UXLEQMZC.js-21-  useVeloClient
+package/build/chunk-UXLEQMZC.js-22-} from "./chunk-737RXJMC.js";
+package/build/chunk-UXLEQMZC.js-23-import {
+package/build/chunk-UXLEQMZC.js-24-  ComponentType
+package/build/chunk-UXLEQMZC.js-25-} from "./chunk-7NOKHY7Z.js";
+package/build/chunk-UXLEQMZC.js-26-import {
+package/build/chunk-UXLEQMZC.js-27-  getGitLatestCommitHash,
+package/build/chunk-UXLEQMZC.js-28-  isInsideGitRepo
+package/build/chunk-UXLEQMZC.js-29-} from "./chunk-RMJ3IRO3.js";
+package/build/chunk-UXLEQMZC.js-30-import {
+package/build/chunk-UXLEQMZC.js-31-  CloudProvider,
+package/build/chunk-UXLEQMZC.js-32-  useBackendAsAServiceClient
+package/build/chunk-UXLEQMZC.js-33-} from "./chunk-EJB7C7MD.js";
+package/build/chunk-UXLEQMZC.js-34-import {
+package/build/chunk-UXLEQMZC.js-35-  useProjectModel,
+package/build/chunk-UXLEQMZC.js-36-  useSiteConfig
+package/build/chunk-UXLEQMZC.js-37-} from "./chunk-TMWD75YU.js";
+package/build/chunk-UXLEQMZC.js-38-import {
+package/build/chunk-UXLEQMZC.js-39-  globby
+package/build/chunk-UXLEQMZC.js-40-} from "./chunk-AAUVYJJT.js";
+package/build/chunk-UXLEQMZC.js-41-import {
+package/build/chunk-UXLEQMZC.js:42:  BACKEND_WORKER_COMPONENT_ID
+package/build/chunk-UXLEQMZC.js-43-} from "./chunk-C7KTTYNA.js";
+package/build/chunk-UXLEQMZC.js-44-import {
+package/build/chunk-UXLEQMZC.js-45-  SiteAuthProvider
+package/build/chunk-UXLEQMZC.js-46-} from "./chunk-5XKGOUNA.js";
+package/build/chunk-UXLEQMZC.js-47-import {
+package/build/chunk-UXLEQMZC.js-48-  Alert,
+package/build/chunk-UXLEQMZC.js-49-  Spinner,
+package/build/chunk-UXLEQMZC.js-50-  useAsync,
+package/build/chunk-UXLEQMZC.js-51-  useAsyncCallback
+package/build/chunk-UXLEQMZC.js-52-} from "./chunk-4LMXM7B3.js";
+package/build/chunk-UXLEQMZC.js-53-import {
+package/build/chunk-UXLEQMZC.js-54-  require_react
+package/build/chunk-UXLEQMZC.js-55-} from "./chunk-TODKQSCF.js";
+package/build/chunk-UXLEQMZC.js-56-import {
+package/build/chunk-UXLEQMZC.js-57-  readFile
+package/build/chunk-UXLEQMZC.js-58-} from "./chunk-SARPTPX4.js";
+package/build/chunk-UXLEQMZC.js-59-import {
+package/build/chunk-UXLEQMZC.js-60-  CliError,
+package/build/chunk-UXLEQMZC.js-61-  CliErrorCode,
+package/build/chunk-UXLEQMZC.js-62-  require_lib
+package/build/chunk-UXLEQMZC.js-63-} from "./chunk-CR5MBLNJ.js";
+package/build/chunk-UXLEQMZC.js-64-import {
+package/build/chunk-UXLEQMZC.js-65-  __toESM,
+package/build/chunk-UXLEQMZC.js-66-  init_esm_shims
+package/build/chunk-UXLEQMZC.js-67-} from "./chunk-EXLZF52D.js";
+package/build/chunk-UXLEQMZC.js-68-
+package/build/chunk-UXLEQMZC.js-69-// ../cli-astro-commands/src/components/PreviewCommand/index.ts
+package/build/chunk-UXLEQMZC.js-70-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-71-
+package/build/chunk-UXLEQMZC.js-72-// ../cli-astro-commands/src/components/PreviewCommand/PreviewCommand.tsx
+package/build/chunk-UXLEQMZC.js-73-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-74-var import_react6 = __toESM(require_react(), 1);
+package/build/chunk-UXLEQMZC.js-75-
+package/build/chunk-UXLEQMZC.js-76-// ../cli-astro-commands/src/components/PreviewCommand/Preview.tsx
+package/build/chunk-UXLEQMZC.js-77-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-78-var import_react5 = __toESM(require_react(), 1);
+package/build/chunk-UXLEQMZC.js-79-var import_variant5 = __toESM(require_lib(), 1);
+package/build/chunk-UXLEQMZC.js-80-
+package/build/chunk-UXLEQMZC.js-81-// ../cli-astro-commands/src/components/PreviewCommand/ActionStatus.tsx
+package/build/chunk-UXLEQMZC.js-82-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-83-var import_react = __toESM(require_react(), 1);
+package/build/chunk-UXLEQMZC.js-84-var import_variant = __toESM(require_lib(), 1);
+package/build/chunk-UXLEQMZC.js-85-var ActionStatus = ({ status, loadingText, successText }) => (0, import_variant.match)(status, {
+package/build/chunk-UXLEQMZC.js-86-  NotRequested: () => null,
+package/build/chunk-UXLEQMZC.js-87-  Loading: () => /* @__PURE__ */ import_react.default.createElement(Spinner, { text: loadingText }),
+package/build/chunk-UXLEQMZC.js-88-  Error: () => null,
+package/build/chunk-UXLEQMZC.js-89-  Success: () => /* @__PURE__ */ import_react.default.createElement(Alert, { type: "success" }, successText)
+package/build/chunk-UXLEQMZC.js-90-});
+package/build/chunk-UXLEQMZC.js-91-
+package/build/chunk-UXLEQMZC.js-92-// ../cli-astro-commands/src/components/PreviewCommand/hooks/useCreatePreview.ts
+package/build/chunk-UXLEQMZC.js-93-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-94-var import_variant2 = __toESM(require_lib(), 1);
+package/build/chunk-UXLEQMZC.js-95-
+package/build/chunk-UXLEQMZC.js-96-// ../cli-astro-commands/src/app-manifest/file.ts
+package/build/chunk-UXLEQMZC.js-97-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-98-import fs from "node:fs/promises";
+package/build/chunk-UXLEQMZC.js:99:async function processAppManifest({
+package/build/chunk-UXLEQMZC.js-100-  projectFolder,
+package/build/chunk-UXLEQMZC.js-101-  config,
+package/build/chunk-UXLEQMZC.js-102-  serverUrl
+package/build/chunk-UXLEQMZC.js-103-}) {
+package/build/chunk-UXLEQMZC.js-104-  const {
+package/build/chunk-UXLEQMZC.js-105-    metaDataSource,
+package/build/chunk-UXLEQMZC.js-106-    appManifestPath,
+package/build/chunk-UXLEQMZC.js-107-    staticsUrlPlaceholder,
+package/build/chunk-UXLEQMZC.js-108-    serverUrlPlaceholder
+package/build/chunk-UXLEQMZC.js-109-  } = await readBuildMetadata(projectFolder, config);
+package/build/chunk-UXLEQMZC.js-110-  if (metaDataSource === "WIX_CONFIG") {
+package/build/chunk-UXLEQMZC.js-111-    return {
+package/build/chunk-UXLEQMZC.js-112-      appManifest: { appId: config.appId, components: [] },
+package/build/chunk-UXLEQMZC.js-113-      componentPlaceholderFieldMasks: []
+package/build/chunk-UXLEQMZC.js-114-    };
+package/build/chunk-UXLEQMZC.js-115-  }
+package/build/chunk-UXLEQMZC.js-116-  const placeholders = /* @__PURE__ */ new Map();
+package/build/chunk-UXLEQMZC.js-117-  if (serverUrl) {
+package/build/chunk-UXLEQMZC.js-118-    if (staticsUrlPlaceholder) {
+package/build/chunk-UXLEQMZC.js-119-      placeholders.set(staticsUrlPlaceholder, serverUrl);
+package/build/chunk-UXLEQMZC.js-120-    }
+package/build/chunk-UXLEQMZC.js-121-    if (serverUrlPlaceholder) {
+package/build/chunk-UXLEQMZC.js-122-      placeholders.set(serverUrlPlaceholder, serverUrl);
+package/build/chunk-UXLEQMZC.js-123-    }
+package/build/chunk-UXLEQMZC.js-124-  }
+package/build/chunk-UXLEQMZC.js-125-  const manifest = await fs.readFile(appManifestPath, "utf-8");
+package/build/chunk-UXLEQMZC.js-126-  return {
+package/build/chunk-UXLEQMZC.js-127-    appManifest: parseLooseAppManifest(manifest, placeholders),
+package/build/chunk-UXLEQMZC.js-128-    componentPlaceholderFieldMasks: getComponentPlaceholderFieldMasks(
+package/build/chunk-UXLEQMZC.js-129-      manifest,
+package/build/chunk-UXLEQMZC.js-130-      placeholders.keys()
+package/build/chunk-UXLEQMZC.js-131-    )
+package/build/chunk-UXLEQMZC.js-132-  };
+package/build/chunk-UXLEQMZC.js-133-}
+package/build/chunk-UXLEQMZC.js-134-
+package/build/chunk-UXLEQMZC.js-135-// ../cli-astro-commands/src/components/PreviewCommand/hooks/useLoadBuildFiles.ts
+package/build/chunk-UXLEQMZC.js-136-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-137-
+package/build/chunk-UXLEQMZC.js-138-// ../cli-deployable-files/src/index.ts
+package/build/chunk-UXLEQMZC.js-139-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-140-import { join } from "node:path";
+package/build/chunk-UXLEQMZC.js-141-async function loadFiles(cwd) {
+package/build/chunk-UXLEQMZC.js-142-  return globby("**/*", { cwd, onlyFiles: true }).then(
+package/build/chunk-UXLEQMZC.js-143-    (files) => files.map((relativePath) => {
+package/build/chunk-UXLEQMZC.js-144-      return {
+package/build/chunk-UXLEQMZC.js-145-        path: join(cwd, relativePath),
+package/build/chunk-UXLEQMZC.js-146-        relativePath
+package/build/chunk-UXLEQMZC.js-147-      };
+package/build/chunk-UXLEQMZC.js-148-    })
+package/build/chunk-UXLEQMZC.js-149-  );
+package/build/chunk-UXLEQMZC.js-150-}
+package/build/chunk-UXLEQMZC.js-151-async function loadDeployableFiles(cwd) {
+package/build/chunk-UXLEQMZC.js-152-  return globby("**/*", {
+package/build/chunk-UXLEQMZC.js-153-    cwd,
+package/build/chunk-UXLEQMZC.js-154-    onlyFiles: true,
+package/build/chunk-UXLEQMZC.js-155-    gitignore: true,
+package/build/chunk-UXLEQMZC.js-156-    dot: false,
+package/build/chunk-UXLEQMZC.js-157-    followSymbolicLinks: false,
+package/build/chunk-UXLEQMZC.js-158-    ignore: [
+package/build/chunk-UXLEQMZC.js-159-      // https://vercel.com/docs/builds/build-features
+package/build/chunk-UXLEQMZC.js-160-      // https://github.com/netlify/cli/blob/8a07280b83de35aae6dee80212d4e065147e3456/src/utils/deploy/upload-source-zip.ts#L23C7-L23C30
+package/build/chunk-UXLEQMZC.js-161-      "**/*.log",
+package/build/chunk-UXLEQMZC.js-162-      "**/CVS",
+package/build/chunk-UXLEQMZC.js-163-      "**/Thumbs.db",
+package/build/chunk-UXLEQMZC.js-164-      "**/__pycache__",
+package/build/chunk-UXLEQMZC.js-165-      "**/__pycache__*",
+package/build/chunk-UXLEQMZC.js-166-      "**/build*",
+package/build/chunk-UXLEQMZC.js-167-      "**/config.gypi",
+package/build/chunk-UXLEQMZC.js-168-      "**/coverage*",
+package/build/chunk-UXLEQMZC.js-169-      "**/dist*",
+package/build/chunk-UXLEQMZC.js-170-      "**/node_modules",
+package/build/chunk-UXLEQMZC.js-171-      "**/node_modules*",
+package/build/chunk-UXLEQMZC.js-172-      "**/npm-debug.log",
+package/build/chunk-UXLEQMZC.js-173-      "**/venv",
+package/build/chunk-UXLEQMZC.js-174-      // lock files
+package/build/chunk-UXLEQMZC.js-175-      "**/package-lock.json",
+package/build/chunk-UXLEQMZC.js-176-      "**/*.lock",
+package/build/chunk-UXLEQMZC.js-177-      "**/pnpm-lock.yaml",
+package/build/chunk-UXLEQMZC.js-178-      "**/bun.lockb",
+package/build/chunk-UXLEQMZC.js-179-      // custom defined paths
+package/build/chunk-UXLEQMZC.js-180-      "**/package.json",
+package/build/chunk-UXLEQMZC.js-181-      "**/wix.config.json",
+package/build/chunk-UXLEQMZC.js-182-      "**/wix-error.log"
+package/build/chunk-UXLEQMZC.js-183-    ]
+package/build/chunk-UXLEQMZC.js-184-  }).then(
+package/build/chunk-UXLEQMZC.js-185-    (files) => files.map((relativePath) => {
+package/build/chunk-UXLEQMZC.js-186-      return {
+package/build/chunk-UXLEQMZC.js-187-        path: join(cwd, relativePath),
+package/build/chunk-UXLEQMZC.js-188-        relativePath
+package/build/chunk-UXLEQMZC.js-189-      };
+package/build/chunk-UXLEQMZC.js-190-    })
+package/build/chunk-UXLEQMZC.js-191-  );
+package/build/chunk-UXLEQMZC.js-192-}
+package/build/chunk-UXLEQMZC.js-193-
+package/build/chunk-UXLEQMZC.js-194-// ../cli-astro-commands/src/components/PreviewCommand/hooks/useLoadBuildFiles.ts
+package/build/chunk-UXLEQMZC.js-195-function useLoadBuildFiles() {
+package/build/chunk-UXLEQMZC.js-196-  const {
+package/build/chunk-UXLEQMZC.js-197-    model: { projectFolder, config }
+package/build/chunk-UXLEQMZC.js-198-  } = useProjectModel();
+package/build/chunk-UXLEQMZC.js-199-  return useAsyncCallback(async () => {
+package/build/chunk-UXLEQMZC.js-200-    const buildMetadata = await readBuildMetadata(projectFolder, config);
+package/build/chunk-UXLEQMZC.js-201-    const load = buildMetadata.metaDataSource === "WIX_CONFIG" ? loadDeployableFiles : loadFiles;
+package/build/chunk-UXLEQMZC.js-202-    const client = (buildMetadata.clientDir ? await load(buildMetadata.clientDir) : []).filter(({ path: path2 }) => {
+package/build/chunk-UXLEQMZC.js-203-      if (path2 === buildMetadata.appManifestPath) {
+package/build/chunk-UXLEQMZC.js-204-        return false;
+package/build/chunk-UXLEQMZC.js-205-      }
+package/build/chunk-UXLEQMZC.js-206-      if (buildMetadata.serverDir && path2.startsWith(buildMetadata.serverDir)) {
+package/build/chunk-UXLEQMZC.js-207-        return false;
+package/build/chunk-UXLEQMZC.js-208-      }
+package/build/chunk-UXLEQMZC.js-209-      return true;
+package/build/chunk-UXLEQMZC.js-210-    });
+package/build/chunk-UXLEQMZC.js-211-    const server = (buildMetadata.serverDir ? await load(buildMetadata.serverDir) : []).filter(({ path: path2 }) => {
+package/build/chunk-UXLEQMZC.js-212-      if (path2 === buildMetadata.appManifestPath) {
+package/build/chunk-UXLEQMZC.js-213-        return false;
+package/build/chunk-UXLEQMZC.js-214-      }
+package/build/chunk-UXLEQMZC.js-215-      return true;
+package/build/chunk-UXLEQMZC.js-216-    });
+package/build/chunk-UXLEQMZC.js-217-    return { client, server };
+package/build/chunk-UXLEQMZC.js-218-  });
+package/build/chunk-UXLEQMZC.js-219-}
+package/build/chunk-UXLEQMZC.js-220-
+package/build/chunk-UXLEQMZC.js-221-// ../cli-astro-commands/src/components/PreviewCommand/hooks/useUpdateManifest.ts
+package/build/chunk-UXLEQMZC.js-222-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-223-var import_react2 = __toESM(require_react(), 1);
+package/build/chunk-UXLEQMZC.js-224-function useUpdateManifest() {
+package/build/chunk-UXLEQMZC.js:225:  const updateManifestWithBackendWorker = (0, import_react2.useCallback)(
+package/build/chunk-UXLEQMZC.js-226-    (manifest, deploymentId, deploymentUrl, label, commitHash) => {
+package/build/chunk-UXLEQMZC.js-227-      const clone = structuredClone(manifest);
+package/build/chunk-UXLEQMZC.js-228-      clone.components.push({
+package/build/chunk-UXLEQMZC.js:229:        compId: BACKEND_WORKER_COMPONENT_ID,
+package/build/chunk-UXLEQMZC.js:230:        compType: ComponentType.BACKEND_WORKER,
+package/build/chunk-UXLEQMZC.js-231-        compData: {
+package/build/chunk-UXLEQMZC.js-232-          backendWorker: {
+package/build/chunk-UXLEQMZC.js-233-            deploymentId,
+package/build/chunk-UXLEQMZC.js-234-            deploymentUrl,
+package/build/chunk-UXLEQMZC.js-235-            label,
+package/build/chunk-UXLEQMZC.js-236-            commitHash
+package/build/chunk-UXLEQMZC.js-237-          }
+package/build/chunk-UXLEQMZC.js-238-        }
+package/build/chunk-UXLEQMZC.js-239-      });
+package/build/chunk-UXLEQMZC.js-240-      return clone;
+package/build/chunk-UXLEQMZC.js-241-    },
+package/build/chunk-UXLEQMZC.js-242-    []
+package/build/chunk-UXLEQMZC.js-243-  );
+package/build/chunk-UXLEQMZC.js-244-  return {
+package/build/chunk-UXLEQMZC.js-245-    updateManifestWithBackendWorker
+package/build/chunk-UXLEQMZC.js-246-  };
+package/build/chunk-UXLEQMZC.js-247-}
+package/build/chunk-UXLEQMZC.js-248-
+package/build/chunk-UXLEQMZC.js-249-// ../cli-astro-commands/src/components/PreviewCommand/hooks/useDeployFiles.ts
+package/build/chunk-UXLEQMZC.js-250-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-251-import path from "node:path";
+package/build/chunk-UXLEQMZC.js-252-import crypto from "node:crypto";
+package/build/chunk-UXLEQMZC.js-253-import fs2 from "node:fs";
+package/build/chunk-UXLEQMZC.js-254-
+package/build/chunk-UXLEQMZC.js-255-// ../../node_modules/mime/dist/src/index.js
+package/build/chunk-UXLEQMZC.js-256-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-257-
+package/build/chunk-UXLEQMZC.js-258-// ../../node_modules/mime/dist/types/other.js
+package/build/chunk-UXLEQMZC.js-259-init_esm_shims();
+package/build/chunk-UXLEQMZC.js-260-var types = {
+package/build/chunk-UXLEQMZC.js-261-  "application/prs.cww": ["cww"],
+package/build/chunk-UXLEQMZC.js-262-  "application/prs.xsf+xml": ["xsf"],
+package/build/chunk-UXLEQMZC.js-263-  "application/vnd.1000minds.decision-model+xml": ["1km"],
+package/build/chunk-UXLEQMZC.js-264-  "application/vnd.3gpp.pic-bw-large": ["plb"],
+package/build/chunk-UXLEQMZC.js-265-  "application/vnd.3gpp.pic-bw-small": ["psb"],
+package/build/chunk-UXLEQMZC.js-266-  "application/vnd.3gpp.pic-bw-var": ["pvb"],
+package/build/chunk-UXLEQMZC.js-267-  "application/vnd.3gpp2.tcap": ["tcap"],
+package/build/chunk-UXLEQMZC.js-268-  "application/vnd.3m.post-it-notes": ["pwn"],
+package/build/chunk-UXLEQMZC.js-269-  "application/vnd.accpac.simply.aso": ["aso"],
+package/build/chunk-UXLEQMZC.js-270-  "application/vnd.accpac.simply.imp": ["imp"],
+package/build/chunk-UXLEQMZC.js-271-  "application/vnd.acucobol": ["acu"],
+package/build/chunk-UXLEQMZC.js-272-  "application/vnd.acucorp": ["atc", "acutc"],
+package/build/chunk-UXLEQMZC.js-273-  "application/vnd.adobe.air-application-installer-package+zip": ["air"],
+package/build/chunk-UXLEQMZC.js-274-  "application/vnd.adobe.formscentral.fcdt": ["fcdt"],
+package/build/chunk-UXLEQMZC.js-275-  "application/vnd.adobe.fxp": ["fxp", "fxpl"],
+package/build/chunk-UXLEQMZC.js-276-  "application/vnd.adobe.xdp+xml": ["xdp"],
+package/build/chunk-UXLEQMZC.js-277-  "application/vnd.adobe.xfdf": ["*xfdf"],
+package/build/chunk-UXLEQMZC.js-278-  "application/vnd.age": ["age"],
+package/build/chunk-UXLEQMZC.js-279-  "application/vnd.ahead.space": ["ahead"],
+package/build/chunk-UXLEQMZC.js-280-  "application/vnd.airzip.filesecure.azf": ["azf"],
+package/build/chunk-UXLEQMZC.js-281-  "application/vnd.airzip.filesecure.azs": ["azs"],
+package/build/chunk-UXLEQMZC.js-282-  "application/vnd.amazon.ebook": ["azw"],
+package/build/chunk-UXLEQMZC.js-283-  "application/vnd.americandynamics.acc": ["acc"],
+package/build/chunk-UXLEQMZC.js-284-  "application/vnd.amiga.ami": ["ami"],
+package/build/chunk-UXLEQMZC.js-285-  "application/vnd.android.package-archive": ["apk"],
+package/build/chunk-UXLEQMZC.js-286-  "application/vnd.anser-web-certificate-issue-initiation": ["cii"],
+package/build/chunk-UXLEQMZC.js-287-  "application/vnd.anser-web-funds-transfer-initiation": ["fti"],
+package/build/chunk-UXLEQMZC.js-288-  "application/vnd.antix.game-component": ["atx"],
+package/build/chunk-UXLEQMZC.js-289-  "application/vnd.apple.installer+xml": ["mpkg"],
+package/build/chunk-UXLEQMZC.js-290-  "application/vnd.apple.keynote": ["key"],
+package/build/chunk-UXLEQMZC.js-291-  "application/vnd.apple.mpegurl": ["m3u8"],
+package/build/chunk-UXLEQMZC.js-292-  "application/vnd.apple.numbers": ["numbers"],
+package/build/chunk-UXLEQMZC.js-293-  "application/vnd.apple.pages": ["pages"],
+package/build/chunk-UXLEQMZC.js-294-  "application/vnd.apple.pkpass": ["pkpass"],
+package/build/chunk-UXLEQMZC.js-295-  "application/vnd.aristanetworks.swi": ["swi"],
+package/build/chunk-UXLEQMZC.js-296-  "application/vnd.astraea-software.iota": ["iota"],
+package/build/chunk-UXLEQMZC.js-297-  "application/vnd.audiograph": ["aep"],
+package/build/chunk-UXLEQMZC.js-298-  "application/vnd.autodesk.fbx": ["fbx"],
+package/build/chunk-UXLEQMZC.js-299-  "application/vnd.balsamiq.bmml+xml": ["bmml"],
+package/build/chunk-UXLEQMZC.js-300-  "application/vnd.blueice.multipass": ["mpm"],
+package/build/chunk-UXLEQMZC.js-301-  "application/vnd.bmi": ["bmi"],
+package/build/chunk-UXLEQMZC.js-302-  "application/vnd.businessobjects": ["rep"],
+package/build/chunk-UXLEQMZC.js-303-  "application/vnd.chemdraw+xml": ["cdxml"],
+package/build/chunk-UXLEQMZC.js-304-  "application/vnd.chipnuts.karaoke-mmd": ["mmd"],
+package/build/chunk-UXLEQMZC.js-305-  "application/vnd.cinderella": ["cdy"],
+package/build/chunk-UXLEQMZC.js-306-  "application/vnd.citationstyles.style+xml": ["csl"],
+package/build/chunk-UXLEQMZC.js-307-  "application/vnd.claymore": ["cla"],
+package/build/chunk-UXLEQMZC.js-308-  "application/vnd.cloanto.rp9": ["rp9"],
+package/build/chunk-UXLEQMZC.js-309-  "application/vnd.clonk.c4group": ["c4g", "c4d", "c4f", "c4p", "c4u"],
+package/build/chunk-UXLEQMZC.js-310-  "application/vnd.cluetrust.cartomobile-config": ["c11amc"],
+package/build/chunk-UXLEQMZC.js-311-  "application/vnd.cluetrust.cartomobile-config-pkg": ["c11amz"],
+package/build/chunk-UXLEQMZC.js-312-  "application/vnd.commonspace": ["csp"],
+package/build/chunk-UXLEQMZC.js-313-  "application/vnd.contact.cmsg": ["cdbcmsg"],
+package/build/chunk-UXLEQMZC.js-314-  "application/vnd.cosmocaller": ["cmc"],
+package/build/chunk-UXLEQMZC.js-315-  "application/vnd.crick.clicker": ["clkx"],
+package/build/chunk-UXLEQMZC.js-316-  "application/vnd.crick.clicker.keyboard": ["clkk"],
+package/build/chunk-UXLEQMZC.js-317-  "application/vnd.crick.clicker.palette": ["clkp"],
+package/build/chunk-UXLEQMZC.js-318-  "application/vnd.crick.clicker.template": ["clkt"],
+package/build/chunk-UXLEQMZC.js-319-  "application/vnd.crick.clicker.wordbank": ["clkw"],
+package/build/chunk-UXLEQMZC.js-320-  "application/vnd.criticaltools.wbs+xml": ["wbs"],
+package/build/chunk-UXLEQMZC.js-321-  "application/vnd.ctc-posml": ["pml"],
+package/build/chunk-UXLEQMZC.js-322-  "application/vnd.cups-ppd": ["ppd"],
+package/build/chunk-UXLEQMZC.js-323-  "application/vnd.curl.car": ["car"],
+package/build/chunk-UXLEQMZC.js-324-  "application/vnd.curl.pcurl": ["pcurl"],
+package/build/chunk-UXLEQMZC.js-325-  "application/vnd.dart": ["dart"],
+package/build/chunk-UXLEQMZC.js-326-  "application/vnd.data-vision.rdz": ["rdz"],
+package/build/chunk-UXLEQMZC.js-327-  "application/vnd.dbf": ["dbf"],
+package/build/chunk-UXLEQMZC.js-328-  "application/vnd.dcmp+xml": ["dcmp"],
+package/build/chunk-UXLEQMZC.js-329-  "application/vnd.dece.data": ["uvf", "uvvf", "uvd", "uvvd"],
+package/build/chunk-UXLEQMZC.js-330-  "application/vnd.dece.ttml+xml": ["uvt", "uvvt"],
