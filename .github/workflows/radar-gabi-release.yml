@@ -20,14 +20,13 @@ jobs:
       WIX_MUNDO_API_KEY: ${{ secrets.WIX_MUNDO_API_KEY }}
     steps:
       - uses: actions/checkout@v4
-      - name: Verify release credential
+      - name: Select Wix authentication route
         shell: bash
         run: |
           if [ -n "${WIX_GABI_RADAR_API_KEY:-${WIX_MUNDO_API_KEY:-}}" ]; then
-            echo "WIX_RELEASE_CREDENTIAL=AVAILABLE"
+            echo "WIX_RELEASE_AUTH=API_KEY"
           else
-            echo "WIX_RELEASE_CREDENTIAL=MISSING"
-            exit 1
+            echo "WIX_RELEASE_AUTH=DEVICE_LOGIN"
           fi
       - name: Run repository Radar release
         shell: bash

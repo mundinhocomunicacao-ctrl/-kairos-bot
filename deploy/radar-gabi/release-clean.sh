@@ -48,9 +48,15 @@ cp "$RADAR_DIR/index.html" "$RADAR_DIR/dist/index.html"
 
 cd "$RADAR_DIR"
 WIX_CLI_KEY="${WIX_GABI_RADAR_API_KEY:-${WIX_MUNDO_API_KEY:-}}"
-test -n "$WIX_CLI_KEY" || (echo "WIX_CLI_API_KEY_MISSING" && exit 1)
-CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_CLI_KEY"
-unset WIX_CLI_KEY
+if [ -n "$WIX_CLI_KEY" ]; then
+  echo "WIX_AUTH_ROUTE=API_KEY"
+  CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_CLI_KEY"
+  unset WIX_CLI_KEY
+else
+  echo "WIX_AUTH_ROUTE=DEVICE_LOGIN"
+  echo "WIX_DEVICE_LOGIN_REQUIRED"
+  CI=1 npx --yes @wix/cli@latest login
+fi
 CI=1 npx --yes @wix/cli@latest whoami
 CI=1 npx --yes @wix/cli@latest release
 
