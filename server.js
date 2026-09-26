@@ -1,7 +1,15 @@
 import http from 'node:http';
 import crypto from 'node:crypto';
+import { normalizeMetaWebhook, verifyMetaSignature } from './commercial-adapter.js';
 
 const PORT = Number(process.env.PORT || 10000);
+const META_VERIFY_TOKEN = String(process.env.META_VERIFY_TOKEN || '').trim();
+const META_APP_SECRET = String(process.env.META_APP_SECRET || '').trim();
+const META_ACCESS_TOKEN = String(process.env.META_ACCESS_TOKEN || '').trim();
+const META_GRAPH_VERSION = String(process.env.META_GRAPH_VERSION || '').trim();
+const META_COMMERCIAL_WEBHOOK_PATH = '/webhooks/meta/whatsapp';
+const META_EVENT_IDS = new Map();
+const META_EVENT_TTL_MS = 24 * 60 * 60 * 1000;
 const API_KEY = process.env.WHATSSCALE_API_KEY;
 const SESSION = process.env.WHATSSCALE_SESSION || 'user_8b1cb7983c6d4999b2cffecca2da723a_08Q8thOB';
 const GROUP_JID = process.env.WHATSSCALE_GROUP_JID || '120363411404153606@g.us';
@@ -85,6 +93,22 @@ async function readBody(req) {
   for await (const chunk of req) chunks.push(chunk);
   const raw = Buffer.concat(chunks).toString('utf8');
   return raw ? JSON.parse(raw) : {};
+}
+
+function cleanupMetaEventIds(now=Date.now()){
+  for(const [id,expiresAt] of META_EVENT_IDS)if(expiresAt<=now)META_EVENT_IDS.delete(id);
+}
+
+async function sendMetaText(phoneNumberId,to,text){
+  if(!META_ACCESS_TOKEN||!META_GRAPH_VERSION)throw new Error('Meta outbound is not configured');
+  const response=await fetch('https://graph.facebook.com/'+encodeURIComponent(META_GRAPH_VERSION)+'/'+encodeURIComponent(phoneNumberId)+'/messages',{
+    method:'POST',
+    headers:{authorization:'Bearer '+META_ACCESS_TOKEN,'content-type':'application/json'},
+    body:JSON.stringify({messaging_product:'whatsapp',recipient_type:'individual',to,type:'text',text:{preview_url:false,body:String(text||'').slice(0,4096)}})
+  });
+  const raw=await response.text();
+  if(!response.ok)throw new Error('Meta send returned HTTP '+response.status+': '+raw.slice(0,160));
+  return raw?JSON.parse(raw):{};
 }
 
 async function whatsScaleJson(path, init = {}) {
@@ -562,11 +586,56 @@ const server = http.createServer(async (req, res) => {
       return res.end("<!doctype html><html lang=\"pt-BR\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>DIVA Runtime</title><style>body{font-family:system-ui,sans-serif;background:#f4f1eb;color:#171717;margin:0;padding:32px}.card{max-width:720px;margin:auto;background:white;border-radius:24px;padding:28px;box-shadow:0 10px 35px #0001}h1{font-family:Georgia,serif;font-size:42px;margin:0 0 8px}.ok{display:inline-block;padding:7px 12px;border-radius:99px;background:#e8f5e9}a{display:inline-block;margin-top:20px;color:#174ea6}</style><main class=\"card\"><div class=\"ok\">● runtime externo</div><h1>DIVA</h1><p>Corpo operacional independente de sessão ChatGPT.</p><p>DIVA → SOPRO → gateway → Malha → persistência.</p><a href=\"/health\">Abrir diagnóstico do runtime →</a></main></html>");
     }
 
+    if (req.method === 'GET' && url.pathname === META_COMMERCIAL_WEBHOOK_PATH) {
+      const mode=url.searchParams.get('hub.mode')||'';
+      const token=url.searchParams.get('hub.verify_token')||'';
+      const challenge=url.searchParams.get('hub.challenge')||'';
+      if(mode!=='subscribe'||!META_VERIFY_TOKEN||!safeEqual(token,META_VERIFY_TOKEN))return json(res,403,{ok:false,error:'verification_denied'});
+      res.writeHead(200,{'content-type':'text/plain; charset=utf-8'});
+      return res.end(challenge);
+    }
+
+    if (req.method === 'POST' && url.pathname === META_COMMERCIAL_WEBHOOK_PATH) {
+      if(!META_APP_SECRET)return json(res,503,{ok:false,error:'meta_webhook_not_configured'});
+      const chunks=[]; for await(const chunk of req)chunks.push(chunk);
+      const raw=Buffer.concat(chunks).toString('utf8');
+      const supplied=String(req.headers['x-hub-signature-256']||'');
+      if(!verifyMetaSignature(raw,supplied,META_APP_SECRET))return json(res,401,{ok:false,error:'signature_invalid'});
+      let payload={}; try{payload=raw?JSON.parse(raw):{}}catch{return json(res,400,{ok:false,error:'invalid_json'});}
+      const events=normalizeMetaWebhook(payload);
+      cleanupMetaEventIds();
+      const results=[];
+      for(const event of events){
+        const id=event.external_event_id;
+        if(META_EVENT_IDS.has(id)){results.push({id,status:'duplicate'});continue;}
+        META_EVENT_IDS.set(id,Date.now()+META_EVENT_TTL_MS);
+        try{
+          const gateway=await invokeDivaGatewayBody(event);
+          const meta=event.native_adapter_metadata||{};
+          const policy=meta.commercial_policy||{mode:'human_handoff',reason:'policy_missing'};
+          if(policy.mode==='auto'){
+            await sendMetaText(meta.whatsapp_business_phone_number_id,meta.whatsapp_sender_id,gateway.answer);
+            results.push({id,status:'replied'});
+          }else{
+            await sendMetaText(meta.whatsapp_business_phone_number_id,meta.whatsapp_sender_id,'Recebi. Vou encaminhar este ponto para validação humana e seguimos por aqui.');
+            results.push({id,status:'human_handoff',reason:policy.reason});
+          }
+        }catch(error){
+          META_EVENT_IDS.delete(id);
+          console.error('DIVA_COMMERCIAL_EVENT_FAILED',{id,error:String(error?.message||error).slice(0,200)});
+          results.push({id,status:'failed'});
+        }
+      }
+      return json(res,200,{ok:true,accepted:events.length,results});
+    }
+
     if (req.method === 'GET' && url.pathname === '/health') {
       await refreshProviderDiagnostics();
       return json(res, 200, {
         ok: true,
         service: 'kairos-whatsapp-cloud',
+        divaCommercialMetaWebhookConfigured:Boolean(META_VERIFY_TOKEN && META_APP_SECRET),
+        divaCommercialMetaOutboundConfigured:Boolean(META_ACCESS_TOKEN && META_GRAPH_VERSION),
         apiKeyConfigured: Boolean(API_KEY),
         triggerSecretConfigured: Boolean(TRIGGER_SECRET),
         testTokenConfigured: Boolean(TEST_TOKEN),
