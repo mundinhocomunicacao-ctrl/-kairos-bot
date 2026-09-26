@@ -80,7 +80,7 @@ jobs:
             grep -n -C 120 -E 'createComponentsOverride|updateOverrideWithNoSideEffects|updateComponentsOverrides|OverrideType|componentOverrideId' package/build/chunk-D7ORRBCE.js | head -3600 || true
             echo
             echo "## Manifest processing exact"
-            grep -n -C 100 -E 'processAppManifest|updateManifestWithBackendWorker|toComponentExperiments|BACKEND_WORKER' package/build/chunk-D7ORRBCE.js | head -3200 || true
+            grep -R -n -C 100 -E 'function updateManifestWithBackendWorker|updateManifestWithBackendWorker =|function processAppManifest|processAppManifest =|BACKEND_WORKER' package/build --include='*.js' | head -5200 || true
           } > "$GITHUB_WORKSPACE/deploy/radar-gabi/diagnostics/wix-deploy-manifest.txt"
           cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
