@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 const COMMITMENT=/\b(contrato|assinar|fechar|fechamento|desconto|%|garantia|exclusividade|multa|prazo de pagamento|parcelamento)\b/iu;
 const SENSITIVE=/\b(senha|password|token|api[ -]?key|chave secreta|c[oó]digo de verifica[cç][aã]o|2fa)\b/iu;
 
@@ -57,4 +58,12 @@ export function normalizeMetaWebhook(payload={}){
     }
   }
   return events;
+}
+
+export function verifyMetaSignature(raw='',supplied='',secret=''){
+  if(!raw||!supplied||!secret)return false;
+  const expected='sha256='+crypto.createHmac('sha256',secret).update(raw).digest('hex');
+  const a=Buffer.from(String(supplied));
+  const b=Buffer.from(expected);
+  return a.length===b.length&&crypto.timingSafeEqual(a,b);
 }
