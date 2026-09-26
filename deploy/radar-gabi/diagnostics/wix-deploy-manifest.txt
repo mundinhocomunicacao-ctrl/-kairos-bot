@@ -2749,3 +2749,525 @@ package/build/PreviewCommand-VUNW5CP4.js-117-            title: t("preview_comma
 package/build/PreviewCommand-VUNW5CP4.js-118-          }
 package/build/PreviewCommand-VUNW5CP4.js-119-        ],
 package/build/PreviewCommand-VUNW5CP4.js-120-        onSubmit
+
+## Astro PreviewCommand core
+1316-  "text/shex": ["shex"],
+1317-  "text/slim": ["slim", "slm"],
+1318-  "text/spdx": ["spdx"],
+1319-  "text/stylus": ["stylus", "styl"],
+1320-  "text/tab-separated-values": ["tsv"],
+1321-  "text/troff": ["t", "tr", "roff", "man", "me", "ms"],
+1322-  "text/turtle": ["ttl"],
+1323-  "text/uri-list": ["uri", "uris", "urls"],
+1324-  "text/vcard": ["vcard"],
+1325-  "text/vtt": ["vtt"],
+1326-  "text/wgsl": ["wgsl"],
+1327-  "text/xml": ["*xml"],
+1328-  "text/yaml": ["yaml", "yml"],
+1329-  "video/3gpp": ["3gp", "3gpp"],
+1330-  "video/3gpp2": ["3g2"],
+1331-  "video/h261": ["h261"],
+1332-  "video/h263": ["h263"],
+1333-  "video/h264": ["h264"],
+1334-  "video/iso.segment": ["m4s"],
+1335-  "video/jpeg": ["jpgv"],
+1336-  "video/jpm": ["*jpm", "*jpgm"],
+1337-  "video/mj2": ["mj2", "mjp2"],
+1338-  "video/mp2t": ["ts", "m2t", "m2ts", "mts"],
+1339-  "video/mp4": ["mp4", "mp4v", "mpg4"],
+1340-  "video/mpeg": ["mpeg", "mpg", "mpe", "m1v", "m2v"],
+1341-  "video/ogg": ["ogv"],
+1342-  "video/quicktime": ["qt", "mov"],
+1343-  "video/webm": ["webm"]
+1344-};
+1345-Object.freeze(types2);
+1346-var standard_default = types2;
+1347-
+1348-// ../../node_modules/mime/dist/src/Mime.js
+1349-init_esm_shims();
+1350-var __classPrivateFieldGet = function(receiver, state, kind, f) {
+1351-  if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+1352-  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+1353-  return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+1354-};
+1355-var _Mime_extensionToType;
+1356-var _Mime_typeToExtension;
+1357-var _Mime_typeToExtensions;
+1358-var Mime = class {
+1359-  constructor(...args) {
+1360-    _Mime_extensionToType.set(this, /* @__PURE__ */ new Map());
+1361-    _Mime_typeToExtension.set(this, /* @__PURE__ */ new Map());
+1362-    _Mime_typeToExtensions.set(this, /* @__PURE__ */ new Map());
+1363-    for (const arg of args) {
+1364-      this.define(arg);
+1365-    }
+1366-  }
+1367-  define(typeMap, force = false) {
+1368-    for (let [type, extensions] of Object.entries(typeMap)) {
+1369-      type = type.toLowerCase();
+1370-      extensions = extensions.map((ext) => ext.toLowerCase());
+1371-      if (!__classPrivateFieldGet(this, _Mime_typeToExtensions, "f").has(type)) {
+1372-        __classPrivateFieldGet(this, _Mime_typeToExtensions, "f").set(type, /* @__PURE__ */ new Set());
+1373-      }
+1374-      const allExtensions = __classPrivateFieldGet(this, _Mime_typeToExtensions, "f").get(type);
+1375-      let first = true;
+1376-      for (let extension of extensions) {
+1377-        const starred = extension.startsWith("*");
+1378-        extension = starred ? extension.slice(1) : extension;
+1379-        allExtensions?.add(extension);
+1380-        if (first) {
+1381-          __classPrivateFieldGet(this, _Mime_typeToExtension, "f").set(type, extension);
+1382-        }
+1383-        first = false;
+1384-        if (starred)
+1385-          continue;
+1386-        const currentType = __classPrivateFieldGet(this, _Mime_extensionToType, "f").get(extension);
+1387-        if (currentType && currentType != type && !force) {
+1388-          throw new Error(`"${type} -> ${extension}" conflicts with "${currentType} -> ${extension}". Pass \`force=true\` to override this definition.`);
+1389-        }
+1390-        __classPrivateFieldGet(this, _Mime_extensionToType, "f").set(extension, type);
+1391-      }
+1392-    }
+1393-    return this;
+1394-  }
+1395-  getType(path2) {
+1396-    if (typeof path2 !== "string")
+1397-      return null;
+1398-    const last = path2.replace(/^.*[/\\]/s, "").toLowerCase();
+1399-    const ext = last.replace(/^.*\./s, "").toLowerCase();
+1400-    const hasPath = last.length < path2.length;
+1401-    const hasDot = ext.length < last.length - 1;
+1402-    if (!hasDot && hasPath)
+1403-      return null;
+1404-    return __classPrivateFieldGet(this, _Mime_extensionToType, "f").get(ext) ?? null;
+1405-  }
+1406-  getExtension(type) {
+1407-    if (typeof type !== "string")
+1408-      return null;
+1409-    type = type?.split?.(";")[0];
+1410-    return (type && __classPrivateFieldGet(this, _Mime_typeToExtension, "f").get(type.trim().toLowerCase())) ?? null;
+1411-  }
+1412-  getAllExtensions(type) {
+1413-    if (typeof type !== "string")
+1414-      return null;
+1415-    return __classPrivateFieldGet(this, _Mime_typeToExtensions, "f").get(type.toLowerCase()) ?? null;
+1416-  }
+1417-  _freeze() {
+1418-    this.define = () => {
+1419-      throw new Error("define() not allowed for built-in Mime objects. See https://github.com/broofa/mime/blob/main/README.md#custom-mime-instances");
+1420-    };
+1421-    Object.freeze(this);
+1422-    for (const extensions of __classPrivateFieldGet(this, _Mime_typeToExtensions, "f").values()) {
+1423-      Object.freeze(extensions);
+1424-    }
+1425-    return this;
+1426-  }
+1427-  _getTestState() {
+1428-    return {
+1429-      types: __classPrivateFieldGet(this, _Mime_extensionToType, "f"),
+1430-      extensions: __classPrivateFieldGet(this, _Mime_typeToExtension, "f")
+1431-    };
+1432-  }
+1433-};
+1434-_Mime_extensionToType = /* @__PURE__ */ new WeakMap(), _Mime_typeToExtension = /* @__PURE__ */ new WeakMap(), _Mime_typeToExtensions = /* @__PURE__ */ new WeakMap();
+1435-var Mime_default = Mime;
+1436-
+1437-// ../../node_modules/mime/dist/src/index.js
+1438-var src_default = new Mime_default(standard_default, other_default)._freeze();
+1439-
+1440-// ../cli-astro-commands/src/components/PreviewCommand/hooks/useDeployFiles.ts
+1441-function useDeployFiles() {
+1442-  const {
+1443-    model: { projectFolder, config }
+1444-  } = useProjectModel();
+1445-  const backendAsAServiceClient = useBackendAsAServiceClient();
+1446-  return useAsyncCallback(async (_, files) => {
+1447-    const buildMetadata = await readBuildMetadata(projectFolder, config);
+1448-    const clientFilesMetadata = await Promise.all(
+1449-      files.client.map(getStaticFileMetadata)
+1450-    );
+1451-    const backendFiles = await Promise.all(
+1452-      files.server.map(getBackendFileData)
+1453-    );
+1454-    const hasClientFiles = clientFilesMetadata.length > 0;
+1455-    if (!hasClientFiles) {
+1456:      const { appDeployment: appDeployment2 } = await backendAsAServiceClient.createAppDeployment(
+1457-        config.appId,
+1458-        backendFiles,
+1459-        void 0,
+1460-        buildMetadata.generateAppDeploymentGroupId
+1461-      );
+1462:      if (!appDeployment2?.id || !appDeployment2.deploymentBaseUrl) {
+1463-        throw new CliError({
+1464-          code: CliErrorCode.FailedCreatingAppDeployment(),
+1465-          cause: null
+1466-        });
+1467-      }
+1468-      return {
+1469-        deploymentId: appDeployment2.id,
+1470:        deploymentBaseUrl: appDeployment2.deploymentBaseUrl
+1471-      };
+1472-    }
+1473-    const {
+1474-      appDeployment,
+1475-      staticFilesUploadUrls,
+1476-      uploadAuthToken,
+1477-      uploadBuckets
+1478:    } = await backendAsAServiceClient.createAppDeployment(
+1479-      config.appId,
+1480-      void 0,
+1481-      clientFilesMetadata,
+1482-      buildMetadata.generateAppDeploymentGroupId
+1483-    );
+1484-    let completionAuthToken = uploadAuthToken;
+1485-    const clientDir = buildMetadata.clientDir;
+1486-    if (clientDir !== void 0 && staticFilesUploadUrls?.[0]) {
+1487-      const isKubernetesCloudProvider = appDeployment?.cloudProviderOverride === CloudProvider.KUBERNETES;
+1488-      if (isKubernetesCloudProvider) {
+1489-        const uploadPromises = staticFilesUploadUrls.map(
+1490-          async (staticFileToUpload) => {
+1491-            const { uploadUrl, staticFileMetadata } = staticFileToUpload;
+1492-            const fileContent = await readFile(
+1493-              path.join(clientDir, staticFileMetadata.path)
+1494-            );
+1495-            return backendAsAServiceClient.putBinaryFile(
+1496-              uploadUrl,
+1497-              fileContent,
+1498-              staticFileMetadata.contentType
+1499-            );
+1500-          }
+1501-        );
+1502-        await Promise.all(uploadPromises);
+1503-      } else if (uploadAuthToken) {
+1504-        const uploadUrl = staticFilesUploadUrls[0].uploadUrl;
+1505-        const staticFilesMetadata = staticFilesUploadUrls.map(
+1506-          (item) => item.staticFileMetadata
+1507-        );
+1508-        const bucketsFormData = await buildBucketsFormData(
+1509-          clientDir,
+1510-          uploadBuckets ?? [],
+1511-          staticFilesMetadata
+1512-        );
+1513-        for (const formData of bucketsFormData) {
+1514-          const response = await backendAsAServiceClient.postForm(
+1515-            uploadUrl,
+1516-            uploadAuthToken,
+1517-            formData
+1518-          );
+1519-          const responseUploadToken = response.result?.jwt;
+1520-          if (responseUploadToken) {
+1521-            completionAuthToken = responseUploadToken;
+1522-          }
+1523-        }
+1524-      }
+1525-    }
+1526:    const completeAppDeployment = await backendAsAServiceClient.completeAppDeployment(
+1527-      {
+1528-        ...appDeployment,
+1529-        files: backendFiles
+1530-      },
+1531-      completionAuthToken
+1532-    );
+1533-    return {
+1534:      deploymentId: completeAppDeployment.id,
+1535:      deploymentBaseUrl: completeAppDeployment.deploymentBaseUrl
+1536-    };
+1537-  });
+1538-}
+1539-async function getStaticFileMetadata(file) {
+1540-  const stats = await fs2.promises.stat(file.path);
+1541-  const fileContent = await readFile(file.path);
+1542-  const hash = crypto.createHash("md5").update(fileContent).digest("hex");
+1543-  return {
+1544-    size: stats.size,
+1545-    hash,
+1546-    contentType: src_default.getType(file.path) ?? "application/octet-stream",
+1547-    path: `/${file.relativePath}`
+1548-  };
+1549-}
+1550-async function getBackendFileData(file) {
+1551-  const buffer = await readFile(file.path);
+1552-  return { path: file.relativePath, content: buffer.toString("base64") };
+1553-}
+1554-async function buildBucketsFormData(clientDir, uploadBuckets, staticFilesMetadata) {
+1555-  if (uploadBuckets.length === 0) {
+1556-    return [];
+1557-  }
+1558-  const staticFilesMetadataByHash = new Map(
+1559-    staticFilesMetadata.map((metadata) => [metadata.hash, metadata])
+1560-  );
+1561-  const batches = [];
+1562-  for (const uploadBucket of uploadBuckets) {
+1563-    if (!uploadBucket.hashes || uploadBucket.hashes.length === 0) {
+1564-      continue;
+1565-    }
+1566-    const form = new FormData();
+1567-    await Promise.all(
+1568-      uploadBucket.hashes.map(async (hash) => {
+1569-        const staticFileMetadata = staticFilesMetadataByHash.get(hash);
+1570-        if (!staticFileMetadata) {
+1571-          return;
+1572-        }
+1573-        const fileContents = await readFile(
+1574-          path.join(clientDir, staticFileMetadata.path)
+1575-        );
+1576-        form.append(
+1577-          hash,
+1578-          new File([fileContents.toString("base64")], hash, {
+1579-            type: staticFileMetadata.contentType
+1580-          }),
+1581-          hash
+1582-        );
+1583-      })
+1584-    );
+1585-    batches.push(form);
+1586-  }
+1587-  return batches;
+1588-}
+1589-
+1590-// ../cli-astro-commands/src/components/PreviewCommand/hooks/useCreatePreview.ts
+1591-var DeploymentTarget = (0, import_variant2.variant)({
+1592-  Site: (0, import_variant2.fields)(),
+1593-  App: (0, import_variant2.fields)()
+1594-});
+1595-function useCreatePreview({
+1596-  baseUrl,
+1597-  label,
+1598:  previewId: existingPreviewId,
+1599:  onPreviewCreated
+1600-}) {
+1601-  const { model } = useProjectModel();
+1602-  const devCenterOverrides = useDevCenterOverridesClient();
+1603-  const loadBuildFiles = useLoadBuildFiles();
+1604-  const deployFiles = useDeployFiles();
+1605-  const { updateManifestWithBackendWorker } = useUpdateManifest();
+1606-  const uploadApplicationAction = useAsyncCallback(async () => {
+1607-    const buildFiles = await loadBuildFiles.execute();
+1608-    if (buildFiles.client.length + buildFiles.server.length === 0) {
+1609-      if (model.config.projectType === "Site") {
+1610-        throw new CliError({
+1611-          code: CliErrorCode.BuildOutputMissing({
+1612-            reason: "Couldn't find any client or server build output files."
+1613-          }),
+1614-          cause: null
+1615-        });
+1616-      }
+1617-      return DeploymentTarget.App({});
+1618-    }
+1619:    const { deploymentBaseUrl, deploymentId } = await deployFiles.execute(buildFiles);
+1620-    return DeploymentTarget[model.config.projectType]({
+1621:      deploymentUrl: deploymentBaseUrl,
+1622-      deploymentId
+1623-    });
+1624-  });
+1625-  const createPreviewIdAction = useAsyncCallback(
+1626-    async (_, serverUrl, deploymentId) => {
+1627-      const gitCommitHash = await isInsideGitRepo(model.projectFolder) ? await getGitLatestCommitHash(model.projectFolder) : void 0;
+1628-      const { appManifest: rawManifest, componentPlaceholderFieldMasks } = await processAppManifest({
+1629-        projectFolder: model.projectFolder,
+1630-        config: model.config,
+1631-        serverUrl
+1632-      });
+1633-      const appManifest = deploymentId && serverUrl ? updateManifestWithBackendWorker(
+1634-        rawManifest,
+1635-        deploymentId,
+1636-        serverUrl,
+1637-        label,
+1638-        gitCommitHash
+1639-      ) : rawManifest;
+1640:      let previewId;
+1641-      if (existingPreviewId) {
+1642:        previewId = await devCenterOverrides.updateOverrideWithNoSideEffects({
+1643-          id: existingPreviewId,
+1644-          appManifest,
+1645-          componentFieldMasks: componentPlaceholderFieldMasks,
+1646-          projectId: model.releaseAppId
+1647-        });
+1648-      } else {
+1649:        previewId = await devCenterOverrides.createComponentsOverride({
+1650-          appManifest,
+1651-          projectId: model.releaseAppId,
+1652-          experiments: toComponentExperiments(appManifest.components)
+1653-        });
+1654-      }
+1655:      return { previewId, appManifest };
+1656-    }
+1657-  );
+1658-  const { status } = useAsync(async () => {
+1659-    await assertBuildOutputExists(model.projectFolder, model.config);
+1660-    const deployment = baseUrl ? DeploymentTarget[model.config.projectType]({ deploymentUrl: baseUrl }) : await uploadApplicationAction.execute();
+1661-    const { deploymentUrl, deploymentId } = deployment;
+1662:    const { previewId, appManifest } = await createPreviewIdAction.execute(
+1663-      deploymentUrl,
+1664-      deploymentId
+1665-    );
+1666:    const result = { deployment, previewId, appManifest };
+1667:    onPreviewCreated?.(result);
+1668-    return result;
+1669-  }, []);
+1670-  return {
+1671-    uploadStatus: uploadApplicationAction.status,
+1672-    createPreviewStatus: createPreviewIdAction.status,
+1673-    status
+1674-  };
+1675-}
+1676-
+1677-// ../cli-astro-commands/src/components/PreviewCommand/SiteTopologyAndLinks.tsx
+1678-init_esm_shims();
+1679-var import_react3 = __toESM(require_react(), 1);
+1680-var import_variant3 = __toESM(require_lib(), 1);
+1681:var SiteTopologyAndLinks = ({ environment, previewId, previewUrl, onTopologyUpdated }) => {
+1682-  const { appId, siteId } = useSiteConfig();
+1683-  const updateDeploymentTopology = useUpdateDeploymentTopologyForSite(siteId);
+1684-  const veloClient = useVeloClient();
+1685-  const links = useSiteLinks({
+1686-    cmd: getPlatformLinkCommand(environment),
+1687-    siteId,
+1688:    overrideId: previewId,
+1689-    siteUrl: previewUrl
+1690-  });
+1691-  const { status } = useAsync(async () => {
+1692-    const [, gitHubOnboarding] = await Promise.all([
+1693-      updateDeploymentTopology({
+1694-        siteUrl: previewUrl,
+1695:        versionOverrideId: previewId,
+1696-        environment
+1697-      }),
+1698-      veloClient.getGitHubOnboardingStatus(appId)
+1699-    ]);
+1700-    onTopologyUpdated();
+1701-    return { gitHubOnboarding };
+1702-  }, []);
+1703-  return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement(
+1704-    ActionStatus,
+1705-    {
+1706-      status,
+1707-      loadingText: "Updating deployment topology manifest...",
+1708-      successText: "Deployment topology manifest updated successfully!"
+1709-    }
+1710-  ), (0, import_variant3.match)(status, {
+1711-    Error: () => null,
+1712-    Loading: () => null,
+1713-    Success: ({ result: { gitHubOnboarding } }) => {
+1714-      const isGitHubEnabled = gitHubOnboarding?.status === OnboardingState.GITHUB_ENABLED;
+1715-      const visibleLinks = isGitHubEnabled ? links : links.filter((link) => link.platform !== "editor");
+1716-      return /* @__PURE__ */ import_react3.default.createElement(PlatformLinksSection, { links: visibleLinks });
+1717-    }
+1718-  }));
+1719-};
+1720-
+1721-// ../cli-astro-commands/src/components/PreviewCommand/AppTopologyAndLinks.tsx
+1722-init_esm_shims();
+1723-var import_react4 = __toESM(require_react(), 1);
+1724-var import_variant4 = __toESM(require_lib(), 1);
+1725:var AppTopologyAndLinks = ({ environment, previewId, onTopologyUpdated }) => {
+1726-  const updateDeploymentTopology = useUpdateDeploymentTopologyForApp();
+1727-  const links = useAppLinks({
+1728-    cmd: getPlatformLinkCommand(environment),
+1729:    overrideId: previewId
+1730-  });
+1731-  const { status } = useAsync(async () => {
+1732-    await updateDeploymentTopology({
+1733:      versionOverrideId: previewId,
+1734-      environment
+1735-    });
+1736-    onTopologyUpdated();
+1737-  }, []);
+1738-  return /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement(
+1739-    ActionStatus,
+1740-    {
+1741-      status,
+1742-      loadingText: "Updating deployment topology manifest...",
+1743-      successText: "Deployment topology manifest updated successfully!"
+1744-    }
+1745-  ), (0, import_variant4.match)(status, {
+1746-    Error: () => null,
+1747-    Loading: () => null,
+1748-    Success: () => /* @__PURE__ */ import_react4.default.createElement(PlatformLinksSection, { links })
+1749-  }));
+1750-};
+1751-
+1752-// ../cli-astro-commands/src/components/PreviewCommand/Preview.tsx
+1753:var Preview = ({ environment, baseUrl, label, previewId, onPreviewCreated }) => {
+1754-  const { uploadStatus, createPreviewStatus, status } = useCreatePreview({
+1755-    baseUrl,
+1756-    label,
+1757:    previewId
+1758-  });
+1759-  return /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement(
+1760-    ActionStatus,
+1761-    {
+1762-      status: uploadStatus,
+1763-      loadingText: "Uploading your application files...",
+1764-      successText: "Uploaded successfully!"
+1765-    }
+1766-  ), /* @__PURE__ */ import_react5.default.createElement(
+1767-    ActionStatus,
+1768-    {
+1769-      status: createPreviewStatus,
+1770-      loadingText: "Creating a preview...",
+1771-      successText: "Preview created successfully!"
+1772-    }
+1773-  ), (0, import_variant5.match)(status, {
+1774-    Error: () => null,
+1775-    Loading: () => null,
+1776-    Success: ({ result }) => (0, import_variant5.match)(result.deployment, {
+1777-      Site: ({ deploymentUrl }) => /* @__PURE__ */ import_react5.default.createElement(
+1778-        SiteTopologyAndLinks,
+1779-        {
+1780-          environment,
+1781-          previewUrl: deploymentUrl,
+1782:          previewId: result.previewId,
+1783:          onTopologyUpdated: () => onPreviewCreated?.({
+1784-            deployment: result.deployment,
+1785:            previewId: result.previewId,
+1786-            appManifest: result.appManifest
+1787-          })
+1788-        }
+1789-      ),
+1790-      App: () => /* @__PURE__ */ import_react5.default.createElement(
+1791-        AppTopologyAndLinks,
+1792-        {
+1793-          environment,
+1794:          previewId: result.previewId,
+1795:          onTopologyUpdated: () => onPreviewCreated?.({
+1796-            deployment: result.deployment,
+1797:            previewId: result.previewId,
+1798-            appManifest: result.appManifest
+1799-          })
+1800-        }
+1801-      )
+1802-    })
+1803-  }));
+1804-};
+1805-
+1806-// ../cli-astro-commands/src/components/PreviewCommand/PreviewCommand.tsx
+1807:var PreviewCommand = ({ environment, baseUrl, label, previewId, onPreviewCreated }) => {
+1808-  const { model } = useProjectModel();
+1809-  return model.config.projectType === "Site" ? /* @__PURE__ */ import_react6.default.createElement(SiteAuthProvider, { siteId: model.config.siteId }, /* @__PURE__ */ import_react6.default.createElement(
+1810-    Preview,
+1811-    {
+1812-      baseUrl,
+1813:      previewId,
+1814:      onPreviewCreated,
+1815-      environment,
+1816-      label
+1817-    }
+1818-  )) : /* @__PURE__ */ import_react6.default.createElement(
+1819-    Preview,
+1820-    {
+1821-      baseUrl,
+1822:      previewId,
+1823:      onPreviewCreated,
+1824-      environment,
+1825-      label
+1826-    }
+1827-  );
+1828-};
+1829-
+1830-export {
+1831-  ActionStatus,
+1832-  useCreatePreview,
+1833-  PreviewCommand
+1834-};
+1835-//# sourceMappingURL=chunk-UXLEQMZC.js.map
