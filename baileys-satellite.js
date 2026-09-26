@@ -15,6 +15,11 @@ const DIVA_AUTH_VAULT_SECRET=process.env.DIVA_AUTH_VAULT_SECRET||"";
 const DIVA_AUTH_INSTANCE=process.env.DIVA_AUTH_INSTANCE||"diva-whatsapp-main";
 let sock=null,qrDataUrl=null,connection="booting",lastError=null;
 const sentMessageIds=new Set(); // fromMe messages from linked phone are valid commands
+const processedMessageIds=new Set();
+const DIVA_MESSAGE_MAX_AGE_MS=300000;
+const DIVA_FLOW_WATCHDOG_MS=90000;
+let flowWatchdog=null,flowObserved=false;
+const messageTimestamp=m=>{const raw=m?.messageTimestamp;const n=typeof raw==="number"?raw:Number(raw?.low??raw??0);return n>0?n*1000:Date.now()};
 
 const wake=s=>/^\s*(?:@?diva)\b[\s,:;!?-]*/i.test(String(s||""));
 const textOf=m=>m?.message?.conversation||m?.message?.extendedTextMessage?.text||m?.message?.imageMessage?.caption||m?.message?.videoMessage?.caption||"";
@@ -100,9 +105,9 @@ async function connect(){
  sock.ev.on("creds.update",saveCreds);
  sock.ev.on("connection.update",async u=>{
    if(u.qr){qrDataUrl=await QRCode.toDataURL(u.qr);connection="pairing"}
-   if(u.connection==="open"){qrDataUrl=null;connection="open";lastError=null;setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000)}
+   if(u.connection==="open"){qrDataUrl=null;connection="open";lastError=null;flowObserved=false;clearTimeout(flowWatchdog);setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000);flowWatchdog=setTimeout(()=>{if(connection==="open"&&!flowObserved){console.log("DIVA_FLOW_WATCHDOG_RECYCLE");try{sock?.end?.(new Error("DIVA flow watchdog"))}catch{};setTimeout(connect,2500)}},DIVA_FLOW_WATCHDOG_MS)}
    if(u.connection==="close"){
-     connection="closed";
+     clearTimeout(flowWatchdog);connection="closed";
      const status=u.lastDisconnect?.error?.output?.statusCode;
      if(status!==DisconnectReason.loggedOut)setTimeout(connect,2500);
    }
@@ -110,7 +115,11 @@ async function connect(){
  sock.ev.on("messages.upsert",async({messages,type})=>{
    if(type!=="notify"&&type!=="append")return;
    for(const m of messages){
-     if(m.key?.remoteJid!==GROUP_JID||sentMessageIds.has(m.key?.id))continue;
+     flowObserved=true;clearTimeout(flowWatchdog);
+     const messageId=m.key?.id;
+     if(m.key?.remoteJid!==GROUP_JID||sentMessageIds.has(messageId)||processedMessageIds.has(messageId))continue;
+     if(Date.now()-messageTimestamp(m)>DIVA_MESSAGE_MAX_AGE_MS)continue;
+     if(messageId){processedMessageIds.add(messageId);setTimeout(()=>processedMessageIds.delete(messageId),600000)}
      const text=textOf(m);
      if(!wake(text))continue;
      try{
