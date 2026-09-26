@@ -1605,3 +1605,1036 @@ package/build/schema-generate-extensions-DHLW6RXB.js:1337:    combined.$schema =
 package/build/chunk-UXLEQMZC.js:159:      // https://vercel.com/docs/builds/build-features
 package/build/chunk-UXLEQMZC.js:160:      // https://github.com/netlify/cli/blob/8a07280b83de35aae6dee80212d4e065147e3456/src/utils/deploy/upload-source-zip.ts#L23C7-L23C30
 package/build/chunk-UXLEQMZC.js:1419:      throw new Error("define() not allowed for built-in Mime objects. See https://github.com/broofa/mime/blob/main/README.md#custom-mime-instances");
+
+## Selected file: src-RAK4XJCX.js
+      services,
+      cliVersion,
+      /* @__PURE__ */ import_react5.default.createElement(
+        PreviewCommand,
+        {
+          baseUrl,
+          label,
+          previewId,
+          environment: "preview"
+        }
+      )
+    );
+  });
+};
+
+// ../cli-astro-commands/src/commands/promote.tsx
+init_esm_shims();
+var import_react6 = __toESM(require_react(), 1);
+var promoteCommand = (services, cliVersion) => {
+  return createCommand("promote").addOption(
+    new Option(
+      "--base-url <url>",
+      "The base url for when static files have been uploaded to an external cdn"
+    ).argParser(validateBase).hideHelp()
+  ).addOption(
+    new Option("-l, --label <label>", "A custom label for this preview").argParser(validateLabel).hideHelp()
+  ).action(async (options, command) => {
+    const { baseUrl, label } = options;
+    const { renderCommand: renderCommand2 } = await import("./render-command-A4WWB27N.js");
+    const { PromoteCommand } = await import("./PromoteCommand-UMELVPCK.js");
+    await renderCommand2(
+      command,
+      services,
+      cliVersion,
+      /* @__PURE__ */ import_react6.default.createElement(PromoteCommand, { baseUrl, label })
+    );
+  });
+};
+
+// ../cli-astro-commands/src/commands/release.tsx
+init_esm_shims();
+var import_react7 = __toESM(require_react(), 1);
+var releaseCommand = (services, cliVersion) => {
+  return createCommand("release").description("Release a new version of your application").addOption(
+    new Option(
+      "--base-url <url>",
+      "The base url for when static files have been uploaded to an external cdn"
+    ).argParser(validateBase).hideHelp()
+  ).addOption(
+    new Option("-l, --label <label>", "A custom label for this preview").argParser(validateLabel).hideHelp()
+  ).option(
+    "-c, --comment <comment>",
+    "The comment for your release version, not visible by users",
+    validateReleaseComment
+  ).addOption(
+    new Option(
+      "-t, --version-type <type>",
+      "The type of version you would like to create"
+    ).choices(["major", "minor"])
+  ).action(async (options, command) => {
+    const { renderCommand: renderCommand2 } = await import("./render-command-A4WWB27N.js");
+    const { ReleaseCommand } = await import("./ReleaseCommand-HIDXLX7H.js");
+    const { baseUrl, label, comment } = options;
+    const versionType = options.versionType ? {
+      major: "MAJOR" /* MAJOR */,
+      minor: "MINOR" /* MINOR */
+    }[options.versionType] : void 0;
+    await renderCommand2(
+      command,
+      services,
+      cliVersion,
+      /* @__PURE__ */ import_react7.default.createElement(
+        ReleaseCommand,
+        {
+          baseUrl,
+          label,
+          comment,
+          versionType
+        }
+      )
+    );
+  });
+};
+
+// ../cli-astro-commands/src/commands/dev.tsx
+init_esm_shims();
+var import_react8 = __toESM(require_react(), 1);
+var devCommand = (services, cliVersion) => {
+  return createCommand("dev").option(
+    "--port <port>",
+    "Specify which port to run on. Defaults to 4321.",
+    (value) => {
+      return parseInt(value, 10);
+    }
+  ).option(
+    "--allowed-hosts <allowedHosts>",
+    "Specify a comma-separated list of allowed hosts or allow any hostname."
+  ).addOption(
+    new Option(
+      "--base-url <url>",
+      "The base url for when static files have been uploaded to an external cdn"
+    ).argParser(validateBase).hideHelp()
+  ).addOption(
+    new Option(
+      "--base <pathname>",
+      "The base path the dev server is served under"
+    ).argParser(validateBasePath).hideHelp()
+  ).action(async (options, command) => {
+    const { DevCommand } = await import("./DevCommand-RIR6LZPG.js");
+    const { renderCommand: renderCommand2 } = await import("./render-command-A4WWB27N.js");
+    await renderCommand2(
+      command,
+      services,
+      cliVersion,
+      /* @__PURE__ */ import_react8.default.createElement(
+        DevCommand,
+        {
+          port: options.port,
+          allowedHosts: options.allowedHosts,
+          serverExposedUrl: options.baseUrl,
+          base: options.base
+        }
+      )
+    );
+  });
+};
+
+// ../cli-astro-commands/src/commands/generate.tsx
+init_esm_shims();
+var import_react10 = __toESM(require_react(), 1);
+
+// ../cli-astro-commands/src/commands/generate-manifest.tsx
+init_esm_shims();
+var import_react9 = __toESM(require_react(), 1);
+var generateManifestCommand = (services, cliVersion) => createCommand("manifest").description("Generate manifest for project extensions").action(async (_, command) => {
+  const { renderCommand: renderCommand2 } = await import("./render-command-A4WWB27N.js");
+  const { GenerateManifestCommand } = await import("./GenerateManifestCommand-OBEPKPHB.js");
+  await renderCommand2(
+    command,
+    services,
+    cliVersion,
+    /* @__PURE__ */ import_react9.default.createElement(GenerateManifestCommand, null)
+  );
+});
+
+// ../cli-astro-commands/src/commands/generate.tsx
+var generateCommand = (services, cliVersion) => {
+  return createCommand("generate").description("Generate a new extension for your project").addCommand(generateManifestCommand(services, cliVersion), { hidden: true }).addOption(
+    new Option("--type <type>", "Extension type to generate").argParser(validateDocsExtensionType).conflicts("params")
+  ).addOption(
+    new Option(
+      "--params <json>",
+      "Generate an extension non-interactively from a JSON object"
+    ).conflicts("type").implies({ json: true }).argParser(validateValidJson)
+  ).addOption(
+    new Option(NO_TTY_JSON_OUTPUT_OPTION, "Output in JSON format").hideHelp()
+  ).addOption(
+    new Option(
+      "--experimental",
+      "Include experimental generators in the picker"
+    ).hideHelp()
+  ).action(async (options, command) => {
+    const { type, experimental = false, params } = options;
+    const { runCommand: runCommand3, renderCommand: renderCommand2 } = await import("./render-command-A4WWB27N.js");
+    if (params !== void 0) {
+      await runCommand3(command, services, cliVersion, async (model) => {
+        const { nonInteractiveGenerateExtension } = await import("./generate-extensions-3ZGAIZDV.js");
+        try {
+          const result = await nonInteractiveGenerateExtension(
+            services,
+            model,
+            params
+          );
+          log(JSON.stringify({ success: true, ...result }));
+        } catch (e) {
+          log(
+            JSON.stringify({
+              success: false,
+              error: e instanceof Error ? e.message : String(e)
+            })
+          );
+          throw e;
+        }
+      });
+    } else {
+      const { GenerateCommand } = await import("./GenerateCommand-LZCOUBWK.js");
+      await renderCommand2(
+        command,
+        services,
+        cliVersion,
+        /* @__PURE__ */ import_react10.default.createElement(
+          GenerateCommand,
+          {
+            docsExtensionType: type,
+            experimental
+          }
+        )
+      );
+    }
+  });
+};
+
+// ../cli-astro-commands/src/commands/translation.tsx
+init_esm_shims();
+
+// ../cli-astro-commands/src/commands/translation-pull.tsx
+init_esm_shims();
+var import_react11 = __toESM(require_react(), 1);
+var translationPullCommand = (services, cliVersion) => {
+  return createCommand("pull").description(
+    "Pulls Wix Multilingual translations and saves them to your project directory"
+  ).addOption(
+    new Option(NO_TTY_JSON_OUTPUT_OPTION, "Output in JSON format").hideHelp()
+  ).action(async (opts, command) => {
+    if (opts.json) {
+      return runCommand2(command, services, cliVersion, async (model) => {
+        const { nonInteractiveTranslationPull } = await import("./translation-pull-E4UIA3GX.js");
+        return nonInteractiveTranslationPull(services, model);
+      });
+    }
+    const { TranslationPullCommand } = await import("./TranslationPullCommand-O44ZSBDN.js");
+
+## Selected file: chunk-MKII26WK.js
+import { createRequire as _createRequire } from 'node:module';
+const require = _createRequire(import.meta.url);
+import {
+  resolveUrl,
+  serializer,
+  toURLSearchParams
+} from "./chunk-5XKGOUNA.js";
+import {
+  init_esm_shims
+} from "./chunk-EXLZF52D.js";
+
+// ../../node_modules/@wix/ambassador-document-management-editor-deployments-v1-deployment/build/es/http.impl.js
+init_esm_shims();
+var _deployment = {
+  updatedDate: "google.protobuf.Timestamp",
+  createdDate: "google.protobuf.Timestamp"
+};
+var _getDeploymentPipelineDescriptionRequest = {};
+var _getDeploymentPipelineDescriptionResponse = {};
+var _getDeploymentRequest = {};
+var _getDeploymentResponse = { deployment: "_deployment" };
+var _publishDeploymentRequest = {};
+var _publishDeploymentResponse = { deployment: "_deployment" };
+function resolveWixEditorDeploymentsV1DeploymentsServiceUrl(opts) {
+  var domainToMappings = {
+    "www._base_domain_": [
+      {
+        srcPath: "/_api/editor-deployments",
+        destPath: ""
+      }
+    ],
+    "editor._base_domain_": [
+      {
+        srcPath: "/_api/editor-deployments",
+        destPath: ""
+      }
+    ],
+    "blocks._base_domain_": [
+      {
+        srcPath: "/_api/editor-deployments",
+        destPath: ""
+      }
+    ],
+    "create.editorx": [
+      {
+        srcPath: "/_api/editor-deployments",
+        destPath: ""
+      }
+    ]
+  };
+  return resolveUrl(Object.assign(opts, { domainToMappings }));
+}
+function getDeployment(payload) {
+  var _a = serializer(_getDeploymentRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_getDeploymentResponse, {
+    _deployment
+  }).fromJSON;
+  function __getDeployment(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.document_management.editor_deployments.v1.deployment",
+      method: "GET",
+      methodFqn: "wix.editor.deployments.v1.DeploymentsService.GetDeployment",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveWixEditorDeploymentsV1DeploymentsServiceUrl({
+        protoPath: "/v1/deployments/{deploymentId}",
+        data: serializedData,
+        host
+      }),
+      params: toURLSearchParams(serializedData),
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __getDeployment.fromReq = fromReq;
+  __getDeployment.__isAmbassador = true;
+  return __getDeployment;
+}
+function publishDeployment(payload) {
+  var _a = serializer(_publishDeploymentRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_publishDeploymentResponse, {
+    _deployment
+  }).fromJSON;
+  function __publishDeployment(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.document_management.editor_deployments.v1.deployment",
+      method: "POST",
+      methodFqn: "wix.editor.deployments.v1.DeploymentsService.PublishDeployment",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveWixEditorDeploymentsV1DeploymentsServiceUrl({
+        protoPath: "/v1/deployments/{deploymentId}",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __publishDeployment.fromReq = fromReq;
+  __publishDeployment.__isAmbassador = true;
+  return __publishDeployment;
+}
+function getDeploymentPipelineDescription(payload) {
+  var _a = serializer(_getDeploymentPipelineDescriptionRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_getDeploymentPipelineDescriptionResponse, {}).fromJSON;
+  function __getDeploymentPipelineDescription(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.document_management.editor_deployments.v1.deployment",
+      method: "GET",
+      methodFqn: "wix.editor.deployments.v1.DeploymentsService.GetDeploymentPipelineDescription",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveWixEditorDeploymentsV1DeploymentsServiceUrl({
+        protoPath: "/v1/deployments/pipeline/{deploymentId}",
+        data: serializedData,
+        host
+      }),
+      params: toURLSearchParams(serializedData),
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __getDeploymentPipelineDescription.fromReq = fromReq;
+  __getDeploymentPipelineDescription.__isAmbassador = true;
+  return __getDeploymentPipelineDescription;
+}
+
+export {
+  getDeployment,
+  publishDeployment,
+  getDeploymentPipelineDescription
+};
+//# sourceMappingURL=chunk-MKII26WK.js.map
+## Selected file: chunk-EJB7C7MD.js
+import { createRequire as _createRequire } from 'node:module';
+const require = _createRequire(import.meta.url);
+import {
+  useHttpClient
+} from "./chunk-BGEGAGDQ.js";
+import {
+  isHttpApplicationError,
+  isHttpError,
+  pRetry,
+  resolveUrl,
+  serializer,
+  toURLSearchParams
+} from "./chunk-5XKGOUNA.js";
+import {
+  usePanoramaMethodLogger
+} from "./chunk-SUANVVJS.js";
+import {
+  require_index_node
+} from "./chunk-QH7LPHNT.js";
+import {
+  require_react
+} from "./chunk-TODKQSCF.js";
+import {
+  getTestOverrides
+} from "./chunk-B6IA5Q6I.js";
+import {
+  external_exports
+} from "./chunk-SDLCFZRL.js";
+import {
+  CliError,
+  CliErrorCode
+} from "./chunk-CR5MBLNJ.js";
+import {
+  __toESM,
+  init_esm_shims
+} from "./chunk-EXLZF52D.js";
+
+// ../backend-as-a-service-client/src/useBackendAsAServiceClient.ts
+init_esm_shims();
+var import_react = __toESM(require_react(), 1);
+
+// ../cli-http-client/src/fetch-error.ts
+init_esm_shims();
+var import_http_client = __toESM(require_index_node(), 1);
+async function createHttpErrorFromFetch(originalResponse) {
+  const res = originalResponse.clone();
+  return (0, import_http_client.createHttpError)({
+    name: "Error",
+    message: `Request failed with status code ${res.status}`,
+    response: {
+      config: {},
+      data: await res.text(),
+      status: res.status,
+      statusText: res.statusText,
+      headers: Object.fromEntries(res.headers)
+    },
+    code: res.statusText,
+    config: {},
+    toJSON: () => res,
+    __CANCEL__: false
+  });
+}
+
+// ../backend-as-a-service-client/src/backend-as-a-service-client.ts
+init_esm_shims();
+import { randomUUID } from "node:crypto";
+
+// ../../node_modules/@wix/ambassador-velo-backend-v1-app-deployment/es/build/http.impl.js
+init_esm_shims();
+var _appDeployment = {
+  createdDate: "google.protobuf.Timestamp",
+  updatedDate: "google.protobuf.Timestamp"
+};
+var _completeAppDeploymentRequest = { appDeployment: "_appDeployment" };
+var _completeAppDeploymentResponse = { appDeployment: "_appDeployment" };
+var _createAppDeploymentRequest = { appDeployment: "_appDeployment" };
+var _createAppDeploymentResponse = { appDeployment: "_appDeployment" };
+function resolveWixVeloBackendV1AppDeploymentManagementUrl(opts) {
+  var domainToMappings = {
+    "manage._base_domain_": [
+      {
+        srcPath: "/_api/wix-code-app-deployments",
+        destPath: ""
+      }
+    ]
+  };
+  return resolveUrl(Object.assign(opts, { domainToMappings }));
+}
+function createAppDeployment(payload) {
+  var _a = serializer(_createAppDeploymentRequest, { _appDeployment }), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_createAppDeploymentResponse, {
+    _appDeployment
+  }).fromJSON;
+  function __createAppDeployment(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.velo.backend.v1.app_deployment",
+      method: "POST",
+      methodFqn: "wix.velo.backend.v1.AppDeploymentManagement.CreateAppDeployment",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveWixVeloBackendV1AppDeploymentManagementUrl({
+        protoPath: "/v1/app-projects/{appDeployment.appProjectId}/app-deployments",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __createAppDeployment.fromReq = fromReq;
+  __createAppDeployment.__isAmbassador = true;
+  return __createAppDeployment;
+}
+function completeAppDeployment(payload) {
+  var _a = serializer(_completeAppDeploymentRequest, { _appDeployment }), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_completeAppDeploymentResponse, {
+    _appDeployment
+  }).fromJSON;
+  function __completeAppDeployment(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.velo.backend.v1.app_deployment",
+      method: "POST",
+      methodFqn: "wix.velo.backend.v1.AppDeploymentManagement.CompleteAppDeployment",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveWixVeloBackendV1AppDeploymentManagementUrl({
+        protoPath: "/v1/app-projects/{appDeployment.appProjectId}/app-deployments/{appDeployment.id}/complete",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __completeAppDeployment.fromReq = fromReq;
+  __completeAppDeployment.__isAmbassador = true;
+  return __completeAppDeployment;
+}
+
+// ../../node_modules/@wix/ambassador-velo-backend-v1-app-project/build/es/http.impl.js
+init_esm_shims();
+var _appProject = {
+  createdDate: "google.protobuf.Timestamp",
+  updatedDate: "google.protobuf.Timestamp",
+  customDomain: "_customDomain"
+};
+var _createAppProjectRequest = { appProject: "_appProject" };
+var _createAppProjectResponse = { appProject: "_appProject" };
+var _customDomain = { connectionDate: "google.protobuf.Timestamp" };
+var _getAppProjectRequest = {};
+var _getAppProjectResponse = { appProject: "_appProject" };
+function resolveWixVeloBackendV1AppProjectLifecycleUrl(opts) {
+  var domainToMappings = {
+    "manage._base_domain_": [
+      {
+        srcPath: "/_api/wix-code-app-projects",
+        destPath: ""
+      }
+    ],
+    "www._base_domain_": [
+      {
+        srcPath: "/_api/wix-code-app-projects",
+        destPath: ""
+      }
+    ],
+    "vibe._base_domain_": [
+      {
+        srcPath: "/_api/wix-code-app-projects",
+        destPath: ""
+      }
+    ]
+  };
+  return resolveUrl(Object.assign(opts, { domainToMappings }));
+}
+function createAppProject(payload) {
+  var _a = serializer(_createAppProjectRequest, { _appProject, _customDomain }), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_createAppProjectResponse, {
+    _appProject,
+    _customDomain
+  }).fromJSON;
+  function __createAppProject(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.velo.backend.v1.app_project",
+      method: "POST",
+      methodFqn: "wix.velo.backend.v1.AppProjectLifecycle.CreateAppProject",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveWixVeloBackendV1AppProjectLifecycleUrl({
+        protoPath: "/v1/app-projects",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __createAppProject.fromReq = fromReq;
+  __createAppProject.__isAmbassador = true;
+  return __createAppProject;
+}
+function getAppProject(payload) {
+  var _a = serializer(_getAppProjectRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_getAppProjectResponse, {
+    _appProject,
+    _customDomain
+  }).fromJSON;
+  function __getAppProject(_a2) {
+    var host = _a2.host;
+
+## Selected file: ReleaseCommand-HIDXLX7H.js
+  }
+});
+
+// ../cli-astro-commands/src/components/ReleaseCommand/index.ts
+init_esm_shims();
+
+// ../cli-astro-commands/src/components/ReleaseCommand/ReleaseCommand.tsx
+init_esm_shims();
+var import_react10 = __toESM(require_react(), 1);
+var import_variant4 = __toESM(require_lib(), 1);
+
+// ../cli-astro-commands/src/components/ReleaseCommand/ReleaseSite.tsx
+init_esm_shims();
+var import_react2 = __toESM(require_react(), 1);
+var import_variant2 = __toESM(require_lib(), 1);
+
+// ../arm-client/src/index.ts
+init_esm_shims();
+
+// ../arm-client/src/client.ts
+init_esm_shims();
+
+// ../../node_modules/@wix/ambassador-ctp-gradual-rollout-v1-app-config/build/es/http.impl.js
+init_esm_shims();
+var _commitComponentOverrideRequest = {};
+var _commitComponentOverrideResponse = {};
+var _createAppReleaseRequest = {};
+var _createAppReleaseResponse = {};
+var _createComponentsRequest = {};
+var _createComponentsResponse = {};
+var _promoteAppVersionFromDraftToProductionRequest = {};
+var _promoteAppVersionFromDraftToProductionResponse = {};
+var _updateAppReleaseRequest = {};
+var _updateAppReleaseResponse = {};
+function resolveComWixCtpAppsReleaseManagerServiceUrl(opts) {
+  var domainToMappings = {
+    "api._api_base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "bo._base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "wixbo.ai": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "wix-bo.com": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "www._base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web/artifacts-release-manager/app-releases",
+        destPath: "/artifacts-release-manager/app-releases"
+      },
+      {
+        srcPath: "/_api/apps-release-manager-service-web/artifacts-release-manager/app-releases",
+        destPath: "/artifacts-release-manager/app-releases"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create",
+        destPath: "/apps/create"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote",
+        destPath: "/apps/promote"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/tags",
+        destPath: "/apps/tags"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create-components",
+        destPath: "/apps/create-components"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/commit",
+        destPath: "/apps/commit"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote-app-version",
+        destPath: "/apps/promote-app-version"
+      }
+    ],
+    "manage._base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote",
+        destPath: "/apps/promote"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create",
+        destPath: "/apps/create"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/tags",
+        destPath: "/apps/tags"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create-components",
+        destPath: "/apps/create-components"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/commit",
+        destPath: "/apps/commit"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote-app-version",
+        destPath: "/apps/promote-app-version"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/release",
+        destPath: "/apps/release"
+      }
+    ]
+  };
+  return resolveUrl(Object.assign(opts, { domainToMappings }));
+}
+function createAppRelease(payload) {
+  var _a = serializer(_createAppReleaseRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_createAppReleaseResponse, {}).fromJSON;
+  function __createAppRelease(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.ctp.gradual_rollout.v1.app_config",
+      method: "POST",
+      methodFqn: "com.wix.ctp.AppsReleaseManagerService.CreateAppRelease",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveComWixCtpAppsReleaseManagerServiceUrl({
+        protoPath: "/apps/create/{appId}",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __createAppRelease.fromReq = fromReq;
+  __createAppRelease.__isAmbassador = true;
+  return __createAppRelease;
+}
+function updateAppRelease(payload) {
+  var _a = serializer(_updateAppReleaseRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_updateAppReleaseResponse, {}).fromJSON;
+  function __updateAppRelease(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.ctp.gradual_rollout.v1.app_config",
+      method: "PUT",
+      methodFqn: "com.wix.ctp.AppsReleaseManagerService.UpdateAppRelease",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveComWixCtpAppsReleaseManagerServiceUrl({
+        protoPath: "/apps/tags/{tag}",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __updateAppRelease.fromReq = fromReq;
+  __updateAppRelease.__isAmbassador = true;
+  return __updateAppRelease;
+}
+function createComponents(payload) {
+  var _a = serializer(_createComponentsRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_createComponentsResponse, {}).fromJSON;
+  function __createComponents(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.ctp.gradual_rollout.v1.app_config",
+      method: "POST",
+      methodFqn: "com.wix.ctp.AppsReleaseManagerService.CreateComponents",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveComWixCtpAppsReleaseManagerServiceUrl({
+        protoPath: "/apps/create-components/{appId}",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __createComponents.fromReq = fromReq;
+  __createComponents.__isAmbassador = true;
+  return __createComponents;
+}
+function commitComponentOverride(payload) {
+  var _a = serializer(_commitComponentOverrideRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_commitComponentOverrideResponse, {}).fromJSON;
+  function __commitComponentOverride(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.ctp.gradual_rollout.v1.app_config",
+      method: "POST",
+      methodFqn: "com.wix.ctp.AppsReleaseManagerService.CommitComponentOverride",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveComWixCtpAppsReleaseManagerServiceUrl({
+        protoPath: "/apps/commit/{appId}/{componentOverrideId}",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __commitComponentOverride.fromReq = fromReq;
+  __commitComponentOverride.__isAmbassador = true;
+  return __commitComponentOverride;
+}
+function promoteAppVersionFromDraftToProduction(payload) {
+  var _a = serializer(_promoteAppVersionFromDraftToProductionRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_promoteAppVersionFromDraftToProductionResponse, {}).fromJSON;
+  function __promoteAppVersionFromDraftToProduction(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.ctp.gradual_rollout.v1.app_config",
+      method: "POST",
+      methodFqn: "com.wix.ctp.AppsReleaseManagerService.PromoteAppVersionFromDraftToProduction",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveComWixCtpAppsReleaseManagerServiceUrl({
+        protoPath: "/apps/promote-app-version/{appId}/{createNewMajor}/{latestMajor}",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __promoteAppVersionFromDraftToProduction.fromReq = fromReq;
+  __promoteAppVersionFromDraftToProduction.__isAmbassador = true;
+  return __promoteAppVersionFromDraftToProduction;
+}
+
+// ../../node_modules/@wix/ambassador-ctp-gradual-rollout-v1-baas-release/es/build/http.impl.js
+init_esm_shims();
+var _releaseRequest = {};
+var _releaseResponse = {};
+function resolveComWixCtpAppsReleaseManagerBassServiceUrl(opts) {
+  var domainToMappings = {
+    "api._api_base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "bo._base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "wixbo.ai": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "wix-bo.com": [
+      {
+        srcPath: "/apps-release-manager-service-web",
+        destPath: ""
+      }
+    ],
+    "www._base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web/artifacts-release-manager/app-releases",
+        destPath: "/artifacts-release-manager/app-releases"
+      },
+      {
+        srcPath: "/_api/apps-release-manager-service-web/artifacts-release-manager/app-releases",
+        destPath: "/artifacts-release-manager/app-releases"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create",
+        destPath: "/apps/create"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote",
+        destPath: "/apps/promote"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/tags",
+        destPath: "/apps/tags"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create-components",
+        destPath: "/apps/create-components"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/commit",
+        destPath: "/apps/commit"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote-app-version",
+        destPath: "/apps/promote-app-version"
+      }
+    ],
+    "manage._base_domain_": [
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote",
+        destPath: "/apps/promote"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create",
+        destPath: "/apps/create"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/tags",
+        destPath: "/apps/tags"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/create-components",
+        destPath: "/apps/create-components"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/commit",
+        destPath: "/apps/commit"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/promote-app-version",
+        destPath: "/apps/promote-app-version"
+      },
+      {
+        srcPath: "/apps-release-manager-service-web/apps/release",
+        destPath: "/apps/release"
+      }
+    ]
+  };
+  return resolveUrl(Object.assign(opts, { domainToMappings }));
+}
+function release(payload) {
+  var _a = serializer(_releaseRequest, {}), toReq = _a.toJSON, fromReq = _a.fromJSON;
+  var fromRes = serializer(_releaseResponse, {}).fromJSON;
+  function __release(_a2) {
+    var host = _a2.host;
+    var serializedData = toReq(payload);
+    var metadata = {
+      entityFqdn: "wix.ctp.gradual_rollout.v1.baas_release",
+      method: "POST",
+      methodFqn: "com.wix.ctp.AppsReleaseManagerBassService.Release",
+      migrationOptions: {
+        optInTransformResponse: true
+      },
+      url: resolveComWixCtpAppsReleaseManagerBassServiceUrl({
+        protoPath: "/apps/release/{appId}/{componentOverrideId}",
+        data: serializedData,
+        host
+      }),
+      data: serializedData,
+      transformResponse: fromRes
+    };
+    return metadata;
+  }
+  __release.fromReq = fromReq;
+  __release.__isAmbassador = true;
+  return __release;
+}
+
+// ../arm-client/src/client.ts
+var import_variant = __toESM(require_lib(), 1);
+
+// ../arm-client/src/isTrustedInternalErr.ts
+init_esm_shims();
+function isTrustedInternalErr(e) {
+  if (isHttpError(e)) {
+    const appError = e.response?.data?.details?.applicationError;
+    if (appError?.description) {
+      let errDescription;
+      try {
+        errDescription = JSON.parse(appError.description);
+      } catch {
+      }
+      return errDescription?.results?.some(
+        (result) => result.error?.startsWith("scriptAsset is not supported")
+      );
+    }
+  }
+  return false;
+}
+
+// ../arm-client/src/schemas.ts
+init_esm_shims();
+var promoteAppVersionFromDraftToProductionSchema = external_exports.object({
+  fullVersion: external_exports.string()
+});
+var commitComponentOverrideSchema = external_exports.object({
+  nextMajor: external_exports.string(),
+  nextMinor: external_exports.string().optional()
+});
+var createAppReleaseSchema = external_exports.object({
+  tag: external_exports.string()
+});
+var releaseSchema = external_exports.object({
+  releaseBaseUrl: external_exports.string()
+});
+
+// ../arm-client/src/client.ts
+var { AppPermissionDenied } = CliErrorCode;
+var UpdateAppReleaseData = (0, import_variant.variant)({
+  TagNotFound: (0, import_variant.fields)(),
+  TagUpdated: {}
+});
+var ARMClient = class {
+  constructor(httpClient) {
+    this.httpClient = httpClient;
+    const { minRetryTimeout, retries } = getTestOverrides();
+    this.retryOptions = {
+      maxTimeout: 3 * 1e3,
+      minTimeout: minRetryTimeout,
+      retries: retries ?? 3
+    };
