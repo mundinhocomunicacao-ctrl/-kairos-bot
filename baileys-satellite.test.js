@@ -1,32 +1,14 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 const src=fs.readFileSync(new URL("./baileys-satellite.js",import.meta.url),"utf8");
-
-assert.match(src,/makeWASocket/);
-assert.doesNotMatch(src,/useMultiFileAuthState/);
-assert.match(src,/createVaultAuthState/);
-assert.match(src,/BufferJSON/);
-assert.match(src,/initAuthCreds/);
-assert.match(src,/messages\\.upsert/);
-assert.match(src,/type!=="notify"&&type!=="append"/);
-assert.match(src,/DIVA_INITIAL_BUFFER_FORCE_FLUSH/);
-assert.match(src,/sock\\?\\.ev\\?\\.flush/);
-assert.match(src,/120363411404153606@g\\.us/);
-assert.match(src,/fromMe/);
-assert.match(src,/DIVA_RELAY_URL/);
-assert.match(src,/DIVA_AUTH_VAULT_URL/);
-assert.match(src,/DIVA_AUTH_VAULT_SECRET/);
-assert.match(src,/aes-256-gcm/);
-assert.match(src,/x-diva-vault-secret/);
-assert.match(src,/x-diva-installation-id/);
-assert.match(src,/x-diva-timestamp/);
-assert.match(src,/x-diva-nonce/);
-assert.match(src,/x-diva-signature/);
-assert.match(src,/x-diva-gateway-version/);
-assert.match(src,/diva-universal-private-gateway-v0\.1/);
-assert.match(src,/stableStringify/);
-assert.match(src,/conversation_ref/);
-assert.match(src,/whatsapp:\/\//);
-assert.match(src,/sock\.sendMessage/);
-assert.match(src,/\/pair/);
+for(const token of [
+"makeWASocket","createVaultAuthState","BufferJSON","initAuthCreds","messages.upsert",
+'type!=="notify"&&type!=="append"',"DIVA_INITIAL_BUFFER_FORCE_FLUSH","sock?.ev?.flush?.()",
+"120363411404153606@g.us","fromMe","DIVA_RELAY_URL","DIVA_AUTH_VAULT_URL",
+"DIVA_AUTH_VAULT_SECRET","aes-256-gcm","x-diva-vault-secret","x-diva-installation-id",
+"x-diva-timestamp","x-diva-nonce","x-diva-signature","x-diva-gateway-version",
+"diva-universal-private-gateway-v0.1","stableStringify","conversation_ref","whatsapp://",
+"sock.sendMessage","/pair"
+]) assert.ok(src.includes(token),"missing contract token: "+token);
+assert.ok(!src.includes("useMultiFileAuthState"),"must not use filesystem auth state");
 console.log("DIVA_BAILEYS_SATELLITE_CONTRACT_OK");
