@@ -68,20 +68,21 @@ jobs:
           echo "RADAR_SIGNED_URL_TIMEOUT"
           exit 1
 
-      - name: Upload exact Radar bundle
+      - name: Upload exact current Radar bundle
         shell: bash
         run: |
           set -euo pipefail
-          cat relay-v4/chunk-*.txt > /tmp/radar-v5.html
-          test "$(wc -c < /tmp/radar-v5.html | tr -d ' ')" = "164493"
-          grep -Fq 'GABI_RADAR_PUBLIC_SAFE_V3' /tmp/radar-v5.html
-          grep -Fq 'const radarCommercialMetrics=' /tmp/radar-v5.html
-          grep -Fq 'const currentProposalCatalog=' /tmp/radar-v5.html
-          grep -Fq 'id="gabiDivaModel"' /tmp/radar-v5.html
-          grep -Fq 'https://static.wixstatic.com/3d/f447cd_31ad20addd514017a0297318f193c80a.glb' /tmp/radar-v5.html
-          grep -Fq 'gabiStudioInitReal3d();' /tmp/radar-v5.html
-          sha256sum /tmp/radar-v5.html
-          curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-v5.html "$(cat /tmp/radar-relay/upload-url.txt)"
+          cp deploy/radar-gabi/index.html /tmp/radar-current.html
+          test "$(wc -c < /tmp/radar-current.html | tr -d ' ')" = "178548"
+          test "$(md5sum /tmp/radar-current.html | awk '{print $1}')" = "e7fd13c56ecc12086acb115e6ce67ea5"
+          grep -Fq 'GABI_RADAR_PUBLIC_SAFE_V3' /tmp/radar-current.html
+          grep -Fq 'universe:807' /tmp/radar-current.html
+          grep -Fq 'presented:35' /tmp/radar-current.html
+          grep -Fq 'agencies:68' /tmp/radar-current.html
+          grep -Fq 'camera-orbit="0deg 78deg 92%"' /tmp/radar-current.html
+          grep -Fq 'divaStageHalo' /tmp/radar-current.html
+          sha256sum /tmp/radar-current.html
+          curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-current.html "$(cat /tmp/radar-relay/upload-url.txt)"
           echo "RADAR_SIGNED_UPLOAD=PASS"
 
       - name: Record result without secret material
