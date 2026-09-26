@@ -14,6 +14,7 @@ const DIVA_AUTH_VAULT_URL=process.env.DIVA_AUTH_VAULT_URL||"";
 const DIVA_AUTH_VAULT_SECRET=process.env.DIVA_AUTH_VAULT_SECRET||"";
 const DIVA_AUTH_INSTANCE=process.env.DIVA_AUTH_INSTANCE||"diva-whatsapp-main";
 let sock=null,qrDataUrl=null,connection="booting",lastError=null;
+const sentMessageIds=new Set(); // fromMe messages from linked phone are valid commands
 
 const wake=s=>/^\s*(?:@?diva)\b[\s,:;!?-]*/i.test(String(s||""));
 const textOf=m=>m?.message?.conversation||m?.message?.extendedTextMessage?.text||m?.message?.imageMessage?.caption||m?.message?.videoMessage?.caption||"";
@@ -109,12 +110,12 @@ async function connect(){
  sock.ev.on("messages.upsert",async({messages,type})=>{
    if(type!=="notify")return;
    for(const m of messages){
-     if(m.key?.fromMe||m.key?.remoteJid!==GROUP_JID)continue;
+     if(m.key?.remoteJid!==GROUP_JID||sentMessageIds.has(m.key?.id))continue;
      const text=textOf(m);
      if(!wake(text))continue;
      try{
        const out=await relay(text,m.key?.id||crypto.randomUUID());
-       if(out?.answer)await sock.sendMessage(GROUP_JID,{text:String(out.answer)});
+       if(out?.answer){const sent=await sock.sendMessage(GROUP_JID,{text:String(out.answer)});if(sent?.key?.id){sentMessageIds.add(sent.key.id);setTimeout(()=>sentMessageIds.delete(sent.key.id),300000)}}
      }catch(e){lastError=String(e?.message||e).slice(0,300)}
    }
  });
