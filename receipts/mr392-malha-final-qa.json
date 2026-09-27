@@ -1,0 +1,49 @@
+{
+  "kind": "MR392_MALHA_FINAL_QA_RECEIPT",
+  "canonicalGitLab": {
+    "project": "mundinhocomunicacao/mundinhocomunicacao",
+    "mr": 392,
+    "sha": "0d6a614dcb808f041f2eb597817589614a52e1bc",
+    "ciStatus": "failed",
+    "ciReason": "ci_quota_exceeded"
+  },
+  "cleanExecutionMirror": {
+    "repo": "mundinhocomunicacao-ctrl/mundinho-os-live",
+    "branch": "qa/mr392-malha-mirror-5c895ee4",
+    "head": "97e05969ed7c3c7f83af72e095785f6700909e6a",
+    "promotable": false
+  },
+  "proofs": [
+    {
+      "kind": "critical_release_qa_and_build",
+      "renderDeploy": "dep-dasnqsbncjis73avaad0",
+      "status": "PASS",
+      "notes": "40-gate critical release QA PASS and Wix worker build PASS on non-promotable execution mirror"
+    },
+    {
+      "kind": "mr392_social_fofoqueiro_qa_and_build",
+      "renderDeploy": "dep-dasnugl9fdbs73e9u1n0",
+      "status": "PASS",
+      "checks": [
+        "FOFOQUEIRO_CONTATOS",
+        "FOFOQUEIRO_MAR_ABERTO",
+        "SOCIAL_INSIGHTS_LIVE_GRID",
+        "SOCIAL_LISTENING_WATCHLIST",
+        "SOCIAL_INSIGHTS_CONTENT_DATA_LIVE",
+        "WIX_WORKER_BUILD"
+      ],
+      "notes": "Dedicated MR392 gate PASS on non-promotable execution mirror"
+    }
+  ],
+  "canonicalFixes": [
+    "responsive navigation regression reconciled to canonical 10 areas",
+    "Social content-first gate aligned with consequence language",
+    "Social live-grid gate aligned with current consequence label and visualizer label case",
+    "dedicated qa:mr392 script added while keeping qa:release at 40 gates"
+  ],
+  "remainingGate": {
+    "status": "BLOCKING_PROMOTION_ONLY",
+    "requirement": "materialize canonical GitLab SHA exactly on Wix QA, prove exact-SHA readback, then authenticated E2E/writeback reread",
+    "productionTouched": false
+  }
+}
