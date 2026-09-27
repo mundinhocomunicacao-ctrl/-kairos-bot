@@ -1,4 +1,4 @@
 [submodule "os"]
 	path = os
 	url = https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git
-	branch = sync/os-reference-restore-bcf852ec-v3
+	branch = sync/os-reference-restore-46409c0a
