@@ -1,0 +1,40 @@
+name: Wix CLI Static Metadata Probe
+
+on:
+  push:
+    branches: [forge/os-submodule-44f2278a]
+    paths:
+      - '.github/workflows/wix-cli-static-metadata-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: forge/os-submodule-44f2278a
+          fetch-depth: 0
+      - name: Inspect official Wix CLI package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wixcli && mkdir /tmp/wixcli && cd /tmp/wixcli
+          npm init -y >/dev/null 2>&1
+          npm install --silent @wix/cli@latest
+          mkdir -p "$GITHUB_WORKSPACE/deploy/os-wix-bridge"
+          {
+            echo '# Wix CLI static metadata probe'
+            echo
+            grep -R -n -E 'staticFilesMetadata|staticFileMetadata|hashFile|createHash|contentType.*hash|hash.*contentType' node_modules/@wix 2>/dev/null | head -300 || true
+          } > "$GITHUB_WORKSPACE/deploy/os-wix-bridge/wix-cli-static-metadata-probe.txt"
+          cd "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/os-wix-bridge/wix-cli-static-metadata-probe.txt
+          git commit -m "receipt(wix): probe official CLI static metadata hashing" || true
+          git push origin HEAD:forge/os-submodule-44f2278a
