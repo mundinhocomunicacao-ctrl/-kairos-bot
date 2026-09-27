@@ -1,0 +1,75 @@
+name: OS Wix Artifact Metadata · 6a75a1df
+
+on:
+  push:
+    branches: [forge/os-submodule-44f2278a]
+    paths:
+      - '.github/workflows/os-wix-artifact-metadata.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: forge/os-submodule-44f2278a
+          fetch-depth: 0
+      - name: Download exact private artifact from ephemeral bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 3 \
+            "https://mundinho-os-head-6a75-artifact-bridge.onrender.com/artifact" \
+            -o /tmp/os-dist-6a75a1df.tar.gz
+          mkdir -p /tmp/os-dist
+          tar -xzf /tmp/os-dist-6a75a1df.tar.gz -C /tmp/os-dist
+          grep -F "6a75a1dfb77d913f8810f48147b7fe568a5c5816" /tmp/os-dist/dist/wix-server/entry.mjs >/dev/null
+      - name: Publish metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p deploy/os-wix-bridge
+          node <<'NODE'
+          const fs=require('fs'),path=require('path'),crypto=require('crypto');
+          const root='/tmp/os-dist/dist';
+          const walk=(d,b='')=>{
+            let out=[];
+            for(const e of fs.readdirSync(d,{withFileTypes:true})){
+              const p=path.join(d,e.name), rel=path.posix.join(b,e.name);
+              if(e.isDirectory()) out=out.concat(walk(p,rel));
+              else {
+                const buf=fs.readFileSync(p);
+                out.push({
+                  path:rel,
+                  size:buf.length,
+                  md5:crypto.createHash('md5').update(buf).digest('hex'),
+                  sha256:crypto.createHash('sha256').update(buf).digest('hex'),
+                  contentType: rel.endsWith('.js')||rel.endsWith('.mjs')?'application/javascript':
+                    rel.endsWith('.css')?'text/css':
+                    rel.endsWith('.json')?'application/json':
+                    rel.endsWith('.html')?'text/html':'application/octet-stream'
+                });
+              }
+            }
+            return out;
+          };
+          const all=walk(root);
+          const result={
+            sourceSha:'6a75a1dfb77d913f8810f48147b7fe568a5c5816',
+            generatedFrom:'private-ephemeral-artifact',
+            totalFiles:all.length,
+            client:all.filter(x=>x.path.startsWith('client/')).map(x=>({...x,path:'/'+x.path.slice(7)})),
+            server:all.filter(x=>x.path.startsWith('wix-server/')).map(x=>({...x,path:x.path.slice(11)}))
+          };
+          fs.writeFileSync('deploy/os-wix-bridge/metadata-6a75a1df.json',JSON.stringify(result,null,2));
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/os-wix-bridge/metadata-6a75a1df.json
+          git commit -m "receipt(os): publish metadata for exact Wix artifact 6a75a1df" || true
+          git push origin HEAD:forge/os-submodule-44f2278a
