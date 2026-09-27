@@ -1,60 +1,109 @@
 name: Mundinho Wix QA Release Probe
+
 on:
-  push:
-    branches:
-      - forge/wix-remote-release-auth-20260927
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   wix-release:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      SOURCE_SHA: "44695f53e34502bd654c027f08ba1290311ca85f"
+      ARTIFACT_URL: "https://mundinho-os-main-44695f53-artifact.onrender.com/artifact"
+      QA_SITE_ID: "242b9d6f-71ad-40c6-b1d7-f1f0825e01be"
+      QA_APP_ID: "8fabf7a9-b3c7-43af-ab51-e37968937afb"
+      QA_HOST: "https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com"
+
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: false
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Fetch exact clean OS artifact
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --show-error --location --retry 3             https://mundinho-os-current-be822-artifact-v2.onrender.com/artifact             --output /tmp/os-current-be822.tar.gz
-          rm -rf /tmp/os-current-be822
-          mkdir -p /tmp/os-current-be822
-          tar -xzf /tmp/os-current-be822.tar.gz -C /tmp/os-current-be822
-          test -f /tmp/os-current-be822/dist/wix-server/entry.mjs
-          grep -F be822ffc6353237a413222ea036bf6eabc45f8e4 /tmp/os-current-be822/dist/wix-server/entry.mjs
-      - name: Prepare Wix release package
+          rm -rf /tmp/mundinho-os-exact
+          mkdir -p /tmp/mundinho-os-exact
+          curl --fail --show-error --location --retry 8 --retry-all-errors "$ARTIFACT_URL" -o /tmp/mundinho-os-exact/os.tar.gz
+          tar -xzf /tmp/mundinho-os-exact/os.tar.gz -C /tmp/mundinho-os-exact
+          test -f /tmp/mundinho-os-exact/dist/wix-server/entry.mjs
+          test -d /tmp/mundinho-os-exact/dist/client
+          grep -F "$SOURCE_SHA" /tmp/mundinho-os-exact/dist/wix-server/entry.mjs >/dev/null
+          grep -R -F "O que ficou urgente" /tmp/mundinho-os-exact/dist/client >/dev/null
+          echo "EXACT_ARTIFACT_PASS=$SOURCE_SHA"
+
+      - name: Prepare clean Wix QA package
         shell: bash
         run: |
           set -euo pipefail
           rm -rf .wix-qa-release
           mkdir -p .wix-qa-release
-          cp -R /tmp/os-current-be822/dist/client .wix-qa-release/client
-          cp -R /tmp/os-current-be822/dist/wix-server .wix-qa-release/server
-          cat > .wix-qa-release/wix.config.json <<'JSON'
-          {
-            "projectType": "Site",
-            "appId": "8fabf7a9-b3c7-43af-ab51-e37968937afb",
-            "siteId": "242b9d6f-71ad-40c6-b1d7-f1f0825e01be",
-            "site": {
-              "outputDirectory": {
-                "client": "./client",
-                "server": "./server"
-              }
-            }
-          }
-          JSON
-      - name: Authenticate and release to Wix QA
+          cp -R /tmp/mundinho-os-exact/dist/client .wix-qa-release/client
+          cp -R /tmp/mundinho-os-exact/dist/wix-server .wix-qa-release/server
+          node - <<'NODE'
+          const fs=require('node:fs');
+          fs.writeFileSync('.wix-qa-release/wix.config.json',JSON.stringify({
+            projectType:'Site',
+            appId:process.env.QA_APP_ID,
+            siteId:process.env.QA_SITE_ID,
+            site:{outputDirectory:{client:'./client',server:'./server'}}
+          },null,2));
+          NODE
+
+      - name: Authenticate and release exact artifact to isolated Wix QA
         working-directory: .wix-qa-release
         env:
           WIX_API_KEY: ${{ secrets.WIX_API_KEY }}
           WIX_CLI_API_KEY: ${{ secrets.WIX_CLI_API_KEY }}
+          WIX_REFRESH_TOKEN: ${{ secrets.WIX_REFRESH_TOKEN }}
+        shell: bash
         run: |
           set -euo pipefail
-          KEY="${WIX_API_KEY:-${WIX_CLI_API_KEY:-}}"
-          test -n "$KEY" || { echo "WIX_CI_CREDENTIAL_MISSING"; exit 78; }
-          npx --yes @wix/cli@latest login --api-key "$KEY"
-          npx --yes @wix/cli@latest whoami
-          npx --yes @wix/cli@latest release --comment "DIVA mass-unblock QA be822ffc"
+          if [ -n "${WIX_API_KEY:-}" ]; then
+            CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_API_KEY"
+            AUTH_MODE="api-key"
+          elif [ -n "${WIX_CLI_API_KEY:-}" ]; then
+            CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_CLI_API_KEY"
+            AUTH_MODE="cli-api-key"
+          elif [ -n "${WIX_REFRESH_TOKEN:-}" ]; then
+            CI=1 npx --yes @wix/cli@latest login --refresh-token "$WIX_REFRESH_TOKEN"
+            AUTH_MODE="refresh-token"
+          else
+            echo "WIX_CI_CREDENTIAL_MISSING"
+            exit 78
+          fi
+          echo "WIX_AUTH_MODE=$AUTH_MODE"
+          CI=1 npx --yes @wix/cli@latest whoami
+          CI=1 npx --yes @wix/cli@latest release --comment "DIVA exact QA $SOURCE_SHA"
+
+      - name: Prove exact QA readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 24); do
+            RV="$(curl -fsSL "$QA_HOST/api/release-version?proof=$i" || true)"
+            DR="$(curl -fsSL "$QA_HOST/api/diva-release?proof=$i" || true)"
+            PR="$(curl -fsSL "$QA_HOST/api/preview-readiness?proof=$i" || true)"
+            if RV="$RV" DR="$DR" PR="$PR" node - <<'NODE'
+          const rv=JSON.parse(process.env.RV||'{}');
+          const dr=JSON.parse(process.env.DR||'{}');
+          const pr=JSON.parse(process.env.PR||'{}');
+          const sha=process.env.SOURCE_SHA;
+          if(rv.sourceSha!==sha) process.exit(1);
+          if(dr.deploymentSha!==sha) process.exit(1);
+          if(pr.sourceSha!==sha || pr.status!=='ready') process.exit(1);
+          console.log('WIX_QA_EXACT_READBACK=PASS',sha);
+          NODE
+            then exit 0; fi
+            sleep 5
+          done
+          echo "WIX_QA_EXACT_READBACK=FAIL expected=$SOURCE_SHA"
+          exit 1
