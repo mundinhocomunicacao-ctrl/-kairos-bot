@@ -1,0 +1,141 @@
+name: DIVA Wix Device Release
+on:
+  push:
+    branches:
+      - forge/wix-remote-release-auth-20260927
+    paths:
+      - '.github/workflows/diva-wix-device-release.yml'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      SOURCE_SHA: 44695f53e34502bd654c027f08ba1290311ca85f
+      ARTIFACT_URL: https://mundinho-os-main-44695f53-artifact.onrender.com/artifact
+      QA_SITE_ID: 242b9d6f-71ad-40c6-b1d7-f1f0825e01be
+      QA_APP_ID: 8fabf7a9-b3c7-43af-ab51-e37968937afb
+      QA_HOST: https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com
+      LIVE_SITE_ID: c80689f2-6627-45fa-a264-4ab2863ba306
+      LIVE_APP_ID: 79eedd41-5ca6-4940-925a-e95e6f3c570e
+      LIVE_HOST: https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com
+      CANONICAL_URL: https://os.mundinhocomunicacao.com
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch exact clean Wix artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --location --retry 5 "$ARTIFACT_URL" -o /tmp/os.tar.gz
+          rm -rf /tmp/os-release
+          mkdir -p /tmp/os-release
+          tar -xzf /tmp/os.tar.gz -C /tmp/os-release
+          test -f /tmp/os-release/dist/wix-server/entry.mjs
+          grep -F "$SOURCE_SHA" /tmp/os-release/dist/wix-server/entry.mjs
+          echo "ARTIFACT_EXACT_SHA_PASS=$SOURCE_SHA"
+
+      - name: Prepare QA package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .wix-release
+          mkdir -p .wix-release
+          cp -R /tmp/os-release/dist/client .wix-release/client
+          cp -R /tmp/os-release/dist/wix-server .wix-release/server
+          node - <<'NODE'
+          const fs=require('node:fs');
+          fs.writeFileSync('.wix-release/wix.config.json',JSON.stringify({
+            projectType:'Site',
+            appId:process.env.QA_APP_ID,
+            siteId:process.env.QA_SITE_ID,
+            site:{outputDirectory:{client:'./client',server:'./server'}}
+          },null,2));
+          NODE
+
+      - name: Wix device authorization
+        shell: bash
+        working-directory: .wix-release
+        run: |
+          set -euo pipefail
+          echo "DIVA_WIX_DEVICE_AUTH_BEGIN"
+          env -u CI -u GITHUB_ACTIONS TERM=xterm-256color script -q -f -e -c "npx --yes @wix/cli@latest login" /tmp/wix-login.typescript
+          echo "DIVA_WIX_DEVICE_AUTH_DONE"
+          CI=1 npx --yes @wix/cli@latest whoami
+
+      - name: Release exact artifact to isolated Headless QA
+        shell: bash
+        working-directory: .wix-release
+        run: |
+          set -euo pipefail
+          CI=1 npx --yes @wix/cli@latest release
+          echo "WIX_QA_RELEASE_SUBMITTED=$SOURCE_SHA"
+
+      - name: Prove QA runtime exact SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            RV="$(curl -fsSL "$QA_HOST/api/release-version?proof=$i" || true)"
+            DR="$(curl -fsSL "$QA_HOST/api/diva-release?proof=$i" || true)"
+            PR="$(curl -fsSL "$QA_HOST/api/preview-readiness?proof=$i" || true)"
+            if RV="$RV" DR="$DR" PR="$PR" node - <<'NODE'
+          const rv=JSON.parse(process.env.RV||'{}');
+          const dr=JSON.parse(process.env.DR||'{}');
+          const pr=JSON.parse(process.env.PR||'{}');
+          const sha=process.env.SOURCE_SHA;
+          if(rv.sourceSha!==sha) process.exit(1);
+          if(dr.deploymentSha!==sha) process.exit(1);
+          if(pr.sourceSha!==sha || pr.status!=='ready') process.exit(1);
+          console.log('QA_EXACT_SHA_PASS',JSON.stringify({sourceSha:sha,deploymentId:dr.deploymentId||null}));
+          NODE
+            then exit 0; fi
+            sleep 5
+          done
+          echo "QA_EXACT_SHA_FAIL expected=$SOURCE_SHA"
+          exit 1
+
+      - name: Rebind same artifact to live Wix OS body
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs=require('node:fs');
+          fs.writeFileSync('.wix-release/wix.config.json',JSON.stringify({
+            projectType:'Site',
+            appId:process.env.LIVE_APP_ID,
+            siteId:process.env.LIVE_SITE_ID,
+            site:{outputDirectory:{client:'./client',server:'./server'}}
+          },null,2));
+          NODE
+
+      - name: Release SAME artifact to live Wix body
+        shell: bash
+        working-directory: .wix-release
+        run: |
+          set -euo pipefail
+          CI=1 npx --yes @wix/cli@latest release
+          echo "WIX_LIVE_RELEASE_SUBMITTED=$SOURCE_SHA"
+
+      - name: Prove live and canonical readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            LIVE="$(curl -fsSL "$LIVE_HOST/api/diva-release?proof=$i" || true)"
+            CANON="$(curl -fsSL "$CANONICAL_URL/api/diva-release?proof=$i" || true)"
+            if LIVE="$LIVE" CANON="$CANON" node - <<'NODE'
+          const live=JSON.parse(process.env.LIVE||'{}');
+          const canon=JSON.parse(process.env.CANON||'{}');
+          const sha=process.env.SOURCE_SHA;
+          if(live.deploymentSha!==sha) process.exit(1);
+          if(canon.deploymentSha!==sha) process.exit(1);
+          console.log('LIVE_AND_CANONICAL_EXACT_SHA_PASS',JSON.stringify({sourceSha:sha,liveDeploymentId:live.deploymentId||null,canonicalDeploymentId:canon.deploymentId||null}));
+          NODE
+            then exit 0; fi
+            sleep 5
+          done
+          echo "LIVE_CANONICAL_READBACK_FAIL expected=$SOURCE_SHA"
+          exit 1
