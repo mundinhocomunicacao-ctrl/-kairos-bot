@@ -88,21 +88,8 @@ async function main(){
 
     writeConfig(QA);
     state.phase='AUTH';
-    fs.rmSync(TRANSCRIPT,{force:true});
-    const watcher=setInterval(()=>{
-      try{
-        const raw=fs.readFileSync(TRANSCRIPT,'utf8');
-        const clean=raw.replace(/\x1b\[[0-?]*[ -\/]*[@-~]/g,'').replace(/\r/g,'\n');
-        const m=clean.match(/Copy this code to the clipboard:\s*([A-Z0-9]{6,12})/i);
-        if(m && state.deviceCode!==m[1].toUpperCase()){
-          state.deviceCode=m[1].toUpperCase();
-          event('AUTH','DEVICE_CODE_READY '+state.deviceCode);
-        }
-      }catch{}
-    },500);
-    try{
-      await run('script',['-q','-f','-e','-c','TERM=xterm-256color npx --yes @wix/cli@latest login',TRANSCRIPT],REL,'AUTH',{TERM:'xterm-256color'});
-    } finally { clearInterval(watcher); }
+    event('AUTH','WIX_DEVICE_LOGIN_START');
+    await run('npx',['--yes','@wix/cli@latest','login'],REL,'AUTH',{TERM:'xterm-256color'});
     event('AUTH','WIX_LOGIN_PASS');
     await run('npx',['--yes','@wix/cli@latest','whoami'],REL,'AUTH',{CI:'1'});
 
