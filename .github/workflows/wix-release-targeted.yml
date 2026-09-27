@@ -1,0 +1,20 @@
+name: Wix CLI Release Targeted Probe
+on:
+  push:
+    branches: ['forge/wix-remote-release-auth-20260927']
+    paths: ['.github/workflows/wix-release-targeted.yml']
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/w && cd /tmp/w
+          npm init -y >/dev/null 2>&1
+          npm install --silent @wix/cli@latest
+          FILE="$(find node_modules/@wix/cli/build -maxdepth 1 -name 'ReleaseCommand-*.js' | head -n1)"
+          echo "RELEASE_FILE=$FILE"
+          grep -n -E "https?://|upload|deployment|release|artifact|signed|presign|token|auth|create.*deploy|start.*deploy|wixapis" "$FILE" | head -n 700
