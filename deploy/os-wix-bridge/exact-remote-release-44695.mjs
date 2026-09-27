@@ -10,7 +10,7 @@ const SOURCE_REF='sync/os-reference-restore-c8c2b70c';
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
-const ROOT=process.cwd(), SRC='/tmp/mundinho-os-reference', REL=path.join(ROOT,'.wix-os-reference-release');
+const ROOT=process.cwd(), SRC=path.join(ROOT,'os'), REL=path.join(ROOT,'.wix-os-reference-release');
 const state={phase:'BOOT',sourceSha:SOURCE_SHA,sourceRef:SOURCE_REF,userCode:null,verificationUri:null,qa:null,live:null,canonical:null,error:null,done:false};
 
 function run(cmd,args,{cwd=ROOT,env={}}={}){
@@ -107,8 +107,7 @@ function sourceGate(){
 async function main(){
   try{
     state.phase='SOURCE';
-    fs.rmSync(SRC,{recursive:true,force:true});
-    sh(`git clone --depth 1 --branch "${SOURCE_REF}" "${SOURCE_REPO}" "${SRC}"`);
+    if(!fs.existsSync(path.join(SRC,'package.json')))throw new Error('OS_SUBMODULE_MISSING');
     const marker=fs.readFileSync(path.join(SRC,'.release-source/canonical-sha.txt'),'utf8').trim();
     if(marker!==SOURCE_SHA)throw new Error('SOURCE_MARKER_MISMATCH '+marker);
     sourceGate();
