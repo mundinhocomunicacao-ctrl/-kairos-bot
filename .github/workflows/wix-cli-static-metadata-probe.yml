@@ -27,14 +27,32 @@ jobs:
           npm init -y >/dev/null 2>&1
           npm install --silent @wix/cli@latest
           mkdir -p "$GITHUB_WORKSPACE/deploy/os-wix-bridge"
-          {
-            echo '# Wix CLI static metadata probe'
-            echo
-            grep -R -n -E 'staticFilesMetadata|staticFileMetadata|hashFile|createHash|contentType.*hash|hash.*contentType' node_modules/@wix 2>/dev/null | head -300 || true
-          } > "$GITHUB_WORKSPACE/deploy/os-wix-bridge/wix-cli-static-metadata-probe.txt"
+          node <<'NODE' > "$GITHUB_WORKSPACE/deploy/os-wix-bridge/wix-cli-static-metadata-probe.txt"
+          const fs=require('fs'),path=require('path');
+          const root='/tmp/wixcli/node_modules';
+          const needles=['staticFilesMetadata','staticFileMetadata','createHash(','hashFile','contentType'];
+          const out=[];
+          function walk(d){
+            for(const e of fs.readdirSync(d,{withFileTypes:true})){
+              const p=path.join(d,e.name);
+              if(e.isDirectory()){ if(!['.bin'].includes(e.name)) walk(p); continue; }
+              if(!/\.(js|mjs|cjs|ts)$/.test(e.name)) continue;
+              let s; try{s=fs.readFileSync(p,'utf8')}catch{continue}
+              if(!s.includes('staticFilesMetadata') && !s.includes('staticFileMetadata')) continue;
+              const lines=s.split('\n');
+              for(let i=0;i<lines.length;i++){
+                if(needles.some(n=>lines[i].includes(n))){
+                  out.push('FILE '+p+' LINE '+(i+1)+'\n'+lines.slice(Math.max(0,i-45),Math.min(lines.length,i+90)).join('\n'));
+                }
+              }
+            }
+          }
+          walk(root);
+          console.log(out.slice(0,80).join('\n\n=====\n\n'));
+          NODE
           cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add deploy/os-wix-bridge/wix-cli-static-metadata-probe.txt
-          git commit -m "receipt(wix): probe official CLI static metadata hashing" || true
+          git commit -m "receipt(wix): inspect CLI metadata builder internals" || true
           git push origin HEAD:forge/os-submodule-44f2278a
