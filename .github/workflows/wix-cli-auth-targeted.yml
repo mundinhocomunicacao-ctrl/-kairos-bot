@@ -1,0 +1,17 @@
+name: Wix CLI Auth Targeted Probe
+on:
+  push:
+    branches: ['forge/wix-remote-release-auth-20260927']
+    paths: ['.github/workflows/wix-cli-auth-targeted.yml']
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/w && cd /tmp/w
+          npm init -y >/dev/null 2>&1
+          npm install --silent @wix/cli@latest
+          nl -ba node_modules/@wix/cli/build/index.js | sed -n '4680,4835p'
