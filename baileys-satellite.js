@@ -18,6 +18,7 @@ const sentMessageIds=new Set(); // fromMe messages from linked phone are valid c
 const processedMessageIds=new Set();
 const DIVA_MESSAGE_MAX_AGE_MS=300000;
 const DIVA_FLOW_WATCHDOG_MS=90000;
+const DIVA_STARTUP_GRACE_MS=Math.max(0,Number(process.env.DIVA_STARTUP_GRACE_MS||30000));
 let flowWatchdog=null,flowObserved=false;
 const messageTimestamp=m=>{const raw=m?.messageTimestamp;const n=typeof raw==="number"?raw:Number(raw?.low??raw??0);return n>0?n*1000:Date.now()};
 
@@ -138,4 +139,4 @@ http.createServer((req,res)=>{
  if(req.method==="GET"&&(u.pathname==="/"||u.pathname==="/pair")){res.writeHead(200,{"content-type":"text/html; charset=utf-8","cache-control":"no-store"});return res.end(page())}
  if(req.method==="GET"&&u.pathname==="/health"){res.writeHead(200,{"content-type":"application/json","cache-control":"no-store"});return res.end(JSON.stringify({ok:true,service:"diva-baileys-satellite",connection,groupConfigured:Boolean(GROUP_JID),relayConfigured:Boolean(DIVA_RELAY_URL&&DIVA_LOCAL_RELAY_SECRET),vaultConfigured:Boolean(DIVA_AUTH_VAULT_URL&&DIVA_AUTH_VAULT_SECRET),lastError}))}
  res.writeHead(404);res.end("not found");
-}).listen(PORT,"0.0.0.0",()=>{console.log("DIVA_BAILEYS_SATELLITE_LISTENING",PORT);connect().catch(e=>{lastError=String(e?.message||e);connection="failed"})});
+}).listen(PORT,"0.0.0.0",()=>{console.log("DIVA_BAILEYS_SATELLITE_LISTENING",PORT);connection="takeover_wait";console.log("DIVA_TAKEOVER_WAIT",DIVA_STARTUP_GRACE_MS);const startConnect=()=>{connection="booting";connect().catch(e=>{lastError=String(e?.message||e);connection="failed"})};setTimeout(startConnect,DIVA_STARTUP_GRACE_MS)});
