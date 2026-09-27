@@ -1,0 +1,4 @@
+[submodule "os"]
+	path = os
+	url = https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git
+	branch = qa/os-definitivo-exact-0febf4cb
