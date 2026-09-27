@@ -15,3 +15,7 @@ console.log("DIVA_BAILEYS_SATELLITE_CONTRACT_OK");
 assert.ok(!src.includes("setTimeout(connect,2500)"),"must not reconnect Baileys in-process");
 
 assert.ok(src.includes("setTimeout(startConnect,DIVA_STARTUP_GRACE_MS)"),"new Render instance must become healthy before taking over the shared Baileys session");
+
+for(const token of ["runRelayCanary","DIVA_LOCAL_RELAY_CANARY_OK","DIVA_LOCAL_RELAY_CANARY_FAILED","without_diva_wake_word"])
+  assert.ok(src.includes(token),"missing relay canary token: "+token);
+assert.ok(src.includes('relay("healthcheck","relay_canary_"+Date.now())'),"relay canary must verify signed local relay without sending a WhatsApp message");
