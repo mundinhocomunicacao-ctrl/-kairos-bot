@@ -1,0 +1,102 @@
+name: Wix QA Release · exact 76662c11
+on:
+  push:
+    branches: [forge/os-submodule-44f2278a]
+    paths:
+      - '.github/workflows/wix-qa-exact-76662c11.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SOURCE_SHA: 76662c1145966fb9f906f7dbf3843da4e6052ce0
+      MUNDINHO_WIX_QA_SITE_ID: 242b9d6f-71ad-40c6-b1d7-f1f0825e01be
+      MUNDINHO_WIX_QA_APP_ID: 8fabf7a9-b3c7-43af-ab51-e37968937afb
+      MUNDINHO_WIX_QA_URL: https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com
+      WIX_KEY_A: ${{ secrets.WIX_MUNDO_API_KEY }}
+      WIX_KEY_B: ${{ secrets.WIX_API_KEY }}
+      WIX_KEY_C: ${{ secrets.WIX_CLI_API_KEY }}
+      WIX_KEY_D: ${{ secrets.WIX_RELEASE_API_KEY }}
+      WIX_KEY_E: ${{ secrets.MUNDINHO_WIX_API_KEY }}
+      WIX_KEY_F: ${{ secrets.WIX_GABI_RADAR_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: forge/os-submodule-44f2278a
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: os/package-lock.json
+
+      - name: Install and gate exact source
+        working-directory: os
+        run: |
+          set -euo pipefail
+          npm ci
+          node scripts/qa-live-auth-contract.mjs
+          node scripts/qa-google-login.mjs
+          node scripts/qa-google-login-canonical-handoff.mjs
+          node scripts/qa-os-route-auth-gate.mjs
+          npm run qa:release
+
+      - name: Build exact Wix worker
+        working-directory: os
+        run: |
+          set -euo pipefail
+          MUNDO_RUNTIME_SOURCE_SHA="$SOURCE_SHA" MUNDO_RUNTIME_ENV=wix-qa npm run build:wix-worker
+          test -f dist/wix-server/entry.mjs
+          grep -F "$SOURCE_SHA" dist/wix-server/entry.mjs >/dev/null
+
+      - name: Package Wix QA release
+        run: |
+          set -euo pipefail
+          rm -rf .wix-qa-release
+          mkdir .wix-qa-release
+          cp -R os/dist/client .wix-qa-release/client
+          cp -R os/dist/wix-server .wix-qa-release/server
+          node -e 'const fs=require("node:fs");fs.writeFileSync(".wix-qa-release/wix.config.json",JSON.stringify({projectType:"Site",appId:process.env.MUNDINHO_WIX_QA_APP_ID,siteId:process.env.MUNDINHO_WIX_QA_SITE_ID,site:{outputDirectory:{client:"./client",server:"./server"}}},null,2))'
+
+      - name: Resolve governed Wix credential
+        run: |
+          set -euo pipefail
+          KEY=""
+          ALIAS=""
+          for pair in "WIX_KEY_A:WIX_MUNDO_API_KEY" "WIX_KEY_B:WIX_API_KEY" "WIX_KEY_C:WIX_CLI_API_KEY" "WIX_KEY_D:WIX_RELEASE_API_KEY" "WIX_KEY_E:MUNDINHO_WIX_API_KEY" "WIX_KEY_F:WIX_GABI_RADAR_API_KEY"; do
+            var="${pair%%:*}"
+            alias="${pair#*:}"
+            value="${!var:-}"
+            if [ -n "$value" ]; then KEY="$value"; ALIAS="$alias"; break; fi
+          done
+          test -n "$KEY" || { echo "WIX_QA_RELEASE_CREDENTIAL=MISSING"; exit 78; }
+          echo "::add-mask::$KEY"
+          echo "WIX_CLI_KEY=$KEY" >> "$GITHUB_ENV"
+          echo "WIX_QA_RELEASE_CREDENTIAL=FOUND alias=$ALIAS"
+
+      - name: Release exact build to Wix QA
+        working-directory: .wix-qa-release
+        run: |
+          set -euo pipefail
+          CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_CLI_KEY"
+          CI=1 npx --yes @wix/cli@latest whoami
+          CI=1 npx --yes @wix/cli@latest release
+
+      - name: Read back exact SHA
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 24); do
+            RV="$(curl -fsSL "$MUNDINHO_WIX_QA_URL/api/release-version?proof=$i" || true)"
+            DR="$(curl -fsSL "$MUNDINHO_WIX_QA_URL/api/diva-release?proof=$i" || true)"
+            PR="$(curl -fsSL "$MUNDINHO_WIX_QA_URL/api/preview-readiness?proof=$i" || true)"
+            if RV="$RV" DR="$DR" PR="$PR" SOURCE_SHA="$SOURCE_SHA" node -e 'const rv=JSON.parse(process.env.RV||"{}");const dr=JSON.parse(process.env.DR||"{}");const pr=JSON.parse(process.env.PR||"{}");const sha=process.env.SOURCE_SHA;if(rv.sourceSha!==sha)process.exit(1);if(dr.deploymentSha!==sha)process.exit(1);if(pr.sourceSha!==sha||pr.status!=="ready")process.exit(1);console.log("WIX_QA_READBACK=PASS",JSON.stringify({sourceSha:sha,deploymentId:dr.deploymentId||null,readiness:pr.status}))'; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "WIX_QA_READBACK=FAIL expected=$SOURCE_SHA"
+          exit 1
