@@ -7,8 +7,8 @@ const PORT=process.env.PORT||10000;
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-qa-release');
-const SOURCE_SHA='723b28094c3b83903235d768af543ca09080af37';
-const MIRROR_COMMIT='0dd623fd055b6585cf2b4343fcfd1980670d93a2';
+const SOURCE_SHA='086481cde2b4b2341eced534dfb7dc844581ab56';
+const MIRROR_COMMIT='e77164f418fde144884c30f47eafb290e9658e0d';
 const QA={
   siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',
   appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',
@@ -17,6 +17,7 @@ const QA={
 const gates=[
   'scripts/qa-os-navigation-contract.mjs',
   'scripts/qa-os-navigation-runtime.mjs',
+  'scripts/qa-os-navigation-usage-order.mjs',
   'scripts/qa-os-visual-reference-manifest.mjs',
   'scripts/qa-os-visual-language.mjs',
   'scripts/qa-social-insights-live-grid.mjs',
