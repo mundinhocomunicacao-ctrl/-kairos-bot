@@ -1,0 +1,7 @@
+{
+  "receiptType": "FORGE_POINTER_ADVANCE",
+  "sourceSha": "0fdac0c25b921a49adde570b15a1d0004ee98f15",
+  "mirrorCommit": "096b434fe7be14a129115dc70bea22edd0bcde8c",
+  "reason": "Advance frozen submodule gitlink after mirror READBACK/HASH verification",
+  "preservesCandidate": true
+}
