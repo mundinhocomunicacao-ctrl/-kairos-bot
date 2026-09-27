@@ -1,13 +1,9 @@
 {
   "kind": "MALHA_EXECUTION_MIRROR",
-  "canonicalGitLabProject": "mundinhocomunicacao/mundinhocomunicacao",
   "canonicalGitLabSha": "5c895ee442ee76e719bed324a39db12d938d9713",
-  "mirrorRepo": "mundinhocomunicacao-ctrl/mundinho-os-live",
-  "mirrorBranch": "qa/mr392-malha-mirror-5c895ee4",
-  "mirrorHead": "69c23b94187776c1a7ef25b661eb82e01640c50f",
+  "mirrorHead": "585e51c2f593e222c33b434aa3c6cba076eb7aad",
   "exactChangedPaths": 14,
-  "qaReleaseScriptsSyncedFromCanonical": 20,
+  "qaReleaseSurfaceSynced": true,
   "baseIsNotExactCanonical": true,
-  "promotable": false,
-  "purpose": "Independent ANJOS/Malha QA and build only. Never release from this receipt."
+  "promotable": false
 }
