@@ -1,0 +1,63 @@
+name: Wix CLI Release Flow Probe
+
+on:
+  push:
+    branches: [forge/os-submodule-44f2278a]
+    paths:
+      - '.github/workflows/wix-cli-release-flow-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: forge/os-submodule-44f2278a
+          fetch-depth: 0
+      - name: Extract current Wix CLI release flow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wixcli && mkdir /tmp/wixcli && cd /tmp/wixcli
+          npm init -y >/dev/null 2>&1
+          npm install --silent @wix/cli@latest
+          mkdir -p "$GITHUB_WORKSPACE/deploy/os-wix-bridge"
+          node <<'NODE' > "$GITHUB_WORKSPACE/deploy/os-wix-bridge/wix-cli-release-flow-probe.txt"
+          const fs=require('fs'),path=require('path');
+          const root='/tmp/wixcli/node_modules/@wix/cli/build';
+          const needles=[
+            'publishDeployment(', 'getDeploymentPipelineDescription(', 'createPreview',
+            'deploymentId', 'useRelease', 'ReleaseCommand', 'releaseAction',
+            'deployFiles.execute', 'updateManifestWithBackendWorker',
+            'skipPipelineCheck', 'isPublishPipelineDeployment'
+          ];
+          const chunks=[];
+          function walk(d){
+            for(const e of fs.readdirSync(d,{withFileTypes:true})){
+              const p=path.join(d,e.name);
+              if(e.isDirectory()){walk(p);continue;}
+              if(!/\.(js|mjs|cjs)$/.test(e.name))continue;
+              let s;try{s=fs.readFileSync(p,'utf8')}catch{continue}
+              if(!needles.some(n=>s.includes(n)))continue;
+              const lines=s.split('\n');
+              for(let i=0;i<lines.length;i++){
+                if(needles.some(n=>lines[i].includes(n))){
+                  chunks.push('FILE '+p+' LINE '+(i+1)+'\n'+lines.slice(Math.max(0,i-55),Math.min(lines.length,i+125)).join('\n'));
+                }
+              }
+            }
+          }
+          walk(root);
+          console.log(chunks.slice(0,120).join('\n\n=====\n\n'));
+          NODE
+          cd "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/os-wix-bridge/wix-cli-release-flow-probe.txt
+          git commit -m "receipt(wix): probe current CLI release pipeline" || true
+          git push origin HEAD:forge/os-submodule-44f2278a
