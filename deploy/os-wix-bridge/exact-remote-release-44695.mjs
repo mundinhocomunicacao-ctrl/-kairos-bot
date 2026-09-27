@@ -119,7 +119,7 @@ async function main(){
     fs.copyFileSync(vendored,lockPath);
     console.log('PACKAGE_LOCK_EXACT_COPY',fs.statSync(lockPath).size);
     console.log('OS_BUILD_WORKSPACE',SRC,'LOCK_BYTES',fs.statSync(lockPath).size);
-    await run('npx',['-y','npm@10.9.4','ci','--no-audit','--no-fund'],{cwd:SRC});
+    await run('npm',['ci','--no-audit','--no-fund'],{cwd:SRC});
     const gates=[
       'node scripts/qa-os-navigation-contract.mjs',
       'node scripts/qa-os-navigation-runtime.mjs',
