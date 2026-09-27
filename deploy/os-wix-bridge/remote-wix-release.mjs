@@ -45,7 +45,7 @@ async function main(){
     prepare();
     state.phase='LOGIN';
     emit('LOGIN','WIX_REMOTE_LOGIN_START');
-    await run('npx',['--yes','@wix/cli@latest','login'],REL,'LOGIN');
+    await run('script',['-q','-e','-c','npx --yes @wix/cli@latest login','/dev/null'],REL,'LOGIN');
     state.phase='WHOAMI';
     const chunks=[];
     const p=spawn('npx',['--yes','@wix/cli@latest','whoami'],{cwd:REL,env:{...process.env,CI:'1'}});
