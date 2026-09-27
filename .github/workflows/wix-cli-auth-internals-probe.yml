@@ -1,0 +1,30 @@
+name: Wix CLI Auth Internals Probe
+on:
+  push:
+    branches:
+      - forge/wix-remote-release-auth-20260927
+    paths:
+      - '.github/workflows/wix-cli-auth-internals-probe.yml'
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inspect Wix CLI package auth and release internals
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/wixcli && cd /tmp/wixcli
+          npm pack @wix/cli@latest >/tmp/pkgname
+          PKG="$(tail -n1 /tmp/pkgname)"
+          tar -xzf "$PKG"
+          echo "=== PACKAGE ==="
+          node -e "const p=require('/tmp/wixcli/package/package.json'); console.log(JSON.stringify({name:p.name,version:p.version,bin:p.bin},null,2))"
+          echo "=== AUTH ENV REFERENCES ==="
+          grep -R -n -E "WIX_[A-Z_]+|process\.env\.[A-Z_]*(TOKEN|KEY|AUTH)|api-key|loginWithDeviceCode|deviceCode|refreshToken|accessToken" package 2>/dev/null | head -n 600 || true
+          echo "=== RELEASE ENDPOINT REFERENCES ==="
+          grep -R -n -E "release|deployment|upload|wixstro|headless.*deploy|static.*upload|signed.*url|presign" package 2>/dev/null | head -n 900 || true
