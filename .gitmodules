@@ -1,4 +1,4 @@
 [submodule "os"]
 	path = os
 	url = https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git
-	branch = sync/gitlab-fix-dc14dd57
+	branch = sync/gitlab-main-44695f53
