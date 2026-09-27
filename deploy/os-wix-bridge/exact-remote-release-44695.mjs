@@ -113,6 +113,13 @@ async function main(){
     sourceGate();
 
     state.phase='TEST_BUILD';
+    const lockPath=path.join(SRC,'package-lock.json');
+    if(!fs.existsSync(lockPath)){
+      const vendored=path.join(ROOT,'deploy/os-wix-bridge/os-package-lock-c8c2.json');
+      if(!fs.existsSync(vendored))throw new Error('PACKAGE_LOCK_MISSING');
+      fs.copyFileSync(vendored,lockPath);
+      console.log('PACKAGE_LOCK_RESTORED_FROM_EXACT_MIRROR');
+    }
     sh('npm ci',SRC);
     const gates=[
       'node scripts/qa-os-navigation-contract.mjs',
