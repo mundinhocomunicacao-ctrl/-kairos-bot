@@ -7,8 +7,8 @@ const PORT=process.env.PORT||10000;
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-qa-release');
-const SOURCE_SHA='086481cde2b4b2341eced534dfb7dc844581ab56';
-const MIRROR_COMMIT='e77164f418fde144884c30f47eafb290e9658e0d';
+const SOURCE_SHA='201b610df9e0b8b08ccdc65e49f03d85ef453408';
+const MIRROR_COMMIT='39e7b198b7065b271ea5e5e0269f62a2e3260db2';
 const QA={
   siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',
   appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',
