@@ -1,4 +1,4 @@
 [submodule "os"]
 	path = os
 	url = https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git
-	branch = sync/gitlab-main-ee6e4332
+	branch = executor/render-wrapper-ee6e-for-70c6bf57
