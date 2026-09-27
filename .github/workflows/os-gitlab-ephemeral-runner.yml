@@ -1,0 +1,112 @@
+name: OS GitLab ephemeral runner bridge
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/os-gitlab-ephemeral-runner.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: os-gitlab-ephemeral-runner
+  cancel-in-progress: true
+
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      RELAY_DIR: relay/os-runner-76662c11
+      RUNNER_TAG: os-external-failover
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate ephemeral relay key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/os-runner "$RELAY_DIR"
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/os-runner/private.pem >/dev/null 2>&1
+          openssl pkey -in /tmp/os-runner/private.pem -pubout -out "$RELAY_DIR/public.pem" >/dev/null 2>&1
+          git config user.name 'Mundinho Ephemeral Runner'
+          git config user.email 'runner-bridge@users.noreply.github.com'
+          git add "$RELAY_DIR/public.pem"
+          git commit -m 'ops: publish ephemeral runner relay key 76662c11'
+          git push origin HEAD:main
+
+      - name: Receive encrypted GitLab registration credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          CIPHER="$RELAY_DIR/runner-token.enc.b64"
+          for i in $(seq 1 180); do
+            git pull --ff-only origin main >/dev/null 2>&1 || true
+            if [ -s "$CIPHER" ]; then
+              base64 -d "$CIPHER" > /tmp/os-runner/token.enc
+              openssl pkeyutl -decrypt -inkey /tmp/os-runner/private.pem -in /tmp/os-runner/token.enc -out /tmp/os-runner/token.txt -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
+              test -s /tmp/os-runner/token.txt
+              chmod 600 /tmp/os-runner/token.txt
+              echo "EPHEMERAL_GITLAB_CREDENTIAL=RECEIVED"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "EPHEMERAL_GITLAB_CREDENTIAL=TIMEOUT"
+          exit 1
+
+      - name: Register project runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64 -o /tmp/os-runner/gitlab-runner
+          chmod +x /tmp/os-runner/gitlab-runner
+          TOKEN="$(cat /tmp/os-runner/token.txt)"
+          /tmp/os-runner/gitlab-runner register --non-interactive             --url https://gitlab.com/             --registration-token "$TOKEN"             --executor shell             --description "mundinho-os-failover-$GITHUB_RUN_ID"             --tag-list "$RUNNER_TAG"             --run-untagged=false             --locked=true             --config /tmp/os-runner/config.toml
+          unset TOKEN
+          shred -u /tmp/os-runner/token.txt /tmp/os-runner/token.enc /tmp/os-runner/private.pem || rm -f /tmp/os-runner/token.txt /tmp/os-runner/token.enc /tmp/os-runner/private.pem
+          echo "EPHEMERAL_GITLAB_RUNNER=REGISTERED"
+
+      - name: Start runner and publish ready receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          nohup /tmp/os-runner/gitlab-runner run --working-directory /tmp/os-runner/work --config /tmp/os-runner/config.toml >/tmp/os-runner/runner.log 2>&1 &
+          echo $! >/tmp/os-runner/runner.pid
+          sleep 3
+          kill -0 "$(cat /tmp/os-runner/runner.pid)"
+          printf '{"status":"ready","tag":"%s","githubRunId":"%s","canonicalSha":"76662c1145966fb9f906f7dbf3843da4e6052ce0"}\n' "$RUNNER_TAG" "$GITHUB_RUN_ID" > "$RELAY_DIR/ready.json"
+          git add "$RELAY_DIR/ready.json"
+          git commit -m 'ops: ephemeral GitLab runner ready 76662c11'
+          git push origin HEAD:main
+
+      - name: Serve GitLab job
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 900); do
+            git pull --ff-only origin main >/dev/null 2>&1 || true
+            if [ -f "$RELAY_DIR/stop.txt" ]; then
+              echo "EPHEMERAL_GITLAB_RUNNER=STOP_REQUESTED"
+              break
+            fi
+            kill -0 "$(cat /tmp/os-runner/runner.pid)" || { echo "EPHEMERAL_GITLAB_RUNNER=STOPPED_UNEXPECTEDLY"; tail -80 /tmp/os-runner/runner.log; exit 1; }
+            sleep 2
+          done
+          tail -80 /tmp/os-runner/runner.log | sed -E 's/(token|registration-token)[^ ]*/[REDACTED]/gi' || true
+
+      - name: Cleanup runner
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          if [ -x /tmp/os-runner/gitlab-runner ] && [ -f /tmp/os-runner/config.toml ]; then
+            /tmp/os-runner/gitlab-runner unregister --all-runners --config /tmp/os-runner/config.toml >/dev/null 2>&1 || true
+          fi
+          [ -f /tmp/os-runner/runner.pid ] && kill "$(cat /tmp/os-runner/runner.pid)" >/dev/null 2>&1 || true
+          rm -rf /tmp/os-runner
+          echo "EPHEMERAL_GITLAB_RUNNER=CLEANED"
