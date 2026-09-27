@@ -4,7 +4,7 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='e41aa84511604942ed1183009b90c8f62c02d64f';
+const SOURCE_SHA='c5d386cbf6db8d11e491db1c1ce2ba4e2f50af6f';
 const SOURCE_REPO='https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git';
 const SOURCE_REF='sync/os-reference-social-e41aa845';
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
