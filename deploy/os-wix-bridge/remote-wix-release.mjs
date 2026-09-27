@@ -151,8 +151,15 @@ async function main(){
     if(marker!==SOURCE_SHA) throw new Error('SOURCE_MARKER_MISMATCH '+marker);
     log('SOURCE_MARKER_PASS '+SOURCE_SHA);
 
-    state.phase='INSTALL';
-    await run('npm',['ci'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
+    state.phase='DEPENDENCIES';
+    const vinextBin=path.join(OS_DIR,'node_modules','.bin','vinext');
+    if(fs.existsSync(vinextBin)){
+      log('DEPENDENCIES_REUSED_FROM_RENDER_BUILD');
+    }else{
+      state.phase='INSTALL';
+      await run('npm',['ci'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
+      log('DEPENDENCIES_INSTALLED_AT_RUNTIME');
+    }
 
     state.phase='QA_GATES';
     for(const gate of gates){
