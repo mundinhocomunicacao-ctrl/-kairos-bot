@@ -11,29 +11,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: os/package-lock.json
-      - name: Build exact approved OS artifact
-        working-directory: os
-        env:
-          MUNDO_RUNTIME_SOURCE_SHA: be822ffc6353237a413222ea036bf6eabc45f8e4
-          MUNDO_RUNTIME_ENV: wix-qa
+      - name: Fetch exact clean OS artifact
+        shell: bash
         run: |
-          npm ci
-          npm run build:wix-worker
-          test -f dist/wix-server/entry.mjs
-          grep -F "$MUNDO_RUNTIME_SOURCE_SHA" dist/wix-server/entry.mjs
+          set -euo pipefail
+          curl --fail --show-error --location --retry 3             https://mundinho-os-current-be822-artifact-v2.onrender.com/artifact             --output /tmp/os-current-be822.tar.gz
+          rm -rf /tmp/os-current-be822
+          mkdir -p /tmp/os-current-be822
+          tar -xzf /tmp/os-current-be822.tar.gz -C /tmp/os-current-be822
+          test -f /tmp/os-current-be822/dist/wix-server/entry.mjs
+          grep -F be822ffc6353237a413222ea036bf6eabc45f8e4 /tmp/os-current-be822/dist/wix-server/entry.mjs
       - name: Prepare Wix release package
         shell: bash
         run: |
+          set -euo pipefail
           rm -rf .wix-qa-release
           mkdir -p .wix-qa-release
-          cp -R os/dist/client .wix-qa-release/client
-          cp -R os/dist/wix-server .wix-qa-release/server
+          cp -R /tmp/os-current-be822/dist/client .wix-qa-release/client
+          cp -R /tmp/os-current-be822/dist/wix-server .wix-qa-release/server
           cat > .wix-qa-release/wix.config.json <<'JSON'
           {
             "projectType": "Site",
@@ -53,6 +52,7 @@ jobs:
           WIX_API_KEY: ${{ secrets.WIX_API_KEY }}
           WIX_CLI_API_KEY: ${{ secrets.WIX_CLI_API_KEY }}
         run: |
+          set -euo pipefail
           KEY="${WIX_API_KEY:-${WIX_CLI_API_KEY:-}}"
           test -n "$KEY" || { echo "WIX_CI_CREDENTIAL_MISSING"; exit 78; }
           npx --yes @wix/cli@latest login --api-key "$KEY"
