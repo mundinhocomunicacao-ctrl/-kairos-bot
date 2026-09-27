@@ -118,8 +118,8 @@ async function main(){
     if(!fs.existsSync(vendored))throw new Error('VENDORED_PACKAGE_LOCK_MISSING');
     fs.copyFileSync(vendored,lockPath);
     console.log('PACKAGE_LOCK_EXACT_COPY',fs.statSync(lockPath).size);
-    sh(`pwd; ls -lah package.json package-lock.json; node -e "const x=require('./package-lock.json'); console.log('LOCKFILE_VERSION',x.lockfileVersion,'LOCK_NAME',x.name)"`,SRC);
-    sh('npx -y npm@10.9.4 ci --no-audit --no-fund',SRC);
+    console.log('OS_BUILD_WORKSPACE',SRC,'LOCK_BYTES',fs.statSync(lockPath).size);
+    await run('npx',['-y','npm@10.9.4','ci','--no-audit','--no-fund'],{cwd:SRC});
     const gates=[
       'node scripts/qa-os-navigation-contract.mjs',
       'node scripts/qa-os-navigation-runtime.mjs',
@@ -130,8 +130,8 @@ async function main(){
       'node scripts/qa-os-visual-language.mjs',
       'node scripts/qa-mobile-contract-sync.mjs'
     ];
-    for(const g of gates)sh(g,SRC);
-    sh(`MUNDO_RUNTIME_SOURCE_SHA=${SOURCE_SHA} MUNDO_RUNTIME_ENV=wix-live npm run build:wix-worker`,SRC);
+    for(const g of gates)await run('bash',['-c',g],{cwd:SRC});
+    await run('npm',['run','build:wix-worker'],{cwd:SRC,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live'}});
     const entry=fs.readFileSync(path.join(SRC,'dist/wix-server/entry.mjs'),'utf8');
     if(!entry.includes(SOURCE_SHA))throw new Error('BUILD_SHA_MISMATCH');
     console.log('REFERENCE_BUILD_PASS '+SOURCE_SHA);
