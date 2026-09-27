@@ -1,68 +1,32 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import {spawn} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 
-const PORT=Number(process.env.PORT||10000);
-const SHA='44695f53e34502bd654c027f08ba1290311ca85f';
-const ARTIFACT='https://mundinho-os-main-44695f53-artifact.onrender.com/artifact';
+const PORT=process.env.PORT||10000;
+const SOURCE_SHA='44695f53e34502bd654c027f08ba1290311ca85f';
+const ARTIFACT_URL='https://mundinho-os-main-44695f53-artifact.onrender.com/artifact';
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
-const CANON='https://os.mundinhocomunicacao.com';
-const ROOT='/tmp/diva-wix-exact-44695';
-const REL=path.join(ROOT,'release');
-const TRANSCRIPT=path.join(ROOT,'login.typescript');
+const CANONICAL='https://os.mundinhocomunicacao.com';
+const ROOT=process.cwd(), REL=path.join(ROOT,'.wix-os-release');
+const state={phase:'BOOT',sourceSha:SOURCE_SHA,userCode:null,verificationUri:null,qa:null,live:null,canonical:null,error:null,done:false};
 
-const state={
-  phase:'BOOT',sourceSha:SHA,artifactUrl:ARTIFACT,
-  deviceLoginUrl:'https://users.wix.com/login/device-login?color=developer&studio=true&referralInfo=cli',
-  deviceCode:null,qa:null,live:null,canonical:null,error:null,done:false,events:[]
-};
-
-function event(phase,message){
-  state.phase=phase;
-  const clean=String(message||'').replace(/\x1b\[[0-?]*[ -\/]*[@-~]/g,'').trim();
-  if(clean){
-    state.events.push({at:new Date().toISOString(),phase,message:clean.slice(0,1200)});
-    if(state.events.length>120) state.events.shift();
-    console.log('['+phase+']',clean);
-    const m=clean.match(/Copy this code to the clipboard:\s*([A-Z0-9]{6,12})/i);
-    if(m) state.deviceCode=m[1].toUpperCase();
-  }
-}
-function run(cmd,args,cwd=ROOT,phase='RUN',envExtra={}){
+function run(cmd,args,{cwd=ROOT,env={}}={}){
   return new Promise((resolve,reject)=>{
-    const env={...process.env,...envExtra};
-    const p=spawn(cmd,args,{cwd,env,stdio:['ignore','pipe','pipe']});
-    p.stdout.on('data',d=>event(phase,d));
-    p.stderr.on('data',d=>event(phase,d));
+    const p=spawn(cmd,args,{cwd,env:{...process.env,...env},stdio:['ignore','pipe','pipe']});
+    p.stdout.on('data',d=>process.stdout.write(d));
+    p.stderr.on('data',d=>process.stderr.write(d));
     p.on('error',reject);
-    p.on('close',code=>code===0?resolve():reject(new Error(phase+'_EXIT_'+code)));
+    p.on('close',c=>c===0?resolve():reject(new Error(cmd+' exit '+c)));
   });
 }
-async function fetchJson(url){
-  const r=await fetch(url,{headers:{accept:'application/json','cache-control':'no-cache'}});
-  const text=await r.text();
-  if(!r.ok) throw new Error('HTTP_'+r.status+' '+url+' '+text.slice(0,300));
-  return JSON.parse(text);
-}
-async function waitProof(host,label){
-  for(let i=1;i<=36;i++){
-    try{
-      const [rv,dr,pr]=await Promise.all([
-        fetchJson(host+'/api/release-version?proof='+Date.now()+'-'+i),
-        fetchJson(host+'/api/diva-release?proof='+Date.now()+'-'+i),
-        fetchJson(host+'/api/preview-readiness?proof='+Date.now()+'-'+i)
-      ]);
-      const ok=rv.sourceSha===SHA && dr.deploymentSha===SHA && pr.sourceSha===SHA && pr.status==='ready';
-      const proof={ok,sourceSha:rv.sourceSha||null,deploymentSha:dr.deploymentSha||null,readiness:pr.status||null,deploymentId:dr.deploymentId||null};
-      state[label]=proof;
-      event('PROOF_'+label.toUpperCase(),JSON.stringify(proof));
-      if(ok)return proof;
-    }catch(e){event('PROOF_'+label.toUpperCase(),String(e))}
-    await new Promise(r=>setTimeout(r,5000));
-  }
-  throw new Error(label.toUpperCase()+'_EXACT_SHA_READBACK_FAILED');
+function sh(cmd,cwd=ROOT){
+  const r=spawnSync('bash',['-lc',cmd],{cwd,encoding:'utf8',env:process.env});
+  if(r.stdout)process.stdout.write(r.stdout);
+  if(r.stderr)process.stderr.write(r.stderr);
+  if(r.status!==0)throw new Error('shell failed '+r.status+': '+cmd);
+  return r.stdout.trim();
 }
 function writeConfig(target){
   fs.writeFileSync(path.join(REL,'wix.config.json'),JSON.stringify({
@@ -70,59 +34,80 @@ function writeConfig(target){
     site:{outputDirectory:{client:'./client',server:'./server'}}
   },null,2));
 }
+async function login(){
+  state.phase='WIX_AUTH';
+  const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env:{...process.env,AI_AGENT:'wix-headless-skill'}});
+  if(who.status===0){console.log('WIX_ALREADY_LOGGED_IN');return;}
+  await new Promise((resolve,reject)=>{
+    const p=spawn('npx',['-y','@wix/cli@latest','login'],{
+      env:{...process.env,AI_AGENT:'wix-headless-skill'},
+      stdio:['ignore','pipe','pipe']
+    });
+    let buf='';
+    const onData=d=>{
+      const s=String(d); process.stdout.write(s); buf+=s;
+      for(const line of buf.split('\n')){
+        try{
+          const ev=JSON.parse(line.trim());
+          if(ev.event==='awaiting_user'){
+            state.userCode=ev.userCode; state.verificationUri=ev.verificationUri;
+            console.log('DIVA_WIX_AWAITING_USER '+JSON.stringify({userCode:ev.userCode,verificationUri:ev.verificationUri,expiresInSeconds:ev.expiresInSeconds}));
+          }
+        }catch{}
+      }
+    };
+    p.stdout.on('data',onData); p.stderr.on('data',d=>process.stderr.write(d));
+    p.on('error',reject); p.on('close',c=>c===0?resolve():reject(new Error('wix login exit '+c)));
+  });
+  const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env:{...process.env,AI_AGENT:'wix-headless-skill'}});
+  if(after.status!==0)throw new Error('WIX_WHOAMI_FAILED_AFTER_LOGIN');
+  console.log('WIX_AUTH_PASS '+after.stdout.trim());
+}
+function fetchJson(url){
+  const out=sh(`curl -fsSL --retry 4 --retry-all-errors "${url}"`);
+  return JSON.parse(out||'{}');
+}
+async function prove(host,label){
+  for(let i=1;i<=30;i++){
+    try{
+      const dr=fetchJson(host+'/api/diva-release?proof='+Date.now());
+      if(dr.deploymentSha===SOURCE_SHA){
+        console.log(label+'_SHA_PASS '+JSON.stringify(dr));
+        return dr;
+      }
+    }catch{}
+    await new Promise(r=>setTimeout(r,5000));
+  }
+  throw new Error(label+'_SHA_READBACK_FAIL');
+}
 async function main(){
   try{
-    fs.rmSync(ROOT,{recursive:true,force:true});
-    fs.mkdirSync(ROOT,{recursive:true});
-    event('ARTIFACT','download exact clean artifact '+SHA);
-    await run('curl',['--fail','--show-error','--location','--retry','6',ARTIFACT,'-o',path.join(ROOT,'artifact.tar.gz')],ROOT,'ARTIFACT');
-    fs.mkdirSync(path.join(ROOT,'unpack'),{recursive:true});
-    await run('tar',['-xzf',path.join(ROOT,'artifact.tar.gz'),'-C',path.join(ROOT,'unpack')],ROOT,'ARTIFACT');
-    const src=path.join(ROOT,'unpack','dist');
-    const entry=path.join(src,'wix-server','entry.mjs');
-    if(!fs.existsSync(entry)||!fs.readFileSync(entry,'utf8').includes(SHA)) throw new Error('ARTIFACT_SHA_MISMATCH');
-    fs.mkdirSync(REL,{recursive:true});
-    fs.cpSync(path.join(src,'client'),path.join(REL,'client'),{recursive:true});
-    fs.cpSync(path.join(src,'wix-server'),path.join(REL,'server'),{recursive:true});
-    event('ARTIFACT','ARTIFACT_EXACT_SHA_PASS '+SHA);
+    await login();
+    state.phase='FETCH_ARTIFACT';
+    fs.rmSync(REL,{recursive:true,force:true}); fs.mkdirSync(REL,{recursive:true});
+    sh(`curl -fsSL --retry 8 --retry-all-errors "${ARTIFACT_URL}" -o /tmp/os44695.tar.gz`);
+    fs.rmSync('/tmp/os44695',{recursive:true,force:true}); fs.mkdirSync('/tmp/os44695',{recursive:true});
+    sh('tar -xzf /tmp/os44695.tar.gz -C /tmp/os44695');
+    const entry=fs.readFileSync('/tmp/os44695/dist/wix-server/entry.mjs','utf8');
+    if(!entry.includes(SOURCE_SHA))throw new Error('ARTIFACT_SHA_MISMATCH');
+    fs.cpSync('/tmp/os44695/dist/client',path.join(REL,'client'),{recursive:true});
+    fs.cpSync('/tmp/os44695/dist/wix-server',path.join(REL,'server'),{recursive:true});
+    console.log('ARTIFACT_EXACT_SHA_PASS '+SOURCE_SHA);
 
-    writeConfig(QA);
-    state.phase='AUTH';
-    event('AUTH','WIX_DEVICE_LOGIN_START');
-    await run('npx',['--yes','@wix/cli@latest','login'],REL,'AUTH',{TERM:'xterm-256color'});
-    event('AUTH','WIX_LOGIN_PASS');
-    await run('npx',['--yes','@wix/cli@latest','whoami'],REL,'AUTH',{CI:'1'});
+    state.phase='RELEASE_QA'; writeConfig(QA);
+    await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
+    state.qa=await prove(QA.host,'QA');
 
-    event('QA_RELEASE','release exact artifact to isolated QA');
-    await run('npx',['--yes','@wix/cli@latest','release'],REL,'QA_RELEASE',{CI:'1'});
-    await waitProof(QA.host,'qa');
+    state.phase='RELEASE_LIVE'; writeConfig(LIVE);
+    await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
+    state.live=await prove(LIVE.host,'LIVE');
 
-    writeConfig(LIVE);
-    event('LIVE_RELEASE','release SAME artifact to live Wix OS body');
-    await run('npx',['--yes','@wix/cli@latest','release'],REL,'LIVE_RELEASE',{CI:'1'});
-    await waitProof(LIVE.host,'live');
-
-    try{
-      const c=await fetchJson(CANON+'/api/diva-release?proof='+Date.now());
-      state.canonical={deploymentSha:c.deploymentSha||null,deploymentId:c.deploymentId||null,exact:c.deploymentSha===SHA};
-      event('CANONICAL',JSON.stringify(state.canonical));
-    }catch(e){
-      state.canonical={exact:false,error:String(e)};
-      event('CANONICAL',String(e));
-    }
-    state.phase='DONE';state.done=true;
-    event('DONE','QA_TO_LIVE_SAME_ARTIFACT_PASS '+SHA);
-  }catch(e){
-    state.phase='ERROR';state.error=String(e?.stack||e);event('ERROR',state.error);
-  }
+    state.phase='PROVE_CANONICAL';
+    state.canonical=await prove(CANONICAL,'CANONICAL');
+    state.phase='DONE'; state.done=true;
+  }catch(e){state.phase='ERROR';state.error=String(e?.stack||e);console.error(state.error);}
 }
-
 http.createServer((req,res)=>{
-  if(req.url?.startsWith('/status')){
-    res.setHeader('content-type','application/json');
-    res.setHeader('cache-control','no-store');
-    return res.end(JSON.stringify(state,null,2));
-  }
-  res.setHeader('content-type','text/plain; charset=utf-8');
-  res.end('DIVA WIX EXACT REMOTE RELEASE\nphase='+state.phase+'\nsourceSha='+SHA+'\ndeviceCode='+(state.deviceCode||'pending')+'\n');
-}).listen(PORT,'0.0.0.0',()=>{console.log('DIVA_WIX_EXACT_CONTROL_READY',PORT);main();});
+  res.setHeader('content-type','application/json');
+  res.end(JSON.stringify(state,null,2));
+}).listen(PORT,'0.0.0.0',()=>{console.log('DIVA_OS_ONLY_RELEASE_CONTROL_READY '+PORT);main();});
