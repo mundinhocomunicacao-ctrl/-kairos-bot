@@ -1,0 +1,6 @@
+{
+  "receiptType": "FORGE_HARNESS_POINTER",
+  "sourceSha": "ce108fbe580ef2d28787769ad74099cd2f3bf56b",
+  "harnessCommit": "4ecc9cf4a805353feeb94633c7134d7c9e371b6b",
+  "purpose": "Execute qa:release + qa:release-full only; do not promote old 0fd artifact label."
+}
