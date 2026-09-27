@@ -23,7 +23,7 @@ function run(cmd,args,{cwd=ROOT,env={}}={}){
   });
 }
 function sh(cmd,cwd=ROOT){
-  const r=spawnSync('bash',['-lc',cmd],{cwd,encoding:'utf8',env:process.env,maxBuffer:64*1024*1024});
+  const r=spawnSync('bash',['-c',cmd],{cwd,encoding:'utf8',env:process.env,maxBuffer:64*1024*1024});
   if(r.stdout)process.stdout.write(r.stdout);
   if(r.stderr)process.stderr.write(r.stderr);
   if(r.status!==0)throw new Error('shell failed '+r.status+': '+cmd);
