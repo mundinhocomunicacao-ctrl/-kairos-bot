@@ -1,0 +1,6 @@
+{
+  "receiptType": "FORGE_HARNESS_POINTER",
+  "sourceSha": "993d3683dfba2aa11b03f264485f8f4f72e35caf",
+  "harnessCommit": "253eb99eac7e66708d858804925e5329a40c8458",
+  "purpose": "Execute full QA on immutable current-head snapshot; no LIVE promotion."
+}
