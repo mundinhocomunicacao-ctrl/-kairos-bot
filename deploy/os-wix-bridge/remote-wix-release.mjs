@@ -34,7 +34,7 @@ const state={
   qaSiteId:QA.siteId,
   tests:[],
   build:null,
-  auth:{status:'NOT_STARTED',userCode:null,verificationUri:null,expiresInSeconds:null},
+  auth:{status:'NOT_STARTED',method:null,apiKeyAlias:null,userCode:null,verificationUri:null,expiresInSeconds:null},
   release:{attempted:false,status:'NOT_STARTED'},
   readback:null,
   productionAttempted:false,
@@ -77,11 +77,28 @@ async function ensureAuth(){
   const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env});
   if(who.status===0){
     state.auth.status='VALID_SESSION';
+    state.auth.method='SESSION';
     log('WIX_AUTH_VALID_SESSION');
+    return;
+  }
+  const apiKeyAliases=['WIX_RELEASE_API_KEY','WIX_CLI_API_KEY','WIX_API_KEY','MUNDINHO_WIX_API_KEY','WIX_MUNDO_API_KEY','WIX_GABI_RADAR_API_KEY'];
+  const apiKeyAlias=apiKeyAliases.find(key=>Boolean(String(process.env[key]||'').trim()));
+  if(apiKeyAlias){
+    state.phase='WIX_API_KEY_AUTH';
+    state.auth.status='AUTHENTICATING';
+    state.auth.method='API_KEY';
+    state.auth.apiKeyAlias=apiKeyAlias;
+    const login=spawnSync('npx',['-y','@wix/cli@latest','login','--api-key',String(process.env[apiKeyAlias])],{cwd:REL,encoding:'utf8',env});
+    if(login.status!==0)throw new Error('WIX_API_KEY_LOGIN_FAIL '+apiKeyAlias+' '+String(login.stderr||login.stdout||'').slice(-1200));
+    const afterKey=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env});
+    if(afterKey.status!==0)throw new Error('WIX_API_KEY_AUTH_NOT_CONFIRMED '+apiKeyAlias);
+    state.auth.status='AUTHENTICATED';
+    log('WIX_API_KEY_AUTH_CONFIRMED '+apiKeyAlias);
     return;
   }
   state.phase='WIX_DEVICE_AUTH';
   state.auth.status='AWAITING_USER';
+  state.auth.method='DEVICE_CODE';
   await new Promise((resolve,reject)=>{
     const p=spawn('npx',['-y','@wix/cli@latest','login'],{cwd:REL,env,stdio:['ignore','pipe','pipe']});
     let buffer='';
