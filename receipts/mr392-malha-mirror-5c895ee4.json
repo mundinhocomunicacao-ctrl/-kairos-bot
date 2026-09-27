@@ -1,9 +1,14 @@
 {
   "kind": "MALHA_EXECUTION_MIRROR",
-  "canonicalGitLabSha": "5c895ee442ee76e719bed324a39db12d938d9713",
-  "mirrorHead": "585e51c2f593e222c33b434aa3c6cba076eb7aad",
-  "exactChangedPaths": 14,
-  "qaReleaseSurfaceSynced": true,
-  "baseIsNotExactCanonical": true,
-  "promotable": false
+  "canonicalGitLabSha": "ae9d0c7876c3cdfed1a29cda4fb9e46ef3502326",
+  "mirrorHead": "67d85520b910af6735e5c90f49b56ee33dc1b928",
+  "releaseQaNowIncludes": [
+    "qa-fofoqueiro-contatos",
+    "qa-fofoqueiro-mar-aberto",
+    "qa-social-insights-live-grid",
+    "qa-social-listening-watchlist",
+    "qa-social-insights-content-data-live"
+  ],
+  "promotable": false,
+  "exactShaWixReadbackRequired": true
 }
