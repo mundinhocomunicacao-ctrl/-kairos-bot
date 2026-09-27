@@ -21,7 +21,10 @@ function emit(phase,line){
 }
 function run(cmd,args,cwd=ROOT,phase='RUN'){
   return new Promise((resolve,reject)=>{
-    const p=spawn(cmd,args,{cwd,env:{...process.env,CI:'1'},stdio:['ignore','pipe','pipe']});
+    const runEnv={...process.env};
+    if(phase!=='LOGIN') runEnv.CI='1';
+    else { delete runEnv.CI; delete runEnv.GITHUB_ACTIONS; }
+    const p=spawn(cmd,args,{cwd,env:runEnv,stdio:['ignore','pipe','pipe']});
     p.stdout.on('data',d=>emit(phase,d));
     p.stderr.on('data',d=>emit(phase,d));
     p.on('error',reject);
