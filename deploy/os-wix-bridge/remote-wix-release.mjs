@@ -45,7 +45,30 @@ async function main(){
     prepare();
     state.phase='LOGIN';
     emit('LOGIN','WIX_REMOTE_LOGIN_START');
-    await run('script',['-q','-e','-c','npx --yes @wix/cli@latest login','/dev/null'],REL,'LOGIN');
+    const loginTranscript='/tmp/wix-login.typescript';
+    try{fs.rmSync(loginTranscript,{force:true});}catch{}
+    const watcher=setInterval(()=>{
+      try{
+        const raw=fs.readFileSync(loginTranscript,'utf8');
+        const clean=raw
+          .replace(/\\x1b\\[[0-?]*[ -\\/]*[@-~]/g,'')
+          .replace(/\\r/g,'\\n')
+          .split('\\n')
+          .map(x=>x.trim())
+          .filter(Boolean)
+          .slice(-30)
+          .join(' | ');
+        if(clean && clean!==state.lastLoginTranscript){
+          state.lastLoginTranscript=clean;
+          console.log('[LOGIN_TRANSCRIPT]',clean);
+        }
+      }catch{}
+    },1000);
+    try{
+      await run('script',['-q','-f','-e','-c','TERM=xterm-256color npx --yes @wix/cli@latest login',loginTranscript],REL,'LOGIN');
+    } finally {
+      clearInterval(watcher);
+    }
     state.phase='WHOAMI';
     const chunks=[];
     const p=spawn('npx',['--yes','@wix/cli@latest','whoami'],{cwd:REL,env:{...process.env,CI:'1'}});
