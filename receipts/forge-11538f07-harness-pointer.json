@@ -1,0 +1,6 @@
+{
+  "receiptType": "FORGE_HARNESS_POINTER",
+  "sourceSha": "11538f0777e9638ea26f5589ff03572e18408da0",
+  "harnessCommit": "fa3592cfec43bd4d966716863a025585afbac087",
+  "purpose": "Execute full QA only; LIVE untouched."
+}
