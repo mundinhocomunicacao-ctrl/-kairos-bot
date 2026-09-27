@@ -118,7 +118,8 @@ async function main(){
     if(!fs.existsSync(vendored))throw new Error('VENDORED_PACKAGE_LOCK_MISSING');
     fs.copyFileSync(vendored,lockPath);
     console.log('PACKAGE_LOCK_EXACT_COPY',fs.statSync(lockPath).size);
-    sh('npm ci --no-audit --no-fund',SRC);
+    sh(`pwd; ls -lah package.json package-lock.json; node -e "const x=require('./package-lock.json'); console.log('LOCKFILE_VERSION',x.lockfileVersion,'LOCK_NAME',x.name)"`,SRC);
+    sh('npx -y npm@10.9.4 ci --no-audit --no-fund',SRC);
     const gates=[
       'node scripts/qa-os-navigation-contract.mjs',
       'node scripts/qa-os-navigation-runtime.mjs',
