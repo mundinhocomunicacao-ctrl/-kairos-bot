@@ -1,0 +1,6 @@
+{
+  "receiptType": "FORGE_WHATSAPP_EXACT_POINTER",
+  "sourceSha": "11538f0777e9638ea26f5589ff03572e18408da0",
+  "harnessCommit": "4a0551f7653075e20623dcf8cf3fac66c760fee7",
+  "purpose": "Prove exact WhatsApp direct bridge + local satellite + continuity + group delivery. LIVE untouched."
+}
