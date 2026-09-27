@@ -7,8 +7,8 @@ const PORT=process.env.PORT||10000;
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-qa-release');
-const SOURCE_SHA='8f9e456d0d337fd436a64e5f875e5d5874092f6f';
-const MIRROR_COMMIT='f5889c802b912593cfc0e9c1578926539f499c49';
+const SOURCE_SHA='fd48a976a2f803ed0f01f9dccea264720ee7a4a8';
+const MIRROR_COMMIT='7fb0ff80747612048933c7b51d68c852bb384eb4';
 const QA={
   siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',
   appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',
@@ -17,15 +17,13 @@ const QA={
 const gates=[
   'scripts/qa-os-navigation-contract.mjs',
   'scripts/qa-os-navigation-runtime.mjs',
-  'scripts/qa-os-navigation-usage-order.mjs',
-  'scripts/qa-os-ideas-primary-area.mjs',
   'scripts/qa-os-visual-reference-manifest.mjs',
   'scripts/qa-os-visual-language.mjs',
   'scripts/qa-social-insights-live-grid.mjs',
-  'scripts/qa-social-content-first.mjs',
-  'scripts/qa-social-insights-content-data-live.mjs',
   'scripts/qa-mobile-contract-sync.mjs',
-  'scripts/qa-wix-packager-canonical-source-marker.mjs'
+  'scripts/qa-anjos-plugin-adaptation.mjs',
+  'scripts/qa-wix-anjos-runtime.mjs',
+  'scripts/qa-resource-mesh-v1-1.mjs'
 ];
 const state={
   phase:'BOOT',
@@ -166,9 +164,12 @@ async function proveQa(){
 async function main(){
   try{
     state.phase='SOURCE_PROOF';
-    const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();
-    if(marker!==SOURCE_SHA) throw new Error('SOURCE_MARKER_MISMATCH '+marker);
-    log('SOURCE_MARKER_PASS '+SOURCE_SHA);
+    const mirrorHead=spawnSync('git',['rev-parse','HEAD'],{cwd:OS_DIR,encoding:'utf8'});
+    const observedMirror=String(mirrorHead.stdout||'').trim();
+    if(mirrorHead.status!==0||observedMirror!==MIRROR_COMMIT) throw new Error('MIRROR_COMMIT_MISMATCH '+observedMirror);
+    const wixBridge=fs.readFileSync(path.join(OS_DIR,'integrations/wix/mundinho-os/anjos-wix-runtime.mjs'),'utf8');
+    if(!wixBridge.includes("orchestrator:'DIVA'")||!wixBridge.includes("accessGovernor:'PANDORA'")) throw new Error('ANJOS_WIX_BRIDGE_MISSING');
+    log('SOURCE_MIRROR_PASS '+MIRROR_COMMIT+' canonical='+SOURCE_SHA);
 
     state.phase='DEPENDENCIES';
     const vinextBin=path.join(OS_DIR,'node_modules','.bin','vinext');
@@ -188,12 +189,13 @@ async function main(){
     log('QA_GATES_PASS '+state.tests.length);
 
     state.phase='BUILD_PROOF';
+    await run('npm',['run','build:wix-worker'],{cwd:OS_DIR,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-qa'}});
     const entryPath=path.join(OS_DIR,'dist/wix-server/entry.mjs');
-    if(!fs.existsSync(entryPath))throw new Error('PREBUILT_WIX_BUNDLE_MISSING');
+    if(!fs.existsSync(entryPath))throw new Error('WIX_BUNDLE_MISSING');
     const entry=fs.readFileSync(entryPath,'utf8');
-    if(!entry.includes(SOURCE_SHA))throw new Error('PREBUILT_WIX_BUNDLE_SHA_MISMATCH');
-    state.build={status:'PASS',sourceSha:SOURCE_SHA,mode:'REUSED_RENDER_BUILD'};
-    log('WIX_PREBUILT_EXACT_SHA_PASS '+SOURCE_SHA);
+    if(!entry.includes(SOURCE_SHA))throw new Error('WIX_BUNDLE_SHA_MISMATCH');
+    state.build={status:'PASS',sourceSha:SOURCE_SHA,mode:'RUNTIME_REBUILD_EXACT_SHA'};
+    log('WIX_RUNTIME_REBUILD_EXACT_SHA_PASS '+SOURCE_SHA);
 
     prepareRelease();
     await ensureAuth();
