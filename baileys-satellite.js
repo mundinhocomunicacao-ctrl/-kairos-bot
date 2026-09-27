@@ -98,6 +98,20 @@ async function relay(message,eventId){
  if(!res.ok)throw new Error("relay "+res.status+" "+String(data.error||"failed"));
  return data;
 }
+async function runRelayCanary(){
+  try{
+    const data=await relay("healthcheck","relay_canary_"+Date.now());
+    if(data?.accepted!==false||data?.reason!=="without_diva_wake_word"){
+      throw new Error("unexpected relay canary response");
+    }
+    lastError=null;
+    console.log("DIVA_LOCAL_RELAY_CANARY_OK");
+  }catch(e){
+    lastError=String(e?.message||e).slice(0,300);
+    console.error("DIVA_LOCAL_RELAY_CANARY_FAILED",lastError);
+  }
+}
+
 
 async function connect(){
  if(bootInProgress)return;bootInProgress=true;
@@ -107,7 +121,7 @@ async function connect(){
  sock.ev.on("creds.update",saveCreds);
  sock.ev.on("connection.update",async u=>{
    if(u.qr){qrDataUrl=await QRCode.toDataURL(u.qr);connection="pairing"}
-   if(u.connection==="open"){bootInProgress=false;qrDataUrl=null;connection="open";lastError=null;flowObserved=false;clearTimeout(flowWatchdog);setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000);flowWatchdog=setTimeout(()=>{if(connection==="open"&&!flowObserved){console.log("DIVA_FLOW_WATCHDOG_RECYCLE");console.log("DIVA_SUPERVISED_RESTART");process.exit(1)}},DIVA_FLOW_WATCHDOG_MS)}
+   if(u.connection==="open"){bootInProgress=false;qrDataUrl=null;connection="open";lastError=null;flowObserved=false;clearTimeout(flowWatchdog);void runRelayCanary();setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000);flowWatchdog=setTimeout(()=>{if(connection==="open"&&!flowObserved){console.log("DIVA_FLOW_WATCHDOG_RECYCLE");console.log("DIVA_SUPERVISED_RESTART");process.exit(1)}},DIVA_FLOW_WATCHDOG_MS)}
    if(u.connection==="close"){
      clearTimeout(flowWatchdog);connection="closed";
      const status=u.lastDisconnect?.error?.output?.statusCode;
