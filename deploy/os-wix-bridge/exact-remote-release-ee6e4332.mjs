@@ -4,8 +4,8 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='83240b7847b1674a8a5ba1c5180cccc2dc1602b7';
-const MIRROR_COMMIT='b1550511591577539e95cbc5227f4fb0d8f53f53';
+const SOURCE_SHA='46e08f4fb7d5e3d92178b87ef3c7de21b84170be';
+const MIRROR_COMMIT='423913b9339a343dce839472617691d89c8a32ae';
 const EXPECTED_MARKER='8539c9b3a534e9179a32650b5380501c9b10af92';
 const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release');
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
