@@ -1,4 +1,4 @@
 [submodule "os"]
 	path = os
 	url = https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git
-	branch = qa/exact-0fdac0c2-closed-loop
+	branch = qa/exact-ac7911fe-closed-loop
