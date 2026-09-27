@@ -4,9 +4,9 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='c8c2b70cb42888509738240c9c357e60d5481ee8';
+const SOURCE_SHA='e41aa84511604942ed1183009b90c8f62c02d64f';
 const SOURCE_REPO='https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git';
-const SOURCE_REF='sync/os-reference-restore-c8c2b70c';
+const SOURCE_REF='sync/os-reference-restore-e41aa845';
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
