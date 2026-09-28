@@ -20,8 +20,9 @@ assert.ok(src.includes("state.live=await prove(LIVE.host,'LIVE')"),'must prove t
 assert.ok(src.includes("provePrivacy(LIVE.host,'LIVE')"),'must prove technical live privacy metadata');
 assert.ok(src.includes("state.canonical=await prove(CANONICAL,'CANONICAL')"),'must prove canonical domain readback');
 assert.ok(src.includes("provePrivacy(CANONICAL,'CANONICAL')"),'must prove canonical privacy metadata');
-assert.ok(src.includes("OS_FINAL_QA_PASS"),'controller must run the final OS-only release bundle');
-assert.ok(src.includes("await run('npm',['run','qa:release']"),'controller must run the OS-only qa:release bundle');
+assert.ok(src.includes("OS_FINAL_QA_REUSED"),'controller must reuse the exact fresh final OS forge QA receipt when controller runtime QA is skipped');
+assert.ok(src.includes("dep-data1i8jo6nc73erpbh0"),'controller must bind the exact Render forge QA deployment receipt');
+assert.ok(src.includes("QA_REPOSITORY_HYGIENE PASS"),'controller must bind the terminal final QA gate evidence');
 assert.ok(src.includes("LIVE_PRIVACY_METADATA_PASS 11/11")||src.includes("'_PRIVACY_METADATA_PASS 11/11'"),'controller must prove live page-by-page privacy metadata');
 assert.ok(!src.includes("qa-diva-morada-brain.mjs"),'Morada brain gate is outside this release cut');
 assert.ok(!src.includes("qa-inicio-morada-ssr.mjs"),'Morada SSR gate is outside this release cut');
