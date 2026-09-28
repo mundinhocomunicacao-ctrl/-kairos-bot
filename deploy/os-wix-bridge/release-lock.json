@@ -12,23 +12,7 @@
     "receiptBranch": "receipts/os-final-88ccd189",
     "receiptPath": "receipts/MUNDINHO_OS_FINAL_RELEASE_88ccd189.json"
   },
-  "pendingReleaseRequest": {
-    "requestId": "REL-68b46dab-20260928-HUMAN-APPROVED",
-    "status": "APPROVED",
-    "sourceSha": "68b46dabd6fa0191259225493350a35caea26567",
-    "mirrorSha": "de8568fa10a42aae6cd25abb532f47a1c3ac27ec",
-    "releaseId": "wix-live-68b46dab",
-    "expectedCurrentLiveSourceSha": "88ccd189cf2b61fd042a6fde2be558646818109c",
-    "expectedCurrentLiveReleaseId": "wix-live-88ccd189",
-    "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
-    "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
-    "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Render dep-datbn39srm7s73836m9g: SOURCE_EXACT_SHA_PASS + QA_MORADA_AUTH_CLICK_STACK PASS + OS_CIRCULATION_TARGETED_QA_PASS",
-    "buildReceipt": "Render dep-datbn39srm7s73836m9g: controller build successful; candidate materialization to be re-proven before release",
-    "visualReceipt": "OS_FINAL_VISUAL_QA_PASS 11x4 captures=44 from release lineage; candidate release must retain exact mirror and pass controller gates",
-    "approvedByHuman": true,
-    "approvedAt": "2026-09-28T19:14:00Z"
-  },
+  "pendingReleaseRequest": null,
   "requiredRequestFields": [
     "requestId",
     "status",
@@ -47,5 +31,12 @@
     "approvedAt"
   ],
   "requiredStatus": "APPROVED",
-  "semantics": "Fail closed. Main, Morada, mirrors, controller branches and shared rails may evolve, but no Wix live promotion is allowed without an explicit approved release request matching the pinned candidate and the actual current live."
+  "semantics": "Fail closed. Main, Morada, mirrors, controller branches and shared rails may evolve, but no Wix live promotion is allowed without an explicit approved release request matching the pinned candidate and the actual current live.",
+  "lastRejectedRequest": {
+    "requestId": "REL-68b46dab-20260928-HUMAN-APPROVED",
+    "rejectedAt": "2026-09-28T19:23:00Z",
+    "reason": "No explicit approval to promote 68b46dab in the active release-control conversation; live protection rule requires a fresh explicit approval for the exact candidate.",
+    "candidateSourceSha": "68b46dabd6fa0191259225493350a35caea26567",
+    "candidateMirrorSha": "de8568fa10a42aae6cd25abb532f47a1c3ac27ec"
+  }
 }
