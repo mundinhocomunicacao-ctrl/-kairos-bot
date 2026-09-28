@@ -136,28 +136,27 @@ async function ensureWixCli(){
     }
     walkContext(cliRoot);
     log('ORBI_WIX_CLI_CODE_CONTEXT '+JSON.stringify(contexts));
-    const deepTargets=[
-      {file:'build/chunk-SYZVVCEX.js',needles:['deployApp','DeploymentOperation','AppType','RcLabel']},
-      {file:'build/chunk-MKII26WK.js',needles:['getDeployment']},
-      {file:'build/chunk-IFMMAAQM.js',needles:['loadProjectGridAppContent']},
-      {file:'build/chunk-YX4UMI3W.js',needles:['httpRequest','authState','type: "code"']},
-      {file:'build/chunk-KB3GWH37.js',needles:['deployAppResponseSchema','getDeploymentResponseSchema']}
+    const deployChunk=path.join(cliRoot,'build/chunk-SYZVVCEX.js');
+    const deploySource=fs.readFileSync(deployChunk,'utf8');
+    const deployNeedles=[
+      'function deployApp(',
+      'function __deployApp(',
+      'var deployApp',
+      'DeployApp',
+      'deploymentOperation',
+      'VELO_ISOLATED',
+      'protoPath'
     ];
-    const deep=[];
-    for(const target of deepTargets){
-      const full=path.join(cliRoot,target.file);
-      if(!fs.existsSync(full))continue;
-      const s=fs.readFileSync(full,'utf8');
-      for(const needle of target.needles){
-        const idx=s.indexOf(needle);
-        if(idx<0)continue;
-        let snippet=s.slice(Math.max(0,idx-3500),Math.min(s.length,idx+7000))
-          .replace(/Bearer\\s+[A-Za-z0-9._~+\\/-]+/g,'Bearer [REDACTED]')
-          .replace(/(access[_-]?token|refresh[_-]?token|api[_-]?key|client[_-]?secret)\\s*[:=]\\s*["'\`][^"'\`]+["'\`]/ig,'$1=[REDACTED]');
-        deep.push({file:target.file,needle,snippet});
-      }
+    const deployContexts=[];
+    for(const needle of deployNeedles){
+      const idx=deploySource.indexOf(needle);
+      if(idx<0)continue;
+      deployContexts.push({
+        needle,
+        snippet:deploySource.slice(Math.max(0,idx-2200),Math.min(deploySource.length,idx+5200))
+      });
     }
-    log('ORBI_WIX_CLI_DEEP_CONTRACT '+JSON.stringify(deep));
+    log('ORBI_WIX_DEPLOYAPP_EXACT '+JSON.stringify(deployContexts));
   }catch(e){log('ORBI_WIX_CLI_ENDPOINT_SCAN_ERROR '+String(e?.message||e))}
   return bin;
 }
