@@ -63,15 +63,26 @@ async function materialize(runtimeEnv){
   log('WIX_BUILD_PASS '+SOURCE_SHA+' '+runtimeEnv);
 }
 
-async function ensureAuth(){
+async function ensureWixCli(){
+  state.phase='WIX_CLI';
+  const dir=path.join(os.tmpdir(),'orbi-wix-cli-runtime');
+  fs.rmSync(dir,{recursive:true,force:true});
+  log('ORBI_WIX_CLI_INSTALL_START');
+  await run('npm',['install','--prefix',dir,'@wix/cli@latest','--no-audit','--no-fund'],{env:{NODE_ENV:'development'}});
+  const bin=path.join(dir,'node_modules','.bin','wix');
+  if(!fs.existsSync(bin))throw new Error('ORBI_WIX_CLI_MISSING');
+  log('ORBI_WIX_CLI_INSTALL_PASS');
+  return bin;
+}
+async function ensureAuth(wixCli){
   state.phase='WIX_AUTH';
   const env={...process.env,AI_AGENT:'wix-headless-skill'};
-  let who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env,timeout:30000});
+  let who=spawnSync(wixCli,['whoami'],{encoding:'utf8',env,timeout:30000});
   if(who.status===0){log('WIX_AUTH_ALREADY_VALID');return}
 
   log('WIX_DEVICE_LOGIN_START');
   await new Promise((resolve,reject)=>{
-    const p=spawn('npx',['-y','@wix/cli@latest','login'],{cwd:ROOT,env,stdio:['ignore','pipe','pipe']});
+    const p=spawn(wixCli,['login'],{cwd:ROOT,env,stdio:['ignore','pipe','pipe']});
     let buffer='';
     const timer=setTimeout(()=>{try{p.kill('SIGKILL')}catch{};reject(new Error('WIX_DEVICE_LOGIN_TIMEOUT'))},10*60*1000);
     p.stdout.on('data',d=>{
@@ -91,7 +102,7 @@ async function ensureAuth(){
     p.on('error',e=>{clearTimeout(timer);reject(e)});
     p.on('close',code=>{clearTimeout(timer);code===0?resolve():reject(new Error('WIX_DEVICE_LOGIN_EXIT_'+code))});
   });
-  who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env,timeout:30000});
+  who=spawnSync(wixCli,['whoami'],{encoding:'utf8',env,timeout:30000});
   if(who.status!==0)throw new Error('WIX_WHOAMI_FAILED_AFTER_LOGIN');
   log('WIX_AUTH_PASS');
 }
@@ -111,11 +122,11 @@ async function prove(host,label,expectedEnv){
   throw new Error(label+'_EXACT_SHA_READBACK_FAIL');
 }
 
-async function release(target,label,runtimeEnv){
+async function release(target,label,runtimeEnv,wixCli){
   await materialize(runtimeEnv);
   writeConfig(target);
   state.phase='RELEASE_'+label;
-  await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
+  await run(wixCli,['release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
   return prove(target.host,label,runtimeEnv);
 }
 
@@ -123,9 +134,10 @@ async function main(){
   try{
     await fetchExactSource();
     await qa();
-    await ensureAuth();
-    state.qa=await release(QA,'QA','wix-qa');
-    state.live=await release(LIVE,'LIVE','wix-live');
+    const wixCli=await ensureWixCli();
+    await ensureAuth(wixCli);
+    state.qa=await release(QA,'QA','wix-qa',wixCli);
+    state.live=await release(LIVE,'LIVE','wix-live',wixCli);
     state.phase='PROVE_CANONICAL';
     state.canonical=await prove(CANONICAL,'CANONICAL','wix-live');
     state.phase='DONE';state.done=true;
