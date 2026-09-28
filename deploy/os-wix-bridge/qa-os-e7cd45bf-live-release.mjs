@@ -83,7 +83,7 @@ assert.ok(!src.includes('PAGE_X_ROBOTS_MISSING'),'Wix protected-route redirects 
 assert.ok(!src.includes('PAGE_REFERRER_POLICY'),'Wix protected-route redirects must not depend on response-level Referrer-Policy headers');
 assert.ok(!src.includes("throw new Error(label+'_X_ROBOTS_MISSING_'"),'Wix root privacy must not depend on X-Robots-Tag response headers');
 assert.ok(!src.includes("throw new Error(label+'_REFERRER_POLICY_'"),'Wix root privacy must not depend on response-level Referrer-Policy headers');
-assert.ok(src.includes("'LOGIN_META_MISSING_'"),'privacy audit must retain live HTML robots/referrer metadata proof');
+assert.ok(src.includes('_LOGIN_META_MISSING_'),'privacy audit must retain live HTML robots/referrer metadata proof');
 assert.ok(src.includes("ROBOTS_TXT_FAIL"),'privacy audit must retain robots.txt deny-all proof');
 assert.ok(src.includes("AUTH_REDIRECT_FAIL"),'privacy audit must retain authenticated-route redirect proof');
 assert.ok(src.includes("qa-malha-pulse-consumer-runtime.mjs"),'controller must execute Malha pulse runtime QA');
