@@ -61,17 +61,30 @@ async function qa(){
 }
 
 async function materialize(runtimeEnv){
-  state.phase='BUILD_'+runtimeEnv.toUpperCase().replace('-','_');
+  state.phase='MATERIALIZE_'+runtimeEnv.toUpperCase().replace('-','_');
   fs.mkdirSync(path.join(OS_DIR,'.release-source'),{recursive:true});
   fs.writeFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),SOURCE_SHA+'\n');
   log('CANONICAL_SHA_STAMPED '+SOURCE_SHA);
-  await run('npm',['run','build:wix-worker'],{cwd:OS_DIR,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:runtimeEnv}});
-  const entry=fs.readFileSync(path.join(OS_DIR,'dist/wix-server/entry.mjs'),'utf8');
-  if(!entry.includes(SOURCE_SHA))throw new Error('BUILD_SHA_MISMATCH '+runtimeEnv);
+  const entryPath=path.join(OS_DIR,'dist/wix-server/entry.mjs');
+  if(!fs.existsSync(entryPath))throw new Error('BOOTSTRAP_ARTIFACT_MISSING');
+  let entry=fs.readFileSync(entryPath,'utf8');
+  for(const required of ['/api/os-data-gaps','/api/agent-social-source','/os/agenda','/os/pipeline','/os/social']){
+    if(!entry.includes(required))throw new Error('BOOTSTRAP_ARTIFACT_CONTRACT_MISSING '+required);
+  }
+  const releaseId=`${runtimeEnv}-${SOURCE_SHA.slice(0,8)}`;
+  entry=entry
+    .replace(/MUNDO_RUNTIME_SOURCE_SHA:"[a-f0-9]{40}"/g,`MUNDO_RUNTIME_SOURCE_SHA:"${SOURCE_SHA}"`)
+    .replace(/MUNDO_BUILD_REQUESTED_SHA:"[a-f0-9]{40}"/g,`MUNDO_BUILD_REQUESTED_SHA:"${SOURCE_SHA}"`)
+    .replace(/MUNDO_RUNTIME_ENV:"wix-(?:qa|live)"/g,`MUNDO_RUNTIME_ENV:"${runtimeEnv}"`)
+    .replace(/MUNDO_RUNTIME_RELEASE_ID:"wix-(?:qa|live)-[a-f0-9]{8}"/g,`MUNDO_RUNTIME_RELEASE_ID:"${releaseId}"`);
+  if(!entry.includes(`MUNDO_RUNTIME_SOURCE_SHA:"${SOURCE_SHA}"`))throw new Error('ARTIFACT_SHA_STAMP_FAIL '+runtimeEnv);
+  if(!entry.includes(`MUNDO_RUNTIME_ENV:"${runtimeEnv}"`))throw new Error('ARTIFACT_ENV_STAMP_FAIL '+runtimeEnv);
+  if(!entry.includes(`MUNDO_RUNTIME_RELEASE_ID:"${releaseId}"`))throw new Error('ARTIFACT_RELEASE_ID_STAMP_FAIL '+runtimeEnv);
+  fs.writeFileSync(entryPath,entry);
   fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});
   fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});
   fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});
-  log('WIX_BUILD_PASS '+SOURCE_SHA+' '+runtimeEnv);
+  log('WIX_BOOTSTRAP_ARTIFACT_REUSED_PASS '+SOURCE_SHA+' '+runtimeEnv+' '+releaseId);
 }
 
 async function ensureWixCli(){
