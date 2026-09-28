@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 SOURCE_SHA="68b46dabd6fa0191259225493350a35caea26567"
 MIRROR_SHA="de8568fa10a42aae6cd25abb532f47a1c3ac27ec"
@@ -18,6 +17,8 @@ if [[ -f "$PROOF" ]]; then
   return 0 2>/dev/null || exit 0
 fi
 
+(
+  set -euo pipefail
 echo "ANJO_BUILD_HEAL_START source=$SOURCE_SHA mirror=$MIRROR_SHA"
 cd "$ROOT"
 git submodule sync --recursive
@@ -42,4 +43,6 @@ grep -F "$RELEASE_ID" "$ENTRY" >/dev/null
 printf '%s\n' "{\"ok\":true,\"sourceSha\":\"$SOURCE_SHA\",\"mirrorSha\":\"$MIRROR_SHA\",\"runtimeEnv\":\"wix-live\",\"releaseId\":\"$RELEASE_ID\",\"builder\":\"render-build-phase-vite-direct\"}" > "$PROOF"
 echo "ANJO_BUILD_HEAL_PASS source=$SOURCE_SHA mirror=$MIRROR_SHA release=$RELEASE_ID"
 cd "$ROOT"
-return 0 2>/dev/null || exit 0
+)
+heal_status=$?
+return $heal_status 2>/dev/null || exit $heal_status
