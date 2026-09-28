@@ -16,6 +16,59 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
+      - name: Probe governed Wix credential
+        env:
+          A1: ${{ secrets.WIX_API_KEY }}
+          A2: ${{ secrets.WIX_CLI_API_KEY }}
+          A3: ${{ secrets.WIX_RELEASE_API_KEY }}
+          A4: ${{ secrets.WIX_MUNDO_API_KEY }}
+          A5: ${{ secrets.MUNDINHO_WIX_API_KEY }}
+          A6: ${{ secrets.WIX_GABI_RADAR_API_KEY }}
+          A7: ${{ secrets.MUNDO_WIX_API_KEY }}
+          A8: ${{ secrets.WIX_ACCOUNT_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p deploy/radar-gabi/diagnostics
+          names=(WIX_API_KEY WIX_CLI_API_KEY WIX_RELEASE_API_KEY WIX_MUNDO_API_KEY MUNDINHO_WIX_API_KEY WIX_GABI_RADAR_API_KEY MUNDO_WIX_API_KEY WIX_ACCOUNT_API_KEY)
+          vals=("$A1" "$A2" "$A3" "$A4" "$A5" "$A6" "$A7" "$A8")
+          found=0
+          alias_name=""
+          {
+            echo "WIX_CREDENTIAL_PROBE_V1"
+            echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            for i in "${!names[@]}"; do
+              if [ -n "${vals[$i]}" ]; then
+                echo "PRESENT:${names[$i]}"
+                if [ "$found" = "0" ]; then
+                  printf '%s' "${vals[$i]}" > /tmp/wix-governed.key
+                  chmod 600 /tmp/wix-governed.key
+                  alias_name="${names[$i]}"
+                fi
+                found=1
+              else
+                echo "ABSENT:${names[$i]}"
+              fi
+            done
+            echo "ANY_PRESENT=$found"
+            echo "SELECTED_ALIAS=${alias_name:-none}"
+          } > deploy/radar-gabi/diagnostics/wix-credential-probe.txt
+
+          if [ "$found" = "1" ]; then
+            WIX_KEY="$(cat /tmp/wix-governed.key)"
+            if CI=1 npx @wix/cli@latest login --api-key "$WIX_KEY" >/tmp/wix-login.out 2>&1 && CI=1 npx @wix/cli@latest whoami >/tmp/wix-whoami.out 2>&1; then
+              echo "WIX_CLI_AUTH=PASS" >> deploy/radar-gabi/diagnostics/wix-credential-probe.txt
+              sed -E 's/(api[-_ ]?key|token)[=: ]+[^ ]+/[REDACTED]/gi' /tmp/wix-whoami.out | head -50 >> deploy/radar-gabi/diagnostics/wix-credential-probe.txt
+            else
+              echo "WIX_CLI_AUTH=FAIL" >> deploy/radar-gabi/diagnostics/wix-credential-probe.txt
+            fi
+            shred -u /tmp/wix-governed.key || rm -f /tmp/wix-governed.key
+          else
+            echo "WIX_CLI_AUTH=NOT_ATTEMPTED" >> deploy/radar-gabi/diagnostics/wix-credential-probe.txt
+          fi
+          cat deploy/radar-gabi/diagnostics/wix-credential-probe.txt
+
       - name: Extract Wix CLI deployment internals
         shell: bash
         run: |
@@ -85,6 +138,6 @@ jobs:
           cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add deploy/radar-gabi/diagnostics/wix-cli-deployment-probe.txt deploy/radar-gabi/diagnostics/wix-deploy-manifest.txt
+          git add deploy/radar-gabi/diagnostics/wix-cli-deployment-probe.txt deploy/radar-gabi/diagnostics/wix-deploy-manifest.txt deploy/radar-gabi/diagnostics/wix-credential-probe.txt
           git commit -m "diag(wix): extract deployment internals from CLI" || true
           git push origin HEAD:main || true
