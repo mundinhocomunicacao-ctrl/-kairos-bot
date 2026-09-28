@@ -4,11 +4,11 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA='9bc0a248b1d2f830cfda7bf6e92998b353ec29c7';
+const SOURCE_SHA='3243632c60c721739316cca189cb35542d0b38df';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
-const ARCHIVE=path.join(ROOT,'os-9bc0a248-artifact.tar.gz');
+const ARCHIVE=path.join(ROOT,'os-3243632c-artifact.tar.gz');
 
 function prepareArtifact(){
   const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();
