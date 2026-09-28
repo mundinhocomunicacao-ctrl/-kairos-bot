@@ -125,6 +125,22 @@
       "failureReason": "ci_quota_exceeded",
       "runner": null,
       "classification": "infrastructure quota; no code execution occurred"
+    },
+    "currentMain": {
+      "sha": "68b46dabd6fa0191259225493350a35caea26567",
+      "compatibility": "OS_FINAL_COMPATIBLE",
+      "stateRef": "state/os-main-compatible-68b46dab",
+      "driftFromReconciliationCheckpoint": {
+        "from": "60dde771a1b54ad4f54e46919b12dcd6d43b72ef",
+        "commits": [
+          "72ea20b6b84e32789bf45a3328f5c005b5e45351",
+          "68b46dabd6fa0191259225493350a35caea26567"
+        ],
+        "changedFiles": [
+          "scripts/qa-morada-interaction-recovery-guard.mjs"
+        ],
+        "touchesOSFinalScope": false
+      }
     }
   },
   "stateRefs": {
