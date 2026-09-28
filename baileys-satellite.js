@@ -102,6 +102,12 @@ async function createVaultAuthState(){
  return{state:{creds,keys},saveCreds};
 }
 
+function safeRelayTarget(){
+  try{
+    const u=new URL(DIVA_RELAY_URL);
+    return{origin:u.origin,path:u.pathname};
+  }catch{return{origin:"invalid",path:""}}
+}
 async function relay(message,eventId){
  const timestamp=new Date().toISOString(),nonce=crypto.randomUUID();
  const body={surface_id:"whatsapp",conversation_ref:"whatsapp://"+GROUP_JID,message,event_id:eventId,native_adapter_metadata:{whatsapp_group_id:GROUP_JID}};
@@ -109,7 +115,13 @@ async function relay(message,eventId){
  const sig=crypto.createHmac("sha256",DIVA_LOCAL_RELAY_SECRET).update(material).digest("hex");
  const res=await fetch(new URL(DIVA_RELAY_URL),{method:"POST",headers:{"content-type":"application/json","x-diva-installation-id":DIVA_GATEWAY_INSTALLATION_ID,"x-diva-timestamp":timestamp,"x-diva-nonce":nonce,"x-diva-signature":sig,"x-diva-gateway-version":DIVA_GATEWAY_VERSION},body:JSON.stringify(body)});
  const data=await res.json().catch(()=>({}));
- if(!res.ok)throw new Error("relay "+res.status+" "+String(data.error||"failed"));
+ if(!res.ok){
+    const err=new Error("relay "+res.status+" "+String(data.error||"failed"));
+    err.status=res.status;
+    err.retryAfter=res.headers.get("retry-after")||null;
+    err.target=safeRelayTarget();
+    throw err;
+  }
  return data;
 }
 async function runRelayCanary(){
@@ -122,7 +134,7 @@ async function runRelayCanary(){
     console.log("DIVA_LOCAL_RELAY_CANARY_OK");
   }catch(e){
     lastError=String(e?.message||e).slice(0,300);
-    console.error("DIVA_LOCAL_RELAY_CANARY_FAILED",lastError);
+    console.error("DIVA_LOCAL_RELAY_CANARY_FAILED",{message:lastError,status:e?.status||null,retryAfter:e?.retryAfter||null,target:e?.target||safeRelayTarget()});
   }
 }
 

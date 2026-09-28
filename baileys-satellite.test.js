@@ -16,6 +16,9 @@ assert.ok(src.includes("child(){return this}"),"silent Baileys logger must satis
 assert.ok(src.includes("logger:silentBaileysLogger"),"makeWASocket must receive the explicit silent logger");
 assert.ok(src.includes('head.startsWith("Closing session:")'),"libsignal Closing session dumps must be intercepted");
 assert.ok(src.includes("DIVA_SIGNAL_SESSION_ROTATION_REDACTED"),"sensitive Signal session dump must be replaced by a sanitized marker");
+assert.ok(src.includes("function safeRelayTarget()"),"relay diagnostics must expose only a sanitized target fingerprint");
+assert.ok(src.includes("return{origin:u.origin,path:u.pathname}"),"relay target diagnostics must omit URL query and credentials");
+assert.ok(src.includes('retryAfter=res.headers.get("retry-after")||null'),"relay 429 diagnostics must preserve retry-after without logging secrets");
 console.log("DIVA_BAILEYS_SATELLITE_CONTRACT_OK");
 assert.ok(!src.includes("setTimeout(connect,2500)"),"must not reconnect Baileys in-process");
 
