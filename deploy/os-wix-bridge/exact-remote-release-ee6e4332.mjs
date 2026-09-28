@@ -141,6 +141,9 @@ async function main() {
         out[name] = { exitCode: r.status, output: String(r.stdout || '').slice(0, 4000) };
         log('PROBE_' + name.toUpperCase() + ' ' + JSON.stringify(out[name]));
       }
+      const ask = exec('curl', ['-sS', '-L', '--max-time', '120', '-X', 'POST', '-H', 'content-type: application/json', '--data', JSON.stringify({text:'DIVA_CANARY_20260927',history:[]}), '-w', '\\nHTTP_STATUS:%{http_code}', 'https://www.especialistabrandingeinfluencia.com/_functions/divaAsk']);
+      out.ask = { exitCode: ask.status, output: String(ask.stdout || '').slice(0, 4000) };
+      log('PROBE_ASK ' + JSON.stringify(out.ask));
       state.health = out.health;
       state.canary = out.canary;
       state.done = true;
