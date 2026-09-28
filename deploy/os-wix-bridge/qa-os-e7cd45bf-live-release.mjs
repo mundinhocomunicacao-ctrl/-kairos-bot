@@ -5,8 +5,8 @@ const controller=new URL('./exact-remote-release-ee6e4332.mjs', import.meta.url)
 assert.ok(fs.existsSync(controller),'controller must exist');
 const src=fs.readFileSync(controller,'utf8');
 
-assert.ok(src.includes("SOURCE_SHA='79ab3d790d9fb678a9bea23983bdc213abe056fa'"),'must pin canonical GitLab SHA');
-assert.ok(src.includes("MIRROR_SHA='6548a55f2babac77b1639a738e30be158db6b2d9'"),'must pin exact GitHub mirror commit');
+assert.ok(src.includes("SOURCE_SHA='1bd02211bbfc313266df886640ea2d26483e4771'"),'must pin canonical GitLab SHA');
+assert.ok(src.includes("MIRROR_SHA='b06687ee94f71fcd4de3fd057ceaed62028a8c63'"),'must pin exact GitHub mirror commit');
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
 assert.ok(src.includes("appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e'"),'must target live Wix app');
 assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must prove human canonical domain');
@@ -18,4 +18,4 @@ assert.ok(src.includes("@wix/cli@latest"),'must publish through Wix CLI');
 assert.ok(!src.includes("242b9d6f-71ad-40c6-b1d7-f1f0825e01be"),'must not publish legacy QA site');
 assert.ok(!src.includes("radar.gabi.mundinhocomunicacao.com"),'must not touch Gabi Radar');
 assert.ok(!src.includes("7687d145-056b-4cc0-9f6f-70c2bb32912e"),'must not target Gabi Radar site');
-console.log('QA_OS_79AB3D79_LIVE_RELEASE_CONTROLLER_PASS');
+console.log('QA_OS_1BD02211_LIVE_RELEASE_CONTROLLER_PASS');

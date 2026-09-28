@@ -4,8 +4,8 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='79ab3d790d9fb678a9bea23983bdc213abe056fa';
-const MIRROR_SHA='6548a55f2babac77b1639a738e30be158db6b2d9';
+const SOURCE_SHA='1bd02211bbfc313266df886640ea2d26483e4771';
+const MIRROR_SHA='b06687ee94f71fcd4de3fd057ceaed62028a8c63';
 const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-e7cd45bf');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
@@ -27,4 +27,4 @@ async function main(){try{
  state.phase='READBACK_CANONICAL';state.canonical=await prove(CANONICAL,'CANONICAL');
  state.phase='DONE';state.done=true;log('DIVA_OS_79AB3D79_RELEASE_COMPLETE '+SOURCE_SHA);
 }catch(e){state.phase='ERROR';state.error=String(e?.stack||e);console.error(state.error)}}
-http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{log('DIVA_OS_79AB3D79_RELEASE_CONTROL_READY '+PORT);main()});
+http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{log('DIVA_OS_1BD02211_RELEASE_CONTROL_READY '+PORT);main()});
