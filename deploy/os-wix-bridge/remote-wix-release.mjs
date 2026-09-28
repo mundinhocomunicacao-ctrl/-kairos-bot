@@ -72,6 +72,36 @@ async function ensureWixCli(){
   const bin=path.join(dir,'node_modules','.bin','wix');
   if(!fs.existsSync(bin))throw new Error('ORBI_WIX_CLI_MISSING');
   log('ORBI_WIX_CLI_INSTALL_PASS');
+  try{
+    const cliRoot=path.join(dir,'node_modules','@wix','cli');
+    const hits=[];
+    const seen=new Set();
+    function walk(p){
+      for(const ent of fs.readdirSync(p,{withFileTypes:true})){
+        const full=path.join(p,ent.name);
+        if(ent.isDirectory()) walk(full);
+        else if(/\.(js|mjs|cjs|json)$/.test(ent.name)){
+          const s=fs.readFileSync(full,'utf8');
+          const patterns=[
+            /https:\/\/[^"'\s)]+/g,
+            /["'`]([^"'\`]{0,120}(?:release|deploy|artifact|upload)[^"'\`]{0,120})["'`]/ig
+          ];
+          for(const re of patterns){
+            for(const m of s.matchAll(re)){
+              const v=(m[1]||m[0]).slice(0,260);
+              if(/wixapis|release|deploy|artifact|upload/i.test(v) && !seen.has(v)){
+                seen.add(v);hits.push(v);
+                if(hits.length>=120)return;
+              }
+            }
+          }
+        }
+        if(hits.length>=120)return;
+      }
+    }
+    walk(cliRoot);
+    log('ORBI_WIX_CLI_ENDPOINT_HINTS '+JSON.stringify(hits.slice(0,120)));
+  }catch(e){log('ORBI_WIX_CLI_ENDPOINT_SCAN_ERROR '+String(e?.message||e))}
   return bin;
 }
 async function ensureAuth(wixCli){
