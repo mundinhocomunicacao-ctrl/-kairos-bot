@@ -5,8 +5,8 @@ import os from 'node:os';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA=String(process.env.TARGET_SOURCE_SHA||'20daa504b8cd514e8cca2ab4f700f47b3cce0c9e').trim();
-const MIRROR_SHA='ff5b902047002f59181b37284ed5c3f389416e56';
+const SOURCE_SHA=String(process.env.TARGET_SOURCE_SHA||'0942e49b87b7c2dc2d6dca5a8257b54bfd35847f').trim();
+const MIRROR_SHA='bf4c978b669cd663c3bb3d980898406d4cab5b4f';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-os-orbi-release');
@@ -38,7 +38,11 @@ async function qa(){
     'scripts/qa-pr-studio-surface.mjs',
     'scripts/qa-diva-face-sync.mjs',
     'scripts/qa-diva-art-direction-core.mjs',
-    'scripts/qa-creative-context-ingestion.mjs'
+    'scripts/qa-creative-context-ingestion.mjs',
+    'scripts/qa-os-hydration-regression.mjs',
+    'scripts/qa-social-insights-live-grid.mjs',
+    'scripts/qa-social-research-contract.mjs',
+    'scripts/qa-pipeline-live-projection.mjs'
   ];
   for(const gate of gates){await run('node',[gate],{cwd:OS_DIR});state.tests.push({gate,status:'PASS'})}
   const contract=fs.readFileSync(path.join(OS_DIR,'data/diva-voice-presence-contract.js'),'utf8');
