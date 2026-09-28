@@ -19,6 +19,11 @@ assert.ok(src.includes("RELEASE_LOCK_SOURCE_MISMATCH"),'controller must reject a
 assert.ok(src.includes("RELEASE_LOCK_MIRROR_MISMATCH"),'controller must reject a request for a different mirror SHA');
 assert.ok(src.includes("assertReleaseUnlocked()"),'controller must call release lock gate before build/auth/release');
 
+assert.ok(src.includes("OS_LIVE_PROMOTION_ENABLED"),'controller must require external Render promotion kill switch');
+assert.ok(src.includes("RELEASE_PROMOTION_DISABLED"),'controller must fail closed when external promotion switch is not explicitly enabled');
+assert.ok(src.includes("OS_LIVE_EXPECTED_CURRENT_SOURCE_SHA"),'controller must bind external expected-current-live source');
+
+
 
 assert.ok(src.includes("SOURCE_SHA='68b46dabd6fa0191259225493350a35caea26567'"),'must pin sovereign GitLab final SHA');
 assert.ok(src.includes("MIRROR_SHA='de8568fa10a42aae6cd25abb532f47a1c3ac27ec'"),'must pin exact final GitHub mirror snapshot');
