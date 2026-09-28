@@ -5,8 +5,8 @@ const controller=new URL('./exact-remote-release-ee6e4332.mjs', import.meta.url)
 assert.ok(fs.existsSync(controller),'controller must exist');
 const src=fs.readFileSync(controller,'utf8');
 
-assert.ok(src.includes("SOURCE_SHA='3243632c60c721739316cca189cb35542d0b38df'"),'must pin sovereign GitLab final SHA');
-assert.ok(src.includes("MIRROR_SHA='44a351b028c4f6b3a307124f5137dc2ff6466002'"),'must pin exact final GitHub mirror snapshot');
+assert.ok(src.includes("SOURCE_SHA='88ccd189cf2b61fd042a6fde2be558646818109c'"),'must pin sovereign GitLab final SHA');
+assert.ok(src.includes("MIRROR_SHA='4c59f42500b010d70cc5e9ce2bc10fb264030ffb'"),'must pin exact final GitHub mirror snapshot');
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
 assert.ok(src.includes("appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e'"),'must target live Wix app');
 assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must prove human canonical domain');
@@ -22,9 +22,11 @@ assert.ok(src.includes("state.canonical=await prove(CANONICAL,'CANONICAL')"),'mu
 assert.ok(src.includes("provePrivacy(CANONICAL,'CANONICAL')"),'must prove canonical privacy metadata');
 assert.ok(src.includes('PAGE_X_ROBOTS_MISSING'),'page-by-page audit must enforce X-Robots-Tag on all protected routes');
 assert.ok(src.includes('PAGE_REFERRER_POLICY'),'page-by-page audit must enforce Referrer-Policy on all protected routes');
-assert.ok(src.includes("OS_FINAL_QA_REUSED"),'controller must reuse the exact fresh final OS forge QA receipt when controller runtime QA is skipped');
-assert.ok(src.includes("dep-data9nnlk1mc73et7hg0"),'controller must bind the exact Render forge QA deployment receipt');
-assert.ok(src.includes("QA_REPOSITORY_HYGIENE PASS"),'controller must bind the terminal final QA gate evidence');
+assert.ok(src.includes("await run('npm',['run','qa:release']"),'controller must execute the OS-only final QA bundle');
+assert.ok(src.includes("OS_FINAL_QA_PASS"),'controller must emit final OS QA pass');
+assert.ok(src.includes("OS_FINAL_VISUAL_QA_PASS 11x4 captures=44"),'controller must bind the 11x4 visual certification');
+assert.ok(src.includes("dep-dataqqd9fdbs73b155t0"),'controller must bind the visual QA Render receipt');
+assert.ok(src.includes("b00b1583804939b84916b1afcf3a5cf23dec1b15"),'controller must bind the visual QA harness commit');
 assert.ok(src.includes("LIVE_PRIVACY_METADATA_PASS 11/11")||src.includes("'_PRIVACY_METADATA_PASS 11/11'"),'controller must prove live page-by-page privacy metadata');
 assert.ok(!src.includes("qa-diva-morada-brain.mjs"),'Morada brain gate is outside this release cut');
 assert.ok(!src.includes("qa-inicio-morada-ssr.mjs"),'Morada SSR gate is outside this release cut');
@@ -33,4 +35,4 @@ assert.ok(!src.includes("242b9d6f-71ad-40c6-b1d7-f1f0825e01be"),'must not publis
 assert.ok(!src.includes("radar.gabi.mundinhocomunicacao.com"),'must not touch Gabi Radar');
 assert.ok(!src.includes("7687d145-056b-4cc0-9f6f-70c2bb32912e"),'must not target Gabi Radar site');
 assert.ok(src.includes("MUNDINHO_OS_FINAL_RELEASE_COMPLETE"),'controller must emit final receipt');
-console.log('QA_OS_3243632C_FINAL_RELEASE_CONTROLLER_PASS');
+console.log('QA_OS_88CCD189_FINAL_RELEASE_CONTROLLER_PASS');
