@@ -5,7 +5,7 @@ import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
 const SOURCE_SHA='a29606151a8f29fff4b25249e9691f4b7f011dc5';
-const MIRROR_SHA='f9bcf3f0d14b2b31d7b8934bc9835bb46dcaa577';
+const MIRROR_SHA='7292e0914956e02ae9e62f536a7f246943b0a920';
 const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-a2960615');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
