@@ -4,8 +4,8 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='e7cd45bf38ee4a3dd6bd1eab3b84cb2e1f97b16f';
-const MIRROR_SHA='4972c0f93d13971e291f8884a17227beee8b9be7';
+const SOURCE_SHA='33922e70120167b90599d15e8b31279611803355';
+const MIRROR_SHA='f9871e0665b0a8c235fb44122017d53e2926d29f';
 const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-e7cd45bf');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
@@ -25,6 +25,6 @@ async function main(){try{
  await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);
  state.phase='READBACK_LIVE';state.live=await prove(LIVE.host,'LIVE');
  state.phase='READBACK_CANONICAL';state.canonical=await prove(CANONICAL,'CANONICAL');
- state.phase='DONE';state.done=true;log('DIVA_OS_E7CD45BF_RELEASE_COMPLETE '+SOURCE_SHA);
+ state.phase='DONE';state.done=true;log('DIVA_OS_33922E70_RELEASE_COMPLETE '+SOURCE_SHA);
 }catch(e){state.phase='ERROR';state.error=String(e?.stack||e);console.error(state.error)}}
-http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{log('DIVA_OS_E7CD45BF_RELEASE_CONTROL_READY '+PORT);main()});
+http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{log('DIVA_OS_33922E70_RELEASE_CONTROL_READY '+PORT);main()});
