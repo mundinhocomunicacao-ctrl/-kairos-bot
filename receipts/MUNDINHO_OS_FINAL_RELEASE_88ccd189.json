@@ -98,5 +98,33 @@
       "parallel experiments",
       "new Wix sites"
     ]
+  },
+  "reconciliation": {
+    "status": "RECONCILED_TO_MAIN",
+    "mainSha": "60dde771a1b54ad4f54e46919b12dcd6d43b72ef",
+    "mergeRequest": 474,
+    "squashCommit": "eaafa111460acfc206ed9629a2e1cce91cd9a80f",
+    "supersededMergeRequest": 473,
+    "supersededMergeRequestState": "closed",
+    "sourceReleaseSha": "88ccd189cf2b61fd042a6fde2be558646818109c",
+    "liveRemainsPinnedTo": "88ccd189cf2b61fd042a6fde2be558646818109c",
+    "liveReadbackAfterMainMerge": {
+      "deploymentId": "wix-live-88ccd189",
+      "runtimeEnv": "wix-live",
+      "readiness": "ready",
+      "writebackReady": true
+    },
+    "mainPreservation": {
+      "moradaBrainPresent": true,
+      "moradaCognitiveRouterPresent": true,
+      "globalQaReleaseMoradaPreserved": true,
+      "qaOsFinalAddedSeparately": true
+    },
+    "ciNote": {
+      "pipelineId": 2890751511,
+      "failureReason": "ci_quota_exceeded",
+      "runner": null,
+      "classification": "infrastructure quota; no code execution occurred"
+    }
   }
 }
