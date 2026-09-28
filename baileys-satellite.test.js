@@ -11,6 +11,9 @@ for(const token of [
 "sock.sendMessage","/pair","processedMessageIds","messageTimestamp","DIVA_MESSAGE_MAX_AGE_MS","DIVA_FLOW_WATCHDOG_MS","DIVA_FLOW_WATCHDOG_RECYCLE","DIVA_SUPERVISED_RESTART","process.exit(1)","bootInProgress","DIVA_STARTUP_GRACE_MS","DIVA_TAKEOVER_WAIT"
 ]) assert.ok(src.includes(token),"missing contract token: "+token);
 assert.ok(!src.includes("useMultiFileAuthState"),"must not use filesystem auth state");
+assert.ok(src.includes("const silentBaileysLogger={"),"Baileys runtime must declare an explicit silent logger");
+assert.ok(src.includes("child(){return this}"),"silent Baileys logger must satisfy child logger contract");
+assert.ok(src.includes("logger:silentBaileysLogger"),"makeWASocket must receive the explicit silent logger");
 console.log("DIVA_BAILEYS_SATELLITE_CONTRACT_OK");
 assert.ok(!src.includes("setTimeout(connect,2500)"),"must not reconnect Baileys in-process");
 

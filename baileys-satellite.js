@@ -26,6 +26,11 @@ const wake=s=>/^\s*(?:@?diva)\b[\s,:;!?-]*/i.test(String(s||""));
 const textOf=m=>m?.message?.conversation||m?.message?.extendedTextMessage?.text||m?.message?.imageMessage?.caption||m?.message?.videoMessage?.caption||"";
 const stableStringify=value=>Array.isArray(value)?"["+value.map(stableStringify).join(",")+"]":value&&typeof value==="object"?"{"+Object.keys(value).sort().map(k=>JSON.stringify(k)+":"+stableStringify(value[k])).join(",")+"}":JSON.stringify(value);
 const sha256Hex=value=>crypto.createHash("sha256").update(String(value||"")).digest("hex");
+const silentBaileysLogger={
+ level:"silent",
+ child(){return this},
+ trace(){},debug(){},info(){},warn(){},error(){},fatal(){}
+};
 
 function vaultKey(){
  if(!DIVA_AUTH_VAULT_SECRET)throw new Error("DIVA_AUTH_VAULT_SECRET is not configured");
@@ -117,7 +122,7 @@ async function connect(){
  if(bootInProgress)return;bootInProgress=true;
  const {state,saveCreds}=await createVaultAuthState();
  const {version}=await fetchLatestBaileysVersion();
- sock=makeWASocket({auth:state,version,printQRInTerminal:false,syncFullHistory:false,markOnlineOnConnect:false});
+ sock=makeWASocket({auth:state,version,logger:silentBaileysLogger,printQRInTerminal:false,syncFullHistory:false,markOnlineOnConnect:false});
  sock.ev.on("creds.update",saveCreds);
  sock.ev.on("connection.update",async u=>{
    if(u.qr){qrDataUrl=await QRCode.toDataURL(u.qr);connection="pairing"}
