@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 40
     env:
       GITLAB_PROJECT_ID: "86501645"
+      EXPECTED_SHA: "e7cd45bf38ee4a3dd6bd1eab3b84cb2e1f97b16f"
       RUNNER_TAG: os-external-failover
       TOKEN_A: ${{ secrets.GITLAB_TOKEN }}
       TOKEN_B: ${{ secrets.GITLAB_PAT }}
@@ -48,29 +49,90 @@ jobs:
           done
           test "$FOUND" = "1" || { echo "CANONICAL_GITLAB_CREDENTIAL=MISSING"; exit 78; }
 
-      - name: Create ephemeral project runner
+      - name: Create ephemeral runner with safe stale-runner GC
         shell: bash
         run: |
           set -euo pipefail
           PAT="$(cat /tmp/os-runner/gitlab.pat)"
-          BODY="$(mktemp)"
-          HTTP="$(curl --silent --show-error --output "$BODY" --write-out '%{http_code}'             --request POST             --header "PRIVATE-TOKEN: $PAT"             --data-urlencode "runner_type=project_type"             --data-urlencode "project_id=$GITLAB_PROJECT_ID"             --data-urlencode "description=mundinho-os-failover-$GITHUB_RUN_ID"             --data-urlencode "tag_list=$RUNNER_TAG"             --data-urlencode "run_untagged=false"             --data-urlencode "locked=true"             --url "https://gitlab.com/api/v4/user/runners")"
-          unset PAT
+
+          create_runner() {
+            BODY="$(mktemp)"
+            HTTP="$(curl --silent --show-error --output "$BODY" --write-out '%{http_code}' \
+              --request POST \
+              --header "PRIVATE-TOKEN: $PAT" \
+              --data-urlencode "runner_type=project_type" \
+              --data-urlencode "project_id=$GITLAB_PROJECT_ID" \
+              --data-urlencode "description=mundinho-os-failover-$GITHUB_RUN_ID" \
+              --data-urlencode "tag_list=$RUNNER_TAG" \
+              --data-urlencode "run_untagged=false" \
+              --data-urlencode "locked=true" \
+              --url "https://gitlab.com/api/v4/user/runners")"
+            printf '%s' "$HTTP" > /tmp/os-runner/create.http
+            mv "$BODY" /tmp/os-runner/create.body
+          }
+
+          create_runner
+          HTTP="$(cat /tmp/os-runner/create.http)"
+
+          if [ "$HTTP" != "201" ]; then
+            MAXED="$(node -e 'const fs=require("fs");let x={};try{x=JSON.parse(fs.readFileSync("/tmp/os-runner/create.body","utf8"))}catch{};process.stdout.write(/Maximum number of ci registered project runners/i.test(JSON.stringify(x))?"1":"0")')"
+            if [ "$MAXED" = "1" ]; then
+              echo "PROJECT_RUNNER_LIMIT=REACHED · searching safe stale runner"
+              curl --fail --silent --show-error \
+                --header "PRIVATE-TOKEN: $PAT" \
+                "https://gitlab.com/api/v4/projects/$GITLAB_PROJECT_ID/runners?per_page=100" \
+                > /tmp/os-runner/project-runners.json
+
+              node <<'NODE'
+              const fs=require('fs');
+              const xs=JSON.parse(fs.readFileSync('/tmp/os-runner/project-runners.json','utf8'));
+              const preferred=xs.filter(r =>
+                r &&
+                r.runner_type === 'project_type' &&
+                r.status === 'offline' &&
+                r.id !== 56444698 &&
+                /failover|ephemeral|render|probe|temporary|temp/i.test(String(r.description||''))
+              );
+              const fallback=xs.filter(r =>
+                r &&
+                r.runner_type === 'project_type' &&
+                r.status === 'offline' &&
+                r.id !== 56444698
+              );
+              const pick=(preferred[0]||fallback[0]);
+              if(!pick) process.exit(2);
+              fs.writeFileSync('/tmp/os-runner/stale.id',String(pick.id));
+              console.log('STALE_RUNNER_SELECTED id='+pick.id+' description='+String(pick.description||'').slice(0,120));
+              NODE
+
+              STALE_ID="$(cat /tmp/os-runner/stale.id)"
+              DELETE_HTTP="$(curl --silent --show-error --output /tmp/os-runner/stale-delete.out --write-out '%{http_code}' \
+                --request DELETE \
+                --header "PRIVATE-TOKEN: $PAT" \
+                --url "https://gitlab.com/api/v4/runners/$STALE_ID")"
+              echo "STALE_RUNNER_DELETE_HTTP=$DELETE_HTTP id=$STALE_ID"
+              test "$DELETE_HTTP" = "204"
+
+              create_runner
+              HTTP="$(cat /tmp/os-runner/create.http)"
+            fi
+          fi
+
           if [ "$HTTP" != "201" ]; then
             echo "EPHEMERAL_RUNNER_CREATE=FAILED http=$HTTP"
-            node -e 'const fs=require("fs");const p=process.argv[1];let x={};try{x=JSON.parse(fs.readFileSync(p,"utf8"))}catch{};console.log("gitlab_error="+String(x.message||x.error||"unknown").slice(0,200))' "$BODY"
-            rm -f "$BODY"
+            node -e 'const fs=require("fs");let x={};try{x=JSON.parse(fs.readFileSync("/tmp/os-runner/create.body","utf8"))}catch{};console.log("gitlab_error="+String(x.message||x.error||"unknown").slice(0,240))'
             exit 1
           fi
-          node - "$BODY" <<'NODE'
+
+          node <<'NODE'
           const fs=require('fs');
-          const body=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
+          const body=JSON.parse(fs.readFileSync('/tmp/os-runner/create.body','utf8'));
           if(!body.id||!body.token||!String(body.token).startsWith('glrt-')) process.exit(2);
           fs.writeFileSync('/tmp/os-runner/runner.id',String(body.id),{mode:0o600});
           fs.writeFileSync('/tmp/os-runner/runner.token',String(body.token),{mode:0o600});
           console.log('EPHEMERAL_RUNNER_CREATE=PASS id='+body.id);
           NODE
-          rm -f "$BODY"
+          unset PAT
 
       - name: Install and register GitLab Runner
         shell: bash
@@ -79,7 +141,12 @@ jobs:
           curl -fsSL --retry 3 https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64 -o /tmp/os-runner/gitlab-runner
           chmod +x /tmp/os-runner/gitlab-runner
           TOKEN="$(cat /tmp/os-runner/runner.token)"
-          /tmp/os-runner/gitlab-runner register --non-interactive             --url https://gitlab.com/             --token "$TOKEN"             --executor shell             --description "mundinho-os-failover-$GITHUB_RUN_ID"             --config /tmp/os-runner/config.toml
+          /tmp/os-runner/gitlab-runner register --non-interactive \
+            --url https://gitlab.com/ \
+            --token "$TOKEN" \
+            --executor shell \
+            --description "mundinho-os-failover-$GITHUB_RUN_ID" \
+            --config /tmp/os-runner/config.toml
           unset TOKEN
           shred -u /tmp/os-runner/runner.token || rm -f /tmp/os-runner/runner.token
           echo "EPHEMERAL_GITLAB_RUNNER=REGISTERED tag=$RUNNER_TAG"
@@ -88,33 +155,69 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          nohup /tmp/os-runner/gitlab-runner run             --working-directory /tmp/os-runner/work             --config /tmp/os-runner/config.toml             >/tmp/os-runner/runner.log 2>&1 &
+          nohup /tmp/os-runner/gitlab-runner run \
+            --working-directory /tmp/os-runner/work \
+            --config /tmp/os-runner/config.toml \
+            >/tmp/os-runner/runner.log 2>&1 &
           echo $! >/tmp/os-runner/runner.pid
           sleep 3
           kill -0 "$(cat /tmp/os-runner/runner.pid)"
           echo "EPHEMERAL_GITLAB_RUNNER=READY"
 
-      - name: Serve queued GitLab job
+      - name: Dispatch exact-SHA GitLab failover pipeline
         shell: bash
         run: |
           set -euo pipefail
-          SEEN_JOB=0
-          for i in $(seq 1 900); do
-            kill -0 "$(cat /tmp/os-runner/runner.pid)" || {
-              echo "EPHEMERAL_GITLAB_RUNNER=STOPPED_UNEXPECTEDLY"
-              tail -100 /tmp/os-runner/runner.log | sed -E 's/(glrt-|token=)[^ ]+/[REDACTED]/g' || true
-              exit 1
-            }
-            if grep -Eq 'Checking for jobs|received job|Appending trace|Job succeeded|Job failed' /tmp/os-runner/runner.log; then
-              SEEN_JOB=1
-            fi
-            if grep -Eq 'Job succeeded|Job failed' /tmp/os-runner/runner.log; then
-              break
-            fi
-            sleep 2
+          PAT="$(cat /tmp/os-runner/gitlab.pat)"
+          BODY="$(mktemp)"
+          HTTP="$(curl --silent --show-error --output "$BODY" --write-out '%{http_code}' \
+            --request POST \
+            --header "PRIVATE-TOKEN: $PAT" \
+            --data-urlencode "ref=main" \
+            --data-urlencode "variables[0][key]=MUNDO_EXTERNAL_FAILOVER" \
+            --data-urlencode "variables[0][value]=1" \
+            --data-urlencode "variables[1][key]=MUNDO_EXPECTED_SHA" \
+            --data-urlencode "variables[1][value]=$EXPECTED_SHA" \
+            --url "https://gitlab.com/api/v4/projects/$GITLAB_PROJECT_ID/pipeline")"
+          test "$HTTP" = "201" || { echo "PIPELINE_DISPATCH_FAILED http=$HTTP"; cat "$BODY"; exit 1; }
+          node - "$BODY" <<'NODE'
+          const fs=require('fs');
+          const x=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
+          if(!x.id) process.exit(2);
+          fs.writeFileSync('/tmp/os-runner/pipeline.id',String(x.id));
+          console.log('GITLAB_FAILOVER_PIPELINE=CREATED id='+x.id+' sha='+x.sha);
+          NODE
+          rm -f "$BODY"
+          unset PAT
+
+      - name: Wait for Wix materialization and exact-SHA readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          PAT="$(cat /tmp/os-runner/gitlab.pat)"
+          PIPELINE_ID="$(cat /tmp/os-runner/pipeline.id)"
+          FINAL=""
+          for i in $(seq 1 180); do
+            BODY="$(curl --fail --silent --show-error \
+              --header "PRIVATE-TOKEN: $PAT" \
+              "https://gitlab.com/api/v4/projects/$GITLAB_PROJECT_ID/pipelines/$PIPELINE_ID")"
+            STATUS="$(printf '%s' "$BODY" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const x=JSON.parse(s);process.stdout.write(String(x.status||""))})')"
+            echo "PIPELINE_STATUS=$STATUS attempt=$i"
+            case "$STATUS" in
+              success)
+                FINAL=success
+                break
+                ;;
+              failed|canceled|skipped)
+                FINAL="$STATUS"
+                break
+                ;;
+            esac
+            sleep 10
           done
-          test "$SEEN_JOB" = "1" || { echo "EPHEMERAL_GITLAB_RUNNER=NO_JOB_OBSERVED"; exit 1; }
-          tail -100 /tmp/os-runner/runner.log | sed -E 's/(glrt-|token=)[^ ]+/[REDACTED]/g' || true
+          unset PAT
+          test "$FINAL" = "success" || { echo "WIX_EXACT_SHA_PIPELINE=FAIL final=${FINAL:-timeout}"; tail -120 /tmp/os-runner/runner.log || true; exit 1; }
+          echo "WIX_EXACT_SHA_PIPELINE=PASS sha=$EXPECTED_SHA"
 
       - name: Cleanup runner
         if: always()
@@ -125,7 +228,10 @@ jobs:
           if [ -f /tmp/os-runner/runner.id ] && [ -f /tmp/os-runner/gitlab.pat ]; then
             ID="$(cat /tmp/os-runner/runner.id)"
             PAT="$(cat /tmp/os-runner/gitlab.pat)"
-            HTTP="$(curl --silent --show-error --output /tmp/os-runner/delete.out --write-out '%{http_code}'               --request DELETE               --header "PRIVATE-TOKEN: $PAT"               --url "https://gitlab.com/api/v4/runners/$ID")"
+            HTTP="$(curl --silent --show-error --output /tmp/os-runner/delete.out --write-out '%{http_code}' \
+              --request DELETE \
+              --header "PRIVATE-TOKEN: $PAT" \
+              --url "https://gitlab.com/api/v4/runners/$ID")"
             unset PAT
             echo "EPHEMERAL_GITLAB_RUNNER_DELETE_HTTP=$HTTP"
           fi
