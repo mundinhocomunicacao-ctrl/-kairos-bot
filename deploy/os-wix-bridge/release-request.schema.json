@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "MUNDINHO_OS_RELEASE_REQUEST_V1",
+  "title": "Mundinho OS explicit live release request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "requestId",
+    "status",
+    "sourceSha",
+    "mirrorSha",
+    "releaseId",
+    "expectedCurrentLiveSourceSha",
+    "expectedCurrentLiveReleaseId",
+    "targetSiteId",
+    "targetAppId",
+    "canonicalDomain",
+    "qaReceipt",
+    "buildReceipt",
+    "visualReceipt",
+    "approvedByHuman",
+    "approvedAt"
+  ],
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "minLength": 8
+    },
+    "status": {
+      "const": "APPROVED"
+    },
+    "sourceSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "mirrorSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "releaseId": {
+      "type": "string",
+      "pattern": "^wix-live-[0-9a-f]{8}$"
+    },
+    "expectedCurrentLiveSourceSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "expectedCurrentLiveReleaseId": {
+      "type": "string",
+      "pattern": "^wix-live-[0-9a-f]{8}$"
+    },
+    "targetSiteId": {
+      "const": "c80689f2-6627-45fa-a264-4ab2863ba306"
+    },
+    "targetAppId": {
+      "const": "79eedd41-5ca6-4940-925a-e95e6f3c570e"
+    },
+    "canonicalDomain": {
+      "const": "https://os.mundinhocomunicacao.com"
+    },
+    "qaReceipt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "buildReceipt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "visualReceipt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approvedByHuman": {
+      "const": true
+    },
+    "approvedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
