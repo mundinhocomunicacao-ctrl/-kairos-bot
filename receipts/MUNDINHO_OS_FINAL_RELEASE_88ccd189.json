@@ -126,5 +126,22 @@
       "runner": null,
       "classification": "infrastructure quota; no code execution occurred"
     }
+  },
+  "stateRefs": {
+    "gitlab": {
+      "liveSourceBranch": "state/os-live-88ccd189",
+      "liveSourceSha": "88ccd189cf2b61fd042a6fde2be558646818109c",
+      "reconciledMainBranch": "state/os-main-reconciled-60dde771",
+      "reconciledMainSha": "60dde771a1b54ad4f54e46919b12dcd6d43b72ef"
+    },
+    "github": {
+      "liveMirrorBranch": "state/os-live-88ccd189",
+      "liveMirrorSha": "4c59f42500b010d70cc5e9ce2bc10fb264030ffb",
+      "controllerBranch": "state/os-live-controller-88ccd189",
+      "controllerSha": "77c7b1489ae724ae182bef571695a37a3f26f4e3",
+      "visualQaBranch": "state/os-visual-qa-88ccd189",
+      "visualQaHarnessSha": "b00b1583804939b84916b1afcf3a5cf23dec1b15"
+    },
+    "semantics": "State refs are governance pointers only. Wix live remains bound to releaseId wix-live-88ccd189; future main or rail changes must not auto-promote."
   }
 }
