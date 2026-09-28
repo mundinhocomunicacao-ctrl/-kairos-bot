@@ -13,6 +13,18 @@ assert.equal(lock.mode,'frozen','live lock must default frozen');
 assert.equal(lock.currentLive.sourceSha,'88ccd189cf2b61fd042a6fde2be558646818109c','release lock must pin approved live source');
 assert.equal(lock.currentLive.releaseId,'wix-live-88ccd189','release lock must pin approved live release id');
 assert.ok(lock.pendingReleaseRequest===null||(lock.pendingReleaseRequest.status==='APPROVED'&&lock.pendingReleaseRequest.approvedByHuman===true&&Boolean(lock.pendingReleaseRequest.approvedAt)),'release lock may contain only an explicit human-approved pending release request');
+
+const schemaPath=new URL('./release-request.schema.json', import.meta.url);
+const templatePath=new URL('./release-request.template.json', import.meta.url);
+assert.ok(fs.existsSync(schemaPath),'release request schema must exist');
+assert.ok(fs.existsSync(templatePath),'release request template must exist');
+const requestTemplate=JSON.parse(fs.readFileSync(templatePath,'utf8'));
+assert.equal(requestTemplate.status,'DRAFT','release request template must never default approved');
+assert.equal(requestTemplate.approvedByHuman,false,'release request template must default to no human approval');
+assert.equal(requestTemplate.qaReceipt,null,'release request template must not prefill QA receipt');
+assert.equal(requestTemplate.buildReceipt,null,'release request template must not prefill build receipt');
+assert.equal(requestTemplate.visualReceipt,null,'release request template must not prefill visual receipt');
+
 assert.ok(src.includes("function assertReleaseUnlocked"),'controller must have a fail-closed release lock gate');
 assert.ok(src.includes("RELEASE_LOCKED_NO_REQUEST"),'controller must refuse release when no explicit request exists');
 assert.ok(src.includes("RELEASE_LOCK_SOURCE_MISMATCH"),'controller must reject a request for a different source SHA');
