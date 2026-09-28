@@ -1,7 +1,7 @@
 [submodule "os"]
 	path = os
 	url = https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git
-	branch = sync/os-reference-restore-46409c0a
+	branch = sync/os-e7cd45bf-20260928
 
 [submodule "morada"]
 	path = morada
