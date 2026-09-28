@@ -1,0 +1,39 @@
+name: Morada one-shot council proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/morada-one-shot-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call one-shot Morada council proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://www.especialistabrandingeinfluencia.com/_functions/divaCouncilProof20260928"
+          HTTP="$(curl -sS --retry 3 --retry-all-errors --retry-delay 2 -o /tmp/proof.json -w '%{http_code}' "$URL")"
+          echo "PROOF_HTTP=$HTTP"
+          cat /tmp/proof.json
+          echo
+          node - "$HTTP" <<'NODE'
+          const fs=require('fs');
+          const http=Number(process.argv[2]);
+          const x=JSON.parse(fs.readFileSync('/tmp/proof.json','utf8'));
+          if(http!==200) throw new Error('PROOF_HTTP_'+http+'_'+String(x.status||'UNKNOWN'));
+          if(x.ok!==true) throw new Error('PROOF_NOT_OK_'+String(x.status||'UNKNOWN'));
+          if(x.provider!=='DIVA_COUNCIL') throw new Error('WRONG_PROVIDER_'+String(x.provider));
+          if(x.model!=='ensemble') throw new Error('WRONG_MODEL_'+String(x.model));
+          if(x.receipt?.ok!==true || !x.receipt?.pulseId) throw new Error('RECEIPT_NOT_PROVEN');
+          console.log('MORADA_COUNCIL_RUNTIME=PASS provider='+x.provider+' model='+x.model+' receipt='+x.receipt.pulseId);
+          console.log('CONTRIBUTORS='+JSON.stringify(x.contributors||[]));
+          console.log('ATTEMPTS='+JSON.stringify(x.attempts||[]));
+          NODE
