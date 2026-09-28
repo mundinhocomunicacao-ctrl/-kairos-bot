@@ -1,7 +1,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import {spawnSync} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 
 const PORT = process.env.PORT || 10000;
 const ROOT = process.cwd();
@@ -66,16 +66,65 @@ async function ensureAuth() {
     'WIX_GABI_RADAR_API_KEY'
   ];
   const alias = aliases.find(name => Boolean(String(process.env[name] || '').trim()));
-  if (!alias) throw new Error('WIX_AUTH_SECRET_ALIAS_NOT_FOUND');
 
-  const login = exec('npx', ['-y', '@wix/cli@latest', 'login', '--api-key', String(process.env[alias])], PROJECT);
-  if (login.status !== 0) throw new Error('WIX_API_KEY_LOGIN_FAILED');
+  if (alias) {
+    const login = exec('npx', ['-y', '@wix/cli@latest', 'login', '--api-key', String(process.env[alias])], PROJECT);
+    if (login.status !== 0) throw new Error('WIX_API_KEY_LOGIN_FAILED');
+
+    who = exec('npx', ['-y', '@wix/cli@latest', 'whoami'], PROJECT);
+    if (who.status !== 0) throw new Error('WIX_AUTH_NOT_CONFIRMED');
+
+    state.auth = {ok: true, method: 'API_KEY', alias};
+    log('WIX_AUTH_API_KEY_PASS ' + alias);
+    return;
+  }
+
+  state.auth = {ok: false, method: 'DEVICE_CODE', status: 'AWAITING_USER'};
+  await new Promise((resolve, reject) => {
+    const child = spawn('npx', ['-y', '@wix/cli@latest', 'login'], {
+      cwd: PROJECT,
+      env: {...process.env, CI: '1', AI_AGENT: 'wix-headless-skill'},
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    let buffer = '';
+    const consume = (chunk) => {
+      const s = String(chunk);
+      process.stdout.write(s);
+      buffer += s;
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (!line) continue;
+        try {
+          const event = JSON.parse(line);
+          if (event.event === 'awaiting_user') {
+            state.auth = {
+              ok: false,
+              method: 'DEVICE_CODE',
+              status: 'AWAITING_USER',
+              userCode: event.userCode || null,
+              verificationUri: event.verificationUri || event.verificationUriComplete || null,
+              expiresInSeconds: event.expiresInSeconds || null
+            };
+            log('DIVA_WIX_AWAITING_USER ' + JSON.stringify(state.auth));
+          }
+          if (event.event === 'success') {
+            log('DIVA_WIX_DEVICE_AUTH_SUCCESS');
+          }
+        } catch {}
+      }
+    };
+    child.stdout.on('data', consume);
+    child.stderr.on('data', consume);
+    child.on('error', reject);
+    child.on('close', code => code === 0 ? resolve() : reject(new Error('WIX_DEVICE_LOGIN_EXIT_' + code)));
+  });
 
   who = exec('npx', ['-y', '@wix/cli@latest', 'whoami'], PROJECT);
-  if (who.status !== 0) throw new Error('WIX_AUTH_NOT_CONFIRMED');
-
-  state.auth = {ok: true, method: 'API_KEY', alias};
-  log('WIX_AUTH_API_KEY_PASS ' + alias);
+  if (who.status !== 0) throw new Error('WIX_AUTH_NOT_CONFIRMED_AFTER_DEVICE_LOGIN');
+  state.auth = {ok: true, method: 'DEVICE_CODE', status: 'AUTHENTICATED'};
+  log('WIX_AUTH_DEVICE_PASS');
 }
 
 async function main() {
