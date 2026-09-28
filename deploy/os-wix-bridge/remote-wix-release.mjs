@@ -51,6 +51,9 @@ async function qa(){
 
 async function materialize(runtimeEnv){
   state.phase='BUILD_'+runtimeEnv.toUpperCase().replace('-','_');
+  fs.mkdirSync(path.join(OS_DIR,'.release-source'),{recursive:true});
+  fs.writeFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),SOURCE_SHA+'\n');
+  log('CANONICAL_SHA_STAMPED '+SOURCE_SHA);
   await run('npm',['run','build:wix-worker'],{cwd:OS_DIR,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:runtimeEnv}});
   const entry=fs.readFileSync(path.join(OS_DIR,'dist/wix-server/entry.mjs'),'utf8');
   if(!entry.includes(SOURCE_SHA))throw new Error('BUILD_SHA_MISMATCH '+runtimeEnv);
