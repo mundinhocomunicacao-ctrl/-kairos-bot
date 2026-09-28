@@ -1,0 +1,18 @@
+{
+  "requestId": "REPLACE_WITH_NEW_REQUEST_ID",
+  "status": "DRAFT",
+  "sourceSha": "REPLACE_WITH_40_CHAR_SOURCE_SHA",
+  "mirrorSha": "REPLACE_WITH_40_CHAR_MIRROR_SHA",
+  "releaseId": "wix-live-REPLACE8",
+  "expectedCurrentLiveSourceSha": "88ccd189cf2b61fd042a6fde2be558646818109c",
+  "expectedCurrentLiveReleaseId": "wix-live-88ccd189",
+  "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+  "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+  "canonicalDomain": "https://os.mundinhocomunicacao.com",
+  "qaReceipt": null,
+  "buildReceipt": null,
+  "visualReceipt": null,
+  "approvedByHuman": false,
+  "approvedAt": null,
+  "_instructions": "This file is a non-executable template only. A future promotion requires: (1) exact candidate source/mirror frozen, (2) QA/build/visual receipts populated, (3) explicit human approval reflected as status=APPROVED, approvedByHuman=true and approvedAt, (4) the approved object copied into release-lock.json pendingReleaseRequest, and (5) Render OS_LIVE_PROMOTION_ENABLED explicitly changed from false to true. After final live+canonical readback, relock by updating currentLive, clearing pendingReleaseRequest, and setting OS_LIVE_PROMOTION_ENABLED=false."
+}
