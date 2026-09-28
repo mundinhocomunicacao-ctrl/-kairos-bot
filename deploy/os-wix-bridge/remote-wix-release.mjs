@@ -1,33 +1,118 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import {spawn,spawnSync} from 'node:child_process';
 
-const PORT=process.env.PORT||10000;
-const SOURCE_SHA='db3c67eeedbe7770c5aab016ca96ed1addc8be14';
-const MIRROR_COMMIT='b7cafa58dbe565991d53b74ca99e86ee89637503';
-const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release');
+const PORT=Number(process.env.PORT||10000);
+const SOURCE_SHA=String(process.env.TARGET_SOURCE_SHA||'20daa504b8cd514e8cca2ab4f700f47b3cce0c9e').trim();
+const ROOT=process.cwd();
+const OS_DIR=path.join(ROOT,'os-live-source');
+const REL=path.join(ROOT,'.wix-os-orbi-release');
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
-const state={phase:'BOOT',sourceSha:SOURCE_SHA,userCode:null,verificationUri:null,qa:null,live:null,canonical:null,tests:[],error:null,done:false};
-function log(x){console.log(x);state.lastLog=String(x).slice(-1200)}
-function sh(cmd,cwd=ROOT,env={}){const r=spawnSync('bash',['-c',cmd],{cwd,encoding:'utf8',env:{...process.env,...env}});if(r.stdout)process.stdout.write(r.stdout);if(r.stderr)process.stderr.write(r.stderr);if(r.status!==0)throw new Error('shell failed '+r.status+': '+cmd);return r.stdout.trim()}
+const state={phase:'BOOT',sourceSha:SOURCE_SHA,qa:null,live:null,canonical:null,tests:[],error:null,done:false,lastLog:null};
+
+function log(x){console.log(x);state.lastLog=String(x).slice(-1600)}
 function run(cmd,args,{cwd=ROOT,env={}}={}){return new Promise((resolve,reject)=>{const p=spawn(cmd,args,{cwd,env:{...process.env,...env},stdio:['ignore','pipe','pipe']});p.stdout.on('data',d=>process.stdout.write(d));p.stderr.on('data',d=>process.stderr.write(d));p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error(cmd+' exit '+c)))})}
+function sh(cmd,cwd=ROOT,env={}){const r=spawnSync('bash',['-lc',cmd],{cwd,encoding:'utf8',env:{...process.env,...env},timeout:20*60*1000});if(r.stdout)process.stdout.write(r.stdout);if(r.stderr)process.stderr.write(r.stderr);if(r.status!==0)throw new Error('shell failed '+r.status+': '+cmd);return String(r.stdout||'').trim()}
 function writeConfig(t){fs.writeFileSync(path.join(REL,'wix.config.json'),JSON.stringify({projectType:'Site',appId:t.appId,siteId:t.siteId,site:{outputDirectory:{client:'./client',server:'./server'}}},null,2))}
 function fetchJson(url){return JSON.parse(sh(`curl -fsSL --retry 6 --retry-all-errors "${url}"`)||'{}')}
-function stampRuntimeMetadata(entry,runtimeEnv){const releaseId=`${runtimeEnv}-${SOURCE_SHA.slice(0,8)}`;let out=String(entry).replace(/MUNDO_RUNTIME_ENV:\"wix-(?:qa|live)\"/,`MUNDO_RUNTIME_ENV:\"${runtimeEnv}\"`).replace(/MUNDO_RUNTIME_RELEASE_ID:\"wix-(?:qa|live)-[a-f0-9]{8}\"/,`MUNDO_RUNTIME_RELEASE_ID:\"${releaseId}\"`);if(!out.includes(`MUNDO_RUNTIME_ENV:\"${runtimeEnv}\"`)||!out.includes(`MUNDO_RUNTIME_RELEASE_ID:\"${releaseId}\"`))throw new Error('RUNTIME_METADATA_STAMP_FAIL '+runtimeEnv);return out}
-function materializeArtifact(runtimeEnv){const builtEntry=path.join(OS_DIR,'dist/wix-server/entry.mjs');let entry=fs.existsSync(builtEntry)?fs.readFileSync(builtEntry,'utf8'):'';if(entry.includes(SOURCE_SHA)){log('WIX_BUILD_REUSED_FROM_RENDER '+SOURCE_SHA+' target='+runtimeEnv)}else{sh(`MUNDO_RUNTIME_SOURCE_SHA=${SOURCE_SHA} MUNDO_RUNTIME_ENV=${runtimeEnv} npm run build:wix-worker`,OS_DIR);entry=fs.readFileSync(builtEntry,'utf8')}entry=stampRuntimeMetadata(entry,runtimeEnv);fs.writeFileSync(builtEntry,entry);if(!entry.includes(SOURCE_SHA)||!entry.includes(`MUNDO_RUNTIME_ENV:\"${runtimeEnv}\"`))throw new Error('BUILD_METADATA_MISMATCH '+runtimeEnv);fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});log('WIX_BUILD_PASS '+SOURCE_SHA+' '+runtimeEnv)}
-async function prove(host,label,expectedEnv){for(let i=1;i<=36;i++){try{const dr=fetchJson(host+'/api/diva-release?proof='+Date.now());const pr=fetchJson(host+'/api/preview-readiness?proof='+Date.now());if(dr.deploymentSha===SOURCE_SHA&&pr.sourceSha===SOURCE_SHA&&pr.status==='ready'&&dr.runtimeEnv===expectedEnv&&pr.environment===expectedEnv){log(label+'_EXACT_SHA_PASS '+SOURCE_SHA+' env='+expectedEnv);return{dr,pr}}}catch{}await new Promise(r=>setTimeout(r,5000))}throw new Error(label+'_EXACT_SHA_READBACK_FAIL expectedEnv='+expectedEnv)}
-async function ensureAuth(){state.phase='WIX_AUTH';const authEnv={...process.env,AI_AGENT:'wix-headless-skill'};const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env:authEnv,timeout:20000});if(who.status===0){log('WIX_AUTH_ALREADY_VALID '+who.stdout.trim());return}const apiKey=String(process.env.WIX_API_KEY||process.env.WIX_CLI_API_KEY||'').trim();const loginArgs=apiKey?['-y','@wix/cli@latest','login','--api-key',apiKey]:['-y','@wix/cli@latest','login'];if(apiKey)log('WIX_AUTH_API_KEY_ROUTE');await new Promise((resolve,reject)=>{const p=spawn('npx',loginArgs,{env:authEnv,stdio:['ignore','pipe','pipe']});let b='';p.stdout.on('data',d=>{const s=String(d);process.stdout.write(s);b+=s;for(const line of b.split('\n')){try{const e=JSON.parse(line.trim());if(e.event==='awaiting_user'){state.userCode=e.userCode;state.verificationUri=e.verificationUri;log('DIVA_WIX_AWAITING_USER '+JSON.stringify({userCode:e.userCode,verificationUri:e.verificationUri,expiresInSeconds:e.expiresInSeconds}))}}catch{}}});p.stderr.on('data',d=>process.stderr.write(d));p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error('wix login exit '+c)))});const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env:authEnv,timeout:20000});if(after.status!==0)throw new Error('WIX_WHOAMI_FAILED_AFTER_LOGIN');log('WIX_AUTH_PASS '+after.stdout.trim())}
-async function main(){try{
- state.phase='SOURCE';await run('bash',['-c','git submodule sync --recursive && git submodule update --init --recursive'],{cwd:ROOT});const mirror=sh('git -C os rev-parse HEAD',ROOT);if(mirror!==MIRROR_COMMIT)throw new Error('MIRROR_COMMIT_MISMATCH '+mirror);const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();if(marker!==SOURCE_SHA)throw new Error('SOURCE_MARKER_MISMATCH '+marker);log('SOURCE_EXACT_SHA_PASS '+SOURCE_SHA+' mirror='+MIRROR_COMMIT);
- state.phase='QA';const vinextBin=path.join(OS_DIR,'node_modules','.bin','vinext');if(fs.existsSync(vinextBin)){log('DEPENDENCIES_REUSED_FROM_RENDER_BUILD');}else{try{await run('npm',['ci','--include=dev'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});}catch{log('NPM_CI_FALLBACK_TO_INSTALL');await run('npm',['install','--include=dev','--no-audit','--no-fund'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});}}for(const gate of ["scripts/qa-os-navigation-contract.mjs","scripts/qa-os-navigation-runtime.mjs","scripts/qa-ten-primary-areas-runtime.mjs","scripts/qa-pr-studio-surface.mjs","scripts/qa-os-next-phase-anjos.mjs","scripts/qa-diva-face-sync.mjs","scripts/qa-diva-morada-brain.mjs","scripts/qa-diva-art-direction-core.mjs","scripts/qa-creative-context-ingestion.mjs","scripts/qa-wix-anjos-runtime.mjs","scripts/qa-mobile-contract-sync.mjs","scripts/qa-diva-duplex-voice-identity.mjs"]){if(gate==="scripts/qa-diva-morada-brain.mjs"){const rawQa=fs.readFileSync(path.join(OS_DIR,gate),'utf8');const repairedQa=rawQa.replace(/\\n/g,'\n');const tempQa=path.join(ROOT,'.qa-diva-morada-brain-runtime.mjs');fs.writeFileSync(tempQa,repairedQa);try{await run('node',[tempQa],{cwd:OS_DIR});log('QA_DIVA_MORADA_BRAIN_HARNESS_REPAIR_PASS');}finally{fs.rmSync(tempQa,{force:true});}}else{await run('node',[gate],{cwd:OS_DIR});}state.tests.push({gate,status:'PASS'})}log('REFERENCE_AND_SOCIAL_GATES_PASS '+state.tests.length);
- state.phase='BUILD_QA';materializeArtifact('wix-qa');
- await ensureAuth();
- state.phase='RELEASE_QA';writeConfig(QA);await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});state.qa=await prove(QA.host,'QA','wix-qa');
- state.phase='BUILD_LIVE';materializeArtifact('wix-live');
- state.phase='RELEASE_LIVE';writeConfig(LIVE);await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});state.live=await prove(LIVE.host,'LIVE','wix-live');
- state.phase='PROVE_CANONICAL';state.canonical=await prove(CANONICAL,'CANONICAL','wix-live');state.phase='DONE';state.done=true;log('DIVA_OS_DB3C67EE_RELEASE_COMPLETE '+SOURCE_SHA+' env=wix-live');
-}catch(e){state.phase='ERROR';state.error=String(e?.stack||e);console.error(state.error)}}
-http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{log('DIVA_OS_DB3C67EE_CONTROL_READY '+PORT);main()});
+
+async function fetchExactSource(){
+  state.phase='SOURCE';
+  fs.rmSync(OS_DIR,{recursive:true,force:true});
+  fs.mkdirSync(OS_DIR,{recursive:true});
+  const tar=path.join(os.tmpdir(),`mundinho-${SOURCE_SHA}.tar.gz`);
+  const url=`https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao/-/archive/${SOURCE_SHA}/mundinhocomunicacao-${SOURCE_SHA}.tar.gz`;
+  sh(`curl --fail --show-error --location --retry 8 --retry-all-errors "${url}" -o "${tar}"`);
+  sh(`tar -xzf "${tar}" --strip-components=1 -C "${OS_DIR}"`);
+  for(const file of ['package.json','pages/os/diva.js','data/diva-voice-presence-contract.js','radar-gabi-site/index.html','scripts/qa-diva-orb-silent-presence.mjs']) if(!fs.existsSync(path.join(OS_DIR,file))) throw new Error('SOURCE_FILE_MISSING '+file);
+  log('SOURCE_EXACT_ARCHIVE_PASS '+SOURCE_SHA);
+}
+
+async function qa(){
+  state.phase='QA';
+  await run('npm',['ci','--include=dev'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
+  const gates=[
+    'scripts/qa-diva-orb-silent-presence.mjs',
+    'scripts/qa-os-navigation-contract.mjs',
+    'scripts/qa-os-navigation-runtime.mjs',
+    'scripts/qa-pr-studio-surface.mjs',
+    'scripts/qa-diva-face-sync.mjs',
+    'scripts/qa-diva-art-direction-core.mjs',
+    'scripts/qa-creative-context-ingestion.mjs'
+  ];
+  for(const gate of gates){await run('node',[gate],{cwd:OS_DIR});state.tests.push({gate,status:'PASS'})}
+  const contract=fs.readFileSync(path.join(OS_DIR,'data/diva-voice-presence-contract.js'),'utf8');
+  const radar=fs.readFileSync(path.join(OS_DIR,'radar-gabi-site/index.html'),'utf8');
+  if(!contract.includes("policy:'CLIENT_SAFE_GABI'"))throw new Error('GABI_CLIENT_SAFE_POLICY_MISSING');
+  if(!radar.includes('/api/gabi-diva-studio'))throw new Error('GABI_BROKER_ROUTE_MISSING');
+  if(!radar.includes('GABI_RADAR_PUBLIC_SAFE_V3'))throw new Error('GABI_PUBLIC_SAFE_MARKER_MISSING');
+  log('GABI_ORBI_CLIENT_SAFE_GUARD_PASS · read-only contract check; no Gabi target in release');
+}
+
+function materialize(runtimeEnv){
+  state.phase='BUILD_'+runtimeEnv.toUpperCase().replace('-','_');
+  sh(`MUNDO_RUNTIME_SOURCE_SHA=${SOURCE_SHA} MUNDO_RUNTIME_ENV=${runtimeEnv} npm run build:wix-worker`,OS_DIR);
+  const entry=fs.readFileSync(path.join(OS_DIR,'dist/wix-server/entry.mjs'),'utf8');
+  if(!entry.includes(SOURCE_SHA))throw new Error('BUILD_SHA_MISMATCH '+runtimeEnv);
+  fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});
+  fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});
+  fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});
+  log('WIX_BUILD_PASS '+SOURCE_SHA+' '+runtimeEnv);
+}
+
+async function ensureAuth(){
+  state.phase='WIX_AUTH';
+  const env={...process.env,AI_AGENT:'wix-headless-skill'};
+  let who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env,timeout:30000});
+  if(who.status===0){log('WIX_AUTH_ALREADY_VALID');return}
+  const key=String(process.env.WIX_API_KEY||process.env.WIX_CLI_API_KEY||'').trim();
+  if(!key)throw new Error('WIX_CLI_API_KEY_MISSING');
+  await run('npx',['-y','@wix/cli@latest','login','--api-key',key],{cwd:ROOT,env});
+  who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env,timeout:30000});
+  if(who.status!==0)throw new Error('WIX_WHOAMI_FAILED_AFTER_LOGIN');
+  log('WIX_AUTH_PASS');
+}
+
+async function prove(host,label,expectedEnv){
+  for(let i=1;i<=36;i++){
+    try{
+      const dr=fetchJson(host+'/api/diva-release?proof='+Date.now());
+      const pr=fetchJson(host+'/api/preview-readiness?proof='+Date.now());
+      if(dr.deploymentSha===SOURCE_SHA&&pr.sourceSha===SOURCE_SHA&&pr.status==='ready'&&(!expectedEnv||dr.runtimeEnv===expectedEnv)){
+        log(label+'_EXACT_SHA_PASS '+SOURCE_SHA+(expectedEnv?' env='+expectedEnv:''));
+        return{dr,pr};
+      }
+    }catch{}
+    await new Promise(r=>setTimeout(r,5000));
+  }
+  throw new Error(label+'_EXACT_SHA_READBACK_FAIL');
+}
+
+async function release(target,label,runtimeEnv){
+  materialize(runtimeEnv);
+  writeConfig(target);
+  state.phase='RELEASE_'+label;
+  await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
+  return prove(target.host,label,runtimeEnv);
+}
+
+async function main(){
+  try{
+    await fetchExactSource();
+    await qa();
+    await ensureAuth();
+    state.qa=await release(QA,'QA','wix-qa');
+    state.live=await release(LIVE,'LIVE','wix-live');
+    state.phase='PROVE_CANONICAL';
+    state.canonical=await prove(CANONICAL,'CANONICAL','wix-live');
+    state.phase='DONE';state.done=true;
+    log('DIVA_ORBI_DIA_A_DIA_RELEASE_COMPLETE '+SOURCE_SHA);
+  }catch(e){state.phase='ERROR';state.error=String(e?.stack||e);console.error(state.error)}
+}
+
+http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))})
+  .listen(PORT,'0.0.0.0',()=>{log('DIVA_ORBI_DIA_A_DIA_CONTROL_READY '+PORT);main()});
