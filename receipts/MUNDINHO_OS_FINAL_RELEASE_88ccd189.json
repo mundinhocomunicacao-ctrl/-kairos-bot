@@ -1,0 +1,102 @@
+{
+  "type": "MUNDINHO_OS_FINAL_RELEASE",
+  "status": "FINAL_PASS",
+  "completedAt": "2026-09-28T18:50:44.290293029Z",
+  "source": {
+    "authority": "GitLab release/os-final-canonical-20260928",
+    "sha": "88ccd189cf2b61fd042a6fde2be558646818109c"
+  },
+  "mirror": {
+    "repository": "mundinhocomunicacao-ctrl/mundinho-os-live",
+    "sha": "4c59f42500b010d70cc5e9ce2bc10fb264030ffb"
+  },
+  "release": {
+    "runtime": "wix-live",
+    "releaseId": "wix-live-88ccd189",
+    "technicalHost": "https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com",
+    "canonicalDomain": "https://os.mundinhocomunicacao.com",
+    "canonicalEntry": "https://os.mundinhocomunicacao.com/os/inicio",
+    "controllerCommit": "77c7b1489ae724ae182bef571695a37a3f26f4e3",
+    "controllerDeployId": "dep-datbcc7lot8c73eti6p0",
+    "artifactBridgeDeployId": "dep-datbc9nf3r2c73efb7mg",
+    "dispatchedAt": "2026-09-28T18:50:40.165209541Z"
+  },
+  "qa": {
+    "fullBundle": "PASS",
+    "terminalGate": "QA_REPOSITORY_HYGIENE PASS",
+    "elevenAreas": "PASS",
+    "auth": "PASS",
+    "googleLogin": "PASS",
+    "pwa": "PASS",
+    "hydration": "PASS",
+    "charts": "PASS",
+    "writeback": "PASS",
+    "anjos": "PASS",
+    "mobileContract": "PASS",
+    "runtimeIdentity": "PASS",
+    "visual": {
+      "status": "PASS",
+      "captures": 44,
+      "areas": 11,
+      "viewports": [
+        "1440",
+        "1024",
+        "768",
+        "375x667"
+      ],
+      "deployId": "dep-dataqqd9fdbs73b155t0",
+      "harnessCommit": "b00b1583804939b84916b1afcf3a5cf23dec1b15",
+      "runtimeFileExact": "components/InicioDecisionDesk.js"
+    }
+  },
+  "artifact": {
+    "exactSha": "PASS",
+    "staticAssets": "PASS",
+    "clientJsReferences": 1047,
+    "liveRepack": "PASS"
+  },
+  "privacy": {
+    "metadata11of11": "PASS",
+    "robots": "User-agent: *\\nDisallow: /",
+    "xRobotsTag": "noindex, nofollow, noarchive, nosnippet",
+    "referrerPolicy": "no-referrer",
+    "anonymousOsRoutes": "redirect-to-root/fail-closed"
+  },
+  "readback": {
+    "technicalHost": {
+      "exactSha": "PASS",
+      "privacyMetadata11of11": "PASS",
+      "status": "ready",
+      "writebackReady": true
+    },
+    "canonicalDomain": {
+      "exactSha": "PASS",
+      "privacyMetadata11of11": "PASS",
+      "status": "ready",
+      "writebackReady": true
+    }
+  },
+  "evidenceMarkers": [
+    "SOURCE_EXACT_SHA_PASS 88ccd189cf2b61fd042a6fde2be558646818109c mirror=4c59f42500b010d70cc5e9ce2bc10fb264030ffb",
+    "OS_FINAL_QA_PASS 88ccd189cf2b61fd042a6fde2be558646818109c mirror=4c59f42500b010d70cc5e9ce2bc10fb264030ffb",
+    "OS_FINAL_VISUAL_QA_PASS 11x4 captures=44 runtime=88ccd189",
+    "WIX_ARTIFACT_EXACT_SHA_PASS 88ccd189cf2b61fd042a6fde2be558646818109c",
+    "WIX_STATIC_ASSETS PASS · 1047 client JS references preserved and resolvable",
+    "WIX_LIVE_REPACK_PASS 88ccd189cf2b61fd042a6fde2be558646818109c release=wix-live-88ccd189",
+    "WIX_LIVE_RELEASE_DISPATCHED 88ccd189cf2b61fd042a6fde2be558646818109c",
+    "LIVE_EXACT_SHA_PASS 88ccd189cf2b61fd042a6fde2be558646818109c runtime=wix-live release=wix-live-88ccd189",
+    "LIVE_PRIVACY_METADATA_PASS 11/11",
+    "CANONICAL_EXACT_SHA_PASS 88ccd189cf2b61fd042a6fde2be558646818109c runtime=wix-live release=wix-live-88ccd189",
+    "CANONICAL_PRIVACY_METADATA_PASS 11/11",
+    "MUNDINHO_OS_FINAL_RELEASE_COMPLETE 88ccd189cf2b61fd042a6fde2be558646818109c"
+  ],
+  "scope": {
+    "included": "Mundinho OS only",
+    "excluded": [
+      "Morada",
+      "Morada pages/copies",
+      "parallel experiments",
+      "new Wix sites"
+    ]
+  }
+}
