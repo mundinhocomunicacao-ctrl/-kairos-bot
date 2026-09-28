@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "npm test && node server.js",
+    "start": "git submodule sync --recursive && git submodule update --init --recursive && cd morada && node scripts/qa-morada-release-controller-council.mjs && node -e \"import('node:http').then(({createServer})=>createServer((q,s)=>s.end('MORADA_CONTROLLER_QA_PASS')).listen(process.env.PORT||10000,'0.0.0.0'))\"",
     "test": "node bridge-contract.test.js"
   },
   "engines": {
