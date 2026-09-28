@@ -11,7 +11,7 @@ const INDEX=path.join(SITE_DIR,'index.html');
 const CONFIG=path.join(SITE_DIR,'wix.config.json');
 const DIST=path.join(SITE_DIR,'dist');
 const LIVE='https://radar.gabi.mundinhocomunicacao.com/';
-const SOURCE_SHA='40d11291ff121f6c1fdf1dd88df61479745dda1d';
+const SOURCE_SHA='e7cd45bf38ee4a3dd6bd1eab3b84cb2e1f97b16f';
 const state={phase:'BOOT',sourceSha:SOURCE_SHA,userCode:null,verificationUri:null,auth:false,released:false,readback:null,error:null,done:false,lastLog:null};
 
 function log(v){const s=String(v);console.log(s);state.lastLog=s.slice(-1800)}
@@ -82,9 +82,11 @@ async function readback(){
       noOldCore:!html.includes('<span class="gabiOrbCore">DIVA</span>'),
       literalParity:html.includes('class="gabiDivaOrb divaAvatar2D large state-ready"')&&html.includes('data-diva-avatar="orbi"'),
       neutralStage:!html.includes('background:radial-gradient(circle at 50% 22%,#76518d'),
-      hasHumanLabel:html.includes('Toque para conversar')&&html.includes("'Entendendo'")
+      hasHumanLabel:html.includes('Toque para conversar')&&html.includes("'Entendendo'"),
+      voiceMenu:html.includes('class="gabiOrbiMenu"')&&html.includes('id="gabiStudioMicMute"')&&html.includes('id="gabiStudioStop"'),
+      conversationalVoice:html.includes('Entendendo…')&&html.includes('Respondendo… pode me interromper quando quiser.')
     };
-    if(res.ok&&last.official&&last.clientSafe&&last.broker&&last.noOldCore&&last.literalParity&&last.neutralStage){state.readback=last;log('GABI_RADAR_LIVE_READBACK_PASS '+JSON.stringify(last));return}
+    if(res.ok&&last.official&&last.clientSafe&&last.broker&&last.noOldCore&&last.literalParity&&last.neutralStage&&last.voiceMenu&&last.conversationalVoice){state.readback=last;log('GABI_RADAR_LIVE_READBACK_PASS '+JSON.stringify(last));return}
     await new Promise(r=>setTimeout(r,4000));
   }
   state.readback=last;throw new Error('GABI_RADAR_LIVE_READBACK_FAIL '+JSON.stringify(last));

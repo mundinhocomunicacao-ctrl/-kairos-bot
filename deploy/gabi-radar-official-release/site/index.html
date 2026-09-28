@@ -92,6 +92,10 @@ main{max-width:1320px;padding:42px 28px 84px}
 .studioHint{margin-top:8px;font-size:10px;color:var(--muted)}.studioHint b{color:var(--ink)}
 .studioResult{display:none;margin-top:12px}.studioResult.ready{display:block}.studioResultHead{display:flex;justify-content:space-between;gap:14px;align-items:center}.studioReplay{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:850}.studioResultPrimary{display:grid;grid-template-columns:1.25fr .75fr;gap:9px;margin-top:10px}.studioResultPrimary .studioResultBlock:first-child{grid-column:1/-1}.studioResultGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.studioResultBlock{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}.studioResultBlock.full{grid-column:1/-1}.studioResultBlock b{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--purple)}.studioResultBlock h3{font-size:22px;letter-spacing:-.04em;margin:6px 0}.studioResultBlock p,.studioResultBlock li{font-size:12px;line-height:1.5;color:#55475b}.studioResultBlock ul{padding-left:17px;margin:8px 0}.studioQuickActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.studioQuickActions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:11px;font-weight:850}.studioDetails{margin-top:10px;border:1px solid var(--line);border-radius:16px;background:#faf8fb;overflow:hidden}.studioDetails summary{cursor:pointer;padding:12px 14px;font-size:11px;font-weight:900;list-style:none}.studioDetails summary::-webkit-details-marker{display:none}.studioDetails[open] summary{border-bottom:1px solid var(--line)}.studioDetails .studioResultGrid,.studioDetails .studioRefs{padding-left:12px;padding-right:12px}.studioDetails .studioRefs{padding-bottom:12px}.studioRefs{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.studioRefs a{display:inline-flex;border-radius:999px;padding:8px 10px;background:#f4edf6;color:var(--ink);text-decoration:none;font-size:11px;font-weight:850;border:1px solid var(--line)}.studioLoading{opacity:.62;pointer-events:none}
 .gabiOrbPresence{display:grid;place-items:center;align-content:center;gap:14px;overflow:visible}
+.gabiOrbiMenu{display:flex;align-items:center;justify-content:center;gap:7px;min-height:30px}
+.gabiOrbiMenu button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;min-height:30px;padding:0 9px;font:850 9px/1 Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(58,29,69,.05)}
+.gabiOrbiMenu button.active{background:#271d23;color:#fff;border-color:#271d23}.gabiOrbiMenu button:disabled{opacity:.34;cursor:default;background:#fff;color:var(--muted)}
+
 .gabiDivaOrb{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;color:inherit}
 .gabiDivaOrb:focus-visible{outline:3px solid rgba(36,79,130,.3);outline-offset:6px;border-radius:999px}
 .divaAvatar2D{--d:38px;position:relative;display:inline-flex;align-items:center;gap:8px;min-width:var(--d);min-height:var(--d);isolation:isolate}
@@ -211,6 +215,10 @@ model-viewer:not(:defined)+.diva3dFallback{display:grid}
           <span class="divaOrbHalo" aria-hidden="true"></span>
           <span class="divaOrbCore" aria-hidden="true"><i class="divaOrbLight"></i><i class="divaOrbMist"></i><i class="divaOrbPulse"></i></span>
         </button>
+        <div class="gabiOrbiMenu" data-orbi-voice-menu="true" aria-label="Controles de voz do ORBI">
+          <button id="gabiStudioMicMute" type="button" aria-pressed="false" aria-label="Mutar microfone">🎙 Microfone</button>
+          <button id="gabiStudioStop" type="button" disabled>Parar</button>
+        </div>
         <div class="giva3dStatus"><span id="gabiStudioPresenceLabel">Toque para conversar</span><div class="gabiOrbiCapacity" id="gabiOrbiCapacity" data-known="false"><b>Inteligência absorvida por ORBI</b><small id="gabiOrbiCapacityValue">estimativa diária em leitura</small></div></div>
       </aside>
 
@@ -282,8 +290,6 @@ model-viewer:not(:defined)+.diva3dFallback{display:grid}
 
         <div class="studioVoiceRow">
           <button id="gabiStudioVoiceToggle" type="button">🔊 Voz natural: ligada</button>
-          <button id="gabiStudioMicMute" type="button" aria-pressed="false">🎙 Mutar microfone</button>
-          <button id="gabiStudioStop" type="button">⏹ Parar</button>
           <button id="gabiStudioContinue" type="button">▶ Continuar</button>
           <span class="studioVoiceStatus" id="gabiStudioVoiceStatus">Pode falar ou escrever. A DIVA responde e mantém o rastro da ideia.</span>
         </div>
@@ -881,7 +887,7 @@ function gabiStudioResumeListening(delay=180){
   gabiStudioResumeTimer=window.setTimeout(()=>{gabiStudioResumeTimer=null;if(gabiStudioConversationOpen&&!gabiStudioRecognition&&!gabiStudioAwaitingReply)startGabiStudioMic({resume:true})},delay);
 }
 function gabiStudioSpokenSummary(text,maxChars=360){
-  const full=gabiStudioPublicText(text,2600);if(full.length<=maxChars)return full;
+  const full=gabiStudioPublicText(text,2600).replace(/^[\s>*#-]+/gm,'').replace(/^\s*\d+[.)]\s+/gm,'').replace(/[|`*_~]/g,' ').replace(/\s+/g,' ').trim();if(full.length<=maxChars)return full;
   const head=full.slice(0,maxChars);
   const cut=Math.max(head.lastIndexOf('. '),head.lastIndexOf('! '),head.lastIndexOf('? '),head.lastIndexOf('; '));
   return (cut>120?head.slice(0,cut+1):head.replace(/\s+\S*$/,'').trim()+'…');
@@ -896,8 +902,8 @@ function gabiStudioSpeak(text){
   u.lang='pt-BR';u.rate=GABI_ORBI_VOICE_PROFILE.rate;u.pitch=GABI_ORBI_VOICE_PROFILE.pitch;u.volume=GABI_ORBI_VOICE_PROFILE.volume;
   const preferred=gabiStudioPickVoice(window.speechSynthesis.getVoices());
   if(preferred)u.voice=preferred;
-  u.onstart=()=>{gabiStudioSpeechStartedAt=Date.now();gabiStudioSetPresenceState('speaking');gabiStudioSetVoiceStatus('DIVA respondendo… você pode tocar no ORBE para interromper.')};
-  u.onend=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus(gabiStudioConversationOpen?'Pode continuar falando.':'Pronta para continuar.');gabiStudioResumeListening()};
+  u.onstart=()=>{gabiStudioSpeechStartedAt=Date.now();gabiStudioSetPresenceState('speaking');gabiStudioSetVoiceStatus('Respondendo… pode me interromper quando quiser.')};
+  u.onend=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus(gabiStudioConversationOpen?'Pode continuar.':'Quando quiser, é só falar.');gabiStudioResumeListening()};
   u.onerror=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus('A voz falhou, mas a resposta continua aqui na tela.');gabiStudioResumeListening()};
   window.speechSynthesis.speak(u);
 }
@@ -906,7 +912,8 @@ function gabiStudioToggleMicMute(){
   const btn=document.getElementById('gabiStudioMicMute');
   if(btn){
     btn.setAttribute('aria-pressed',String(gabiStudioMicMuted));
-    btn.textContent=gabiStudioMicMuted?'🔇 Desmutar microfone':'🎙 Mutar microfone';
+    btn.textContent=gabiStudioMicMuted?'🔇 Microfone':'🎙 Microfone';
+    btn.setAttribute('aria-label',gabiStudioMicMuted?'Desmutar microfone':'Mutar microfone');
     btn.classList.toggle('active',gabiStudioMicMuted);
   }
   if(gabiStudioMicMuted){
@@ -921,6 +928,7 @@ function gabiStudioToggleMicMute(){
 }
 function gabiStudioStopConversation(){
   gabiStudioConversationOpen=false;gabiStudioAwaitingReply=false;
+  const stop=document.getElementById('gabiStudioStop');if(stop)stop.disabled=true;
   if(gabiStudioResumeTimer){window.clearTimeout(gabiStudioResumeTimer);gabiStudioResumeTimer=null}
   if(gabiStudioRecognition){try{gabiStudioRecognition.abort()}catch{}gabiStudioRecognition=null}
   if('speechSynthesis' in window)window.speechSynthesis.cancel();
@@ -931,7 +939,7 @@ function gabiStudioLocalVoiceCommand(value){
   const normalized=normalizedLiveText(value).replace(/^diva\s*/,'').trim();
   if(normalized.includes('pare')){gabiStudioStopConversation();return true}
   if(normalized.includes('continue')){
-    gabiStudioConversationOpen=true;gabiStudioSetVoiceStatus('Ouvindo você…');gabiStudioResumeListening(80);return true;
+    gabiStudioConversationOpen=true;const stop=document.getElementById('gabiStudioStop');if(stop)stop.disabled=false;gabiStudioSetVoiceStatus('Ouvindo você…');gabiStudioResumeListening(80);return true;
   }
   if(normalized.includes('repete')||normalized.includes('repita')){
     if(gabiStudioLastSpeech)gabiStudioSpeak(gabiStudioLastSpeech);
@@ -1076,7 +1084,7 @@ async function gabiStudioGenerate(intent=gabiStudioIntent,overrideBrief=''){
   const composer=document.getElementById('gabiStudioComposer'),button=document.getElementById('gabiStudioGenerate'),brief=(overrideBrief||document.getElementById('gabiStudioBrief').value).trim();
   gabiStudioLastBrief=brief;
   if(gabiStudioLocalVoiceCommand(brief))return;
-  const preset=gabiStudioSmartPreset(intent,brief);gabiStudioAwaitingReply=true;composer.classList.add('studioLoading');button.textContent='Criando…';gabiStudioSetPresenceState('thinking');gabiStudioSetVoiceStatus('DIVA está organizando a melhor direção…');
+  const preset=gabiStudioSmartPreset(intent,brief);gabiStudioAwaitingReply=true;composer.classList.add('studioLoading');button.textContent='Criando…';gabiStudioSetPresenceState('thinking');gabiStudioSetVoiceStatus('Entendendo…');
   try{
     const res=await fetch(GABI_DIVA_STUDIO_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({intent,brief,preset,context:gabiStudioPublicContext()})});
     const data=await res.json().catch(()=>({}));
@@ -1116,6 +1124,7 @@ async function startGabiStudioMic({resume=false}={}){
     }
   }
   gabiStudioConversationOpen=true;
+  const stop=document.getElementById('gabiStudioStop');if(stop)stop.disabled=false;
   if('speechSynthesis' in window&&window.speechSynthesis.speaking)window.speechSynthesis.cancel();
   if(gabiStudioRecognition){try{gabiStudioRecognition.abort()}catch{}gabiStudioRecognition=null}
   const mic=document.getElementById('gabiStudioMic'),brief=document.getElementById('gabiStudioBrief');
@@ -1166,7 +1175,7 @@ function activateGabiStudio(){
   document.getElementById('gabiDivaOrb')?.addEventListener('click',()=>{setPath('context');if('speechSynthesis' in window&&window.speechSynthesis.speaking){gabiStudioMentalSignal('interruption',{state:'speaking',elapsedMs:gabiStudioSpeechStartedAt?Date.now()-gabiStudioSpeechStartedAt:0});window.speechSynthesis.cancel();startGabiStudioMic();return}if(!gabiStudioConversationOpen)startGabiStudioMic();else if(!gabiStudioRecognition)startGabiStudioMic({resume:true})});
   document.getElementById('gabiStudioStop')?.addEventListener('click',()=>gabiStudioStopConversation());
   document.getElementById('gabiStudioMicMute')?.addEventListener('click',()=>gabiStudioToggleMicMute());
-  document.getElementById('gabiStudioContinue')?.addEventListener('click',()=>{gabiStudioConversationOpen=true;startGabiStudioMic({resume:true})});
+  document.getElementById('gabiStudioContinue')?.addEventListener('click',()=>{gabiStudioConversationOpen=true;const stop=document.getElementById('gabiStudioStop');if(stop)stop.disabled=false;startGabiStudioMic({resume:true})});
   document.getElementById('gabiStudioVoiceToggle')?.addEventListener('click',e=>{
     gabiStudioVoiceEnabled=!gabiStudioVoiceEnabled;e.currentTarget.textContent=gabiStudioVoiceEnabled?'🔊 Voz natural: ligada':'🔇 Voz: desligada';
     if(!gabiStudioVoiceEnabled&&'speechSynthesis' in window){window.speechSynthesis.cancel();gabiStudioSetPresenceState('idle');gabiStudioResumeListening()}
