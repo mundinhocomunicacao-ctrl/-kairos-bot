@@ -6,7 +6,7 @@ import {spawn,spawnSync} from 'node:child_process';
 
 const ROOT=process.cwd();
 const MORADA=path.join(ROOT,'morada');
-const EXPECTED_SOURCE='c8b5dcc0158e505f64cf430332d5362026d6fb78';
+const EXPECTED_SOURCE='28dd98017ed3df94925c1100b994fdff37bf2f51';
 const SITE='https://www.especialistabrandingeinfluencia.com';
 const CANARY_NONCE='m0aWKB9L8B-lHKj3gNZJMRU5Bh_C_TGaKvZc94WTh6E';
 const PORT=Number(process.env.PORT||10000);
@@ -98,20 +98,28 @@ async function prove(){
   log('DIVA_MORADA_SESSION_GUARD_PASS');
 
   state.phase='PROVE_BRAIN_CANARY';
-  const canary=await jsonFetch(SITE+'/_functions/divaCanary?nonce='+encodeURIComponent(CANARY_NONCE)+'&proof='+Date.now());
-  if(canary.status!==200||canary.data?.ok!==true||canary.data?.status!=='BRAIN_OK'||canary.data?.provider!=='DIVA_GATEWAY'||canary.data?.receipt?.ok!==true){
-    throw new Error('MORADA_CENTRAL_GATEWAY_CANARY_FAIL '+JSON.stringify(canary));
+  const canary=await jsonFetch(SITE+'/_functions/divaCouncilProof20260928?proof='+Date.now());
+  if(canary.status===410&&canary.data?.status==='COUNCIL_PROOF_CONSUMED'){
+    state.proofs.canary={status:410,brainStatus:'COUNCIL_PROOF_CONSUMED'};
+    log('DIVA_MORADA_COUNCIL_CANARY_ALREADY_CONSUMED');
+    return;
+  }
+  if(canary.status!==200||canary.data?.ok!==true||canary.data?.status!=='BRAIN_OK'||canary.data?.provider!=='DIVA_COUNCIL'||canary.data?.model!=='ensemble'||canary.data?.receipt?.ok!==true||!canary.data?.receipt?.pulseId){
+    throw new Error('MORADA_DIVA_COUNCIL_CANARY_FAIL '+JSON.stringify(canary));
   }
   state.proofs.canary={
     status:canary.status,
     brainStatus:canary.data.status,
     provider:canary.data.provider,
     model:canary.data.model||null,
+    councilVersion:canary.data.councilVersion||null,
+    contributors:Array.isArray(canary.data.contributors)?canary.data.contributors:[],
+    attempts:Array.isArray(canary.data.attempts)?canary.data.attempts:[],
     receiptStatus:canary.data.receipt?.status||null,
     pulseId:canary.data.receipt?.pulseId||null,
     memoryRecordId:canary.data.receipt?.memoryRecordId||null
   };
-  log('DIVA_MORADA_CENTRAL_GATEWAY_CANARY_PASS '+JSON.stringify(state.proofs.canary));
+  log('DIVA_MORADA_COUNCIL_CANARY_PASS '+JSON.stringify(state.proofs.canary));
 }
 async function main(){
   try{
@@ -122,9 +130,9 @@ async function main(){
     log('DIVA_MORADA_SOURCE_EXACT_PASS '+source);
 
     state.phase='QA';
-    await run('node',['scripts/qa-morada-central-gateway.mjs'],{cwd:MORADA});
+    await run('node',['scripts/qa-morada-real-source-bridge.mjs'],{cwd:MORADA});
     state.proofs.qa='PASS';
-    log('QA_MORADA_CENTRAL_GATEWAY_PASS');
+    log('QA_MORADA_REAL_SOURCE_BRIDGE_PASS');
 
     const wixCli=await ensureWixCli();
     await ensureAuth(wixCli);
@@ -138,7 +146,7 @@ async function main(){
     await prove();
 
     state.phase='DONE';state.done=true;
-    log('DIVA_MORADA_CENTRAL_GATEWAY_RELEASE_COMPLETE '+EXPECTED_SOURCE);
+    log('DIVA_MORADA_COUNCIL_RELEASE_COMPLETE '+EXPECTED_SOURCE);
   }catch(error){
     state.phase='ERROR';state.error=String(error?.stack||error);console.error(state.error);
   }
