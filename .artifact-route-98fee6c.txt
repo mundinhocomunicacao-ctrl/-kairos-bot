@@ -1,0 +1,3 @@
+Mundinho OS artifact route
+source=98fee6c346ce3cd3f99e8de1bcf60b768d1754cb
+mirror=45c5f22b0ec5d5457aac5274c54a9a8780d58c94
