@@ -30,7 +30,7 @@ async function fetchExactSource(){
 
 async function qa(){
   state.phase='QA';
-  await run('npm',['ci','--include=dev'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
+  if(fs.existsSync(path.join(OS_DIR,'node_modules'))){log('NPM_DEPS_REUSE_PASS')}else{await run('npm',['ci','--include=dev'],{cwd:OS_DIR,env:{NODE_ENV:'development'}})};
   const gates=[
     'scripts/qa-diva-orb-silent-presence.mjs',
     'scripts/qa-os-navigation-contract.mjs',
