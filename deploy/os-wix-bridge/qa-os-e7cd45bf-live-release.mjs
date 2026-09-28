@@ -87,6 +87,8 @@ assert.ok(!src.includes("throw new Error(label+'_LOGIN_META_MISSING_'"),'Wix boo
 assert.ok(src.includes('ROOT_PRIVACY_DIAGNOSTIC'),'Wix raw bootstrap metadata must remain visible as diagnostics');
 assert.ok(src.includes("ROBOTS_TXT_FAIL"),'privacy audit must retain robots.txt deny-all proof');
 assert.ok(src.includes("AUTH_REDIRECT_FAIL"),'privacy audit must retain authenticated-route redirect proof');
+assert.ok(!src.includes("components/OSPageMeta.js"),'live route privacy audit must not depend on a nonexistent local title-contract file');
+assert.ok(!src.includes("TITLE_CONTRACT_MISSING"),'live route privacy audit must not gate on stale local title literals');
 assert.ok(src.includes("qa-malha-pulse-consumer-runtime.mjs"),'controller must execute Malha pulse runtime QA');
 assert.ok(src.includes("qa-diva-face-sync.mjs"),'controller must execute DIVA face-sync QA');
 assert.ok(src.includes("qa-diva-ia-cognitive-router.mjs"),'controller must execute cognitive-router QA');
