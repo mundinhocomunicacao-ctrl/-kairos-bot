@@ -54,6 +54,8 @@ assert.ok(healSrc.includes('de8568fa10a42aae6cd25abb532f47a1c3ac27ec'),'healing 
 assert.ok(healSrc.includes('68b46dabd6fa0191259225493350a35caea26567'),'healing hook must pin exact source');
 assert.ok(healSrc.includes("npm exec vite -- build --minify false"),'healing hook must compile through direct Vite build');
 assert.ok(healSrc.includes('scripts/package-wix-worker.mjs'),'healing hook must package Wix worker in build phase');
+assert.ok(healSrc.includes('ROOT="$PWD"'),'healing hook must use actual build working directory');
+assert.ok(!healSrc.includes('RENDER_PROJECT_DIR'),'healing hook must not trust Render relative project-dir metadata');
 assert.ok(src.includes('PREBUILT_ARTIFACT_PROOF_PATH'),'controller must require build-phase artifact proof');
 assert.ok(src.includes('WIX_PREBUILT_ARTIFACT_PASS'),'controller must emit prebuilt artifact receipt');
 assert.ok(!src.includes("await run('npm',['ci','--ignore-scripts']"),'runtime controller must not reinstall dependencies');
