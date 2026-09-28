@@ -1,0 +1,121 @@
+name: Mundinho OS · Day-to-Day Live Release · ffbdab06
+
+on:
+  push:
+    branches: [forge/os-submodule-44f2278a]
+    paths:
+      - '.github/workflows/os-day-to-day-live-release-ffbdab06.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SOURCE_SHA: ffbdab068929e235fdc9d7d83f57085e227a1e4c
+      MUNDINHO_WIX_LIVE_SITE_ID: c80689f2-6627-45fa-a264-4ab2863ba306
+      MUNDINHO_WIX_LIVE_APP_ID: 79eedd41-5ca6-4940-925a-e95e6f3c570e
+      MUNDINHO_WIX_LIVE_URL: https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com
+      WIX_KEY_A: ${{ secrets.WIX_OS_API_KEY }}
+      WIX_KEY_B: ${{ secrets.WIX_MUNDO_API_KEY }}
+      WIX_KEY_C: ${{ secrets.WIX_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: forge/os-submodule-44f2278a
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: os/package-lock.json
+
+      - name: Prove source and run OS-only gates
+        working-directory: os
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(tr -d '\r\n ' < .release-source/canonical-sha.txt)" = "$SOURCE_SHA"
+          npm ci
+          node scripts/qa-wix-live-isolation.mjs
+          node scripts/qa-os-route-auth-gate.mjs
+          node scripts/qa-ten-primary-areas-runtime.mjs
+          node scripts/qa-home-diva-click-voice.mjs
+          node scripts/qa-diva-orb-silent-presence.mjs
+          node scripts/qa-os-visual-language.mjs
+          node scripts/qa-social-insights-live-grid.mjs
+          node scripts/qa-os-hydration-regression.mjs
+          node scripts/qa-os-11-surface-angel-closure.mjs
+          node scripts/qa-social-insights-content-data-live.mjs
+          node scripts/qa-social-research-contract.mjs
+          node scripts/qa-pr-studio-surface.mjs
+          node scripts/qa-os-radar-gabi-v2.mjs
+          node scripts/qa-human-radar-ideas-live-charts.mjs
+          node scripts/qa-mobile-contract-sync.mjs
+          node scripts/qa-diva-listening-reflex.mjs
+          echo "OS_DAY_TO_DAY_GATES=PASS"
+
+      - name: Build exact Wix live artifact
+        working-directory: os
+        shell: bash
+        run: |
+          set -euo pipefail
+          MUNDO_RUNTIME_SOURCE_SHA="$SOURCE_SHA" MUNDO_RUNTIME_ENV=wix-live npm run build:wix-worker
+          test -d dist/client
+          test -f dist/wix-server/entry.mjs
+          grep -F "$SOURCE_SHA" dist/wix-server/entry.mjs >/dev/null
+          echo "ARTIFACT_EXACT_RUNTIME_SHA_PASS $SOURCE_SHA"
+
+      - name: Package Wix live release
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .wix-live-release
+          mkdir .wix-live-release
+          cp -R os/dist/client .wix-live-release/client
+          cp -R os/dist/wix-server .wix-live-release/server
+          node -e 'const fs=require("node:fs");fs.writeFileSync(".wix-live-release/wix.config.json",JSON.stringify({projectType:"Site",appId:process.env.MUNDINHO_WIX_LIVE_APP_ID,siteId:process.env.MUNDINHO_WIX_LIVE_SITE_ID,site:{outputDirectory:{client:"./client",server:"./server"}}},null,2))'
+
+      - name: Resolve governed Wix credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEY="${ WIX_KEY_A:-}"
+          ALIAS="WIX_OS_API_KEY"
+          if [ -z "$KEY" ]; then KEY="${ WIX_KEY_B:-}"; ALIAS="WIX_MUNDO_API_KEY"; fi
+          if [ -z "$KEY" ]; then KEY="${ WIX_KEY_C:-}"; ALIAS="WIX_API_KEY"; fi
+          test -n "$KEY" || { echo "WIX_LIVE_RELEASE_CREDENTIAL_MISSING"; exit 78; }
+          echo "::add-mask::$KEY"
+          echo "WIX_CLI_KEY=$KEY" >> "$GITHUB_ENV"
+          echo "WIX_LIVE_RELEASE_CREDENTIAL=FOUND alias=$ALIAS"
+
+      - name: Release exact build to DIA A DIA
+        working-directory: .wix-live-release
+        shell: bash
+        run: |
+          set -euo pipefail
+          CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_CLI_KEY"
+          CI=1 npx --yes @wix/cli@latest whoami
+          CI=1 npx --yes @wix/cli@latest release
+          echo "WIX_LIVE_RELEASE_DISPATCHED site=$MUNDINHO_WIX_LIVE_SITE_ID sha=$SOURCE_SHA"
+
+      - name: Read back exact live SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            RV="$(curl -fsSL "$MUNDINHO_WIX_LIVE_URL/api/release-version?proof=$i" || true)"
+            DR="$(curl -fsSL "$MUNDINHO_WIX_LIVE_URL/api/diva-release?proof=$i" || true)"
+            PR="$(curl -fsSL "$MUNDINHO_WIX_LIVE_URL/api/preview-readiness?proof=$i" || true)"
+            if RV="$RV" DR="$DR" PR="$PR" SOURCE_SHA="$SOURCE_SHA" node -e 'const rv=JSON.parse(process.env.RV||"{}");const dr=JSON.parse(process.env.DR||"{}");const pr=JSON.parse(process.env.PR||"{}");const sha=process.env.SOURCE_SHA;if(rv.sourceSha!==sha)process.exit(1);if(dr.deploymentSha!==sha)process.exit(1);if(pr.sourceSha!==sha||pr.status!=="ready")process.exit(1);console.log("LIVE_EXACT_SHA_PASS",JSON.stringify({sourceSha:sha,deploymentId:dr.deploymentId||null,readiness:pr.status}))'; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "WIX_LIVE_READBACK_FAIL expected=$SOURCE_SHA"
+          exit 1
