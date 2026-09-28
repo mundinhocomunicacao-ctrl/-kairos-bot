@@ -4,9 +4,9 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='9bc0a248b1d2f830cfda7bf6e92998b353ec29c7';
-const MIRROR_SHA='d7f70bedd6639e24393c32ca8b49cd151d401b57';
-const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-9bc0a248');
+const SOURCE_SHA='3243632c60c721739316cca189cb35542d0b38df';
+const MIRROR_SHA='44a351b028c4f6b3a307124f5137dc2ff6466002';
+const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-3243632c');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`;
@@ -52,9 +52,13 @@ async function provePrivacy(host,label){
   if(!metaSource.includes(route)||!metaSource.includes(title))throw new Error(label+'_TITLE_CONTRACT_MISSING '+route);
   const res=await fetch(host+route+'?privacyProof='+Date.now(),{redirect:'manual',headers:{'cache-control':'no-cache'}});
   const location=res.headers.get('location')||'';
+  const pageXRobots=String(res.headers.get('x-robots-tag')||'').toLowerCase();
+  const pageReferrer=String(res.headers.get('referrer-policy')||'').toLowerCase();
+  for(const token of ['noindex','nofollow','noarchive','nosnippet'])if(!pageXRobots.includes(token))throw new Error(label+'_PAGE_X_ROBOTS_MISSING_'+route+'_'+token);
+  if(pageReferrer!=='no-referrer')throw new Error(label+'_PAGE_REFERRER_POLICY_'+route+'_'+pageReferrer);
   let redirectPath='';try{redirectPath=new URL(location,host).pathname}catch{}
   if(![301,302,303,307,308].includes(res.status)||redirectPath!=='/')throw new Error(label+'_AUTH_REDIRECT_FAIL '+route+' status='+res.status+' location='+location);
-  pages.push({route,status:res.status,redirect:redirectPath,title});
+  pages.push({route,status:res.status,redirect:redirectPath,title,xRobots:pageXRobots,referrer:pageReferrer});
  }
  log(label+'_PRIVACY_METADATA_PASS 11/11');
  return{login:{status:root.status,title:'Mundinho OS · Acesso Interno',xRobots,referrer},robots:robotsBody,pages};
@@ -63,7 +67,7 @@ async function materializeArtifact(){
  state.phase='ARTIFACT';
  const res=await fetch(ARTIFACT_URL+'?source='+SOURCE_SHA,{headers:{'cache-control':'no-cache'}});
  if(!res.ok)throw new Error('ARTIFACT_FETCH_FAILED '+res.status);
- const artifactPath=path.join(ROOT,'os-release-9bc0a248.tar.gz');
+ const artifactPath=path.join(ROOT,'os-release-3243632c.tar.gz');
  fs.writeFileSync(artifactPath,Buffer.from(await res.arrayBuffer()));
  fs.rmSync(path.join(OS_DIR,'dist'),{recursive:true,force:true});
  await run('tar',['-xzf',artifactPath,'-C',OS_DIR],{cwd:ROOT});
@@ -85,7 +89,7 @@ async function main(){try{
  state.phase='SOURCE';await run('bash',['-lc','git submodule sync --recursive && git submodule update --init --recursive os'],{cwd:ROOT});const mirror=sh('git -C os rev-parse HEAD');if(mirror!==MIRROR_SHA)throw new Error('MIRROR_SHA_MISMATCH '+mirror);const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();if(marker!==SOURCE_SHA)throw new Error('SOURCE_MARKER_MISMATCH '+marker);log('SOURCE_EXACT_SHA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
  state.phase='CONTROLLER_QA';await run('node',['deploy/os-wix-bridge/qa-os-e7cd45bf-live-release.mjs'],{cwd:ROOT});state.tests.push({gate:'controller',status:'PASS'});
  state.phase='QA';
- const FORGE_QA={deployId:'dep-data1i8jo6nc73erpbh0',sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,status:'live',lastGate:'QA_REPOSITORY_HYGIENE PASS'};
+ const FORGE_QA={deployId:'dep-data9nnlk1mc73et7hg0',sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,status:'live',lastGate:'QA_REPOSITORY_HYGIENE PASS'};
  state.tests.push({gate:'qa:release-os-final',status:'PASS',evidence:FORGE_QA});
  log('OS_FINAL_QA_REUSED '+FORGE_QA.deployId+' source='+SOURCE_SHA+' mirror='+MIRROR_SHA);
  await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_artifact_live_repack');
