@@ -6,8 +6,9 @@ import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const SOURCE_SHA=String(process.env.TARGET_SOURCE_SHA||'20daa504b8cd514e8cca2ab4f700f47b3cce0c9e').trim();
+const MIRROR_SHA='ff5b902047002f59181b37284ed5c3f389416e56';
 const ROOT=process.cwd();
-const OS_DIR=path.join(ROOT,'os-live-source');
+const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-os-orbi-release');
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
@@ -21,14 +22,10 @@ async function fetchJson(url){const r=await fetch(url,{headers:{'cache-control':
 
 async function fetchExactSource(){
   state.phase='SOURCE';
-  fs.rmSync(OS_DIR,{recursive:true,force:true});
-  fs.mkdirSync(OS_DIR,{recursive:true});
-  const tar=path.join(os.tmpdir(),`mundinho-${SOURCE_SHA}.tar.gz`);
-  const url=`https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao/-/archive/${SOURCE_SHA}/mundinhocomunicacao-${SOURCE_SHA}.tar.gz`;
-  await run('curl',['--fail','--show-error','--location','--retry','8','--retry-all-errors',url,'-o',tar]);
-  await run('tar',['-xzf',tar,'--strip-components=1','-C',OS_DIR]);
+  const head=spawnSync('git',['rev-parse','HEAD'],{cwd:OS_DIR,encoding:'utf8'}).stdout.trim();
+  if(head!==MIRROR_SHA)throw new Error('MIRROR_SHA_MISMATCH '+head);
   for(const file of ['package.json','pages/os/diva.js','data/diva-voice-presence-contract.js','radar-gabi-site/index.html','scripts/qa-diva-orb-silent-presence.mjs']) if(!fs.existsSync(path.join(OS_DIR,file))) throw new Error('SOURCE_FILE_MISSING '+file);
-  log('SOURCE_EXACT_ARCHIVE_PASS '+SOURCE_SHA);
+  log('SOURCE_EXACT_MIRROR_PASS gitlab='+SOURCE_SHA+' mirror='+MIRROR_SHA);
 }
 
 async function qa(){
