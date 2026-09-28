@@ -4,9 +4,9 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='7cc83b51ccdde17db039d2ca3ff44178792681f6';
-const MIRROR_SHA='2e0c0061226ff929972d30d6c307263885e47388';
-const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-7cc83b51');
+const SOURCE_SHA='970a1f54e9dd3c1c32746e4804c0cabf21383897';
+const MIRROR_SHA='b32a0b155fbbef3755037f8ed421b173f5056dfb';
+const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-970a1f54');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`;
@@ -68,7 +68,7 @@ async function materializeArtifact(){
  state.phase='ARTIFACT';
  const res=await fetch(ARTIFACT_URL+'?source='+SOURCE_SHA,{headers:{'cache-control':'no-cache'}});
  if(!res.ok)throw new Error('ARTIFACT_FETCH_FAILED '+res.status);
- const artifactPath=path.join(ROOT,'os-release-7cc83b51.tar.gz');
+ const artifactPath=path.join(ROOT,'os-release-970a1f54.tar.gz');
  fs.writeFileSync(artifactPath,Buffer.from(await res.arrayBuffer()));
  fs.rmSync(path.join(OS_DIR,'dist'),{recursive:true,force:true});
  await run('tar',['-xzf',artifactPath,'-C',OS_DIR],{cwd:ROOT});
