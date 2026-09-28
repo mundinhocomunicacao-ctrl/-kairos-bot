@@ -65,12 +65,20 @@ async function materialize(runtimeEnv){
   fs.mkdirSync(path.join(OS_DIR,'.release-source'),{recursive:true});
   fs.writeFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),SOURCE_SHA+'\n');
   log('CANONICAL_SHA_STAMPED '+SOURCE_SHA);
-  const entryPath=path.join(OS_DIR,'dist/wix-server/entry.mjs');
-  if(!fs.existsSync(entryPath))throw new Error('BOOTSTRAP_ARTIFACT_MISSING');
-  let entry=fs.readFileSync(entryPath,'utf8');
-  for(const required of ['/api/os-data-gaps','/api/agent-social-source','/os/agenda','/os/pipeline','/os/social']){
-    if(!entry.includes(required))throw new Error('BOOTSTRAP_ARTIFACT_CONTRACT_MISSING '+required);
+  const requiredSourceFiles=[
+    'pages/api/os-data-gaps.js',
+    'pages/api/agent-social-source.js',
+    'pages/os/agenda.js',
+    'pages/os/pipeline/index.js',
+    'pages/os/social.js'
+  ];
+  for(const required of requiredSourceFiles){
+    if(!fs.existsSync(path.join(OS_DIR,required)))throw new Error('SOURCE_CONTRACT_FILE_MISSING '+required);
   }
+  const entryPath=path.join(OS_DIR,'dist/wix-server/entry.mjs');
+  const clientDir=path.join(OS_DIR,'dist/client');
+  if(!fs.existsSync(entryPath)||!fs.existsSync(clientDir))throw new Error('BOOTSTRAP_ARTIFACT_MISSING');
+  let entry=fs.readFileSync(entryPath,'utf8');
   const releaseId=`${runtimeEnv}-${SOURCE_SHA.slice(0,8)}`;
   entry=entry
     .replace(/MUNDO_RUNTIME_SOURCE_SHA:"[a-f0-9]{40}"/g,`MUNDO_RUNTIME_SOURCE_SHA:"${SOURCE_SHA}"`)
