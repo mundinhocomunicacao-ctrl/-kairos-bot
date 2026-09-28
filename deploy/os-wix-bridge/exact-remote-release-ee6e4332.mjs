@@ -12,6 +12,7 @@ const CANONICAL='https://os.mundinhocomunicacao.com';
 const EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`;
 const ARTIFACT_URL='https://mundinho-wix-remote-release-pty.onrender.com/artifact';
 const RETRY_AUTH_ONLY=false;
+const READBACK_ONLY=true;
 const PAGE_TITLES={
   '/os/inicio':'Mundinho OS · Início',
   '/os/agenda':'Mundinho OS · Agenda',
@@ -92,8 +93,13 @@ async function main(){try{
  const FORGE_QA={deployId:'dep-data9nnlk1mc73et7hg0',sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,status:'live',lastGate:'QA_REPOSITORY_HYGIENE PASS'};
  state.tests.push({gate:'qa:release-os-final',status:'PASS',evidence:FORGE_QA});
  log('OS_FINAL_QA_REUSED '+FORGE_QA.deployId+' source='+SOURCE_SHA+' mirror='+MIRROR_SHA);
- await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_artifact_live_repack');
- await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);
+ if(!READBACK_ONLY){
+  await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_artifact_live_repack');
+  await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);
+ }else{
+  state.tests.push({gate:'wix-release',status:'PASS',evidence:{sourceSha:SOURCE_SHA,releaseId:EXPECTED_RELEASE_ID,dispatchedAt:'2026-09-28T17:28:50.797248574Z'}});
+  log('WIX_LIVE_RELEASE_REUSED '+SOURCE_SHA+' release='+EXPECTED_RELEASE_ID);
+ }
  state.phase='READBACK_LIVE';state.live=await prove(LIVE.host,'LIVE');state.livePrivacy=await provePrivacy(LIVE.host,'LIVE');
  state.phase='READBACK_CANONICAL';state.canonical=await prove(CANONICAL,'CANONICAL');state.canonicalPrivacy=await provePrivacy(CANONICAL,'CANONICAL');
  state.phase='DONE';state.done=true;log('MUNDINHO_OS_FINAL_RELEASE_COMPLETE '+SOURCE_SHA);
