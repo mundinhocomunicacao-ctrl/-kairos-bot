@@ -1,0 +1,216 @@
+name: Mundinho OS · Reconciled Exact Release 7a5dacb4
+on:
+  push:
+    branches:
+      - release/os-7a5dacb4-github-runner
+    paths:
+      - .github/workflows/os-release-current-7a5dacb4.yml
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SOURCE_SHA: 7a5dacb4d6ddd67a89db3c910bb48b0cb8b0baa8
+      MIRROR_SHA: 40b675ed66aa02eea1f28a42a8e544e06609e26f
+      EXPECTED_MARKER: 8539c9b3a534e9179a32650b5380501c9b10af92
+      QA_SITE_ID: 242b9d6f-71ad-40c6-b1d7-f1f0825e01be
+      QA_APP_ID: 8fabf7a9-b3c7-43af-ab51-e37968937afb
+      QA_HOST: https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com
+      LIVE_SITE_ID: c80689f2-6627-45fa-a264-4ab2863ba306
+      LIVE_APP_ID: 79eedd41-5ca6-4940-925a-e95e6f3c570e
+      LIVE_HOST: https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com
+      CANONICAL_HOST: https://os.mundinhocomunicacao.com
+      WIX_KEY_A: ${{ secrets.WIX_RELEASE_API_KEY }}
+      WIX_KEY_B: ${{ secrets.WIX_MUNDO_API_KEY }}
+      WIX_KEY_C: ${{ secrets.WIX_API_KEY }}
+      WIX_KEY_D: ${{ secrets.WIX_CLI_API_KEY }}
+      WIX_KEY_E: ${{ secrets.MUNDINHO_WIX_API_KEY }}
+      WIX_KEY_F: ${{ secrets.WIX_GABI_RADAR_API_KEY }}
+
+    steps:
+      - name: Checkout exact controller branch
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Prove exact source
+        run: |
+          set -euo pipefail
+          test "$(git -C os rev-parse HEAD)" = "$MIRROR_SHA"
+          test "$(tr -d '\n' < os/.release-source/canonical-sha.txt)" = "$EXPECTED_MARKER"
+          echo "SOURCE_EXACT_TREE_PASS mirror=$MIRROR_SHA source=$SOURCE_SHA marker=$EXPECTED_MARKER"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: os/package-lock.json
+
+      - name: Install dependencies
+        working-directory: os
+        run: npm ci --include=dev
+
+      - name: Run 16 reconciled gates
+        working-directory: os
+        run: |
+          set -euo pipefail
+          for gate in \
+            scripts/qa-os-definitivo-5pages.mjs \
+            scripts/qa-os-navigation-contract.mjs \
+            scripts/qa-os-navigation-runtime.mjs \
+            scripts/qa-os-visual-reference-manifest.mjs \
+            scripts/qa-os-visual-language.mjs \
+            scripts/qa-social-insights-live-grid.mjs \
+            scripts/qa-social-content-first.mjs \
+            scripts/qa-social-insights-content-data-live.mjs \
+            scripts/qa-mobile-contract-sync.mjs \
+            scripts/qa-os-ideas-primary-area.mjs \
+            scripts/qa-anjos-plugin-adaptation.mjs \
+            scripts/qa-wix-anjos-runtime.mjs \
+            scripts/qa-diva-mcp-plugin.mjs \
+            scripts/qa-resource-mesh-v1-1.mjs \
+            scripts/qa-diva-morada-staged-auth.mjs \
+            scripts/qa-diva-morada-brain.mjs
+          do
+            node "$gate"
+          done
+          echo "RECONCILED_GATES_PASS 16"
+
+      - name: Build exact Wix worker once
+        working-directory: os
+        env:
+          MUNDO_RUNTIME_SOURCE_SHA: ${{ env.SOURCE_SHA }}
+          MUNDO_RUNTIME_ENV: wix-live
+        run: |
+          set -euo pipefail
+          npm run build:wix-worker
+          test -f dist/wix-server/entry.mjs
+          grep -F "$SOURCE_SHA" dist/wix-server/entry.mjs >/dev/null
+          echo "WIX_BUILD_PASS $SOURCE_SHA"
+
+      - name: Package immutable release artifact
+        run: |
+          set -euo pipefail
+          rm -rf .wix-exact-release
+          mkdir .wix-exact-release
+          cp -R os/dist/client .wix-exact-release/client
+          cp -R os/dist/wix-server .wix-exact-release/server
+
+      - name: Resolve governed Wix credential
+        run: |
+          set -euo pipefail
+          KEY=""
+          ALIAS=""
+          for pair in \
+            "WIX_KEY_A:WIX_RELEASE_API_KEY" \
+            "WIX_KEY_B:WIX_MUNDO_API_KEY" \
+            "WIX_KEY_C:WIX_API_KEY" \
+            "WIX_KEY_D:WIX_CLI_API_KEY" \
+            "WIX_KEY_E:MUNDINHO_WIX_API_KEY" \
+            "WIX_KEY_F:WIX_GABI_RADAR_API_KEY"
+          do
+            var="${pair%%:*}"
+            alias="${pair#*:}"
+            value="${!var:-}"
+            if [ -n "$value" ]; then KEY="$value"; ALIAS="$alias"; break; fi
+          done
+          test -n "$KEY" || { echo "WIX_RELEASE_CREDENTIAL=MISSING"; exit 78; }
+          echo "::add-mask::$KEY"
+          echo "WIX_CLI_KEY=$KEY" >> "$GITHUB_ENV"
+          echo "WIX_RELEASE_CREDENTIAL=FOUND alias=$ALIAS"
+
+      - name: Authenticate Wix
+        working-directory: .wix-exact-release
+        run: |
+          set -euo pipefail
+          CI=1 npx --yes @wix/cli@latest login --api-key "$WIX_CLI_KEY"
+          CI=1 npx --yes @wix/cli@latest whoami
+          echo "WIX_AUTH_PASS"
+
+      - name: Release same artifact to QA
+        working-directory: .wix-exact-release
+        run: |
+          set -euo pipefail
+          node -e 'const fs=require("node:fs");fs.writeFileSync("wix.config.json",JSON.stringify({projectType:"Site",appId:process.env.QA_APP_ID,siteId:process.env.QA_SITE_ID,site:{outputDirectory:{client:"./client",server:"./server"}}},null,2))'
+          CI=1 npx --yes @wix/cli@latest release
+
+      - name: Prove QA exact SHA
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const {execFileSync}=require('node:child_process');
+          const host=process.env.QA_HOST, sha=process.env.SOURCE_SHA;
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const get=url=>JSON.parse(execFileSync('curl',['-fsSL','--retry','4','--retry-all-errors',url],{encoding:'utf8'}));
+          (async()=>{
+            for(let i=1;i<=36;i++){
+              try{
+                const rv=get(`${host}/api/release-version?proof=${Date.now()}`);
+                const dr=get(`${host}/api/diva-release?proof=${Date.now()}`);
+                const pr=get(`${host}/api/preview-readiness?proof=${Date.now()}`);
+                if(rv.sourceSha===sha&&dr.deploymentSha===sha&&pr.sourceSha===sha&&pr.status==='ready'){
+                  console.log('QA_EXACT_SHA_PASS',sha);
+                  return;
+                }
+              }catch{}
+              await sleep(5000);
+            }
+            throw new Error('QA_EXACT_SHA_READBACK_FAIL');
+          })();
+          NODE
+
+      - name: Release same artifact to LIVE
+        working-directory: .wix-exact-release
+        run: |
+          set -euo pipefail
+          node -e 'const fs=require("node:fs");fs.writeFileSync("wix.config.json",JSON.stringify({projectType:"Site",appId:process.env.LIVE_APP_ID,siteId:process.env.LIVE_SITE_ID,site:{outputDirectory:{client:"./client",server:"./server"}}},null,2))'
+          CI=1 npx --yes @wix/cli@latest release
+
+      - name: Prove LIVE and canonical exact SHA
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const {execFileSync}=require('node:child_process');
+          const sha=process.env.SOURCE_SHA;
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const get=url=>JSON.parse(execFileSync('curl',['-fsSL','--retry','4','--retry-all-errors',url],{encoding:'utf8'}));
+          async function prove(host,label){
+            for(let i=1;i<=36;i++){
+              try{
+                const dr=get(`${host}/api/diva-release?proof=${Date.now()}`);
+                const pr=get(`${host}/api/preview-readiness?proof=${Date.now()}`);
+                if(dr.deploymentSha===sha&&pr.sourceSha===sha&&pr.status==='ready'){
+                  console.log(`${label}_EXACT_SHA_PASS`,sha);
+                  return {deploymentId:dr.deploymentId||null};
+                }
+              }catch{}
+              await sleep(5000);
+            }
+            throw new Error(`${label}_EXACT_SHA_READBACK_FAIL`);
+          }
+          (async()=>{
+            const live=await prove(process.env.LIVE_HOST,'LIVE');
+            const canonical=await prove(process.env.CANONICAL_HOST,'CANONICAL');
+            require('node:fs').writeFileSync('release-receipt.json',JSON.stringify({
+              ok:true,
+              sourceSha:sha,
+              mirrorSha:process.env.MIRROR_SHA,
+              marker:process.env.EXPECTED_MARKER,
+              live,
+              canonical,
+              completedAt:new Date().toISOString()
+            },null,2));
+          })();
+          NODE
+
+      - name: Upload release receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: mundinho-os-release-receipt-7a5dacb4
+          path: release-receipt.json
+          if-no-files-found: error
