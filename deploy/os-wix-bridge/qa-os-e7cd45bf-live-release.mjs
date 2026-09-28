@@ -79,8 +79,11 @@ assert.ok(src.includes("state.live=await prove(LIVE.host,'LIVE')"),'must prove t
 assert.ok(src.includes("provePrivacy(LIVE.host,'LIVE')"),'must prove technical live privacy metadata');
 assert.ok(src.includes("state.canonical=await prove(CANONICAL,'CANONICAL')"),'must prove canonical domain readback');
 assert.ok(src.includes("provePrivacy(CANONICAL,'CANONICAL')"),'must prove canonical privacy metadata');
-assert.ok(src.includes('PAGE_X_ROBOTS_MISSING'),'page-by-page audit must enforce X-Robots-Tag on all protected routes');
-assert.ok(src.includes('PAGE_REFERRER_POLICY'),'page-by-page audit must enforce Referrer-Policy on all protected routes');
+assert.ok(!src.includes('PAGE_X_ROBOTS_MISSING'),'Wix protected-route redirects must not depend on unsupported X-Robots-Tag response headers');
+assert.ok(!src.includes('PAGE_REFERRER_POLICY'),'Wix protected-route redirects must not depend on response-level Referrer-Policy headers');
+assert.ok(src.includes("'LOGIN_META_MISSING_'"),'privacy audit must retain live HTML robots/referrer metadata proof');
+assert.ok(src.includes("ROBOTS_TXT_FAIL"),'privacy audit must retain robots.txt deny-all proof');
+assert.ok(src.includes("AUTH_REDIRECT_FAIL"),'privacy audit must retain authenticated-route redirect proof');
 assert.ok(src.includes("qa-malha-pulse-consumer-runtime.mjs"),'controller must execute Malha pulse runtime QA');
 assert.ok(src.includes("qa-diva-face-sync.mjs"),'controller must execute DIVA face-sync QA');
 assert.ok(src.includes("qa-diva-ia-cognitive-router.mjs"),'controller must execute cognitive-router QA');
