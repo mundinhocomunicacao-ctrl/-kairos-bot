@@ -10,7 +10,8 @@ assert.ok(src.includes("MIRROR_SHA='94e05737e43f8fbdc28371935e29d061344a9644'"),
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
 assert.ok(src.includes("appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e'"),'must target live Wix app');
 assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must prove human canonical domain');
-assert.ok(src.includes("ARTIFACT_URL='https://mundinho-wix-remote-release-pty.onrender.com/artifact'"),'must consume the safe exact artifact bridge');
+assert.ok(src.includes("MATERIALIZE_FROM_PINNED_SUBMODULE=true"),'must materialize release from the already verified exact mirror submodule');
+assert.ok(!src.includes("ARTIFACT_URL='https://mundinho-wix-remote-release-pty.onrender.com/artifact'"),'must not depend on remote artifact transport after exact mirror verification');
 assert.ok(src.includes("WIX_ARTIFACT_EXACT_SHA_PASS"),'must verify artifact source SHA after extraction');
 assert.ok(src.includes("MUNDO_RUNTIME_ENV:'wix-live'"),'must repack the artifact with live runtime identity');
 assert.ok(src.includes("EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`"),'must bind live release id to canonical SHA');
