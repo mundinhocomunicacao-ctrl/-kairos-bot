@@ -22,7 +22,14 @@ async function fetchJson(url){const r=await fetch(url,{headers:{'cache-control':
 
 async function fetchExactSource(){
   state.phase='SOURCE';
-  const head=spawnSync('git',['rev-parse','HEAD'],{cwd:OS_DIR,encoding:'utf8'}).stdout.trim();
+  let head=spawnSync('git',['rev-parse','HEAD'],{cwd:OS_DIR,encoding:'utf8'}).stdout.trim();
+  if(head!==MIRROR_SHA){
+    log('MIRROR_ADVANCE_START '+head+' -> '+MIRROR_SHA);
+    await run('git',['fetch','origin',MIRROR_SHA,'--depth','1'],{cwd:OS_DIR});
+    await run('git',['checkout','--detach',MIRROR_SHA],{cwd:OS_DIR});
+    head=spawnSync('git',['rev-parse','HEAD'],{cwd:OS_DIR,encoding:'utf8'}).stdout.trim();
+    log('MIRROR_ADVANCE_DONE '+head);
+  }
   if(head!==MIRROR_SHA)throw new Error('MIRROR_SHA_MISMATCH '+head);
   for(const file of ['package.json','pages/os/diva.js','data/diva-voice-presence-contract.js','radar-gabi-site/index.html','scripts/qa-diva-orb-silent-presence.mjs']) if(!fs.existsSync(path.join(OS_DIR,file))) throw new Error('SOURCE_FILE_MISSING '+file);
   log('SOURCE_EXACT_MIRROR_PASS gitlab='+SOURCE_SHA+' mirror='+MIRROR_SHA);
