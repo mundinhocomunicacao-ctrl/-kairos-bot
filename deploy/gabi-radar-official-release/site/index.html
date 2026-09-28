@@ -69,8 +69,8 @@ main{max-width:1320px;padding:42px 28px 84px}
 
 /* DIVA_STUDIO_GABI_V3 · compact interactive creative station */
 .studioShell{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;align-items:stretch;padding:18px!important;background:linear-gradient(145deg,#fff 0%,#fbf7fb 52%,#f6f1f8 100%);overflow:visible}
-.studioPresence{position:relative;min-height:430px;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 50% 22%,#76518d 0,#35223f 34%,#211626 72%);display:grid;place-items:center;isolation:isolate}
-.studioPresence:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 78%,rgba(255,255,255,.035)),repeating-linear-gradient(90deg,transparent 0 28px,rgba(255,255,255,.025) 29px);transform:perspective(520px) rotateX(68deg) translateY(150px) scale(1.6)}
+.studioPresence{position:relative;min-height:220px;border-radius:22px;overflow:visible;background:transparent;display:grid;place-items:center;align-content:center;isolation:isolate}
+.studioPresence:before{display:none}
 
 
 
@@ -79,7 +79,7 @@ main{max-width:1320px;padding:42px 28px 84px}
 
 
 
-.giva3dStatus{position:absolute;left:14px;right:14px;bottom:15px;text-align:center;color:#eadff0}.giva3dStatus b{display:block;font-size:11px;letter-spacing:.12em;color:#fff}.giva3dStatus>span{display:block;font-size:10px;margin-top:4px;opacity:.76}.gabiOrbiCapacity{display:grid;gap:3px;margin:10px auto 0;max-width:230px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:rgba(19,25,37,.22);backdrop-filter:blur(8px)}.gabiOrbiCapacity b{font:800 7px/1.2 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#fff}.gabiOrbiCapacity small{font-size:8px;line-height:1.3;color:#f3eaf1}.gabiOrbiCapacity[data-known="true"] small{color:#d7ffe5;font-weight:800}
+.giva3dStatus{position:static;text-align:center;color:var(--muted)}.giva3dStatus>span{display:block;font-size:10px;margin-top:2px;color:#776b73}.gabiOrbiCapacity{display:grid;gap:3px;margin:10px auto 0;max-width:230px;padding:7px 9px;border:1px solid var(--line);border-radius:12px;background:#fff}.gabiOrbiCapacity b{font:800 7px/1.2 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#b10c59}.gabiOrbiCapacity small{font-size:8px;line-height:1.3;color:#776b73}.gabiOrbiCapacity[data-known="true"] small{color:#27734f;font-weight:800}
 .studioPresence[data-state="listening"] .studioPresence[data-state="thinking"] .studioPresence[data-state="thinking"] .studioPresence[data-state="speaking"] .studioPresence[data-state="speaking"] 
 @keyframes givaPulse{50%{transform:rotateX(66deg) rotateZ(8deg) scale(1.08)}}@keyframes givaOrbit{to{transform:rotateX(66deg) rotateZ(350deg)}}@keyframes givaTalk{to{height:15px;border-radius:50%;border:2px solid #a04b7b}}@media(prefers-reduced-motion:reduce){.giva3dAura,}
 .studioWorkbench{min-width:0;padding:4px 4px 2px}.studioHeader{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.studioHeader .title{font-size:28px!important;margin-top:5px!important;max-width:680px}.studioHeader .explain{font-size:13px;max-width:690px}
@@ -91,28 +91,25 @@ main{max-width:1320px;padding:42px 28px 84px}
 .studioVoiceRow{display:flex;gap:8px;align-items:center;margin-top:8px}.studioVoiceRow button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:850}.studioVoiceStatus{font-size:10px;color:var(--muted);line-height:1.4}
 .studioHint{margin-top:8px;font-size:10px;color:var(--muted)}.studioHint b{color:var(--ink)}
 .studioResult{display:none;margin-top:12px}.studioResult.ready{display:block}.studioResultHead{display:flex;justify-content:space-between;gap:14px;align-items:center}.studioReplay{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:850}.studioResultPrimary{display:grid;grid-template-columns:1.25fr .75fr;gap:9px;margin-top:10px}.studioResultPrimary .studioResultBlock:first-child{grid-column:1/-1}.studioResultGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.studioResultBlock{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}.studioResultBlock.full{grid-column:1/-1}.studioResultBlock b{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--purple)}.studioResultBlock h3{font-size:22px;letter-spacing:-.04em;margin:6px 0}.studioResultBlock p,.studioResultBlock li{font-size:12px;line-height:1.5;color:#55475b}.studioResultBlock ul{padding-left:17px;margin:8px 0}.studioQuickActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.studioQuickActions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:11px;font-weight:850}.studioDetails{margin-top:10px;border:1px solid var(--line);border-radius:16px;background:#faf8fb;overflow:hidden}.studioDetails summary{cursor:pointer;padding:12px 14px;font-size:11px;font-weight:900;list-style:none}.studioDetails summary::-webkit-details-marker{display:none}.studioDetails[open] summary{border-bottom:1px solid var(--line)}.studioDetails .studioResultGrid,.studioDetails .studioRefs{padding-left:12px;padding-right:12px}.studioDetails .studioRefs{padding-bottom:12px}.studioRefs{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.studioRefs a{display:inline-flex;border-radius:999px;padding:8px 10px;background:#f4edf6;color:var(--ink);text-decoration:none;font-size:11px;font-weight:850;border:1px solid var(--line)}.studioLoading{opacity:.62;pointer-events:none}
-.gabiOrbPresence{display:grid;place-items:center;align-content:center;gap:18px;overflow:visible}
-.gabiDivaOrb{position:relative;width:min(238px,74vw);aspect-ratio:1;border:0;border-radius:50%;cursor:pointer;background:transparent;overflow:visible;isolation:isolate;box-shadow:none;filter:none;z-index:3}
-.gabiDivaOrb:focus-visible{outline:3px solid rgba(36,79,130,.3);outline-offset:6px}
-.gabiDivaOrb:before{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(239,24,120,.18),rgba(239,24,120,0) 68%);transform:scale(1.42);filter:blur(1px);pointer-events:none;z-index:0}
-.gabiDivaOrb:after{display:none}
-.gabiOrbCore{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 34% 28%,#fff 0 5%,#ffddeb 20%,#f98fc2 43%,#ef3b91 67%,#9d0e59 100%);border:1px solid rgba(181,20,94,.12);box-shadow:0 9px 26px rgba(184,26,105,.17),inset 0 0 20px rgba(255,255,255,.42);z-index:1}
-.gabiOrbLight{position:absolute;width:44%;height:32%;left:17%;top:12%;border-radius:50%;background:rgba(255,255,255,.48);filter:blur(5px);transform:rotate(-18deg)}
-.gabiOrbMist{position:absolute;inset:18% 9% 5% 25%;border-radius:50%;background:radial-gradient(circle at 65% 55%,rgba(255,255,255,.12),rgba(95,30,92,.12) 54%,transparent 72%);filter:blur(2px)}
-.gabiOrbPulse{position:absolute;width:20%;height:20%;left:40%;top:40%;border-radius:50%;background:rgba(255,255,255,.42);box-shadow:0 0 18px rgba(255,255,255,.7)}
-.gabiOrbWave,.gabiOrbOrbit{display:none}
-.gabiDivaOrb[data-state="idle"]:before{animation:gabiOfficialBreathe 4.8s ease-in-out infinite}
-.gabiDivaOrb[data-state="idle"] .gabiOrbCore{animation:gabiOfficialFloat 5.6s ease-in-out infinite}
-.gabiDivaOrb[data-state="thinking"]:before,.gabiDivaOrb[data-state="listening"]:before{animation:gabiOfficialPulse 1.55s ease-in-out infinite}
-.gabiDivaOrb[data-state="listening"] .gabiOrbCore{box-shadow:0 9px 28px rgba(184,26,105,.24),0 0 0 5px rgba(239,24,120,.07),inset 0 0 20px rgba(255,255,255,.46)}
-.gabiDivaOrb[data-state="speaking"]:before{animation:gabiOfficialSpeakHalo .82s ease-in-out infinite}
-.gabiDivaOrb[data-state="speaking"] .gabiOrbPulse{animation:gabiOfficialSpeakCore .48s ease-in-out infinite alternate}
-@keyframes gabiOfficialBreathe{0%,100%{transform:scale(1.38);opacity:.7}50%{transform:scale(1.56);opacity:.34}}
-@keyframes gabiOfficialFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
-@keyframes gabiOfficialPulse{50%{transform:scale(1.62);opacity:.48}}
-@keyframes gabiOfficialSpeakHalo{0%,100%{transform:scale(1.38);opacity:.68}50%{transform:scale(1.72);opacity:.22}}
-@keyframes gabiOfficialSpeakCore{to{transform:scale(1.48);opacity:.58}}
-@media(prefers-reduced-motion:reduce){.gabiDivaOrb:before,.gabiOrbCore,.gabiOrbPulse{animation:none!important}}
+.gabiOrbPresence{display:grid;place-items:center;align-content:center;gap:14px;overflow:visible}
+.gabiDivaOrb{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;color:inherit}
+.gabiDivaOrb:focus-visible{outline:3px solid rgba(36,79,130,.3);outline-offset:6px;border-radius:999px}
+.divaAvatar2D{--d:38px;position:relative;display:inline-flex;align-items:center;gap:8px;min-width:var(--d);min-height:var(--d);isolation:isolate}
+.divaAvatar2D.medium{--d:48px}.divaAvatar2D.large{--d:64px}
+.divaOrbHalo{position:absolute;width:var(--d);height:var(--d);border-radius:50%;background:radial-gradient(circle,rgba(239,24,120,.18),rgba(239,24,120,0) 68%);transform:scale(1.42);filter:blur(1px)}
+.divaOrbCore{position:relative;width:var(--d);height:var(--d);display:grid;place-items:center;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 34% 28%,#fff 0 5%,#ffddeb 20%,#f98fc2 43%,#ef3b91 67%,#9d0e59 100%);border:1px solid rgba(181,20,94,.12);box-shadow:0 9px 26px rgba(184,26,105,.17),inset 0 0 20px rgba(255,255,255,.42)}
+.divaOrbLight{position:absolute;width:44%;height:32%;left:17%;top:12%;border-radius:50%;background:rgba(255,255,255,.48);filter:blur(5px);transform:rotate(-18deg)}
+.divaOrbMist{position:absolute;inset:18% 9% 5% 25%;border-radius:50%;background:radial-gradient(circle at 65% 55%,rgba(255,255,255,.12),rgba(95,30,92,.12) 54%,transparent 72%);filter:blur(2px)}
+.divaOrbPulse{position:absolute;width:20%;height:20%;border-radius:50%;background:rgba(255,255,255,.42);box-shadow:0 0 18px rgba(255,255,255,.7)}
+.state-ready .divaOrbHalo{animation:divaBreathe 4.8s ease-in-out infinite}.state-ready .divaOrbCore{animation:divaFloat 5.6s ease-in-out infinite}
+.state-thinking .divaOrbHalo,.state-listening .divaOrbHalo{animation:divaPulse 1.55s ease-in-out infinite}.state-listening .divaOrbCore{box-shadow:0 9px 28px rgba(184,26,105,.24),0 0 0 5px rgba(239,24,120,.07),inset 0 0 20px rgba(255,255,255,.46)}
+.state-speaking .divaOrbHalo{animation:divaSpeakHalo .82s ease-in-out infinite}.state-speaking .divaOrbPulse{animation:divaSpeakCore .48s ease-in-out infinite alternate}
+@keyframes divaBreathe{0%,100%{transform:scale(1.38);opacity:.7}50%{transform:scale(1.56);opacity:.34}}
+@keyframes divaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+@keyframes divaPulse{50%{transform:scale(1.62);opacity:.48}}
+@keyframes divaSpeakHalo{0%,100%{transform:scale(1.38);opacity:.68}50%{transform:scale(1.72);opacity:.22}}
+@keyframes divaSpeakCore{to{transform:scale(1.48);opacity:.58}}
+@media(prefers-reduced-motion:reduce){.divaOrbHalo,.divaOrbCore,.divaOrbPulse{animation:none!important}}
 @media(max-width:900px){.studioShell{grid-template-columns:180px minmax(0,1fr)}.studioPresence{min-height:390px}.studioModes{grid-template-columns:1fr 1fr}.studioResultPrimary{grid-template-columns:1fr}.studioResultPrimary .studioResultBlock:first-child{grid-column:auto}}
 @media(max-width:700px){.studioShell{grid-template-columns:1fr}.studioPresence{min-height:220px}.studioPath{grid-template-columns:1fr 1fr 1fr}.studioComposer{grid-template-columns:1fr}.studioComposerActions{grid-template-columns:1fr 1fr;grid-template-rows:48px;min-width:0}.studioVoiceRow{align-items:flex-start;flex-wrap:wrap}.studioResultGrid{grid-template-columns:1fr}.studioResultBlock.full{grid-column:auto}}
 @media(max-width:500px){.studioModes{grid-template-columns:1fr}.studioPathStep span{font-size:10px}.studioHeader .title{font-size:24px!important}}
@@ -210,9 +207,9 @@ model-viewer:not(:defined)+.diva3dFallback{display:grid}
   <div class="grid">
     <div class="card span12 studioShell studioShellV4" data-diva-studio-shell="v4">
       <aside class="studioPresence studioPresenceReal gabiOrbPresence" data-state="idle" aria-label="DIVA · Gabi pronta para ouvir">
-        <button id="gabiDivaOrb" class="gabiDivaOrb" type="button" data-diva-orb="gabi" data-orbi-visual="diva-official-v1" data-state="idle" aria-label="Conversar com a DIVA · Gabi" aria-pressed="false">
-          <span class="gabiOrbCore" aria-hidden="true"><i class="gabiOrbLight"></i><i class="gabiOrbMist"></i><i class="gabiOrbPulse"></i></span>
-          <span class="gabiOrbWave" aria-hidden="true"></span>
+        <button id="gabiDivaOrb" class="gabiDivaOrb divaAvatar2D large state-ready" type="button" data-diva-avatar="orbi" data-diva-orb="gabi" data-orbi-visual="diva-official-v1" data-state="idle" aria-label="Conversar com a DIVA · Gabi" aria-pressed="false">
+          <span class="divaOrbHalo" aria-hidden="true"></span>
+          <span class="divaOrbCore" aria-hidden="true"><i class="divaOrbLight"></i><i class="divaOrbMist"></i><i class="divaOrbPulse"></i></span>
         </button>
         <div class="giva3dStatus"><span id="gabiStudioPresenceLabel">Toque para conversar</span><div class="gabiOrbiCapacity" id="gabiOrbiCapacity" data-known="false"><b>Inteligência absorvida por ORBI</b><small id="gabiOrbiCapacityValue">estimativa diária em leitura</small></div></div>
       </aside>
@@ -285,6 +282,7 @@ model-viewer:not(:defined)+.diva3dFallback{display:grid}
 
         <div class="studioVoiceRow">
           <button id="gabiStudioVoiceToggle" type="button">🔊 Voz natural: ligada</button>
+          <button id="gabiStudioMicMute" type="button" aria-pressed="false">🎙 Mutar microfone</button>
           <button id="gabiStudioStop" type="button">⏹ Parar</button>
           <button id="gabiStudioContinue" type="button">▶ Continuar</button>
           <span class="studioVoiceStatus" id="gabiStudioVoiceStatus">Pode falar ou escrever. A DIVA responde e mantém o rastro da ideia.</span>
@@ -770,7 +768,8 @@ async function loadLiveFeed(){
 const GABI_DIVA_STUDIO_ENDPOINT='https://os.mundinhocomunicacao.com/api/gabi-diva-studio';
 const GABI_ORBI_MENTAL_ENDPOINT='https://os.mundinhocomunicacao.com/api/gabi-orbi-mental';
 const GABI_ORBI_CAPACITY_ENDPOINT='https://os.mundinhocomunicacao.com/api/orbi-capacity?face=DIVA_GABI&orbiId=ORBI_GABI';
-let gabiStudioIntent='surprise',gabiStudioVoiceEnabled=true,gabiStudioRecognition=null,gabiStudioLastSpeech='',gabiStudioLastResult=null,gabiStudioLastBrief='',gabiStudioLastInteractionId='',gabiStudioSpeechStartedAt=0,gabiStudioConversationOpen=false,gabiStudioAwaitingReply=false,gabiStudioResumeTimer=null,gabiStudioMicPermissionGranted=false;
+const GABI_ORBI_VOICE_PROFILE=Object.freeze({style:'NATURAL_CONVERSATIONAL',rate:1.03,pitch:1.03,volume:.95,personality:'jovem-adulta, próxima, segura e leve'});
+let gabiStudioIntent='surprise',gabiStudioVoiceEnabled=true,gabiStudioRecognition=null,gabiStudioLastSpeech='',gabiStudioLastResult=null,gabiStudioLastBrief='',gabiStudioLastInteractionId='',gabiStudioSpeechStartedAt=0,gabiStudioConversationOpen=false,gabiStudioAwaitingReply=false,gabiStudioResumeTimer=null,gabiStudioMicPermissionGranted=false,gabiStudioMicMuted=false;
 function gabiStudioMentalSignal(kind,payload={}){
   if(!gabiStudioLastInteractionId)return;
   void fetch(GABI_ORBI_MENTAL_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},cache:'no-store',keepalive:true,body:JSON.stringify({kind,interactionId:gabiStudioLastInteractionId,...payload})}).catch(()=>{});
@@ -838,7 +837,7 @@ function gabiStudioSetPresenceState(state='idle'){
   const stage=document.querySelector('.gabiOrbPresence'),orb=document.querySelector('[data-diva-orb="gabi"]'),label=document.getElementById('gabiStudioPresenceLabel');
   const safeState=['idle','listening','thinking','speaking'].includes(state)?state:'idle';
   if(stage){stage.dataset.state=safeState;stage.setAttribute('aria-label',safeState==='listening'?'DIVA · Gabi ouvindo':safeState==='thinking'?'DIVA · Gabi pensando':safeState==='speaking'?'DIVA · Gabi falando':'DIVA · Gabi pronta para ouvir')}
-  if(orb){orb.dataset.state=safeState;orb.setAttribute('aria-pressed',String(gabiStudioConversationOpen));orb.setAttribute('aria-label',safeState==='listening'?'DIVA · Gabi ouvindo. Fale naturalmente.':safeState==='speaking'?'DIVA · Gabi falando. Toque para interromper.':'Conversar com a DIVA · Gabi')}
+  if(orb){const visualState=safeState==='idle'?'ready':safeState;orb.dataset.state=safeState;orb.classList.remove('state-ready','state-listening','state-thinking','state-speaking');orb.classList.add('state-'+visualState);orb.setAttribute('aria-pressed',String(gabiStudioConversationOpen));orb.setAttribute('aria-label',safeState==='listening'?'DIVA · Gabi ouvindo. Fale naturalmente.':safeState==='speaking'?'DIVA · Gabi falando. Toque para interromper.':'Conversar com a DIVA · Gabi')}
   if(label)label.textContent=safeState==='listening'?'Ouvindo você':safeState==='thinking'?'Entendendo':safeState==='speaking'?'Respondendo':'Toque para conversar';
 }
 function gabiStudioSmartPreset(intent=gabiStudioIntent,brief=''){
@@ -871,13 +870,13 @@ function gabiStudioPickVoice(voices=[]){
     const name=String(v?.name||'').toLowerCase(),lang=String(v?.lang||'').toLowerCase();
     let s=0;if(lang==='pt-br')s+=100;else if(lang.startsWith('pt'))s+=55;else return-999;
     if(/google.*portugu|microsoft.*francisca|luciana|camila|fernanda|leticia|maria/.test(name))s+=34;
-    if(v?.localService)s+=8;if(/natural|neural|premium|enhanced/.test(name))s+=18;if(/compact|espeak/.test(name))s-=30;
+    if(/natural|neural|online|premium|enhanced/.test(name))s+=38;if(/microsoft|google|apple|siri/.test(name))s+=10;if(v?.localService)s+=5;if(/compact|espeak/.test(name))s-=30;
     return s;
   };
   return [...voices].sort((a,b)=>score(b)-score(a))[0]||null;
 }
 function gabiStudioResumeListening(delay=180){
-  if(!gabiStudioConversationOpen)return;
+  if(!gabiStudioConversationOpen||gabiStudioMicMuted)return;
   if(gabiStudioResumeTimer)window.clearTimeout(gabiStudioResumeTimer);
   gabiStudioResumeTimer=window.setTimeout(()=>{gabiStudioResumeTimer=null;if(gabiStudioConversationOpen&&!gabiStudioRecognition&&!gabiStudioAwaitingReply)startGabiStudioMic({resume:true})},delay);
 }
@@ -894,13 +893,31 @@ function gabiStudioSpeak(text){
   window.speechSynthesis.cancel();
   const spoken=gabiStudioSpokenSummary(gabiStudioLastSpeech).replace(/[`*_#>]/g,' ').replace(/\s+/g,' ').trim();
   const u=new SpeechSynthesisUtterance(spoken);
-  u.lang='pt-BR';u.rate=.91;u.pitch=.98;u.volume=.96;
+  u.lang='pt-BR';u.rate=GABI_ORBI_VOICE_PROFILE.rate;u.pitch=GABI_ORBI_VOICE_PROFILE.pitch;u.volume=GABI_ORBI_VOICE_PROFILE.volume;
   const preferred=gabiStudioPickVoice(window.speechSynthesis.getVoices());
   if(preferred)u.voice=preferred;
   u.onstart=()=>{gabiStudioSpeechStartedAt=Date.now();gabiStudioSetPresenceState('speaking');gabiStudioSetVoiceStatus('DIVA respondendo… você pode tocar no ORBE para interromper.')};
   u.onend=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus(gabiStudioConversationOpen?'Pode continuar falando.':'Pronta para continuar.');gabiStudioResumeListening()};
   u.onerror=()=>{gabiStudioSetPresenceState('idle');gabiStudioSetVoiceStatus('A voz falhou, mas a resposta continua aqui na tela.');gabiStudioResumeListening()};
   window.speechSynthesis.speak(u);
+}
+function gabiStudioToggleMicMute(){
+  gabiStudioMicMuted=!gabiStudioMicMuted;
+  const btn=document.getElementById('gabiStudioMicMute');
+  if(btn){
+    btn.setAttribute('aria-pressed',String(gabiStudioMicMuted));
+    btn.textContent=gabiStudioMicMuted?'🔇 Desmutar microfone':'🎙 Mutar microfone';
+    btn.classList.toggle('active',gabiStudioMicMuted);
+  }
+  if(gabiStudioMicMuted){
+    if(gabiStudioResumeTimer){window.clearTimeout(gabiStudioResumeTimer);gabiStudioResumeTimer=null}
+    if(gabiStudioRecognition){try{gabiStudioRecognition.abort()}catch{}gabiStudioRecognition=null}
+    gabiStudioSetVoiceStatus('Microfone mutado. Eu continuo aqui enquanto penso e respondo.');
+    if(document.querySelector('.gabiOrbPresence')?.dataset.state==='listening')gabiStudioSetPresenceState('idle');
+  }else{
+    gabiStudioSetVoiceStatus(gabiStudioConversationOpen?'Microfone aberto. Pode falar.':'Microfone aberto.');
+    if(gabiStudioConversationOpen)gabiStudioResumeListening(80);
+  }
 }
 function gabiStudioStopConversation(){
   gabiStudioConversationOpen=false;gabiStudioAwaitingReply=false;
@@ -1083,6 +1100,7 @@ function gabiStudioRefine(kind){
   gabiStudioGenerate(gabiStudioIntent,[base,previous,instruction].filter(Boolean).join('\n'));
 }
 async function startGabiStudioMic({resume=false}={}){
+  if(gabiStudioMicMuted){gabiStudioSetVoiceStatus('Microfone mutado. Toque em “Desmutar microfone” para falar.');return}
   const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!Recognition){gabiStudioSetVoiceStatus('Este navegador não liberou reconhecimento de voz. Você ainda pode escrever o briefing.');return}
   if(!navigator.mediaDevices?.getUserMedia){gabiStudioSetVoiceStatus('Este navegador não liberou acesso ao microfone. Você ainda pode escrever o briefing.');return}
@@ -1147,6 +1165,7 @@ function activateGabiStudio(){
   document.getElementById('gabiStudioMic')?.addEventListener('click',()=>{setPath('context');if(gabiStudioConversationOpen)gabiStudioStopConversation();else startGabiStudioMic()});
   document.getElementById('gabiDivaOrb')?.addEventListener('click',()=>{setPath('context');if('speechSynthesis' in window&&window.speechSynthesis.speaking){gabiStudioMentalSignal('interruption',{state:'speaking',elapsedMs:gabiStudioSpeechStartedAt?Date.now()-gabiStudioSpeechStartedAt:0});window.speechSynthesis.cancel();startGabiStudioMic();return}if(!gabiStudioConversationOpen)startGabiStudioMic();else if(!gabiStudioRecognition)startGabiStudioMic({resume:true})});
   document.getElementById('gabiStudioStop')?.addEventListener('click',()=>gabiStudioStopConversation());
+  document.getElementById('gabiStudioMicMute')?.addEventListener('click',()=>gabiStudioToggleMicMute());
   document.getElementById('gabiStudioContinue')?.addEventListener('click',()=>{gabiStudioConversationOpen=true;startGabiStudioMic({resume:true})});
   document.getElementById('gabiStudioVoiceToggle')?.addEventListener('click',e=>{
     gabiStudioVoiceEnabled=!gabiStudioVoiceEnabled;e.currentTarget.textContent=gabiStudioVoiceEnabled?'🔊 Voz natural: ligada':'🔇 Voz: desligada';

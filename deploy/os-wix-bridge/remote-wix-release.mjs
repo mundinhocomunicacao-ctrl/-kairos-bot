@@ -11,7 +11,7 @@ const INDEX=path.join(SITE_DIR,'index.html');
 const CONFIG=path.join(SITE_DIR,'wix.config.json');
 const DIST=path.join(SITE_DIR,'dist');
 const LIVE='https://radar.gabi.mundinhocomunicacao.com/';
-const SOURCE_SHA='dc4388e4437a2bf1202dec06d4adbe8a747f6429';
+const SOURCE_SHA='40d11291ff121f6c1fdf1dd88df61479745dda1d';
 const state={phase:'BOOT',sourceSha:SOURCE_SHA,userCode:null,verificationUri:null,auth:false,released:false,readback:null,error:null,done:false,lastLog:null};
 
 function log(v){const s=String(v);console.log(s);state.lastLog=s.slice(-1800)}
@@ -28,7 +28,9 @@ function verifySource(){
     official:html.includes('data-orbi-visual="diva-official-v1"'),
     clientSafe:html.includes('GABI_RADAR_PUBLIC_SAFE_V3'),
     broker:html.includes('/api/gabi-diva-studio'),
-    noOldCore:!html.includes('<span class="gabiOrbCore">DIVA</span>')
+    noOldCore:!html.includes('<span class="gabiOrbCore">DIVA</span>'),
+    literalParity:html.includes('class="gabiDivaOrb divaAvatar2D large state-ready"')&&html.includes('data-diva-avatar="orbi"'),
+    neutralStage:!html.includes('background:radial-gradient(circle at 50% 22%,#76518d')
   };
   if(Object.values(checks).some(v=>!v))throw new Error('SOURCE_CONTRACT_FAIL '+JSON.stringify(checks));
   fs.rmSync(DIST,{recursive:true,force:true});fs.mkdirSync(DIST,{recursive:true});
@@ -78,9 +80,11 @@ async function readback(){
       clientSafe:html.includes('GABI_RADAR_PUBLIC_SAFE_V3'),
       broker:html.includes('/api/gabi-diva-studio'),
       noOldCore:!html.includes('<span class="gabiOrbCore">DIVA</span>'),
+      literalParity:html.includes('class="gabiDivaOrb divaAvatar2D large state-ready"')&&html.includes('data-diva-avatar="orbi"'),
+      neutralStage:!html.includes('background:radial-gradient(circle at 50% 22%,#76518d'),
       hasHumanLabel:html.includes('Toque para conversar')&&html.includes("'Entendendo'")
     };
-    if(res.ok&&last.official&&last.clientSafe&&last.broker&&last.noOldCore){state.readback=last;log('GABI_RADAR_LIVE_READBACK_PASS '+JSON.stringify(last));return}
+    if(res.ok&&last.official&&last.clientSafe&&last.broker&&last.noOldCore&&last.literalParity&&last.neutralStage){state.readback=last;log('GABI_RADAR_LIVE_READBACK_PASS '+JSON.stringify(last));return}
     await new Promise(r=>setTimeout(r,4000));
   }
   state.readback=last;throw new Error('GABI_RADAR_LIVE_READBACK_FAIL '+JSON.stringify(last));
