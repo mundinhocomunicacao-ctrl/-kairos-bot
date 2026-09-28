@@ -4,13 +4,13 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='a3492fb0fd1a5f2ec947f0c7716342ec613796e2';
-const MIRROR_SHA='ac2bed0986d60de2828985f02d15d1b4597971bc';
-const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-a3492fb0');
+const SOURCE_SHA='ffbdab068929e235fdc9d7d83f57085e227a1e4c';
+const MIRROR_SHA='672c17c06ddab6e87fb6a25bcc0991ca97faafbe';
+const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-ffbdab06');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`;
-const ARTIFACT_URL='https://mundinho-os-current-be822-artifact-v2.onrender.com/artifact';
+const ARTIFACT_URL='https://mundinho-wix-remote-release-pty.onrender.com/artifact';
 const state={phase:'BOOT',sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,userCode:null,verificationUri:null,live:null,canonical:null,tests:[],error:null,done:false};
 function log(x){console.log(x);state.lastLog=String(x).slice(-1500)}
 function sh(cmd,cwd=ROOT,env={}){const r=spawnSync('bash',['-lc',cmd],{cwd,encoding:'utf8',env:{...process.env,...env}});if(r.stdout)process.stdout.write(r.stdout);if(r.stderr)process.stderr.write(r.stderr);if(r.status!==0)throw new Error('shell failed '+r.status+': '+cmd);return String(r.stdout||'').trim()}
@@ -22,7 +22,7 @@ async function materializeArtifact(){
  state.phase='ARTIFACT';
  const res=await fetch(ARTIFACT_URL+'?source='+SOURCE_SHA,{headers:{'cache-control':'no-cache'}});
  if(!res.ok)throw new Error('ARTIFACT_FETCH_FAILED '+res.status);
- const artifactPath=path.join(ROOT,'os-release-a3492fb0.tar.gz');
+ const artifactPath=path.join(ROOT,'os-release-ffbdab06.tar.gz');
  fs.writeFileSync(artifactPath,Buffer.from(await res.arrayBuffer()));
  fs.rmSync(path.join(OS_DIR,'dist'),{recursive:true,force:true});
  await run('tar',['-xzf',artifactPath,'-C',OS_DIR],{cwd:ROOT});
@@ -43,11 +43,13 @@ async function ensureAuth(){state.phase='WIX_AUTH';const env={...process.env,AI_
 async function main(){try{
  state.phase='SOURCE';await run('bash',['-lc','git submodule sync --recursive && git submodule update --init --recursive os'],{cwd:ROOT});const mirror=sh('git -C os rev-parse HEAD');if(mirror!==MIRROR_SHA)throw new Error('MIRROR_SHA_MISMATCH '+mirror);const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();if(marker!==SOURCE_SHA)throw new Error('SOURCE_MARKER_MISMATCH '+marker);log('SOURCE_EXACT_SHA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
  state.phase='CONTROLLER_QA';await run('node',['deploy/os-wix-bridge/qa-os-e7cd45bf-live-release.mjs'],{cwd:ROOT});state.tests.push({gate:'controller',status:'PASS'});
- state.phase='QA';try{await run('npm',['ci','--include=dev'],{cwd:OS_DIR,env:{NODE_ENV:'development'}})}catch{await run('npm',['install','--include=dev','--no-audit','--no-fund'],{cwd:OS_DIR,env:{NODE_ENV:'development'}})}await run('npm',['run','qa:release'],{cwd:OS_DIR});state.tests.push({gate:'qa:release',status:'PASS'});
+ state.phase='QA';try{await run('npm',['ci','--include=dev'],{cwd:OS_DIR,env:{NODE_ENV:'development'}})}catch{await run('npm',['install','--include=dev','--no-audit','--no-fund'],{cwd:OS_DIR,env:{NODE_ENV:'development'}})}
+ const osGates=['scripts/qa-wix-live-isolation.mjs','scripts/qa-os-route-auth-gate.mjs','scripts/qa-ten-primary-areas-runtime.mjs','scripts/qa-home-diva-click-voice.mjs','scripts/qa-diva-orb-silent-presence.mjs','scripts/qa-os-visual-language.mjs','scripts/qa-social-insights-live-grid.mjs','scripts/qa-os-hydration-regression.mjs','scripts/qa-os-11-surface-angel-closure.mjs','scripts/qa-social-insights-content-data-live.mjs','scripts/qa-social-research-contract.mjs','scripts/qa-pr-studio-surface.mjs','scripts/qa-os-radar-gabi-v2.mjs','scripts/qa-human-radar-ideas-live-charts.mjs','scripts/qa-mobile-contract-sync.mjs','scripts/qa-diva-listening-reflex.mjs','scripts/qa-wix-runtime-release-identity.mjs'];
+ for(const gate of osGates){await run('node',[gate],{cwd:OS_DIR});state.tests.push({gate,status:'PASS'})}log('OS_DAY_TO_DAY_GATES_PASS '+osGates.length);
  await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_artifact_live_repack');
  await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);
  state.phase='READBACK_LIVE';state.live=await prove(LIVE.host,'LIVE');
  state.phase='READBACK_CANONICAL';state.canonical=await prove(CANONICAL,'CANONICAL');
- state.phase='DONE';state.done=true;log('DIVA_OS_A3492FB0_RELEASE_COMPLETE '+SOURCE_SHA);
+ state.phase='DONE';state.done=true;log('DIVA_OS_FFBDAB06_RELEASE_COMPLETE '+SOURCE_SHA);
 }catch(e){state.phase='ERROR';state.error=String(e?.stack||e);console.error(state.error)}}
-http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{log('DIVA_OS_A3492FB0_RELEASE_CONTROL_READY '+PORT);main()});
+http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{log('DIVA_OS_FFBDAB06_RELEASE_CONTROL_READY '+PORT);main()});
