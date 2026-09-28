@@ -190,6 +190,34 @@ async function ensureWixCli(){
     }
     log('ORBI_WIX_DEPLOYAPP_EXACT '+JSON.stringify(deployContexts));
   }catch(e){log('ORBI_WIX_CLI_ENDPOINT_SCAN_ERROR '+String(e?.message||e))}
+  try{
+    const cliRoot=path.join(dir,'node_modules','@wix','cli');
+    const wanted=['deployGridApp','loadProjectGridAppContent','deploymentOperation','RcLabel.WIX_CLI','appType: AppType.VELO_ISOLATED','revision:','gridApp'];
+    const found=[];
+    function scan(p){
+      for(const ent of fs.readdirSync(p,{withFileTypes:true})){
+        const full=path.join(p,ent.name);
+        if(ent.isDirectory()) scan(full);
+        else if(/\.(js|mjs|cjs)$/.test(ent.name)){
+          const s=fs.readFileSync(full,'utf8');
+          for(const w of wanted){
+            let idx=s.indexOf(w);
+            if(idx>=0){
+              found.push({
+                file:path.relative(cliRoot,full),
+                needle:w,
+                snippet:s.slice(Math.max(0,idx-5000),Math.min(s.length,idx+12000))
+              });
+              if(found.length>=40)return;
+            }
+          }
+        }
+        if(found.length>=40)return;
+      }
+    }
+    scan(cliRoot);
+    log('GABI_WIX_RELEASE_PAYLOAD_CONTRACT '+JSON.stringify(found));
+  }catch(e){log('GABI_WIX_RELEASE_PAYLOAD_CONTRACT_ERROR '+String(e?.stack||e))}
   return bin;
 }
 async function ensureAuth(wixCli){
@@ -253,6 +281,7 @@ async function main(){
     await fetchExactSource();
     await qa();
     const wixCli=await ensureWixCli();
+    state.phase='DIAGNOSTIC_DONE';state.done=true;log('GABI_WIX_RELEASE_DIAGNOSTIC_DONE');return;
     await ensureAuth(wixCli);
     state.qa=await release(QA,'QA','wix-qa',wixCli);
     state.live=await release(LIVE,'LIVE','wix-live',wixCli);
