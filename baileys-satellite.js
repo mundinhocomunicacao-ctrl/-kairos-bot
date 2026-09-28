@@ -31,6 +31,15 @@ const silentBaileysLogger={
  child(){return this},
  trace(){},debug(){},info(){},warn(){},error(){},fatal(){}
 };
+const rawConsoleLog=console.log.bind(console);
+console.log=(...args)=>{
+ const head=String(args[0]??"");
+ if(head.startsWith("Closing session:")){
+   rawConsoleLog("DIVA_SIGNAL_SESSION_ROTATION_REDACTED");
+   return;
+ }
+ rawConsoleLog(...args);
+};
 
 function vaultKey(){
  if(!DIVA_AUTH_VAULT_SECRET)throw new Error("DIVA_AUTH_VAULT_SECRET is not configured");

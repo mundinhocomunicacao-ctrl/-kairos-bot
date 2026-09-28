@@ -14,6 +14,8 @@ assert.ok(!src.includes("useMultiFileAuthState"),"must not use filesystem auth s
 assert.ok(src.includes("const silentBaileysLogger={"),"Baileys runtime must declare an explicit silent logger");
 assert.ok(src.includes("child(){return this}"),"silent Baileys logger must satisfy child logger contract");
 assert.ok(src.includes("logger:silentBaileysLogger"),"makeWASocket must receive the explicit silent logger");
+assert.ok(src.includes('head.startsWith("Closing session:")'),"libsignal Closing session dumps must be intercepted");
+assert.ok(src.includes("DIVA_SIGNAL_SESSION_ROTATION_REDACTED"),"sensitive Signal session dump must be replaced by a sanitized marker");
 console.log("DIVA_BAILEYS_SATELLITE_CONTRACT_OK");
 assert.ok(!src.includes("setTimeout(connect,2500)"),"must not reconnect Baileys in-process");
 
