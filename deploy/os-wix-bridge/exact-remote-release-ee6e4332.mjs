@@ -117,7 +117,7 @@ async function main(){
   try{
     state.phase='SOURCE';
     await run('bash',['-lc','git submodule sync --recursive && git submodule update --init --recursive morada'],{cwd:ROOT});
-    const source=sh('git rev-parse HEAD',MORADA);
+    const source=sh('git -C morada rev-parse HEAD',ROOT);
     if(source!==EXPECTED_SOURCE)throw new Error('MORADA_SOURCE_SHA_MISMATCH '+source);
     log('DIVA_MORADA_SOURCE_EXACT_PASS '+source);
 
