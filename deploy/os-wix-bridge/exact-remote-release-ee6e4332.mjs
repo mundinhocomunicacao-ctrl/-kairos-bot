@@ -90,7 +90,6 @@ async function main(){try{
  state.phase='SOURCE';await run('bash',['-lc','git submodule sync --recursive && git submodule update --init --recursive os'],{cwd:ROOT});const mirror=sh('git -C os rev-parse HEAD');if(mirror!==MIRROR_SHA)throw new Error('MIRROR_SHA_MISMATCH '+mirror);const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();if(marker!==SOURCE_SHA)throw new Error('SOURCE_MARKER_MISMATCH '+marker);log('SOURCE_EXACT_SHA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
  state.phase='CONTROLLER_QA';await run('node',['deploy/os-wix-bridge/qa-os-e7cd45bf-live-release.mjs'],{cwd:ROOT});state.tests.push({gate:'controller',status:'PASS'});
  state.phase='QA';
- try{await run('npm',['ci','--include=dev'],{cwd:OS_DIR,env:{NODE_ENV:'development'}})}catch{await run('npm',['install','--include=dev','--no-audit','--no-fund'],{cwd:OS_DIR,env:{NODE_ENV:'development'}})}
  await run('npm',['run','qa:release'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
  state.tests.push({gate:'qa:release-os-final',status:'PASS'});
  log('OS_FINAL_QA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
