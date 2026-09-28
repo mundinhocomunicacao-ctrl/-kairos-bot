@@ -44,6 +44,8 @@ async function assertReleaseUnlocked(){
  const envExpectedSource=String(process.env.OS_LIVE_EXPECTED_CURRENT_SOURCE_SHA||'').trim();
  const envExpectedRelease=String(process.env.OS_LIVE_EXPECTED_CURRENT_RELEASE_ID||'').trim();
  const promotionEnabled=String(process.env.OS_LIVE_PROMOTION_ENABLED||'false').trim().toLowerCase()==='true';
+ const externalApprovedRequestId=String(process.env.OS_LIVE_APPROVED_REQUEST_ID||'').trim();
+ const externalApprovedSourceSha=String(process.env.OS_LIVE_APPROVED_SOURCE_SHA||'').trim();
  if(envPolicy!=='MUNDINHO_OS_LIVE_LOCK_V1')throw new Error('RELEASE_LOCK_ENV_POLICY_MISMATCH '+envPolicy);
  if(envExpectedSource!==lock.currentLive?.sourceSha)throw new Error('RELEASE_LOCK_ENV_CURRENT_SOURCE_MISMATCH '+envExpectedSource+' expected='+String(lock.currentLive?.sourceSha||''));
  if(envExpectedRelease!==lock.currentLive?.releaseId)throw new Error('RELEASE_LOCK_ENV_CURRENT_RELEASE_MISMATCH '+envExpectedRelease+' expected='+String(lock.currentLive?.releaseId||''));
@@ -51,6 +53,8 @@ async function assertReleaseUnlocked(){
  const request=lock.pendingReleaseRequest;
  if(!request)throw new Error('RELEASE_LOCKED_NO_REQUEST current='+String(lock.currentLive?.sourceSha||''));
  if(request.status!=='APPROVED'||request.approvedByHuman!==true||!request.approvedAt)throw new Error('RELEASE_LOCK_REQUEST_NOT_APPROVED '+String(request.requestId||''));
+ if(externalApprovedRequestId!==request.requestId)throw new Error('RELEASE_EXTERNAL_REQUEST_ID_MISMATCH '+externalApprovedRequestId+' expected='+String(request.requestId||''));
+ if(externalApprovedSourceSha!==SOURCE_SHA||externalApprovedSourceSha!==request.sourceSha)throw new Error('RELEASE_EXTERNAL_SOURCE_MISMATCH '+externalApprovedSourceSha+' expected='+SOURCE_SHA);
  if(request.sourceSha!==SOURCE_SHA)throw new Error('RELEASE_LOCK_SOURCE_MISMATCH '+String(request.sourceSha||'')+' expected='+SOURCE_SHA);
  if(request.mirrorSha!==MIRROR_SHA)throw new Error('RELEASE_LOCK_MIRROR_MISMATCH '+String(request.mirrorSha||'')+' expected='+MIRROR_SHA);
  if(request.releaseId!==EXPECTED_RELEASE_ID)throw new Error('RELEASE_LOCK_RELEASE_ID_MISMATCH '+String(request.releaseId||'')+' expected='+EXPECTED_RELEASE_ID);
