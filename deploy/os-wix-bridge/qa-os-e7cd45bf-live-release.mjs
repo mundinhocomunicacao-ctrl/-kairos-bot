@@ -23,7 +23,7 @@ assert.ok(src.includes("provePrivacy(CANONICAL,'CANONICAL')"),'must prove canoni
 assert.ok(src.includes('PAGE_X_ROBOTS_MISSING'),'page-by-page audit must enforce X-Robots-Tag on all protected routes');
 assert.ok(src.includes('PAGE_REFERRER_POLICY'),'page-by-page audit must enforce Referrer-Policy on all protected routes');
 assert.ok(src.includes("OS_FINAL_QA_REUSED"),'controller must reuse the exact fresh final OS forge QA receipt when controller runtime QA is skipped');
-assert.ok(src.includes("dep-data1i8jo6nc73erpbh0"),'controller must bind the exact Render forge QA deployment receipt');
+assert.ok(src.includes("dep-data9nnlk1mc73et7hg0"),'controller must bind the exact Render forge QA deployment receipt');
 assert.ok(src.includes("QA_REPOSITORY_HYGIENE PASS"),'controller must bind the terminal final QA gate evidence');
 assert.ok(src.includes("LIVE_PRIVACY_METADATA_PASS 11/11")||src.includes("'_PRIVACY_METADATA_PASS 11/11'"),'controller must prove live page-by-page privacy metadata');
 assert.ok(!src.includes("qa-diva-morada-brain.mjs"),'Morada brain gate is outside this release cut');
