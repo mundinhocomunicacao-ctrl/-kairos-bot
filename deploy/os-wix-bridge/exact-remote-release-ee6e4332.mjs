@@ -14,7 +14,7 @@ const RELEASE_LOCK_PATH=path.join(ROOT,'deploy/os-wix-bridge/release-lock.json')
 const PREBUILT_ARTIFACT_PROOF_PATH=path.join(OS_DIR,'.wix-prebuilt-68b46dab.json');
 const MATERIALIZE_FROM_PINNED_SUBMODULE=true;
 const RETRY_AUTH_ONLY=false;
-const READBACK_ONLY=false;
+const READBACK_ONLY=process.env.READBACK_ONLY==='1';
 const PAGE_TITLES={
   '/os/inicio':'Mundinho OS · Início',
   '/os/agenda':'Mundinho OS · Agenda',
