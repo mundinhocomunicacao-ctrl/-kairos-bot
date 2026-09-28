@@ -40,6 +40,14 @@ async function assertReleaseUnlocked(){
  state.releaseLock={policyVersion:lock.policyVersion||null,mode:lock.mode||null,currentLive:lock.currentLive||null,pendingReleaseRequest:lock.pendingReleaseRequest?{requestId:lock.pendingReleaseRequest.requestId||null,status:lock.pendingReleaseRequest.status||null}:null};
  if(lock.policyVersion!=='MUNDINHO_OS_LIVE_LOCK_V1')throw new Error('RELEASE_LOCK_POLICY_MISMATCH');
  if(lock.mode!=='frozen')throw new Error('RELEASE_LOCK_MODE_INVALID '+String(lock.mode||''));
+ const envPolicy=String(process.env.OS_LIVE_LOCK_POLICY_VERSION||'').trim();
+ const envExpectedSource=String(process.env.OS_LIVE_EXPECTED_CURRENT_SOURCE_SHA||'').trim();
+ const envExpectedRelease=String(process.env.OS_LIVE_EXPECTED_CURRENT_RELEASE_ID||'').trim();
+ const promotionEnabled=String(process.env.OS_LIVE_PROMOTION_ENABLED||'false').trim().toLowerCase()==='true';
+ if(envPolicy!=='MUNDINHO_OS_LIVE_LOCK_V1')throw new Error('RELEASE_LOCK_ENV_POLICY_MISMATCH '+envPolicy);
+ if(envExpectedSource!==lock.currentLive?.sourceSha)throw new Error('RELEASE_LOCK_ENV_CURRENT_SOURCE_MISMATCH '+envExpectedSource+' expected='+String(lock.currentLive?.sourceSha||''));
+ if(envExpectedRelease!==lock.currentLive?.releaseId)throw new Error('RELEASE_LOCK_ENV_CURRENT_RELEASE_MISMATCH '+envExpectedRelease+' expected='+String(lock.currentLive?.releaseId||''));
+ if(!promotionEnabled)throw new Error('RELEASE_PROMOTION_DISABLED current='+String(lock.currentLive?.sourceSha||''));
  const request=lock.pendingReleaseRequest;
  if(!request)throw new Error('RELEASE_LOCKED_NO_REQUEST current='+String(lock.currentLive?.sourceSha||''));
  if(request.status!=='APPROVED'||request.approvedByHuman!==true||!request.approvedAt)throw new Error('RELEASE_LOCK_REQUEST_NOT_APPROVED '+String(request.requestId||''));
