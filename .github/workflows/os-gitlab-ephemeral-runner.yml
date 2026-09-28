@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: os-gitlab-ephemeral-runner
@@ -19,94 +19,115 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
-      RELAY_DIR: relay/os-runner-76662c11
+      GITLAB_PROJECT_ID: "86501645"
       RUNNER_TAG: os-external-failover
+      TOKEN_A: ${{ secrets.GITLAB_TOKEN }}
+      TOKEN_B: ${{ secrets.GITLAB_PAT }}
+      TOKEN_C: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+      TOKEN_D: ${{ secrets.MUNDINHO_GITLAB_TOKEN }}
+      TOKEN_E: ${{ secrets.GITLAB_API_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Generate ephemeral relay key
+      - name: Select governed GitLab credential
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/os-runner "$RELAY_DIR"
-          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/os-runner/private.pem >/dev/null 2>&1
-          openssl pkey -in /tmp/os-runner/private.pem -pubout -out "$RELAY_DIR/public.pem" >/dev/null 2>&1
-          git config user.name 'Mundinho Ephemeral Runner'
-          git config user.email 'runner-bridge@users.noreply.github.com'
-          git add "$RELAY_DIR/public.pem"
-          git commit -m 'ops: publish ephemeral runner relay key 76662c11'
-          git push origin HEAD:main
-
-      - name: Receive encrypted GitLab registration credential
-        shell: bash
-        run: |
-          set -euo pipefail
-          CIPHER="$RELAY_DIR/runner-token.enc.b64"
-          for i in $(seq 1 180); do
-            git pull --ff-only origin main >/dev/null 2>&1 || true
-            if [ -s "$CIPHER" ]; then
-              base64 -d "$CIPHER" > /tmp/os-runner/token.enc
-              openssl pkeyutl -decrypt -inkey /tmp/os-runner/private.pem -in /tmp/os-runner/token.enc -out /tmp/os-runner/token.txt -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
-              test -s /tmp/os-runner/token.txt
-              chmod 600 /tmp/os-runner/token.txt
-              echo "EPHEMERAL_GITLAB_CREDENTIAL=RECEIVED"
-              exit 0
+          mkdir -p /tmp/os-runner
+          FOUND=0
+          for pair in "TOKEN_A:GITLAB_TOKEN" "TOKEN_B:GITLAB_PAT" "TOKEN_C:GITLAB_ACCESS_TOKEN" "TOKEN_D:MUNDINHO_GITLAB_TOKEN" "TOKEN_E:GITLAB_API_TOKEN"; do
+            var="${pair%%:*}"
+            label="${pair#*:}"
+            value="${!var:-}"
+            if [ -n "$value" ]; then
+              printf '%s' "$value" > /tmp/os-runner/gitlab.pat
+              chmod 600 /tmp/os-runner/gitlab.pat
+              echo "CANONICAL_GITLAB_CREDENTIAL=FOUND alias=$label"
+              FOUND=1
+              break
             fi
-            sleep 2
           done
-          echo "EPHEMERAL_GITLAB_CREDENTIAL=TIMEOUT"
-          exit 1
+          test "$FOUND" = "1" || { echo "CANONICAL_GITLAB_CREDENTIAL=MISSING"; exit 78; }
 
-      - name: Register project runner
+      - name: Create ephemeral project runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          PAT="$(cat /tmp/os-runner/gitlab.pat)"
+          BODY="$(mktemp)"
+          HTTP="$(curl --silent --show-error --output "$BODY" --write-out '%{http_code}'             --request POST             --header "PRIVATE-TOKEN: $PAT"             --data-urlencode "runner_type=project_type"             --data-urlencode "project_id=$GITLAB_PROJECT_ID"             --data-urlencode "description=mundinho-os-failover-$GITHUB_RUN_ID"             --data-urlencode "tag_list=$RUNNER_TAG"             --data-urlencode "run_untagged=false"             --data-urlencode "locked=true"             --url "https://gitlab.com/api/v4/user/runners")"
+          unset PAT
+          if [ "$HTTP" != "201" ]; then
+            echo "EPHEMERAL_RUNNER_CREATE=FAILED http=$HTTP"
+            node -e 'const fs=require("fs");const p=process.argv[1];let x={};try{x=JSON.parse(fs.readFileSync(p,"utf8"))}catch{};console.log("gitlab_error="+String(x.message||x.error||"unknown").slice(0,200))' "$BODY"
+            rm -f "$BODY"
+            exit 1
+          fi
+          node - "$BODY" <<'NODE'
+          const fs=require('fs');
+          const body=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
+          if(!body.id||!body.token||!String(body.token).startsWith('glrt-')) process.exit(2);
+          fs.writeFileSync('/tmp/os-runner/runner.id',String(body.id),{mode:0o600});
+          fs.writeFileSync('/tmp/os-runner/runner.token',String(body.token),{mode:0o600});
+          console.log('EPHEMERAL_RUNNER_CREATE=PASS id='+body.id);
+          NODE
+          rm -f "$BODY"
+
+      - name: Install and register GitLab Runner
         shell: bash
         run: |
           set -euo pipefail
           curl -fsSL --retry 3 https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64 -o /tmp/os-runner/gitlab-runner
           chmod +x /tmp/os-runner/gitlab-runner
-          TOKEN="$(cat /tmp/os-runner/token.txt)"
-          /tmp/os-runner/gitlab-runner register --non-interactive             --url https://gitlab.com/             --registration-token "$TOKEN"             --executor shell             --description "mundinho-os-failover-$GITHUB_RUN_ID"             --tag-list "$RUNNER_TAG"             --run-untagged=false             --locked=true             --config /tmp/os-runner/config.toml
+          TOKEN="$(cat /tmp/os-runner/runner.token)"
+          /tmp/os-runner/gitlab-runner register --non-interactive             --url https://gitlab.com/             --token "$TOKEN"             --executor shell             --description "mundinho-os-failover-$GITHUB_RUN_ID"             --config /tmp/os-runner/config.toml
           unset TOKEN
-          shred -u /tmp/os-runner/token.txt /tmp/os-runner/token.enc /tmp/os-runner/private.pem || rm -f /tmp/os-runner/token.txt /tmp/os-runner/token.enc /tmp/os-runner/private.pem
-          echo "EPHEMERAL_GITLAB_RUNNER=REGISTERED"
+          shred -u /tmp/os-runner/runner.token || rm -f /tmp/os-runner/runner.token
+          echo "EPHEMERAL_GITLAB_RUNNER=REGISTERED tag=$RUNNER_TAG"
 
-      - name: Start runner and publish ready receipt
+      - name: Start runner
         shell: bash
         run: |
           set -euo pipefail
-          nohup /tmp/os-runner/gitlab-runner run --working-directory /tmp/os-runner/work --config /tmp/os-runner/config.toml >/tmp/os-runner/runner.log 2>&1 &
+          nohup /tmp/os-runner/gitlab-runner run             --working-directory /tmp/os-runner/work             --config /tmp/os-runner/config.toml             >/tmp/os-runner/runner.log 2>&1 &
           echo $! >/tmp/os-runner/runner.pid
           sleep 3
           kill -0 "$(cat /tmp/os-runner/runner.pid)"
-          printf '{"status":"ready","tag":"%s","githubRunId":"%s","canonicalSha":"76662c1145966fb9f906f7dbf3843da4e6052ce0"}\n' "$RUNNER_TAG" "$GITHUB_RUN_ID" > "$RELAY_DIR/ready.json"
-          git add "$RELAY_DIR/ready.json"
-          git commit -m 'ops: ephemeral GitLab runner ready 76662c11'
-          git push origin HEAD:main
+          echo "EPHEMERAL_GITLAB_RUNNER=READY"
 
-      - name: Serve GitLab job
+      - name: Serve queued GitLab job
         shell: bash
         run: |
           set -euo pipefail
+          SEEN_JOB=0
           for i in $(seq 1 900); do
-            git pull --ff-only origin main >/dev/null 2>&1 || true
-            if [ -f "$RELAY_DIR/stop.txt" ]; then
-              echo "EPHEMERAL_GITLAB_RUNNER=STOP_REQUESTED"
+            kill -0 "$(cat /tmp/os-runner/runner.pid)" || {
+              echo "EPHEMERAL_GITLAB_RUNNER=STOPPED_UNEXPECTEDLY"
+              tail -100 /tmp/os-runner/runner.log | sed -E 's/(glrt-|token=)[^ ]+/[REDACTED]/g' || true
+              exit 1
+            }
+            if grep -Eq 'Checking for jobs|received job|Appending trace|Job succeeded|Job failed' /tmp/os-runner/runner.log; then
+              SEEN_JOB=1
+            fi
+            if grep -Eq 'Job succeeded|Job failed' /tmp/os-runner/runner.log; then
               break
             fi
-            kill -0 "$(cat /tmp/os-runner/runner.pid)" || { echo "EPHEMERAL_GITLAB_RUNNER=STOPPED_UNEXPECTEDLY"; tail -80 /tmp/os-runner/runner.log; exit 1; }
             sleep 2
           done
-          tail -80 /tmp/os-runner/runner.log | sed -E 's/(token|registration-token)[^ ]*/[REDACTED]/gi' || true
+          test "$SEEN_JOB" = "1" || { echo "EPHEMERAL_GITLAB_RUNNER=NO_JOB_OBSERVED"; exit 1; }
+          tail -100 /tmp/os-runner/runner.log | sed -E 's/(glrt-|token=)[^ ]+/[REDACTED]/g' || true
 
       - name: Cleanup runner
         if: always()
         shell: bash
         run: |
           set +e
-          if [ -x /tmp/os-runner/gitlab-runner ] && [ -f /tmp/os-runner/config.toml ]; then
-            /tmp/os-runner/gitlab-runner unregister --all-runners --config /tmp/os-runner/config.toml >/dev/null 2>&1 || true
-          fi
           [ -f /tmp/os-runner/runner.pid ] && kill "$(cat /tmp/os-runner/runner.pid)" >/dev/null 2>&1 || true
+          if [ -f /tmp/os-runner/runner.id ] && [ -f /tmp/os-runner/gitlab.pat ]; then
+            ID="$(cat /tmp/os-runner/runner.id)"
+            PAT="$(cat /tmp/os-runner/gitlab.pat)"
+            HTTP="$(curl --silent --show-error --output /tmp/os-runner/delete.out --write-out '%{http_code}'               --request DELETE               --header "PRIVATE-TOKEN: $PAT"               --url "https://gitlab.com/api/v4/runners/$ID")"
+            unset PAT
+            echo "EPHEMERAL_GITLAB_RUNNER_DELETE_HTTP=$HTTP"
+          fi
           rm -rf /tmp/os-runner
           echo "EPHEMERAL_GITLAB_RUNNER=CLEANED"
