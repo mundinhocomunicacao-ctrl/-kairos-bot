@@ -43,6 +43,10 @@ assert.ok(src.includes("RELEASE_EXTERNAL_SOURCE_MISMATCH"),'controller must reje
 
 
 
+assert.ok(src.includes("await run('npm',['exec','vite','--','build','--minify','false']"),'controller must use direct Vite build with minification disabled on the constrained release worker');
+assert.ok(src.includes("await run('node',['scripts/package-wix-worker.mjs']"),'controller must package the Wix worker after the direct Vite build');
+assert.ok(!src.includes("await run('npm',['run','build:wix-worker']"),'controller must not route this constrained release through the hanging vinext wrapper');
+
 assert.ok(src.includes("SOURCE_SHA='68b46dabd6fa0191259225493350a35caea26567'"),'must pin sovereign GitLab final SHA');
 assert.ok(src.includes("MIRROR_SHA='de8568fa10a42aae6cd25abb532f47a1c3ac27ec'"),'must pin exact final GitHub mirror snapshot');
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
