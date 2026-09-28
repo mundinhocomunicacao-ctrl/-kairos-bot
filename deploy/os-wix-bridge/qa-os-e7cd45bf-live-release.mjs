@@ -13,7 +13,10 @@ assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must p
 assert.ok(src.includes("state.live=await prove(LIVE.host,'LIVE')"),'must prove technical live host readback');
 assert.ok(src.includes("state.canonical=await prove(CANONICAL,'CANONICAL')"),'must prove canonical domain readback');
 assert.ok(src.includes("git -C os rev-parse HEAD"),'must verify mirror commit');
-assert.ok(src.includes("build:wix-worker"),'must build Wix artifact from source');
+assert.ok(src.includes("ARTIFACT_URL='https://mundinho-os-current-be822-artifact-v2.onrender.com/artifact'"),'must consume the dedicated exact artifact service');
+assert.ok(src.includes("WIX_ARTIFACT_EXACT_SHA_PASS"),'must verify artifact source SHA after extraction');
+assert.ok(src.includes("state.tests.push({gate:'artifact',status:'PASS'})"),'must record artifact verification gate');
+assert.ok(!src.includes("state.phase='BUILD';await run('npm',['run','build:wix-worker']"),'release runtime must not rebuild the app in the memory-limited web container');
 assert.ok(src.includes("@wix/cli@latest"),'must publish through Wix CLI');
 assert.ok(!src.includes("242b9d6f-71ad-40c6-b1d7-f1f0825e01be"),'must not publish legacy QA site');
 assert.ok(!src.includes("radar.gabi.mundinhocomunicacao.com"),'must not touch Gabi Radar');
