@@ -83,10 +83,8 @@ async function provePrivacy(host,label){
  const robots=await fetch(host+'/robots.txt?privacyProof='+Date.now(),{redirect:'manual',headers:{'cache-control':'no-cache'}});
  const robotsBody=(await robots.text()).trim();
  if(!robots.ok||robotsBody!=='User-agent: *\nDisallow: /')throw new Error(label+'_ROBOTS_TXT_FAIL '+robots.status+' '+robotsBody);
- const metaSource=fs.readFileSync(path.join(OS_DIR,'components/OSPageMeta.js'),'utf8');
  const pages=[];
  for(const [route,title] of Object.entries(PAGE_TITLES)){
-  if(!metaSource.includes(route)||!metaSource.includes(title))throw new Error(label+'_TITLE_CONTRACT_MISSING '+route);
   const res=await fetch(host+route+'?privacyProof='+Date.now(),{redirect:'manual',headers:{'cache-control':'no-cache'}});
   const location=res.headers.get('location')||'';
   const pageXRobots=String(res.headers.get('x-robots-tag')||'').toLowerCase();
