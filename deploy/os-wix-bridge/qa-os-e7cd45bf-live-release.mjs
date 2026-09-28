@@ -59,6 +59,7 @@ assert.ok(!healSrc.includes('RENDER_PROJECT_DIR'),'healing hook must not trust R
 assert.ok(!healSrc.startsWith('#!/usr/bin/env bash\nset -euo pipefail'),'healing hook must not leak strict shell options into Render runtime wrapper');
 assert.ok(healSrc.includes('(') && healSrc.includes('set -euo pipefail'),'healing hook must isolate strict mode inside a subshell');
 assert.ok(src.includes('PREBUILT_ARTIFACT_PROOF_PATH'),'controller must require build-phase artifact proof');
+assert.ok(src.includes("const READBACK_ONLY=process.env.READBACK_ONLY==='1'"),'controller must expose env-driven readback-only mode without re-releasing Wix');
 assert.ok(src.includes('WIX_PREBUILT_ARTIFACT_PASS'),'controller must emit prebuilt artifact receipt');
 assert.ok(!src.includes("await run('npm',['ci','--ignore-scripts']"),'runtime controller must not reinstall dependencies');
 
