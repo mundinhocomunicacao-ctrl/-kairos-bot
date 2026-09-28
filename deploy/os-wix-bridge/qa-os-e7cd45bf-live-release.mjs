@@ -10,8 +10,8 @@ assert.ok(src.includes("MIRROR_SHA='4972c0f93d13971e291f8884a17227beee8b9be7'"),
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
 assert.ok(src.includes("appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e'"),'must target live Wix app');
 assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must prove human canonical domain');
-assert.ok(src.includes("LIVE_EXACT_SHA_PASS"),'must prove technical live host readback');
-assert.ok(src.includes("CANONICAL_EXACT_SHA_PASS"),'must prove canonical domain readback');
+assert.ok(src.includes("state.live=await prove(LIVE.host,'LIVE')"),'must prove technical live host readback');
+assert.ok(src.includes("state.canonical=await prove(CANONICAL,'CANONICAL')"),'must prove canonical domain readback');
 assert.ok(src.includes("git -C os rev-parse HEAD"),'must verify mirror commit');
 assert.ok(src.includes("build:wix-worker"),'must build Wix artifact from source');
 assert.ok(src.includes("@wix/cli@latest"),'must publish through Wix CLI');
