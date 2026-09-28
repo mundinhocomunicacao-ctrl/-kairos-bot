@@ -5,8 +5,8 @@ import os from 'node:os';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA=String(process.env.TARGET_SOURCE_SHA||'0942e49b87b7c2dc2d6dca5a8257b54bfd35847f').trim();
-const MIRROR_SHA='bf4c978b669cd663c3bb3d980898406d4cab5b4f';
+const SOURCE_SHA=String(process.env.TARGET_SOURCE_SHA||'adcc50800b21e9ffa13700b333f9eab4927cedfa').trim();
+const MIRROR_SHA='b77ce4822fea7c115ce8df499cb9bcfc65ad6777';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-os-orbi-release');
@@ -49,7 +49,8 @@ async function qa(){
     'scripts/qa-os-hydration-regression.mjs',
     'scripts/qa-social-insights-live-grid.mjs',
     'scripts/qa-social-research-contract.mjs',
-    'scripts/qa-pipeline-live-projection.mjs'
+    'scripts/qa-pipeline-live-projection.mjs',
+    'scripts/qa-os-11-surface-angel-closure.mjs'
   ];
   for(const gate of gates){await run('node',[gate],{cwd:OS_DIR});state.tests.push({gate,status:'PASS'})}
   const contract=fs.readFileSync(path.join(OS_DIR,'data/diva-voice-presence-contract.js'),'utf8');
@@ -70,7 +71,11 @@ async function materialize(runtimeEnv){
     'pages/api/agent-social-source.js',
     'pages/os/agenda.js',
     'pages/os/pipeline/index.js',
-    'pages/os/social.js'
+    'pages/os/social.js',
+    'data/os-closure-queue-registry.js',
+    'data/social-visualizer-catalog.js',
+    'lib/os-closure-orchestrator.mjs',
+    'pages/api/os-closure-missions.js'
   ];
   for(const required of requiredSourceFiles){
     if(!fs.existsSync(path.join(OS_DIR,required)))throw new Error('SOURCE_CONTRACT_FILE_MISSING '+required);
