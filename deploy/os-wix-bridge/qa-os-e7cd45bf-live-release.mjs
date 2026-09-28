@@ -6,7 +6,7 @@ assert.ok(fs.existsSync(controller),'controller must exist');
 const src=fs.readFileSync(controller,'utf8');
 
 assert.ok(src.includes("SOURCE_SHA='9bc0a248b1d2f830cfda7bf6e92998b353ec29c7'"),'must pin sovereign GitLab final SHA');
-assert.ok(src.includes("MIRROR_SHA='3848ae8b44bc552f19e78fe3c988ff36955b3195'"),'must pin exact final GitHub mirror snapshot');
+assert.ok(src.includes("MIRROR_SHA='d7f70bedd6639e24393c32ca8b49cd151d401b57'"),'must pin exact final GitHub mirror snapshot');
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
 assert.ok(src.includes("appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e'"),'must target live Wix app');
 assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must prove human canonical domain');
