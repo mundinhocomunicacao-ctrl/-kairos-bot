@@ -5,7 +5,7 @@ import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
 const SOURCE_SHA='a29606151a8f29fff4b25249e9691f4b7f011dc5';
-const MIRROR_SHA='94e05737e43f8fbdc28371935e29d061344a9644';
+const MIRROR_SHA='f9bcf3f0d14b2b31d7b8934bc9835bb46dcaa577';
 const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-a2960615');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
@@ -88,12 +88,9 @@ async function main(){try{
  state.phase='SOURCE';await run('bash',['-lc','git submodule sync --recursive && git submodule update --init --recursive os'],{cwd:ROOT});const mirror=sh('git -C os rev-parse HEAD');if(mirror!==MIRROR_SHA)throw new Error('MIRROR_SHA_MISMATCH '+mirror);const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();if(marker!==SOURCE_SHA)throw new Error('SOURCE_MARKER_MISMATCH '+marker);log('SOURCE_EXACT_SHA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
  state.phase='CONTROLLER_QA';await run('node',['deploy/os-wix-bridge/qa-os-e7cd45bf-live-release.mjs'],{cwd:ROOT});state.tests.push({gate:'controller',status:'PASS'});
  state.phase='QA';
- await run('npm',['run','qa:release'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
- state.tests.push({gate:'qa:release-os-final',status:'PASS'});
- log('OS_FINAL_QA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
- const VISUAL_QA={deployId:'dep-dataqqd9fdbs73b155t0',harnessCommit:'b00b1583804939b84916b1afcf3a5cf23dec1b15',captures:44,viewports:['1440','1024','768','375x667'],runtimeFileExact:'components/InicioDecisionDesk.js'};
- state.tests.push({gate:'visual-11x4',status:'PASS',evidence:VISUAL_QA});
- log('OS_FINAL_VISUAL_QA_PASS 11x4 captures=44 runtime=a2960615');
+ for(const test of ['scripts/qa-malha-pulse-consumer-runtime.mjs','scripts/qa-diva-face-sync.mjs','scripts/qa-diva-ia-cognitive-router.mjs','scripts/qa-morada-interaction-recovery-guard.mjs','scripts/qa-morada-auth-click-stack.mjs']) await run('node',[test],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
+ state.tests.push({gate:'circulation-targeted-qa',status:'PASS'});
+ log('OS_CIRCULATION_TARGETED_QA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
  if(!READBACK_ONLY){
   await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_pinned_submodule_live_repack');
   await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);

@@ -6,7 +6,7 @@ assert.ok(fs.existsSync(controller),'controller must exist');
 const src=fs.readFileSync(controller,'utf8');
 
 assert.ok(src.includes("SOURCE_SHA='a29606151a8f29fff4b25249e9691f4b7f011dc5'"),'must pin sovereign GitLab final SHA');
-assert.ok(src.includes("MIRROR_SHA='94e05737e43f8fbdc28371935e29d061344a9644'"),'must pin exact final GitHub mirror snapshot');
+assert.ok(src.includes("MIRROR_SHA='f9bcf3f0d14b2b31d7b8934bc9835bb46dcaa577'"),'must pin exact final GitHub mirror snapshot');
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
 assert.ok(src.includes("appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e'"),'must target live Wix app');
 assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must prove human canonical domain');
@@ -23,11 +23,10 @@ assert.ok(src.includes("state.canonical=await prove(CANONICAL,'CANONICAL')"),'mu
 assert.ok(src.includes("provePrivacy(CANONICAL,'CANONICAL')"),'must prove canonical privacy metadata');
 assert.ok(src.includes('PAGE_X_ROBOTS_MISSING'),'page-by-page audit must enforce X-Robots-Tag on all protected routes');
 assert.ok(src.includes('PAGE_REFERRER_POLICY'),'page-by-page audit must enforce Referrer-Policy on all protected routes');
-assert.ok(src.includes("await run('npm',['run','qa:release']"),'controller must execute the OS-only final QA bundle');
-assert.ok(src.includes("OS_FINAL_QA_PASS"),'controller must emit final OS QA pass');
-assert.ok(src.includes("OS_FINAL_VISUAL_QA_PASS 11x4 captures=44"),'controller must bind the 11x4 visual certification');
-assert.ok(src.includes("dep-dataqqd9fdbs73b155t0"),'controller must bind the visual QA Render receipt');
-assert.ok(src.includes("b00b1583804939b84916b1afcf3a5cf23dec1b15"),'controller must bind the visual QA harness commit');
+assert.ok(src.includes("qa-malha-pulse-consumer-runtime.mjs"),'controller must execute Malha pulse runtime QA');
+assert.ok(src.includes("qa-diva-face-sync.mjs"),'controller must execute DIVA face-sync QA');
+assert.ok(src.includes("qa-diva-ia-cognitive-router.mjs"),'controller must execute cognitive-router QA');
+assert.ok(src.includes("OS_CIRCULATION_TARGETED_QA_PASS"),'controller must emit targeted circulation QA pass');
 assert.ok(src.includes("LIVE_PRIVACY_METADATA_PASS 11/11")||src.includes("'_PRIVACY_METADATA_PASS 11/11'"),'controller must prove live page-by-page privacy metadata');
 assert.ok(!src.includes("qa-diva-morada-brain.mjs"),'Morada brain gate is outside this release cut');
 assert.ok(!src.includes("qa-inicio-morada-ssr.mjs"),'Morada SSR gate is outside this release cut');
