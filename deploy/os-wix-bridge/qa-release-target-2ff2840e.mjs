@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const src=fs.readFileSync(new URL('./exact-remote-release-ee6e4332.mjs',import.meta.url),'utf8');
+assert.match(src,/SOURCE_SHA='2ff2840e18c06839c0850f0442914342a11c3a6c'/);
+assert.match(src,/MIRROR_COMMIT='9ac046a0d560480d060d8019e8cd0efa01ac68fb'/);
+assert.match(src,/qa-diva-gateway-installations\.mjs/);
+assert.match(src,/qa-diva-morada-ed25519-gateway\.mjs/);
+assert.doesNotMatch(src,/SOURCE_SHA='22b53d928d2d418561c2a358152c333bff41bec4'/);
+assert.doesNotMatch(src,/MIRROR_COMMIT='89a1157598980b879b0c86488f2711da91e7f372'/);
+console.log('QA_RELEASE_TARGET_2FF2840E PASS · exact release pinned to Ed25519 canonical head');
