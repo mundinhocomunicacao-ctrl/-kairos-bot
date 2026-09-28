@@ -262,7 +262,11 @@
       "wixAuthMarkersAfterFinalBlock": 0,
       "wixReleaseMarkersAfterFinalBlock": 0,
       "awaitingUserMarkersAfterFinalBlock": 0,
-      "activeDeployId": "dep-datc1iugekts73a823g0"
+      "activeDeployId": "dep-datc1iugekts73a823g0",
+      "liveDeploymentShaAfterFinalBlock": "88ccd189cf2b61fd042a6fde2be558646818109c",
+      "liveDeploymentIdAfterFinalBlock": "wix-live-88ccd189",
+      "liveReadinessAfterFinalBlock": "ready",
+      "writebackReadyAfterFinalBlock": true
     },
     "externalApprovalTuple": {
       "promotionEnabledEnv": "OS_LIVE_PROMOTION_ENABLED",
@@ -274,7 +278,6 @@
       "rule": "Even an APPROVED request in Git is insufficient. The exact requestId and sourceSha must also be explicitly mirrored in Render environment variables for that release window."
     },
     "activeRenderDeployId": "dep-datc1iugekts73a823g0",
-    "sharedRailPinnedTo": "42cc4cfb799ef178f270b265e40072d724c2c486",
     "concurrentPromotionIncident": {
       "candidateSourceSha": "68b46dabd6fa0191259225493350a35caea26567",
       "candidateMirrorSha": "de8568fa10a42aae6cd25abb532f47a1c3ac27ec",
@@ -292,6 +295,27 @@
         "force-repinned shared rail branch to state/os-live-lock-v3 commit 42cc4cfb",
         "redeployed controller from safe commit 42cc4cfb"
       ]
+    },
+    "authorityModel": {
+      "liveAuthority": "Wix live readback + release receipt 88ccd189",
+      "controllerAuthority": "active Render deployment dep-datc1iugekts73a823g0 from governance SHA 42cc4cfb799ef178f270b265e40072d724c2c486",
+      "immutableGovernanceRef": "state/os-live-lock-v3",
+      "sharedRailAuthoritative": false,
+      "sharedRailReason": "Shared forge branch is concurrently mutable and may drift; it cannot authorize promotion by itself."
+    },
+    "sharedRail": {
+      "branch": "forge/wix-remote-release-auth-20260927",
+      "observedHead": "04dd9d77a161d9268eb2b88df2876112b6acf7cd",
+      "observedMessage": "release: restore 68b46dab request after external tuple armed",
+      "authoritative": false,
+      "promotionEffect": "NONE while Render kill switch/approval tuple do not match an explicit release window"
+    },
+    "activeController": {
+      "governanceSha": "42cc4cfb799ef178f270b265e40072d724c2c486",
+      "renderDeployId": "dep-datc1iugekts73a823g0",
+      "phase": "ERROR",
+      "expectedError": "RELEASE_PROMOTION_DISABLED",
+      "pendingReleaseRequest": null
     }
   }
 }
