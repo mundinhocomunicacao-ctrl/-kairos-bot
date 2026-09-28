@@ -10,7 +10,7 @@ const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`;
-const ARTIFACT_URL='https://mundinho-wix-remote-release-pty.onrender.com/artifact';
+const MATERIALIZE_FROM_PINNED_SUBMODULE=true;
 const RETRY_AUTH_ONLY=false;
 const READBACK_ONLY=false;
 const PAGE_TITLES={
@@ -66,23 +66,20 @@ async function provePrivacy(host,label){
 }
 async function materializeArtifact(){
  state.phase='ARTIFACT';
- const res=await fetch(ARTIFACT_URL+'?source='+SOURCE_SHA,{headers:{'cache-control':'no-cache'}});
- if(!res.ok)throw new Error('ARTIFACT_FETCH_FAILED '+res.status);
- const artifactPath=path.join(ROOT,'os-release-a2960615.tar.gz');
- fs.writeFileSync(artifactPath,Buffer.from(await res.arrayBuffer()));
- fs.rmSync(path.join(OS_DIR,'dist'),{recursive:true,force:true});
- await run('tar',['-xzf',artifactPath,'-C',OS_DIR],{cwd:ROOT});
- const entryPath=path.join(OS_DIR,'dist/wix-server/entry.mjs');
- if(!fs.existsSync(entryPath))throw new Error('ARTIFACT_ENTRY_MISSING');
- const artifactEntry=fs.readFileSync(entryPath,'utf8');
- if(!artifactEntry.includes(SOURCE_SHA))throw new Error('ARTIFACT_SHA_MISMATCH');
- state.tests.push({gate:'artifact',status:'PASS'});
- log('WIX_ARTIFACT_EXACT_SHA_PASS '+SOURCE_SHA);
+ if(!MATERIALIZE_FROM_PINNED_SUBMODULE)throw new Error('PINNED_SUBMODULE_MATERIALIZATION_DISABLED');
+ const mirror=sh('git rev-parse HEAD',OS_DIR);
+ if(mirror!==MIRROR_SHA)throw new Error('MATERIALIZE_MIRROR_SHA_MISMATCH '+mirror);
+ const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();
+ if(marker!==SOURCE_SHA)throw new Error('MATERIALIZE_SOURCE_MARKER_MISMATCH '+marker);
  await run('node',['scripts/package-wix-worker.mjs'],{cwd:OS_DIR,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live'}});
+ const entryPath=path.join(OS_DIR,'dist/wix-server/entry.mjs');
+ if(!fs.existsSync(entryPath))throw new Error('MATERIALIZED_ENTRY_MISSING');
  const liveEntry=fs.readFileSync(entryPath,'utf8');
  if(!liveEntry.includes(SOURCE_SHA))throw new Error('LIVE_REPACK_SHA_MISMATCH');
  if(!liveEntry.includes('wix-live')||!liveEntry.includes(EXPECTED_RELEASE_ID))throw new Error('LIVE_REPACK_IDENTITY_MISMATCH');
+ state.tests.push({gate:'artifact',status:'PASS',evidence:{source:'pinned-submodule',mirrorSha:MIRROR_SHA}});
  state.tests.push({gate:'live-repack',status:'PASS'});
+ log('WIX_ARTIFACT_EXACT_SHA_PASS '+SOURCE_SHA+' source=pinned-submodule mirror='+MIRROR_SHA);
  log('WIX_LIVE_REPACK_PASS '+SOURCE_SHA+' release='+EXPECTED_RELEASE_ID);
 }
 async function ensureAuth(){state.phase='WIX_AUTH';const env={...process.env,AI_AGENT:'wix-headless-skill'};const apiKey=String(process.env.WIX_OS_API_KEY||process.env.WIX_MUNDO_API_KEY||process.env.WIX_API_KEY||'').trim();if(apiKey){await run('npx',['-y','@wix/cli@latest','login','--api-key',apiKey],{cwd:REL,env});log('WIX_API_KEY_AUTH_PASS');return}const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env,timeout:30000});if(who.status===0){log('WIX_AUTH_ALREADY_VALID');return}await new Promise((resolve,reject)=>{const p=spawn('npx',['-y','@wix/cli@latest','login'],{cwd:REL,env,stdio:['ignore','pipe','pipe']});let b='';p.stdout.on('data',d=>{const s=String(d);process.stdout.write(s);b+=s;for(const line of b.split('\n')){try{const e=JSON.parse(line.trim());if(e.event==='awaiting_user'){state.userCode=e.userCode||null;state.verificationUri=e.verificationUri||null;state.phase='AWAITING_WIX_AUTH';log('DIVA_OS_WIX_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:e.expiresInSeconds||null}))}}catch{}}});p.stderr.on('data',d=>process.stderr.write(d));p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error('wix login exit '+c)))});const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env,timeout:30000});if(after.status!==0)throw new Error('WIX_AUTH_FAILED_AFTER_DEVICE_LOGIN');log('WIX_AUTH_PASS')}
@@ -97,7 +94,7 @@ async function main(){try{
  state.tests.push({gate:'visual-11x4',status:'PASS',evidence:VISUAL_QA});
  log('OS_FINAL_VISUAL_QA_PASS 11x4 captures=44 runtime=a2960615');
  if(!READBACK_ONLY){
-  await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_artifact_live_repack');
+  await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_pinned_submodule_live_repack');
   await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);
  }else{
   state.tests.push({gate:'wix-release',status:'PASS',evidence:{sourceSha:SOURCE_SHA,releaseId:EXPECTED_RELEASE_ID,dispatchedAt:'2026-09-28T17:43:54.121033022Z'}});
