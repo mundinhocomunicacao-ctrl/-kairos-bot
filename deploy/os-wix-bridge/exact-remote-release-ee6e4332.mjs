@@ -4,8 +4,8 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='a29606151a8f29fff4b25249e9691f4b7f011dc5';
-const MIRROR_SHA='7292e0914956e02ae9e62f536a7f246943b0a920';
+const SOURCE_SHA='68b46dabd6fa0191259225493350a35caea26567';
+const MIRROR_SHA='de8568fa10a42aae6cd25abb532f47a1c3ac27ec';
 const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-a2960615');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
