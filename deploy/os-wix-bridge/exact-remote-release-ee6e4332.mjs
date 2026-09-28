@@ -73,6 +73,10 @@ async function provePrivacy(host,label){
  const root=await fetch(host+'/?privacyProof='+Date.now(),{redirect:'manual',headers:{'cache-control':'no-cache'}});
  if(!root.ok)throw new Error(label+'_LOGIN_HTTP_'+root.status);
  const rootHtml=await root.text();
+ const titleMatch=rootHtml.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+ const robotsMatch=rootHtml.match(/<meta[^>]+name=["']robots["'][^>]+content=["']([^"']*)["'][^>]*>/i)||rootHtml.match(/<meta[^>]+content=["']([^"']*)["'][^>]+name=["']robots["'][^>]*>/i);
+ const referrerMetaMatch=rootHtml.match(/<meta[^>]+name=["']referrer["'][^>]+content=["']([^"']*)["'][^>]*>/i)||rootHtml.match(/<meta[^>]+content=["']([^"']*)["'][^>]+name=["']referrer["'][^>]*>/i);
+ log(label+'_ROOT_PRIVACY_DIAGNOSTIC '+JSON.stringify({status:root.status,title:(titleMatch?.[1]||'').trim().slice(0,160),robots:(robotsMatch?.[1]||'').trim().slice(0,160),referrerMeta:(referrerMetaMatch?.[1]||'').trim().slice(0,160),htmlLength:rootHtml.length}));
  const xRobots=String(root.headers.get('x-robots-tag')||'').toLowerCase();
  const referrer=String(root.headers.get('referrer-policy')||'').toLowerCase();
  for(const token of ['Mundinho OS · Acesso Interno','Acesso interno ao sistema operacional da Mundinho Comunicação.','noindex','nofollow','noarchive','nosnippet','no-referrer']){
