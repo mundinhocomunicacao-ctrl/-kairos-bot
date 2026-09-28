@@ -101,6 +101,41 @@ async function ensureWixCli(){
     }
     walk(cliRoot);
     log('ORBI_WIX_CLI_ENDPOINT_HINTS '+JSON.stringify(hits.slice(0,120)));
+    const needles=[
+      'FailedToDeploySite',
+      'Failed to deploy site document',
+      'Failed to upload static files',
+      'apps-release-manager-service-web',
+      'getDeploymentSourceData',
+      'UpdateDeploymentTopologyForSite',
+      'createBackendDeployment',
+      'finalizeAppDeployment'
+    ];
+    const contexts=[];
+    function walkContext(p){
+      for(const ent of fs.readdirSync(p,{withFileTypes:true})){
+        const full=path.join(p,ent.name);
+        if(ent.isDirectory()) walkContext(full);
+        else if(/\.(js|mjs|cjs)$/.test(ent.name)){
+          const s=fs.readFileSync(full,'utf8');
+          for(const needle of needles){
+            let idx=s.indexOf(needle);
+            if(idx>=0){
+              const start=Math.max(0,idx-1800);
+              const end=Math.min(s.length,idx+3200);
+              let snippet=s.slice(start,end)
+                .replace(/Bearer\\s+[A-Za-z0-9._~+\\/-]+/g,'Bearer [REDACTED]')
+                .replace(/(access[_-]?token|refresh[_-]?token|api[_-]?key|client[_-]?secret)\\s*[:=]\\s*["'\`][^"'\`]+["'\`]/ig,'$1=[REDACTED]');
+              contexts.push({file:path.relative(cliRoot,full),needle,snippet});
+              if(contexts.length>=24)return;
+            }
+          }
+        }
+        if(contexts.length>=24)return;
+      }
+    }
+    walkContext(cliRoot);
+    log('ORBI_WIX_CLI_CODE_CONTEXT '+JSON.stringify(contexts));
   }catch(e){log('ORBI_WIX_CLI_ENDPOINT_SCAN_ERROR '+String(e?.message||e))}
   return bin;
 }
