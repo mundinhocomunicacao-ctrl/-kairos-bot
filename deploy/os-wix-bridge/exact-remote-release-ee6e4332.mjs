@@ -129,6 +129,25 @@ async function ensureAuth() {
 
 async function main() {
   try {
+    if (String(process.env.PROBE_ONLY || '') === '1') {
+      state.phase = 'PROBE_ONLY';
+      const urls = {
+        health: 'https://www.especialistabrandingeinfluencia.com/_functions/divaHealth?proof=' + Date.now(),
+        canary: CANARY_URL + '&proof=' + Date.now()
+      };
+      const out = {};
+      for (const [name, url] of Object.entries(urls)) {
+        const r = exec('curl', ['-sS', '-L', '--max-time', '120', '-w', '\\nHTTP_STATUS:%{http_code}', url]);
+        out[name] = { exitCode: r.status, output: String(r.stdout || '').slice(0, 4000) };
+        log('PROBE_' + name.toUpperCase() + ' ' + JSON.stringify(out[name]));
+      }
+      state.health = out.health;
+      state.canary = out.canary;
+      state.done = true;
+      state.phase = 'DONE';
+      log('MORADA_RUNTIME_PROBE_DONE');
+      return;
+    }
     state.phase = 'SOURCE_PROOF';
     const config = JSON.parse(fs.readFileSync(path.join(PROJECT, 'wix.config.json'), 'utf8'));
     if (config.siteId !== SITE_ID) throw new Error('MORADA_SITE_ID_MISMATCH');
