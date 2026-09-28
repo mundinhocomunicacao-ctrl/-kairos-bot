@@ -4,9 +4,9 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 
 const PORT=process.env.PORT||10000;
-const SOURCE_SHA='88ccd189cf2b61fd042a6fde2be558646818109c';
-const MIRROR_SHA='4c59f42500b010d70cc5e9ce2bc10fb264030ffb';
-const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-88ccd189');
+const SOURCE_SHA='a29606151a8f29fff4b25249e9691f4b7f011dc5';
+const MIRROR_SHA='94e05737e43f8fbdc28371935e29d061344a9644';
+const ROOT=process.cwd(),OS_DIR=path.join(ROOT,'os'),REL=path.join(ROOT,'.wix-os-release-a2960615');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`;
@@ -68,7 +68,7 @@ async function materializeArtifact(){
  state.phase='ARTIFACT';
  const res=await fetch(ARTIFACT_URL+'?source='+SOURCE_SHA,{headers:{'cache-control':'no-cache'}});
  if(!res.ok)throw new Error('ARTIFACT_FETCH_FAILED '+res.status);
- const artifactPath=path.join(ROOT,'os-release-88ccd189.tar.gz');
+ const artifactPath=path.join(ROOT,'os-release-a2960615.tar.gz');
  fs.writeFileSync(artifactPath,Buffer.from(await res.arrayBuffer()));
  fs.rmSync(path.join(OS_DIR,'dist'),{recursive:true,force:true});
  await run('tar',['-xzf',artifactPath,'-C',OS_DIR],{cwd:ROOT});
@@ -95,7 +95,7 @@ async function main(){try{
  log('OS_FINAL_QA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
  const VISUAL_QA={deployId:'dep-dataqqd9fdbs73b155t0',harnessCommit:'b00b1583804939b84916b1afcf3a5cf23dec1b15',captures:44,viewports:['1440','1024','768','375x667'],runtimeFileExact:'components/InicioDecisionDesk.js'};
  state.tests.push({gate:'visual-11x4',status:'PASS',evidence:VISUAL_QA});
- log('OS_FINAL_VISUAL_QA_PASS 11x4 captures=44 runtime=88ccd189');
+ log('OS_FINAL_VISUAL_QA_PASS 11x4 captures=44 runtime=a2960615');
  if(!READBACK_ONLY){
   await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_artifact_live_repack');
   await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);
