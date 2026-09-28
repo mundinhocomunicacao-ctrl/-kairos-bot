@@ -16,9 +16,8 @@ const state={phase:'BOOT',sourceSha:SOURCE_SHA,qa:null,live:null,canonical:null,
 
 function log(x){console.log(x);state.lastLog=String(x).slice(-1600)}
 function run(cmd,args,{cwd=ROOT,env={}}={}){return new Promise((resolve,reject)=>{const p=spawn(cmd,args,{cwd,env:{...process.env,...env},stdio:['ignore','pipe','pipe']});p.stdout.on('data',d=>process.stdout.write(d));p.stderr.on('data',d=>process.stderr.write(d));p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error(cmd+' exit '+c)))})}
-function sh(cmd,cwd=ROOT,env={}){const r=spawnSync('bash',['-lc',cmd],{cwd,encoding:'utf8',env:{...process.env,...env},timeout:20*60*1000});if(r.stdout)process.stdout.write(r.stdout);if(r.stderr)process.stderr.write(r.stderr);if(r.status!==0)throw new Error('shell failed '+r.status+': '+cmd);return String(r.stdout||'').trim()}
 function writeConfig(t){fs.writeFileSync(path.join(REL,'wix.config.json'),JSON.stringify({projectType:'Site',appId:t.appId,siteId:t.siteId,site:{outputDirectory:{client:'./client',server:'./server'}}},null,2))}
-function fetchJson(url){return JSON.parse(sh(`curl -fsSL --retry 6 --retry-all-errors "${url}"`)||'{}')}
+async function fetchJson(url){const r=await fetch(url,{headers:{'cache-control':'no-cache'}});if(!r.ok)throw new Error('HTTP_'+r.status+' '+url);return r.json()}
 
 async function fetchExactSource(){
   state.phase='SOURCE';
@@ -26,8 +25,8 @@ async function fetchExactSource(){
   fs.mkdirSync(OS_DIR,{recursive:true});
   const tar=path.join(os.tmpdir(),`mundinho-${SOURCE_SHA}.tar.gz`);
   const url=`https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao/-/archive/${SOURCE_SHA}/mundinhocomunicacao-${SOURCE_SHA}.tar.gz`;
-  sh(`curl --fail --show-error --location --retry 8 --retry-all-errors "${url}" -o "${tar}"`);
-  sh(`tar -xzf "${tar}" --strip-components=1 -C "${OS_DIR}"`);
+  await run('curl',['--fail','--show-error','--location','--retry','8','--retry-all-errors',url,'-o',tar]);
+  await run('tar',['-xzf',tar,'--strip-components=1','-C',OS_DIR]);
   for(const file of ['package.json','pages/os/diva.js','data/diva-voice-presence-contract.js','radar-gabi-site/index.html','scripts/qa-diva-orb-silent-presence.mjs']) if(!fs.existsSync(path.join(OS_DIR,file))) throw new Error('SOURCE_FILE_MISSING '+file);
   log('SOURCE_EXACT_ARCHIVE_PASS '+SOURCE_SHA);
 }
@@ -53,9 +52,9 @@ async function qa(){
   log('GABI_ORBI_CLIENT_SAFE_GUARD_PASS · read-only contract check; no Gabi target in release');
 }
 
-function materialize(runtimeEnv){
+async function materialize(runtimeEnv){
   state.phase='BUILD_'+runtimeEnv.toUpperCase().replace('-','_');
-  sh(`MUNDO_RUNTIME_SOURCE_SHA=${SOURCE_SHA} MUNDO_RUNTIME_ENV=${runtimeEnv} npm run build:wix-worker`,OS_DIR);
+  await run('npm',['run','build:wix-worker'],{cwd:OS_DIR,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:runtimeEnv}});
   const entry=fs.readFileSync(path.join(OS_DIR,'dist/wix-server/entry.mjs'),'utf8');
   if(!entry.includes(SOURCE_SHA))throw new Error('BUILD_SHA_MISMATCH '+runtimeEnv);
   fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});
@@ -80,8 +79,8 @@ async function ensureAuth(){
 async function prove(host,label,expectedEnv){
   for(let i=1;i<=36;i++){
     try{
-      const dr=fetchJson(host+'/api/diva-release?proof='+Date.now());
-      const pr=fetchJson(host+'/api/preview-readiness?proof='+Date.now());
+      const dr=await fetchJson(host+'/api/diva-release?proof='+Date.now());
+      const pr=await fetchJson(host+'/api/preview-readiness?proof='+Date.now());
       if(dr.deploymentSha===SOURCE_SHA&&pr.sourceSha===SOURCE_SHA&&pr.status==='ready'&&(!expectedEnv||dr.runtimeEnv===expectedEnv)){
         log(label+'_EXACT_SHA_PASS '+SOURCE_SHA+(expectedEnv?' env='+expectedEnv:''));
         return{dr,pr};
@@ -93,7 +92,7 @@ async function prove(host,label,expectedEnv){
 }
 
 async function release(target,label,runtimeEnv){
-  materialize(runtimeEnv);
+  await materialize(runtimeEnv);
   writeConfig(target);
   state.phase='RELEASE_'+label;
   await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
