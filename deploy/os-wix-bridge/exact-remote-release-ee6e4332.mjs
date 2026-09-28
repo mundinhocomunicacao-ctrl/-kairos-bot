@@ -67,7 +67,7 @@ async function provePrivacy(host,label){
 async function materializeArtifact(){
  state.phase='ARTIFACT';
  if(!MATERIALIZE_FROM_PINNED_SUBMODULE)throw new Error('PINNED_SUBMODULE_MATERIALIZATION_DISABLED');
- const mirror=sh('git rev-parse HEAD',OS_DIR);
+ const mirror=sh('git -C os rev-parse HEAD');
  if(mirror!==MIRROR_SHA)throw new Error('MATERIALIZE_MIRROR_SHA_MISMATCH '+mirror);
  const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();
  if(marker!==SOURCE_SHA)throw new Error('MATERIALIZE_SOURCE_MARKER_MISMATCH '+marker);
