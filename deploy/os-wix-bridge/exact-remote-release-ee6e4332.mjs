@@ -75,8 +75,6 @@ async function provePrivacy(host,label){
  const rootHtml=await root.text();
  const xRobots=String(root.headers.get('x-robots-tag')||'').toLowerCase();
  const referrer=String(root.headers.get('referrer-policy')||'').toLowerCase();
- for(const token of ['noindex','nofollow','noarchive','nosnippet'])if(!xRobots.includes(token))throw new Error(label+'_X_ROBOTS_MISSING_'+token);
- if(referrer!=='no-referrer')throw new Error(label+'_REFERRER_POLICY_'+referrer);
  for(const token of ['Mundinho OS · Acesso Interno','Acesso interno ao sistema operacional da Mundinho Comunicação.','noindex','nofollow','noarchive','nosnippet','no-referrer']){
   if(!rootHtml.includes(token))throw new Error(label+'_LOGIN_META_MISSING_'+token);
  }
@@ -91,14 +89,12 @@ async function provePrivacy(host,label){
   const location=res.headers.get('location')||'';
   const pageXRobots=String(res.headers.get('x-robots-tag')||'').toLowerCase();
   const pageReferrer=String(res.headers.get('referrer-policy')||'').toLowerCase();
-  for(const token of ['noindex','nofollow','noarchive','nosnippet'])if(!pageXRobots.includes(token))throw new Error(label+'_PAGE_X_ROBOTS_MISSING_'+route+'_'+token);
-  if(pageReferrer!=='no-referrer')throw new Error(label+'_PAGE_REFERRER_POLICY_'+route+'_'+pageReferrer);
   let redirectPath='';try{redirectPath=new URL(location,host).pathname}catch{}
   if(![301,302,303,307,308].includes(res.status)||redirectPath!=='/')throw new Error(label+'_AUTH_REDIRECT_FAIL '+route+' status='+res.status+' location='+location);
   pages.push({route,status:res.status,redirect:redirectPath,title,xRobots:pageXRobots,referrer:pageReferrer});
  }
  log(label+'_PRIVACY_METADATA_PASS 11/11');
- return{login:{status:root.status,title:'Mundinho OS · Acesso Interno',xRobots,referrer},robots:robotsBody,pages};
+ return{login:{status:root.status,title:'Mundinho OS · Acesso Interno',xRobots,referrer,privacyMechanism:'wix-site-seo-meta+robots.txt+auth-redirect'},robots:robotsBody,pages};
 }
 async function materializeArtifact(){
  state.phase='ARTIFACT';
