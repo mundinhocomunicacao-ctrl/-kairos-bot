@@ -281,7 +281,6 @@ async function main(){
     await fetchExactSource();
     await qa();
     const wixCli=await ensureWixCli();
-    state.phase='DIAGNOSTIC_DONE';state.done=true;log('GABI_WIX_RELEASE_DIAGNOSTIC_DONE');return;
     await ensureAuth(wixCli);
     state.qa=await release(QA,'QA','wix-qa',wixCli);
     state.live=await release(LIVE,'LIVE','wix-live',wixCli);
