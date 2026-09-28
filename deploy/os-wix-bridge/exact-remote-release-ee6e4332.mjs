@@ -107,7 +107,9 @@ async function materializeArtifact(){
  const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();
  if(marker!==SOURCE_SHA)throw new Error('MATERIALIZE_SOURCE_MARKER_MISMATCH '+marker);
  await run('npm',['ci','--ignore-scripts'],{cwd:OS_DIR,env:{NODE_ENV:'development'}});
- await run('npm',['run','build:wix-worker'],{cwd:OS_DIR,env:{NODE_ENV:'production',MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live'}});
+ const liveBuildEnv={NODE_ENV:'production',MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live'};
+ await run('npm',['exec','vite','--','build','--minify','false'],{cwd:OS_DIR,env:liveBuildEnv});
+ await run('node',['scripts/package-wix-worker.mjs'],{cwd:OS_DIR,env:liveBuildEnv});
  const entryPath=path.join(OS_DIR,'dist/wix-server/entry.mjs');
  if(!fs.existsSync(entryPath))throw new Error('MATERIALIZED_ENTRY_MISSING');
  const liveEntry=fs.readFileSync(entryPath,'utf8');
