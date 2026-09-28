@@ -5,8 +5,8 @@ const controller=new URL('./exact-remote-release-ee6e4332.mjs', import.meta.url)
 assert.ok(fs.existsSync(controller),'controller must exist');
 const src=fs.readFileSync(controller,'utf8');
 
-assert.ok(src.includes("SOURCE_SHA='ffbdab068929e235fdc9d7d83f57085e227a1e4c'"),'must pin sovereign GitLab day-to-day SHA');
-assert.ok(src.includes("MIRROR_SHA='672c17c06ddab6e87fb6a25bcc0991ca97faafbe'"),'must pin exact clean GitHub live snapshot');
+assert.ok(src.includes("SOURCE_SHA='9bc0a248b1d2f830cfda7bf6e92998b353ec29c7'"),'must pin sovereign GitLab final SHA');
+assert.ok(src.includes("MIRROR_SHA='3848ae8b44bc552f19e78fe3c988ff36955b3195'"),'must pin exact final GitHub mirror snapshot');
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
 assert.ok(src.includes("appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e'"),'must target live Wix app');
 assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must prove human canonical domain');
@@ -17,14 +17,17 @@ assert.ok(src.includes("EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`"
 assert.ok(src.includes("dr.data?.runtimeEnv==='wix-live'"),'live readback must prove wix-live runtime metadata');
 assert.ok(src.includes("dr.data?.deploymentId===EXPECTED_RELEASE_ID"),'live readback must prove deployment id');
 assert.ok(src.includes("state.live=await prove(LIVE.host,'LIVE')"),'must prove technical live host readback');
+assert.ok(src.includes("provePrivacy(LIVE.host,'LIVE')"),'must prove technical live privacy metadata');
 assert.ok(src.includes("state.canonical=await prove(CANONICAL,'CANONICAL')"),'must prove canonical domain readback');
-assert.ok(src.includes("OS_DAY_TO_DAY_GATES_PASS"),'controller must run the explicit OS-only gate set');
-assert.ok(src.includes("qa-wix-runtime-release-identity.mjs"),'controller must verify environment-aware release identity');
-assert.ok(!src.includes("await run('npm',['run','qa:release']"),'day-to-day controller must not invoke the mixed Morada release bundle');
+assert.ok(src.includes("provePrivacy(CANONICAL,'CANONICAL')"),'must prove canonical privacy metadata');
+assert.ok(src.includes("OS_FINAL_QA_PASS"),'controller must run the final OS-only release bundle');
+assert.ok(src.includes("await run('npm',['run','qa:release']"),'controller must run the OS-only qa:release bundle');
+assert.ok(src.includes("LIVE_PRIVACY_METADATA_PASS 11/11")||src.includes("'_PRIVACY_METADATA_PASS 11/11'"),'controller must prove live page-by-page privacy metadata');
 assert.ok(!src.includes("qa-diva-morada-brain.mjs"),'Morada brain gate is outside this release cut');
 assert.ok(!src.includes("qa-inicio-morada-ssr.mjs"),'Morada SSR gate is outside this release cut');
 assert.ok(src.includes("@wix/cli@latest"),'must publish through Wix CLI');
 assert.ok(!src.includes("242b9d6f-71ad-40c6-b1d7-f1f0825e01be"),'must not publish legacy QA site');
 assert.ok(!src.includes("radar.gabi.mundinhocomunicacao.com"),'must not touch Gabi Radar');
 assert.ok(!src.includes("7687d145-056b-4cc0-9f6f-70c2bb32912e"),'must not target Gabi Radar site');
-console.log('QA_OS_FFBDAB06_LIVE_RELEASE_CONTROLLER_PASS');
+assert.ok(src.includes("MUNDINHO_OS_FINAL_RELEASE_COMPLETE"),'controller must emit final receipt');
+console.log('QA_OS_9BC0A248_FINAL_RELEASE_CONTROLLER_PASS');
