@@ -70,7 +70,7 @@ assert.ok(src.includes("CANONICAL='https://os.mundinhocomunicacao.com'"),'must p
 assert.ok(src.includes("MATERIALIZE_FROM_PINNED_SUBMODULE=true"),'must materialize release from the already verified exact mirror submodule');
 assert.ok(!src.includes("ARTIFACT_URL='https://mundinho-wix-remote-release-pty.onrender.com/artifact'"),'must not depend on remote artifact transport after exact mirror verification');
 assert.ok(src.includes("WIX_ARTIFACT_EXACT_SHA_PASS"),'must verify artifact source SHA after extraction');
-assert.ok(src.includes("MUNDO_RUNTIME_ENV:'wix-live'"),'must repack the artifact with live runtime identity');
+assert.ok(healSrc.includes('MUNDO_RUNTIME_ENV=wix-live'),'build-phase healing must repack the artifact with live runtime identity');
 assert.ok(src.includes("EXPECTED_RELEASE_ID=`wix-live-${SOURCE_SHA.slice(0,8)}`"),'must bind live release id to canonical SHA');
 assert.ok(src.includes("dr.data?.runtimeEnv==='wix-live'"),'live readback must prove wix-live runtime metadata');
 assert.ok(src.includes("dr.data?.deploymentId===EXPECTED_RELEASE_ID"),'live readback must prove deployment id');
