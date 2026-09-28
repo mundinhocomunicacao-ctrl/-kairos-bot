@@ -43,9 +43,9 @@ assert.ok(src.includes("RELEASE_EXTERNAL_SOURCE_MISMATCH"),'controller must reje
 
 
 
-assert.ok(src.includes("await run('npm',['exec','vite','--','build','--minify','false']"),'controller must use direct Vite build with minification disabled on the constrained release worker');
-assert.ok(src.includes("await run('node',['scripts/package-wix-worker.mjs']"),'controller must package the Wix worker after the direct Vite build');
-assert.ok(!src.includes("await run('npm',['run','build:wix-worker']"),'controller must not route this constrained release through the hanging vinext wrapper');
+assert.ok(!src.includes("await run('npm',['exec','vite','--','build','--minify','false']"),'runtime controller must not compile the artifact after build-phase healing');
+assert.ok(!src.includes("await run('node',['scripts/package-wix-worker.mjs']"),'runtime controller must not package the Wix worker after build-phase healing');
+assert.ok(!src.includes("await run('npm',['run','build:wix-worker']"),'runtime controller must not route this release through the hanging vinext wrapper');
 
 const healHook=new URL('./render-build-heal-68b46dab.sh', import.meta.url);
 assert.ok(fs.existsSync(healHook),'build-phase healing hook must exist');
