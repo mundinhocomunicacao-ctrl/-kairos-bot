@@ -1,0 +1,74 @@
+name: QA DIVA Morada exact GitLab SHA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/qa-morada-gitlab-sha.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  morada-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: "1"
+      GITLAB_PROJECT_PATH: "mundinhocomunicacao/mundinhocomunicacao"
+      SOURCE_SHA: "73c44989e15d7663ca565b364a0e07c3c5f218d1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact GitLab source
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://gitlab.com/${GITLAB_PROJECT_PATH}/-/archive/${SOURCE_SHA}/mundinhocomunicacao-${SOURCE_SHA}.tar.gz"
+          mkdir -p canonical
+          code="$(curl --silent --show-error --location --retry 4 --output source.tar.gz --write-out '%{http_code}' "$url")"
+          echo "GITLAB_ARCHIVE_HTTP=$code"
+          test "$code" = "200"
+          tar -xzf source.tar.gz --strip-components=1 -C canonical
+          test -f canonical/package.json
+          test -f canonical/backend/diva-morada-brain.web.js
+          test -f canonical/backend/diva-identity-continuity.js
+          test -f canonical/backend/diva-morada-council.js
+          echo "MORADA_SOURCE_EXACT_SHA=$SOURCE_SHA"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: canonical/package-lock.json
+
+      - name: Install exact dependencies
+        working-directory: canonical
+        run: npm ci
+
+      - name: Verify DIVA identity continuity
+        working-directory: canonical
+        run: node scripts/qa-diva-identity-continuity.mjs
+
+      - name: Verify DIVA multi-intelligence council
+        working-directory: canonical
+        run: node scripts/qa-diva-morada-council.mjs
+
+      - name: Verify Morada brain and bridge
+        working-directory: canonical
+        run: node scripts/qa-diva-morada-brain.mjs
+
+      - name: Verify Morada aggregate gate
+        working-directory: canonical
+        run: npm run qa:morada-brain
+
+      - name: Build exact application source
+        working-directory: canonical
+        shell: bash
+        run: |
+          export MUNDO_RUNTIME_SOURCE_SHA="$SOURCE_SHA"
+          export MUNDO_RUNTIME_ENV="wix-qa"
+          npm run build:vinext
+          echo "MORADA_EXACT_SHA_QA_BUILD_PASS=$SOURCE_SHA"
