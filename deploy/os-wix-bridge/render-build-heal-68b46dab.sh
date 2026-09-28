@@ -4,7 +4,7 @@ set -euo pipefail
 SOURCE_SHA="68b46dabd6fa0191259225493350a35caea26567"
 MIRROR_SHA="de8568fa10a42aae6cd25abb532f47a1c3ac27ec"
 RELEASE_ID="wix-live-68b46dab"
-ROOT="${RENDER_PROJECT_DIR:-$PWD}"
+ROOT="$PWD"
 OS_DIR="$ROOT/os"
 PROOF="$OS_DIR/.wix-prebuilt-68b46dab.json"
 
