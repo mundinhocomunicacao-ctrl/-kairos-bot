@@ -13,7 +13,7 @@ const REL=path.join(ROOT,'.wix-os-orbi-release');
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
-const state={phase:'BOOT',sourceSha:SOURCE_SHA,qa:null,live:null,canonical:null,tests:[],error:null,done:false,lastLog:null};
+const state={phase:'BOOT',sourceSha:SOURCE_SHA,userCode:null,verificationUri:null,qa:null,live:null,canonical:null,tests:[],error:null,done:false,lastLog:null};
 
 function log(x){console.log(x);state.lastLog=String(x).slice(-1600)}
 function run(cmd,args,{cwd=ROOT,env={}}={}){return new Promise((resolve,reject)=>{const p=spawn(cmd,args,{cwd,env:{...process.env,...env},stdio:['ignore','pipe','pipe']});p.stdout.on('data',d=>process.stdout.write(d));p.stderr.on('data',d=>process.stderr.write(d));p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error(cmd+' exit '+c)))})}
@@ -68,9 +68,29 @@ async function ensureAuth(){
   const env={...process.env,AI_AGENT:'wix-headless-skill'};
   let who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env,timeout:30000});
   if(who.status===0){log('WIX_AUTH_ALREADY_VALID');return}
-  const key=String(process.env.WIX_API_KEY||process.env.WIX_CLI_API_KEY||'').trim();
-  if(!key)throw new Error('WIX_CLI_API_KEY_MISSING');
-  await run('npx',['-y','@wix/cli@latest','login','--api-key',key],{cwd:ROOT,env});
+
+  log('WIX_DEVICE_LOGIN_START');
+  await new Promise((resolve,reject)=>{
+    const p=spawn('npx',['-y','@wix/cli@latest','login'],{cwd:ROOT,env,stdio:['ignore','pipe','pipe']});
+    let buffer='';
+    const timer=setTimeout(()=>{try{p.kill('SIGKILL')}catch{};reject(new Error('WIX_DEVICE_LOGIN_TIMEOUT'))},10*60*1000);
+    p.stdout.on('data',d=>{
+      const s=String(d);process.stdout.write(s);buffer+=s;
+      for(const line of buffer.split('\n')){
+        try{
+          const event=JSON.parse(line.trim());
+          if(event.event==='awaiting_user'){
+            state.userCode=event.userCode||null;
+            state.verificationUri=event.verificationUri||null;
+            log('DIVA_WIX_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:event.expiresInSeconds||null}));
+          }
+        }catch{}
+      }
+    });
+    p.stderr.on('data',d=>process.stderr.write(d));
+    p.on('error',e=>{clearTimeout(timer);reject(e)});
+    p.on('close',code=>{clearTimeout(timer);code===0?resolve():reject(new Error('WIX_DEVICE_LOGIN_EXIT_'+code))});
+  });
   who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{encoding:'utf8',env,timeout:30000});
   if(who.status!==0)throw new Error('WIX_WHOAMI_FAILED_AFTER_LOGIN');
   log('WIX_AUTH_PASS');
