@@ -1,0 +1,35 @@
+{
+  "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
+  "mode": "frozen",
+  "currentLive": {
+    "sourceSha": "88ccd189cf2b61fd042a6fde2be558646818109c",
+    "mirrorSha": "4c59f42500b010d70cc5e9ce2bc10fb264030ffb",
+    "releaseId": "wix-live-88ccd189",
+    "runtimeEnv": "wix-live",
+    "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+    "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+    "canonicalDomain": "https://os.mundinhocomunicacao.com",
+    "receiptBranch": "receipts/os-final-88ccd189",
+    "receiptPath": "receipts/MUNDINHO_OS_FINAL_RELEASE_88ccd189.json"
+  },
+  "pendingReleaseRequest": null,
+  "requiredRequestFields": [
+    "requestId",
+    "status",
+    "sourceSha",
+    "mirrorSha",
+    "releaseId",
+    "expectedCurrentLiveSourceSha",
+    "expectedCurrentLiveReleaseId",
+    "targetSiteId",
+    "targetAppId",
+    "canonicalDomain",
+    "qaReceipt",
+    "buildReceipt",
+    "visualReceipt",
+    "approvedByHuman",
+    "approvedAt"
+  ],
+  "requiredStatus": "APPROVED",
+  "semantics": "Fail closed. Main, Morada, mirrors, controller branches and shared rails may evolve, but no Wix live promotion is allowed without an explicit approved release request matching the pinned candidate and the actual current live."
+}
