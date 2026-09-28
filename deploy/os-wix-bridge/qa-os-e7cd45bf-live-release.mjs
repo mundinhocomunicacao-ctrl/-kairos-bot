@@ -5,6 +5,21 @@ const controller=new URL('./exact-remote-release-ee6e4332.mjs', import.meta.url)
 assert.ok(fs.existsSync(controller),'controller must exist');
 const src=fs.readFileSync(controller,'utf8');
 
+const lockPath=new URL('./release-lock.json', import.meta.url);
+assert.ok(fs.existsSync(lockPath),'release lock must exist beside the controller');
+const lock=JSON.parse(fs.readFileSync(lockPath,'utf8'));
+assert.equal(lock.policyVersion,'MUNDINHO_OS_LIVE_LOCK_V1','release lock policy version');
+assert.equal(lock.mode,'frozen','live lock must default frozen');
+assert.equal(lock.currentLive.sourceSha,'88ccd189cf2b61fd042a6fde2be558646818109c','release lock must pin approved live source');
+assert.equal(lock.currentLive.releaseId,'wix-live-88ccd189','release lock must pin approved live release id');
+assert.equal(lock.pendingReleaseRequest,null,'release lock must not contain an implicit pending release request');
+assert.ok(src.includes("function assertReleaseUnlocked"),'controller must have a fail-closed release lock gate');
+assert.ok(src.includes("RELEASE_LOCKED_NO_REQUEST"),'controller must refuse release when no explicit request exists');
+assert.ok(src.includes("RELEASE_LOCK_SOURCE_MISMATCH"),'controller must reject a request for a different source SHA');
+assert.ok(src.includes("RELEASE_LOCK_MIRROR_MISMATCH"),'controller must reject a request for a different mirror SHA');
+assert.ok(src.includes("assertReleaseUnlocked()"),'controller must call release lock gate before build/auth/release');
+
+
 assert.ok(src.includes("SOURCE_SHA='68b46dabd6fa0191259225493350a35caea26567'"),'must pin sovereign GitLab final SHA');
 assert.ok(src.includes("MIRROR_SHA='de8568fa10a42aae6cd25abb532f47a1c3ac27ec'"),'must pin exact final GitHub mirror snapshot');
 assert.ok(src.includes("siteId:'c80689f2-6627-45fa-a264-4ab2863ba306'"),'must target DIA A DIA live site');
