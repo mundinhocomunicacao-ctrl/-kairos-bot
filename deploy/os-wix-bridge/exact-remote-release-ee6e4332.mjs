@@ -97,7 +97,7 @@ async function main(){try{
   await materializeArtifact();fs.rmSync(REL,{recursive:true,force:true});fs.mkdirSync(REL,{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(REL,'client'),{recursive:true});fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(REL,'server'),{recursive:true});writeConfig();log('WIX_BUILD_PASS '+SOURCE_SHA+' via_artifact_live_repack');
   await ensureAuth();state.phase='RELEASE_LIVE';await run('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});log('WIX_LIVE_RELEASE_DISPATCHED '+SOURCE_SHA);
  }else{
-  state.tests.push({gate:'wix-release',status:'PASS',evidence:{sourceSha:SOURCE_SHA,releaseId:EXPECTED_RELEASE_ID,dispatchedAt:'2026-09-28T17:28:50.797248574Z'}});
+  state.tests.push({gate:'wix-release',status:'PASS',evidence:{sourceSha:SOURCE_SHA,releaseId:EXPECTED_RELEASE_ID,dispatchedAt:'2026-09-28T17:43:54.121033022Z'}});
   log('WIX_LIVE_RELEASE_REUSED '+SOURCE_SHA+' release='+EXPECTED_RELEASE_ID);
  }
  state.phase='READBACK_LIVE';state.live=await prove(LIVE.host,'LIVE');state.livePrivacy=await provePrivacy(LIVE.host,'LIVE');
