@@ -162,7 +162,7 @@
   },
   "livePromotionPolicy": {
     "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
-    "status": "ENFORCED_FAIL_CLOSED",
+    "status": "ENFORCED_FAIL_CLOSED_V3",
     "lockStateRef": "state/os-live-lock-v1",
     "lockControllerSha": "aba9ae13bda9e4a026f1e6854a34e1e2b7524a2a",
     "lockDeployId": "dep-datbpf1srm7s7383elk0",
@@ -201,9 +201,9 @@
       "wixReleaseReached": false,
       "liveAfterTest": "88ccd189cf2b61fd042a6fde2be558646818109c"
     },
-    "activeStateRef": "state/os-live-lock-v2",
-    "activeControllerGovernanceSha": "a688f40ba591de79d1806d57f58b61184bedcc75",
-    "stableVerificationDeployId": "dep-datbts8jo6nc7398r3f0",
+    "activeStateRef": "state/os-live-lock-v3",
+    "activeControllerGovernanceSha": "42cc4cfb799ef178f270b265e40072d724c2c486",
+    "stableVerificationDeployId": "dep-datc06mgekts73a7si60",
     "externalKillSwitch": {
       "renderEnv": "OS_LIVE_PROMOTION_ENABLED",
       "defaultValue": false,
@@ -256,7 +256,18 @@
       "wixReleaseMarkersAfterBlock": 0,
       "liveAfterGovernanceTest": "88ccd189cf2b61fd042a6fde2be558646818109c",
       "readinessAfterGovernanceTest": "ready",
-      "writebackReadyAfterGovernanceTest": true
+      "writebackReadyAfterGovernanceTest": true,
+      "stableDeployId": "dep-datc06mgekts73a7si60",
+      "currentPendingReleaseRequest": null
+    },
+    "externalApprovalTuple": {
+      "promotionEnabledEnv": "OS_LIVE_PROMOTION_ENABLED",
+      "promotionEnabledDefault": false,
+      "approvedRequestIdEnv": "OS_LIVE_APPROVED_REQUEST_ID",
+      "approvedRequestIdDefault": "__NONE__",
+      "approvedSourceShaEnv": "OS_LIVE_APPROVED_SOURCE_SHA",
+      "approvedSourceShaDefault": "__NONE__",
+      "rule": "Even an APPROVED request in Git is insufficient. The exact requestId and sourceSha must also be explicitly mirrored in Render environment variables for that release window."
     }
   }
 }
