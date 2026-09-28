@@ -12,7 +12,7 @@ assert.equal(lock.policyVersion,'MUNDINHO_OS_LIVE_LOCK_V1','release lock policy 
 assert.equal(lock.mode,'frozen','live lock must default frozen');
 assert.equal(lock.currentLive.sourceSha,'88ccd189cf2b61fd042a6fde2be558646818109c','release lock must pin approved live source');
 assert.equal(lock.currentLive.releaseId,'wix-live-88ccd189','release lock must pin approved live release id');
-assert.equal(lock.pendingReleaseRequest,null,'release lock must not contain an implicit pending release request');
+assert.ok(lock.pendingReleaseRequest===null||(lock.pendingReleaseRequest.status==='APPROVED'&&lock.pendingReleaseRequest.approvedByHuman===true&&Boolean(lock.pendingReleaseRequest.approvedAt)),'release lock may contain only an explicit human-approved pending release request');
 assert.ok(src.includes("function assertReleaseUnlocked"),'controller must have a fail-closed release lock gate');
 assert.ok(src.includes("RELEASE_LOCKED_NO_REQUEST"),'controller must refuse release when no explicit request exists');
 assert.ok(src.includes("RELEASE_LOCK_SOURCE_MISMATCH"),'controller must reject a request for a different source SHA');
