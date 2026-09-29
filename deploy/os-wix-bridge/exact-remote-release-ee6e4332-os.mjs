@@ -61,8 +61,8 @@ async function qaAndBuild(){
   mark('QA_MORADA_GOOGLE_LOGIN_FIRST_PREFLIGHT');
   await run('node',['scripts/qa-os-full-rollout-rlf-20260929.mjs'],OS_DIR);
   mark('QA_OS_FULL_ROLLOUT_RLF_20260929_PREFLIGHT');
-  await run('npm',['ci'],OS_DIR);
-  mark('NPM_CI');
+  await run('npm',['ci','--include=dev'],OS_DIR);
+  mark('NPM_CI_DEV_INCLUDED');
   await run('npm',['run','qa:release'],OS_DIR);
   mark('QA_RELEASE');
   await run('npm',['run','build:vinext'],OS_DIR);
