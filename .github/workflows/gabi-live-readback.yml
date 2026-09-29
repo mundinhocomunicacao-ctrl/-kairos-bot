@@ -1,0 +1,69 @@
+name: Gabi Live Visual Readback
+on:
+  push:
+    branches:
+      - forge/wix-remote-release-auth-20260927
+    paths:
+      - '.github/workflows/gabi-live-readback.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  readback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      LIVE_URL: https://radar.gabi.mundinhocomunicacao.com/
+      EXPECTED_SHA: 3773aaae669119deb96b22bd56b08f807f042192
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch live Radar
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 18); do
+            if curl -fsSL --retry 2 --retry-all-errors "$LIVE_URL?gabi_root_readback=$i" -o /tmp/gabi-live.html; then
+              if grep -F 'data-diva-face="DIVA_GABI"' /tmp/gabi-live.html >/dev/null                 && grep -F 'data-diva-root="DIVA_RAIZ"' /tmp/gabi-live.html >/dev/null                 && grep -F 'data-orbi-visual="diva-official-v1"' /tmp/gabi-live.html >/dev/null                 && grep -F 'class="gabiDivaOrb divaAvatar2D hero state-ready"' /tmp/gabi-live.html >/dev/null                 && ! grep -F '.divaStageHalo' /tmp/gabi-live.html >/dev/null                 && ! grep -F '<model-viewer' /tmp/gabi-live.html >/dev/null; then
+                ok=1
+                break
+              fi
+            fi
+            sleep 5
+          done
+          mkdir -p ops/receipts
+          if [ "$ok" = "1" ]; then
+            {
+              echo "status=PASS"
+              echo "proof=GABI_ORBI_ROOT_VISUAL_PARITY_LIVE_READBACK"
+              echo "canonical_sha=$EXPECTED_SHA"
+              echo "live_url=$LIVE_URL"
+              echo "verified_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            } > ops/receipts/GABI_LIVE_VISUAL_READBACK_LATEST.txt
+            echo "GABI_ORBI_ROOT_VISUAL_PARITY_LIVE_READBACK=PASS"
+          else
+            {
+              echo "status=FAIL"
+              echo "proof=GABI_ORBI_ROOT_VISUAL_PARITY_LIVE_READBACK"
+              echo "canonical_sha=$EXPECTED_SHA"
+              echo "live_url=$LIVE_URL"
+              echo "verified_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            } > ops/receipts/GABI_LIVE_VISUAL_READBACK_LATEST.txt
+            echo "GABI_ORBI_ROOT_VISUAL_PARITY_LIVE_READBACK=FAIL"
+            exit 1
+          fi
+
+      - name: Persist receipt
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "diva-readback-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add ops/receipts/GABI_LIVE_VISUAL_READBACK_LATEST.txt
+          git commit -m "receipt(gabi): live root visual readback [skip render]" || exit 0
+          git push origin HEAD:forge/wix-remote-release-auth-20260927
