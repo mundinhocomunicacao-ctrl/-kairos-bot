@@ -4,112 +4,102 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA='88ccd189cf2b61fd042a6fde2be558646818109c';
 const ROOT=process.cwd();
-const OS_DIR=path.join(ROOT,'os');
-const ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
-const ARCHIVE=path.join(ROOT,'os-88ccd189-artifact.tar.gz');
-
+const SNAPSHOT_CHUNKS=path.join(ROOT,'deploy/morada-wix-snapshot-chunks');
+const WORKDIR='/tmp/morada-wix-pandora-release';
 const MORADA_SITE_ID=String(process.env.MORADA_SITE_ID||'7aff6327-39c6-4be0-aa3f-5d50680eb337').trim();
-const MORADA_EMBED_ID=String(process.env.MORADA_EMBED_ID||'fcb4b995-6595-4eae-9eb2-f93ae5e2e443').trim();
-const MORADA_EMBED_FILE=path.join(ROOT,'deploy/os-wix-bridge/interaction-recovery-v6.html');
 
-function prepareArtifact(){
-  const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();
-  if(marker!==SOURCE_SHA)throw new Error('ARTIFACT_SOURCE_MARKER_MISMATCH '+marker);
-  const entry=fs.readFileSync(ENTRY,'utf8');
-  if(!entry.includes('MUNDO_RUNTIME_SOURCE_SHA:'+JSON.stringify(SOURCE_SHA)))throw new Error('ARTIFACT_RUNTIME_SHA_MISMATCH');
-  execFileSync('tar',['-czf',ARCHIVE,'-C',OS_DIR,'dist'],{stdio:'inherit'});
-  return Object.freeze({phase:'ARTIFACT_BRIDGE_READY',done:true,released:false,sourceSha:SOURCE_SHA,reason:'Safe transport only; release controller runs separately.'});
-}
-
-async function wixAuthHeaders(siteId){
-  const aliases=[
-    'WIX_MUNDO_API_KEY','WIX_API_KEY','WIX_CLI_API_KEY','WIX_RELEASE_API_KEY','MUNDINHO_WIX_API_KEY','WIX_OS_API_KEY'
-  ];
-  for(const alias of aliases){
-    const value=String(process.env[alias]||'').trim();
-    if(value)return {headers:{'content-type':'application/json',authorization:value,'wix-site-id':siteId},authMode:'api_key',authAlias:alias};
+function readChunks(){
+  const files=['chunk-01.json','chunk-02.json','chunk-03.json','chunk-04.json'];
+  const rows=[];
+  for(const name of files){
+    const doc=JSON.parse(fs.readFileSync(path.join(SNAPSHOT_CHUNKS,name),'utf8'));
+    rows.push(...(Array.isArray(doc.files)?doc.files:[]));
   }
-
-  const clientId=String(process.env.WIX_CLIENT_ID||'').trim();
-  const clientSecret=String(process.env.WIX_CLIENT_SECRET||'').trim();
-  const instanceId=String(process.env.WIX_CLIENT_INSTANCE_ID||'').trim();
-  if(!clientId||!clientSecret)throw new Error('WIX_INSTITUTIONAL_AUTH_MISSING');
-
-  const tokenBody={grant_type:'client_credentials',client_id:clientId,client_secret:clientSecret};
-  if(instanceId)tokenBody.instance_id=instanceId;
-  const response=await fetch('https://www.wixapis.com/oauth2/token',{
-    method:'POST',
-    headers:{'content-type':'application/json'},
-    body:JSON.stringify(tokenBody)
-  });
-  const data=await response.json().catch(()=>({}));
-  const token=String(data?.access_token||'').trim();
-  if(!response.ok||!token)throw new Error('WIX_OAUTH_TOKEN_'+response.status);
-  return {headers:{'content-type':'application/json',authorization:token,'wix-site-id':siteId},authMode:'oauth_client_credentials',authAlias:'WIX_CLIENT_ID'};
+  if(rows.length!==70)throw new Error('MORADA_SNAPSHOT_FILE_COUNT_'+rows.length);
+  return rows;
 }
 
-async function listEmbeds(headers){
-  const response=await fetch('https://www.wixapis.com/embeds/v1/custom-embeds',{method:'GET',headers});
-  const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw new Error('WIX_EMBEDS_LIST_'+response.status+' '+String(data?.message||data?.error||''));
-  return Array.isArray(data?.customEmbeds)?data.customEmbeds:[];
+function materializeSnapshot(){
+  fs.rmSync(WORKDIR,{recursive:true,force:true});
+  fs.mkdirSync(WORKDIR,{recursive:true});
+  const rows=readChunks();
+  for(const row of rows){
+    const target=path.join(WORKDIR,row.path);
+    fs.mkdirSync(path.dirname(target),{recursive:true});
+    fs.writeFileSync(target,String(row.content??''),'utf8');
+  }
+  return rows.length;
 }
 
-async function patchMoradaEmbed(){
-  const html=fs.readFileSync(MORADA_EMBED_FILE,'utf8');
-  if(!html.includes('diva-interaction-recovery-v6'))throw new Error('MORADA_V6_SOURCE_MARKER_MISSING');
-  if(!html.includes("site.style.setProperty('pointer-events',isBlocked?'auto':'none','important')"))throw new Error('MORADA_V6_SITE_BYPASS_MISSING');
+function run(cmd,args,cwd=WORKDIR,env=process.env){
+  return execFileSync(cmd,args,{cwd,env,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
+}
 
-  const auth=await wixAuthHeaders(MORADA_SITE_ID);
-  const beforeList=await listEmbeds(auth.headers);
-  const before=beforeList.find(x=>x.id===MORADA_EMBED_ID);
-  if(!before)throw new Error('MORADA_EMBED_NOT_FOUND');
+function wixApiKey(){
+  for(const alias of ['WIX_MUNDO_API_KEY','WIX_API_KEY','WIX_CLI_API_KEY','WIX_RELEASE_API_KEY','MUNDINHO_WIX_API_KEY','WIX_OS_API_KEY']){
+    const value=String(process.env[alias]||'').trim();
+    if(value)return {alias,value};
+  }
+  return null;
+}
 
-  const body={customEmbed:{
-    id:MORADA_EMBED_ID,
-    revision:String(before.revision),
-    name:'DIVA Morada · Interaction Recovery V6 · Wix Host Bypass',
-    enabled:true,
-    loadOnce:false,
-    position:'BODY_END',
-    embedData:{category:'ESSENTIAL',html}
-  }};
+function ensureWixCli(){
+  try{return run('wix',['--version'],ROOT);}catch{}
+  run('npm',['install','-g','@wix/cli@latest'],ROOT);
+  return run('wix',['--version'],ROOT);
+}
 
-  const response=await fetch('https://www.wixapis.com/embeds/v1/custom-embeds/'+encodeURIComponent(MORADA_EMBED_ID),{
-    method:'PATCH',
-    headers:auth.headers,
-    body:JSON.stringify(body)
-  });
+function authenticateWix(){
+  const api=wixApiKey();
+  if(api){
+    run('wix',['login','--api-key',api.value],WORKDIR);
+    return {mode:'api_key',alias:api.alias};
+  }
+  try{
+    const who=run('wix',['whoami'],WORKDIR);
+    if(who)return {mode:'existing_session',alias:'wix_whoami'};
+  }catch{}
+  throw new Error('WIX_AUTH_UNAVAILABLE_NO_API_KEY_OR_SESSION');
+}
+
+function qa(){
+  const output=run('node',['scripts/qa-morada-pandora-authority.mjs'],WORKDIR);
+  if(!output.includes('QA_MORADA_PANDORA_AUTHORITY PASS'))throw new Error('MORADA_PANDORA_QA_FAIL');
+  return output;
+}
+
+async function health(){
+  const response=await fetch('https://www.especialistabrandingeinfluencia.com/_functions/divaHealth',{headers:{'cache-control':'no-cache'}});
   const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw new Error('WIX_EMBED_PATCH_'+response.status+' '+String(data?.message||data?.error||''));
+  return {httpStatus:response.status,data};
+}
 
-  const afterList=await listEmbeds(auth.headers);
-  const after=afterList.find(x=>x.id===MORADA_EMBED_ID);
-  const liveHtml=String(after?.embedData?.html||'');
-  const verified=Boolean(
-    after?.enabled===true &&
-    liveHtml.includes('diva-interaction-recovery-v6') &&
-    liveHtml.includes("site.style.setProperty('pointer-events',isBlocked?'auto':'none','important')")
-  );
-  if(!verified)throw new Error('MORADA_V6_REREAD_FAILED');
-
+async function release(){
+  const files=materializeSnapshot();
+  const qaOutput=qa();
+  const cliVersion=ensureWixCli();
+  const auth=authenticateWix();
+  const publishOutput=run('wix',['publish','-y'],WORKDIR);
+  await new Promise(r=>setTimeout(r,8000));
+  const live=await health();
+  if(live.httpStatus!==200)throw new Error('MORADA_HEALTH_HTTP_'+live.httpStatus);
+  if(live.data?.pandoraMachineAuthority!=='OWNER_OR_PANDORA_MISSION_AUTHORITY_V1'){
+    throw new Error('MORADA_PANDORA_LIVE_MARKER_MISSING');
+  }
   return Object.freeze({
-    phase:'MORADA_EMBED_PATCH_VERIFIED',
+    phase:'MORADA_PANDORA_RELEASE_VERIFIED',
     done:true,
     released:true,
     siteId:MORADA_SITE_ID,
-    embedId:MORADA_EMBED_ID,
-    beforeRevision:String(before.revision),
-    afterRevision:String(after.revision),
-    name:after.name,
-    enabled:after.enabled===true,
-    marker:'diva-interaction-recovery-v6',
-    siteContainerBypass:true,
-    delegatedFallback:true,
-    authMode:auth.authMode,
-    authAlias:auth.authAlias
+    snapshotFiles:files,
+    qa:'PASS',
+    qaOutput,
+    cliVersion,
+    authMode:auth.mode,
+    authAlias:auth.alias,
+    publishOutput:publishOutput.slice(-2000),
+    health:live
   });
 }
 
@@ -117,13 +107,16 @@ let state=Object.freeze({phase:'BOOTING',done:false,released:false});
 
 async function boot(){
   try{
-    if(/^(1|true|yes)$/i.test(String(process.env.MORADA_EMBED_PATCH||''))){
-      state=await patchMoradaEmbed();
-      console.log('MORADA_EMBED_PATCH_VERIFIED '+JSON.stringify({embedId:state.embedId,beforeRevision:state.beforeRevision,afterRevision:state.afterRevision,authMode:state.authMode,authAlias:state.authAlias}));
-      return;
-    }
-    state=prepareArtifact();
-    console.log('OS_ARTIFACT_BRIDGE_READY '+SOURCE_SHA);
+    state=await release();
+    console.log('MORADA_PANDORA_RELEASE_VERIFIED '+JSON.stringify({
+      siteId:state.siteId,
+      snapshotFiles:state.snapshotFiles,
+      qa:state.qa,
+      authMode:state.authMode,
+      authAlias:state.authAlias,
+      healthStatus:state.health.httpStatus,
+      pandoraMachineAuthority:state.health.data?.pandoraMachineAuthority||null
+    }));
   }catch(error){
     state=Object.freeze({phase:'EXECUTOR_ERROR',done:true,released:false,error:String(error?.stack||error)});
     console.error(state.error);
@@ -131,13 +124,8 @@ async function boot(){
 }
 
 http.createServer((req,res)=>{
-  const u=new URL(req.url,'http://localhost');
-  if(u.pathname==='/artifact'&&state.phase==='ARTIFACT_BRIDGE_READY'){
-    res.setHeader('content-type','application/gzip');
-    return fs.createReadStream(ARCHIVE).pipe(res);
-  }
   res.setHeader('content-type','application/json');
-  if(u.pathname==='/manifest')return res.end(JSON.stringify(state));
+  if(req.url==='/manifest')return res.end(JSON.stringify(state));
   res.end(JSON.stringify(state,null,2));
 }).listen(PORT,'0.0.0.0',()=>console.log('WIX_RELEASE_CONTROL_READY'));
 
