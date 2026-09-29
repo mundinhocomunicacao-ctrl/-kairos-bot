@@ -12,10 +12,19 @@ try{
   fs.rmSync(dir,{recursive:true,force:true});
   const n=spawnSync('npm',['install','--prefix',dir,'@wix/cli@latest','--no-audit','--no-fund'],{encoding:'utf8',timeout:180000});
   if(n.status!==0) throw new Error('npm install failed '+n.stderr);
-  const build=path.join(dir,'node_modules','@wix','cli','package','build');
-  const file=fs.readdirSync(build).find(x=>/^chunk-D7ORRBCE\.js$/.test(x));
-  if(!file) throw new Error('chunk-D7ORRBCE.js missing');
-  const lines=fs.readFileSync(path.join(build,file),'utf8').split(/\r?\n/);
+  const root=path.join(dir,'node_modules','@wix','cli');
+  function findFile(p,name){
+    for(const ent of fs.readdirSync(p,{withFileTypes:true})){
+      const full=path.join(p,ent.name);
+      if(ent.isDirectory()){const f=findFile(full,name);if(f)return f}
+      else if(ent.name===name)return full;
+    }
+    return null;
+  }
+  const file=findFile(root,'chunk-D7ORRBCE.js');
+  if(!file) throw new Error('chunk-D7ORRBCE.js missing under '+root);
+  log('WIX_OVERRIDE_CHUNK '+file);
+  const lines=fs.readFileSync(file,'utf8').split(/\r?\n/);
   const ranges=[[5188,5248],[2160,2185],[1380,1410],[1735,1785]];
   for(const [a,b] of ranges){
     log('WIX_OVERRIDE_SOURCE_RANGE '+a+'-'+b);
