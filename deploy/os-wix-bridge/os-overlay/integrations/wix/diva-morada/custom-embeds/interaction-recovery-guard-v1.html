@@ -1,0 +1,133 @@
+<script id="diva-interaction-recovery-v1">
+(()=>{
+const CHANNEL='DIVA_MORADA_AUTH_V1',ROOT=document.documentElement,GATE_ID='diva-morada-login-gate',STYLE_ID='diva-interaction-recovery-v1-style';
+let loginTimer=null,probeTimer=null;
+const core=()=>document.getElementById("dv");
+
+if(!document.getElementById(STYLE_ID)){
+ const s=document.createElement('style');
+ s.id=STYLE_ID;
+ s.textContent=`
+html,body,#SITE_CONTAINER{pointer-events:auto!important}
+html:not([data-diva-morada-gate="authorized"]) #dv{visibility:hidden!important;pointer-events:none!important}
+#dv{z-index:2147482000!important;isolation:isolate!important}
+html[data-diva-morada-gate="authorized"] #dv{visibility:visible!important;z-index:2147483000!important;pointer-events:auto!important}
+html[data-diva-native-login="open"] #dv{visibility:hidden!important;z-index:1!important;pointer-events:none!important}
+#divaMoradaAuthBridge,diva-morada-auth-bridge{position:relative!important;z-index:2147483646!important;pointer-events:auto!important}
+#dv button,#dv a,#dv input,#dv textarea,#dv select,#dv [role="button"],#dv .tc,#dv .wc,#dv .sg,#dv .ni,#dv .tb{pointer-events:auto!important}
+#dv .modal:not(.open){pointer-events:none!important}
+#diva-malha-room-v11-root{z-index:2147483646!important;pointer-events:none!important}
+html:not([data-diva-morada-gate="authorized"]) #diva-malha-room-v11-root{display:none!important}
+#diva-malha-room-v11-root .dmr-launch,#diva-malha-room-v11-root .dmr-room,#diva-malha-room-v11-root .dmr-room *{pointer-events:auto!important}
+#diva-morada-login-gate{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;background:#f7f4f1;color:#211c1f;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:auto!important}
+html[data-diva-morada-gate="authorized"] #diva-morada-login-gate{display:none!important}
+html[data-diva-native-login="open"] #diva-morada-login-gate{z-index:1!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+#diva-morada-login-gate .dlg{width:min(420px,calc(100vw - 36px));padding:34px 30px;border:1px solid rgba(33,28,31,.11);border-radius:28px;background:#fff;box-shadow:0 28px 80px rgba(33,28,31,.12);text-align:center}
+#diva-morada-login-gate .mark{width:54px;height:54px;margin:0 auto 18px;display:grid;place-items:center;border-radius:50%;background:#211c1f;color:#fff;font:700 24px/1 Georgia,serif}
+#diva-morada-login-gate h1{margin:0;font:600 27px/1.12 Georgia,serif}
+#diva-morada-login-gate p{margin:10px auto 22px;max-width:300px;color:#746970;font-size:12px;line-height:1.5}
+#diva-morada-google-login{width:100%;border:1px solid rgba(33,28,31,.14);border-radius:14px;background:#fff;color:#211c1f;padding:13px 16px;font:800 13px/1 Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 7px 18px rgba(33,28,31,.06)}
+#diva-morada-login-gate .g{display:inline-grid;place-items:center;width:22px;height:22px;margin-right:9px;border-radius:50%;background:#f1efed;font-weight:900;vertical-align:middle}
+#diva-morada-login-status{display:block;min-height:16px;margin-top:12px;color:#81757c;font-size:9px;line-height:1.4}
+#diva-morada-login-gate .private{margin-top:18px;color:#aaa0a5;font-size:8px;letter-spacing:.1em;text-transform:uppercase}
+`;
+ (document.head||document.documentElement).appendChild(s);
+}
+
+const state=()=>String(ROOT.getAttribute('data-diva-morada-gate')||core()?.dataset.gate||'checking').toLowerCase();
+const status=txt=>{const el=document.getElementById('diva-morada-login-status');if(el)el.textContent=txt||''};
+const bridgeReady=()=>{const api=window.DIVA_MORADA_GATE_CORE;try{return !!(api&&typeof api.bridgeReady==='function'&&api.bridgeReady())}catch{return false}};
+
+function ensureGate(){
+ if(!core())return null;
+ let gate=document.getElementById(GATE_ID);
+ if(gate)return gate;
+ if(!document.body)return null;
+ document.body.insertAdjacentHTML('beforeend','<section id="diva-morada-login-gate" data-google-ready="false" aria-label="Acesso privado da Morada"><div class="dlg"><div class="mark">D</div><h1>Morada</h1><p>Acesso privado da Mundinho. Entre com uma conta Google autorizada antes de abrir a Morada.</p><button id="diva-morada-google-login" type="button"><span class="g">G</span>Entrar com Google</button><small id="diva-morada-login-status">Preparando login do Google...</small><div class="private">Mundinho · acesso autorizado</div></div></section>');
+ gate=document.getElementById(GATE_ID);
+ gate?.querySelector('#diva-morada-google-login')?.addEventListener('click',requestGoogle);
+ return gate;
+}
+
+function nativeLoginFallback(){
+ const scope=document.querySelector('header,#SITE_HEADER,[data-testid="site-header"]')||document;
+ const nodes=[...scope.querySelectorAll('button,a,[role="button"]')];
+ const hit=nodes.find(el=>!el.closest('#'+GATE_ID)&&(()=>{
+   const t=((el.textContent||'')+' '+(el.getAttribute('aria-label')||'')+' '+(el.getAttribute('title')||'')+' '+(el.getAttribute('href')||'')).trim().toLowerCase();
+   return /(^|\s)(entrar|login|log in|sign in)(\s|$)/.test(t)||/\/account\b/.test(t);
+ })());
+ if(!hit)return false;
+ try{hit.click();return true}catch{return false}
+}
+
+function openNative(){
+ ROOT.setAttribute('data-diva-native-login','open');
+ clearTimeout(loginTimer);
+ loginTimer=setTimeout(()=>{ROOT.removeAttribute('data-diva-native-login');repair()},90000);
+ repair();
+}
+
+function requestGoogle(){
+ const gate=ensureGate(),api=window.DIVA_MORADA_GATE_CORE,ready=bridgeReady();
+ if(gate)gate.setAttribute('data-google-ready',String(ready));
+ status(ready?'Abrindo login do Google...':'Abrindo login seguro do Wix...');
+ let sent=false;
+ try{if(ready&&api&&typeof api.requestLogin==='function')sent=api.requestLogin()===true}catch{}
+ if(!sent)sent=nativeLoginFallback();
+ if(sent){openNative();return}
+ if(gate)gate.setAttribute('data-google-ready','false');
+ status('Sua conta esta autorizada. O login Wix ainda nao esta conectado a esta pagina.');
+}
+
+function repair(){
+ if(!core())return;
+ ROOT.setAttribute('data-morada-interaction-guard','ready');
+ ROOT.style.setProperty('pointer-events','auto','important');
+ if(document.body)document.body.style.setProperty('pointer-events','auto','important');
+ const gate=ensureGate(),site=document.getElementById('SITE_CONTAINER');
+ if(site){site.style.setProperty('pointer-events','auto','important');site.removeAttribute('aria-hidden')}
+ document.getElementById('diva-v2')?.remove();
+ const gateState=state(),authorized=gateState==='authorized',loginOpen=ROOT.getAttribute('data-diva-native-login')==='open',dv=core();
+ if(gate){
+   gate.setAttribute('data-google-ready',String(bridgeReady()));
+   if(!loginOpen){
+     if(gateState==='checking')status(bridgeReady()?'Verificando sua conta...':'Entre com Google para validar seu acesso.');
+     else if(gateState==='guest')status('Entre com uma conta Google autorizada da Mundinho.');
+     else if(gateState==='denied')status('Esta conta nao tem acesso a Morada.');
+   }
+ }
+ if(dv){
+   dv.style.setProperty('visibility',authorized&&!loginOpen?'visible':'hidden','important');
+   dv.style.setProperty('z-index',loginOpen?'1':(authorized?'2147483000':'2147482000'),'important');
+   dv.style.setProperty('pointer-events',authorized&&!loginOpen?'auto':'none','important');
+ }
+ const malha=document.getElementById('diva-malha-room-v11-root');
+ if(malha&&authorized)malha.querySelectorAll('.dmr-launch,.dmr-room,.dmr-room *').forEach(el=>el.style.setProperty('pointer-events','auto','important'));
+ if(authorized&&probeTimer){clearInterval(probeTimer);probeTimer=null}
+}
+
+addEventListener('message',e=>{
+ const m=e.data;
+ if(!m||m.channel!==CHANNEL)return;
+ if(m.type==='DIVA_MORADA_LOGIN_REQUEST'){openNative();return}
+ if(m.type==='DIVA_MORADA_BRIDGE_READY'){repair();try{window.DIVA_MORADA_GATE_CORE?.requestCheck?.()}catch{}return}
+ if(m.type==='DIVA_MORADA_STATE'){
+   const s=String(m.state||'').toUpperCase();
+   if(['AUTHORIZED','GUEST','DENIED'].includes(s))ROOT.removeAttribute('data-diva-native-login');
+   repair();
+ }
+});
+
+repair();
+probeTimer=setInterval(()=>{
+ if(!core())return;
+ const gate=ensureGate();
+ if(gate)gate.setAttribute('data-google-ready',String(bridgeReady()));
+ if(bridgeReady()&&state()==='checking'){try{window.DIVA_MORADA_GATE_CORE?.requestCheck?.()}catch{}}
+},500);
+setTimeout(()=>{if(probeTimer){clearInterval(probeTimer);probeTimer=null}},120000);
+const observer=new MutationObserver(repair);
+observer.observe(document.documentElement,{childList:true,subtree:true});
+setTimeout(()=>observer.disconnect(),120000);
+})();
+</script>
