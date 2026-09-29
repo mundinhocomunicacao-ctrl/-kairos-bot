@@ -108,15 +108,106 @@ async function prove(){
   };
 }
 
+const PANDORA_MISSION_ID='MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929';
+const PANDORA_GRANT_ID='PANDORA::MORADA::MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929';
+const PANDORA_CANONICAL_KEY='MUNDO/MALHA/AWAKEN_BODY/V1';
+
+async function readJsonBody(req){
+  let raw='';
+  for await(const chunk of req){
+    raw+=chunk;
+    if(raw.length>200000) throw new Error('PAYLOAD_TOO_LARGE');
+  }
+  return raw.trim()?JSON.parse(raw):{};
+}
+
+function routePandoraMission(body={}){
+  const authority=String(body?.authority||'');
+  const worldId=String(body?.worldId||'');
+  const canonicalKey=String(body?.canonicalKey||'');
+  const missionId=String(body?.missionId||'');
+  const grantId=String(body?.grantId||'');
+  const sourceSurface=String(body?.sourceSurface||'');
+  const validation=String(body?.validation||'');
+
+  const authorized=
+    authority==='PANDORA' &&
+    worldId==='MUNDO' &&
+    canonicalKey==='MUNDO/MALHA/AWAKEN_BODY/V1' &&
+    missionId==='MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929' &&
+    grantId==='PANDORA::MORADA::MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929' &&
+    sourceSurface==='MORADA_AUTOMATION' &&
+    validation==='PANDORA_MISSION_AUTHORITY';
+
+  if(!authorized){
+    return {httpStatus:403,payload:{ok:false,status:'PANDORA_MISSION_AUTHORITY_DENIED'}};
+  }
+
+  const mission=buildAngelMission({
+    missionId:PANDORA_MISSION_ID,
+    intent:'Destravar o MUNDO a partir da Morada via PANDORA e os 7 ANJOS, usando apenas authority+capability comprovadas.',
+    complexity:'CRITICAL',
+    requestedPlugins:['GitLab','GitHub','Wix','Render','Slack','Supabase','Google Drive'],
+    requiredFronts:['STATE_TRUTH','CAPABILITY_ROUTE','EXECUTION_SEQUENCE','QA_PROOF','PROVENANCE_WRITEBACK','SIGNALS_CONNECTIONS','FINAL_RECONCILIATION'],
+    minimumAngels:7
+  });
+
+  const receipts=mission.angels.map((angel,index)=>({
+    receiptId:'MORADA-ANJO-'+String(index+1).padStart(2,'0')+'-20260929',
+    agentId:angel.id,
+    name:angel.name,
+    status:'MISSION_ROUTED',
+    accessGovernor:angel.accessGovernor,
+    reportsTo:angel.reportsTo
+  }));
+
+  console.log('MORADA_PANDORA_MISSION_VERIFIED',JSON.stringify({
+    missionId:PANDORA_MISSION_ID,
+    grantId:PANDORA_GRANT_ID,
+    canonicalKey:PANDORA_CANONICAL_KEY,
+    selected:mission.angels.length,
+    sourceSurface:'MORADA_AUTOMATION'
+  }));
+
+  return {
+    httpStatus:202,
+    payload:{
+      ok:true,
+      status:'MISSION_ROUTED_TO_7_ANJOS',
+      validation:'PANDORA_MISSION_AUTHORITY_EXECUTION_PROOF',
+      missionId:PANDORA_MISSION_ID,
+      grantId:PANDORA_GRANT_ID,
+      canonicalKey:PANDORA_CANONICAL_KEY,
+      selected:mission.angels.length,
+      receipts
+    }
+  };
+}
+
 let moradaProbe=null;
 let snapshot;
 try{snapshot=await prove();}
 catch(error){snapshot={ok:false,error:String(error?.stack||error),checkedAt:new Date().toISOString()};}
 
-http.createServer((req,res)=>{
+http.createServer(async(req,res)=>{
   if(req.method==='OPTIONS'){
     res.writeHead(204,{'access-control-allow-origin':'*','access-control-allow-methods':'GET,POST,OPTIONS','access-control-allow-headers':'content-type'});
     return res.end();
+  }
+  if(req.url==='/mission'&&req.method==='POST'){
+    try{
+      const body=await readJsonBody(req);
+      const routed=routePandoraMission(body);
+      res.writeHead(routed.httpStatus,{
+        'content-type':'application/json',
+        'access-control-allow-origin':'*',
+        'cache-control':'no-store'
+      });
+      return res.end(JSON.stringify(routed.payload));
+    }catch(error){
+      res.writeHead(400,{'content-type':'application/json','access-control-allow-origin':'*','cache-control':'no-store'});
+      return res.end(JSON.stringify({ok:false,status:'INVALID_MISSION_PAYLOAD'}));
+    }
   }
   if(req.url==='/morada-probe'&&req.method==='POST'){
     let body='';
