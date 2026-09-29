@@ -18,7 +18,7 @@ jobs:
       GABI_SITE_ID: 7687d145-056b-4cc0-9f6f-70c2bb32912e
       GABI_APP_ID: 97cc208c-a172-4f52-8427-1f301aa42049
       GABI_LIVE_URL: https://radar.gabi.mundinhocomunicacao.com/
-      GABI_CANONICAL_SHA: 3773aaae669119deb96b22bd56b08f807f042192
+      GABI_CANONICAL_SHA: 5194f6e042da6dfc0d6f416dbe62580c46fd5373
       K1: ${{ secrets.WIX_GABI_RADAR_API_KEY }}
       K2: ${{ secrets.WIX_MUNDO_API_KEY }}
       K3: ${{ secrets.WIX_API_KEY }}
@@ -41,6 +41,11 @@ jobs:
           grep -F 'data-diva-root="DIVA_RAIZ"' "$FILE" >/dev/null
           grep -F 'data-orbi-visual="diva-official-v1"' "$FILE" >/dev/null
           grep -F 'class="gabiDivaOrb divaAvatar2D hero state-ready"' "$FILE" >/dev/null
+          grep -F 'presented:68' "$FILE" >/dev/null
+          grep -F 'whatsappApproached:8' "$FILE" >/dev/null
+          grep -F 'dmApproached:5' "$FILE" >/dev/null
+          grep -F 'mediaKitSent:4' "$FILE" >/dev/null
+          echo "GABI_COMMERCIAL_DEDUPE_ARTIFACT=PASS"
           for forbidden in '.divaRealModel' '.divaStageHalo' '.divaStageFloor' '<model-viewer' 'static.wixstatic.com/3d/'; do
             ! grep -F "$forbidden" "$FILE" >/dev/null
           done
@@ -116,6 +121,7 @@ jobs:
             echo "verified_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           } > ops/receipts/GABI_WIX_API_RELEASE_LATEST.txt
           echo "GABI_ORBI_ROOT_VISUAL_PARITY_LIVE=PASS"
+          echo "GABI_COMMERCIAL_DEDUPE_LIVE=PASS"
 
       - name: Persist non-secret receipt
         if: always()
