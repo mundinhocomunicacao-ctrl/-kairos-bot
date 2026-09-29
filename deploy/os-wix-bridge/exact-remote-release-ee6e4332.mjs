@@ -123,6 +123,30 @@ async function materializeArtifact(){
  log('WIX_LIVE_REPACK_PASS '+SOURCE_SHA+' release='+EXPECTED_RELEASE_ID);
 }
 async function ensureAuth(){state.phase='WIX_AUTH';const env={...process.env,AI_AGENT:'wix-headless-skill'};const apiKey=String(process.env.WIX_OS_API_KEY||process.env.WIX_MUNDO_API_KEY||process.env.WIX_API_KEY||'').trim();if(apiKey){await run('npx',['-y','@wix/cli@latest','login','--api-key',apiKey],{cwd:REL,env});log('WIX_API_KEY_AUTH_PASS');return}const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env,timeout:30000});if(who.status===0){log('WIX_AUTH_ALREADY_VALID');return}await new Promise((resolve,reject)=>{const p=spawn('npx',['-y','@wix/cli@latest','login'],{cwd:REL,env,stdio:['ignore','pipe','pipe']});let b='';p.stdout.on('data',d=>{const s=String(d);process.stdout.write(s);b+=s;for(const line of b.split('\n')){try{const e=JSON.parse(line.trim());if(e.event==='awaiting_user'){state.userCode=e.userCode||null;state.verificationUri=e.verificationUri||null;state.phase='AWAITING_WIX_AUTH';log('DIVA_OS_WIX_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:e.expiresInSeconds||null}))}}catch{}}});p.stderr.on('data',d=>process.stderr.write(d));p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error('wix login exit '+c)))});const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env,timeout:30000});if(after.status!==0)throw new Error('WIX_AUTH_FAILED_AFTER_DEVICE_LOGIN');log('WIX_AUTH_PASS')}
+async function ensureMoradaWixCli(){
+ const dir=path.join(os.tmpdir(),'morada-persistent-wix-cli');
+ fs.rmSync(dir,{recursive:true,force:true});
+ log('MORADA_WIX_CLI_INSTALL_START');
+ await run('npm',['install','--prefix',dir,'@wix/cli@latest','--no-audit','--no-fund'],{cwd:ROOT,env:{NODE_ENV:'development'}});
+ const bin=path.join(dir,'node_modules','.bin','wix');
+ if(!fs.existsSync(bin))throw new Error('MORADA_WIX_CLI_MISSING');
+ log('MORADA_WIX_CLI_INSTALL_PASS');
+ return bin;
+}
+async function ensureMoradaAuth(wixCli){
+ state.phase='MORADA_WIX_AUTH';
+ const env={...process.env,AI_AGENT:'wix-headless-skill'};
+ const apiKey=String(process.env.WIX_OS_API_KEY||process.env.WIX_MUNDO_API_KEY||process.env.WIX_API_KEY||'').trim();
+ if(apiKey){
+   await run(wixCli,['login','--api-key',apiKey],{cwd:ROOT,env});
+   log('MORADA_WIX_API_KEY_AUTH_PASS');
+   return;
+ }
+ const who=spawnSync(wixCli,['whoami'],{encoding:'utf8',env,timeout:30000});
+ if(who.status===0){log('MORADA_WIX_AUTH_ALREADY_VALID '+String(who.stdout||'').trim());return}
+ throw new Error('MORADA_WIX_AUTH_REFERENCE_MISSING');
+}
+
 async function runMoradaRelease(){
  const dir=path.join(ROOT,'.morada-release-runtime');
  state.phase='MORADA_SOURCE';
@@ -144,9 +168,10 @@ async function runMoradaRelease(){
  }
  const cfg=JSON.parse(fs.readFileSync(path.join(dir,'wix.config.json'),'utf8'));
  if(cfg.siteId!=='7aff6327-39c6-4be0-aa3f-5d50680eb337')throw new Error('MORADA_SITE_ID_MISMATCH '+String(cfg.siteId||''));
- await ensureAuth();
+ const moradaWixCli=await ensureMoradaWixCli();
+ await ensureMoradaAuth(moradaWixCli);
  state.phase='MORADA_PUBLISH';
- await run('npx',['-y','@wix/cli@latest','publish','-y'],{cwd:dir,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
+ await run(moradaWixCli,['publish','-y'],{cwd:dir,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
  log('MORADA_WIX_PUBLISH_PASS '+sha);
  await new Promise(r=>setTimeout(r,12000));
  state.phase='MORADA_READBACK';
