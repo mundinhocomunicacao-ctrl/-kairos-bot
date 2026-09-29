@@ -27,3 +27,13 @@ assert.ok(src.includes("setTimeout(startConnect,DIVA_STARTUP_GRACE_MS)"),"new Re
 for(const token of ["runRelayCanary","DIVA_LOCAL_RELAY_CANARY_OK","DIVA_LOCAL_RELAY_CANARY_FAILED","without_diva_wake_word"])
   assert.ok(src.includes(token),"missing relay canary token: "+token);
 assert.ok(src.includes('relay("healthcheck","relay_canary_"+Date.now())'),"relay canary must verify signed local relay without sending a WhatsApp message");
+
+for(const token of [
+  "DIVA_E2E_CANARY_ON_START",
+  "DIVA_E2E_CANARY_SENT",
+  "DIVA_E2E_CANARY_UPSERT_SEEN",
+  "DIVA_E2E_CANARY_RELAY_OK",
+  "DIVA_E2E_CANARY_REPLY_SENT",
+  "lastE2eCanary"
+]) assert.ok(src.includes(token),"missing E2E canary token: "+token);
+assert.ok(src.includes("m.key?.id===lastE2eCanary.commandMessageId"),"canary must prove messages.upsert observed the real group command message");
