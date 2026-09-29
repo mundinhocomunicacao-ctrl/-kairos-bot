@@ -658,9 +658,7 @@ export async function runDivaBrainTransport(input = {}, identityLabel = 'MORADA_
 }
 
 
-export const sendPandoraMissionToMalha = webMethod(
-    Permissions.Anyone,
-    async (input = {}) => {
+export async function sendPandoraMissionToMalhaInternal(input = {}) {
         const missionId = String(input?.missionId || '').trim().slice(0, 200);
         const message = String(input?.text || input?.message || '').trim().slice(0, 12000);
 
@@ -708,6 +706,10 @@ export const sendPandoraMissionToMalha = webMethod(
             };
         }
     }
+
+export const sendPandoraMissionToMalha = webMethod(
+    Permissions.Anyone,
+    async (input = {}) => sendPandoraMissionToMalhaInternal(input)
 );
 
 export const askDiva = webMethod(
