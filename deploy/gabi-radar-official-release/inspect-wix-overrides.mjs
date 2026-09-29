@@ -22,15 +22,15 @@ try{
   if(n.status!==0) throw new Error('npm install failed '+n.stderr);
   const root=path.join(dir,'node_modules','@wix','cli');
   const files=walk(root);
-  const needles=['updateManifestWithBackendWorker','createComponentsOverride','modifiedComponents','backendWorker'];
+  const needles=['BACKEND_WORKER_COMPONENT_ID','ComponentType2[\"BACKEND_WORKER\"]','BACKEND_WORKER =','updateManifestWithBackendWorker'];
   for(const file of files){
     const content=fs.readFileSync(file,'utf8');
     for(const needle of needles){
       let p=content.indexOf(needle);
       if(p>=0){
-        const excerpt=content.slice(Math.max(0,p-7000),Math.min(content.length,p+15000));
+        const excerpt=content.slice(Math.max(0,p-1200),Math.min(content.length,p+2200));
         state.excerpts.push({file,needle,excerpt});
-        log('WIX_SOURCE_MATCH '+needle+' '+file); if(needle==='updateManifestWithBackendWorker'||needle==='backendWorker') log('WIX_SOURCE_EXCERPT '+excerpt.replace(/\\n/g,' ↵ '));
+        log('WIX_SOURCE_MATCH '+needle+' '+file); if(true) log('WIX_SOURCE_EXCERPT '+excerpt.replace(/\\n/g,' ↵ '));
       }
     }
   }
