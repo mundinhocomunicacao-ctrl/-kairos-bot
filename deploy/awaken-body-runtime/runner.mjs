@@ -108,11 +108,29 @@ async function prove(){
   };
 }
 
+let moradaProbe=null;
 let snapshot;
 try{snapshot=await prove();}
 catch(error){snapshot={ok:false,error:String(error?.stack||error),checkedAt:new Date().toISOString()};}
 
 http.createServer((req,res)=>{
+  if(req.method==='OPTIONS'){
+    res.writeHead(204,{'access-control-allow-origin':'*','access-control-allow-methods':'GET,POST,OPTIONS','access-control-allow-headers':'content-type'});
+    return res.end();
+  }
+  if(req.url==='/morada-probe'&&req.method==='POST'){
+    let body='';
+    req.on('data',chunk=>{body+=chunk;if(body.length>200000)req.destroy()});
+    req.on('end',()=>{
+      try{moradaProbe={receivedAt:new Date().toISOString(),body:JSON.parse(body||'{}')};res.writeHead(200,{'content-type':'application/json','access-control-allow-origin':'*','cache-control':'no-store'});res.end(JSON.stringify({ok:true}))}
+      catch(e){res.writeHead(400,{'content-type':'application/json','access-control-allow-origin':'*'});res.end(JSON.stringify({ok:false,error:String(e)}))}
+    });
+    return;
+  }
+  if(req.url==='/morada-probe'&&req.method==='GET'){
+    res.writeHead(200,{'content-type':'application/json','access-control-allow-origin':'*','cache-control':'no-store'});
+    return res.end(JSON.stringify({ok:true,probe:moradaProbe}));
+  }
   if(req.url==='/health'||req.url==='/'){
     res.writeHead(snapshot.ok?200:500,{'content-type':'application/json','cache-control':'no-store'});
     res.end(JSON.stringify(snapshot));
