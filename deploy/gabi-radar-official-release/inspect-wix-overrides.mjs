@@ -30,7 +30,7 @@ try{
       if(p>=0){
         const excerpt=content.slice(Math.max(0,p-7000),Math.min(content.length,p+15000));
         state.excerpts.push({file,needle,excerpt});
-        log('WIX_SOURCE_MATCH '+needle+' '+file);
+        log('WIX_SOURCE_MATCH '+needle+' '+file); if(needle==='updateManifestWithBackendWorker'||needle==='backendWorker') log('WIX_SOURCE_EXCERPT '+excerpt.replace(/\\n/g,' ↵ '));
       }
     }
   }
