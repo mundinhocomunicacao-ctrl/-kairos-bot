@@ -1,6 +1,8 @@
 const target=String(process.env.RELEASE_TARGET||'').trim();
 if(target==='gabi-wix-cli-introspect'){
   await import('../gabi-radar-official-release/wix-cli-introspect.mjs');
+}else if(target==='inspect-wix-overrides'){
+  await import('../gabi-radar-official-release/inspect-wix-overrides.mjs');
 }else if(target==='gabi-radar-signed-upload'){
   await import('../gabi-radar-official-release/signed-upload-proxy.mjs');
 }else if(target==='gabi-radar-dedupe'){
