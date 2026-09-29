@@ -1,0 +1,156 @@
+name: Publish DIVA Morada Interaction Fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/pages/DIVA.bv8it.js'
+      - 'src/backend/http-functions.js'
+      - 'src/backend/divaBridge.web.js'
+      - 'scripts/qa-morada-pandora-authority.mjs'
+      - 'scripts/qa-morada-persistent-release-marker.mjs'
+      - 'scripts/qa-morada-interaction-fallback.mjs'
+      - '.github/workflows/publish-diva-morada-interaction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p diagnostics
+          echo '{"qaPass":false,"wixSecretPresent":false,"publishAttempted":false,"publishExit":null,"healthPass":false}' > diagnostics/morada-publish-latest.json
+
+      - name: Verify interaction regression
+        id: qa1
+        continue-on-error: true
+        run: node scripts/qa-morada-interaction-fallback.mjs
+
+      - name: Verify persistent release marker contract
+        id: qa2
+        continue-on-error: true
+        run: node scripts/qa-morada-persistent-release-marker.mjs
+
+      - name: Verify Pandora machine authority contract
+        id: qa3
+        continue-on-error: true
+        run: node scripts/qa-morada-pandora-authority.mjs
+
+      - name: Record QA status
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const p='diagnostics/morada-publish-latest.json';
+          const x=JSON.parse(fs.readFileSync(p,'utf8'));
+          x.qaPass=${{ steps.qa1.outcome == 'success' && steps.qa2.outcome == 'success' && steps.qa3.outcome == 'success' }};
+          fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n');
+          NODE
+
+      - name: Check Wix secret presence
+        id: wixsecret
+        env:
+          WIX_CLI: ${{ secrets.WIX_CLI }}
+        run: |
+          if [ -n "$WIX_CLI" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Record secret presence
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const p='diagnostics/morada-publish-latest.json';
+          const x=JSON.parse(fs.readFileSync(p,'utf8'));
+          x.wixSecretPresent=${{ steps.wixsecret.outputs.present == 'true' }};
+          fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n');
+          NODE
+
+      - name: Install Wix CLI
+        if: steps.wixsecret.outputs.present == 'true' && steps.qa1.outcome == 'success' && steps.qa2.outcome == 'success' && steps.qa3.outcome == 'success'
+        run: npm install -g @wix/cli@latest
+
+      - name: Authenticate Wix CLI
+        if: steps.wixsecret.outputs.present == 'true' && steps.qa1.outcome == 'success' && steps.qa2.outcome == 'success' && steps.qa3.outcome == 'success'
+        env:
+          WIX_CLI: ${{ secrets.WIX_CLI }}
+        run: wix login --api-key "$WIX_CLI"
+
+      - name: Publish exact main
+        id: publish
+        continue-on-error: true
+        if: steps.wixsecret.outputs.present == 'true' && steps.qa1.outcome == 'success' && steps.qa2.outcome == 'success' && steps.qa3.outcome == 'success'
+        run: wix publish -y
+
+      - name: Record publish status
+        if: always()
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const p='diagnostics/morada-publish-latest.json';
+          const x=JSON.parse(fs.readFileSync(p,'utf8'));
+          x.publishAttempted=${{ steps.publish.outcome != 'skipped' }};
+          x.publishExit=${{ steps.publish.outcome == 'success' && 0 || 1 }};
+          fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n');
+          NODE
+
+      - name: Prove live Morada backend still healthy
+        id: health
+        continue-on-error: true
+        if: steps.publish.outcome == 'success'
+        run: |
+          sleep 8
+          STATUS=$(curl -sS -o /tmp/health.json -w "%{http_code}" 'https://www.especialistabrandingeinfluencia.com/_functions/divaHealth' || true)
+          test "$STATUS" = "200"
+          node <<'NODE'
+          const fs = require('fs');
+          const x = JSON.parse(fs.readFileSync('/tmp/health.json','utf8'));
+          if (x?.interactionBuild !== 'MORADA_CLICK_FALLBACK_V6') throw new Error('MORADA_INTERACTION_BUILD_MISMATCH');
+          if (x?.releaseRail !== 'WIX_NATIVE_SITE_PUBLISH_API') throw new Error('MORADA_RELEASE_RAIL_MISMATCH');
+          if (x?.malhaFlow !== 'ONLINE') throw new Error('MORADA_MALHA_FLOW_MISMATCH');
+          if (x?.pandoraMachineAuthority !== 'OWNER_OR_PANDORA_MISSION_AUTHORITY_V1') throw new Error('MORADA_PANDORA_AUTHORITY_MARKER_MISSING');
+          NODE
+
+      - name: Record health status
+        if: always()
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const p='diagnostics/morada-publish-latest.json';
+          const x=JSON.parse(fs.readFileSync(p,'utf8'));
+          x.healthPass=${{ steps.health.outcome == 'success' }};
+          x.recordedAt=new Date().toISOString();
+          x.headSha=process.env.GITHUB_SHA;
+          fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n');
+          NODE
+
+      - name: Persist sanitized publish diagnostics
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add diagnostics/morada-publish-latest.json
+          git commit -m "test(morada): persist publish diagnostics" || exit 0
+          git push origin HEAD:main
+
+      - name: Enforce publish result
+        if: always()
+        run: |
+          node <<'NODE'
+          const x=require('./diagnostics/morada-publish-latest.json');
+          if(!x.qaPass) throw new Error('MORADA_QA_FAILED');
+          if(!x.wixSecretPresent) throw new Error('WIX_CLI_MISSING');
+          if(x.publishExit!==0) throw new Error('WIX_PUBLISH_FAILED');
+          if(!x.healthPass) throw new Error('MORADA_HEALTH_READBACK_FAILED');
+          console.log('MORADA_PANDORA_PUBLISH_COMPLETE');
+          NODE
