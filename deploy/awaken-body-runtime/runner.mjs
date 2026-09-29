@@ -1,4 +1,5 @@
 import http from 'node:http';
+import {createHash,createPrivateKey,randomBytes,sign as signPayload} from 'node:crypto';
 import {buildAngelMission,angelPluginCoverage} from '../../lib/anjos-plugin-orchestrator.mjs';
 import {ANJOS} from '../../data/anjos-agent-registry.js';
 import {MAESTRO_QUEUE_REGISTRY} from '../../data/maestro-queue-registry.js';
@@ -108,9 +109,93 @@ async function prove(){
   };
 }
 
-const PANDORA_MISSION_ID='MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929';
-const PANDORA_GRANT_ID='PANDORA::MORADA::MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929';
+const PANDORA_MISSION_ID=String(process.env.PANDORA_MISSION_ID||'').trim();
+const PANDORA_GRANT_ID=String(process.env.PANDORA_MISSION_KEY||'').trim();
 const PANDORA_CANONICAL_KEY='MUNDO/MALHA/AWAKEN_BODY/V1';
+const DIVA_GATEWAY_VERSION='diva-universal-private-gateway-v0.1';
+const DIVA_GATEWAY_INSTALLATION='morada-wix';
+const DIVA_GATEWAY_PATH='/api/diva-gateway/execute';
+const DIVA_GATEWAY_URL='https://os.mundinhocomunicacao.com/api/diva-gateway/execute';
+
+function stableStringify(value){
+  if(Array.isArray(value))return '['+value.map(stableStringify).join(',')+']';
+  if(value&&typeof value==='object'){
+    return '{'+Object.keys(value).sort().map(key=>JSON.stringify(key)+':'+stableStringify(value[key])).join(',')+'}';
+  }
+  return JSON.stringify(value);
+}
+function sha256(value){return createHash('sha256').update(String(value||'')).digest('hex');}
+function normalizePrivateKey(value){
+  const raw=String(value||'').trim().replace(/\\n/g,'\n');
+  if(raw.includes('BEGIN PRIVATE KEY'))return raw;
+  try{
+    const decoded=Buffer.from(raw,'base64').toString('utf8').trim();
+    return decoded.includes('BEGIN PRIVATE KEY')?decoded:raw;
+  }catch{return raw;}
+}
+function signedGatewayHeaders(body){
+  const stored=String(process.env.DIVA_MORADA_GATEWAY_PRIVATE_KEY||'').trim();
+  if(!stored)throw new Error('DIVA_MORADA_GATEWAY_PRIVATE_KEY_MISSING');
+  const timestamp=new Date().toISOString();
+  const nonce=randomBytes(18).toString('base64url');
+  const material=[
+    DIVA_GATEWAY_VERSION,
+    DIVA_GATEWAY_INSTALLATION,
+    timestamp,
+    nonce,
+    'POST',
+    DIVA_GATEWAY_PATH,
+    sha256(stableStringify(body))
+  ].join('\n');
+  const key=createPrivateKey(normalizePrivateKey(stored));
+  const signature=signPayload(null,Buffer.from(material,'utf8'),key).toString('base64url');
+  return {
+    'content-type':'application/json',
+    'x-diva-installation-id':DIVA_GATEWAY_INSTALLATION,
+    'x-diva-timestamp':timestamp,
+    'x-diva-nonce':nonce,
+    'x-diva-signature':signature,
+    'x-diva-signature-alg':'ed25519',
+    'x-diva-gateway-version':DIVA_GATEWAY_VERSION
+  };
+}
+async function executeSignedPandoraGateway({missionId,message,grantId}){
+  const body={
+    surface_id:'wix',
+    mission_id:missionId,
+    message,
+    history:[],
+    currentRoute:'/cópia-sobre-mim',
+    conversation_ref:'morada://sala-da-malha',
+    context:'PANDORA_MISSION_AUTHORITY · deny-by-default · capability=malha_command · grantFingerprint='+sha256(grantId).slice(0,16)
+  };
+  const response=await fetch(DIVA_GATEWAY_URL,{
+    method:'POST',
+    headers:signedGatewayHeaders(body),
+    body:JSON.stringify(body)
+  });
+  const raw=await response.text();
+  let json={};
+  try{json=raw?JSON.parse(raw):{};}catch{}
+  const result={
+    ok:response.ok,
+    httpStatus:response.status,
+    gatewayMissionId:response.headers.get('x-diva-gateway-mission-id')||missionId,
+    gatewayEventId:response.headers.get('x-diva-gateway-event-id')||null,
+    runtimeRequestId:json?.runtime?.requestId||null,
+    answer:String(json?.answer||json?.message||'').slice(0,4000),
+    provider:json?.provider||null,
+    model:json?.model||null
+  };
+  console.log(result.ok?'PANDORA_SIGNED_GATEWAY_VERIFIED':'PANDORA_SIGNED_GATEWAY_FAILED',JSON.stringify({
+    ok:result.ok,
+    httpStatus:result.httpStatus,
+    gatewayMissionId:result.gatewayMissionId,
+    gatewayEventId:result.gatewayEventId,
+    runtimeRequestId:result.runtimeRequestId
+  }));
+  return result;
+}
 
 async function readJsonBody(req){
   let raw='';
@@ -121,7 +206,7 @@ async function readJsonBody(req){
   return raw.trim()?JSON.parse(raw):{};
 }
 
-function routePandoraMission(body={}){
+async function routePandoraMission(body={}){
   const authority=String(body?.authority||'');
   const worldId=String(body?.worldId||'');
   const canonicalKey=String(body?.canonicalKey||'');
@@ -136,8 +221,8 @@ function routePandoraMission(body={}){
     authority==='PANDORA' &&
     worldId==='MUNDO' &&
     canonicalKey==='MUNDO/MALHA/AWAKEN_BODY/V1' &&
-    missionId==='MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929' &&
-    grantId==='PANDORA::MORADA::MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929' &&
+    missionId===String(process.env.PANDORA_MISSION_ID||'') &&
+    grantId===String(process.env.PANDORA_MISSION_KEY||'') &&
     sourceSurface==='MORADA_AUTOMATION' &&
     validation==='PANDORA_MISSION_AUTHORITY' &&
     expectedNonce.length>=24 &&
@@ -146,6 +231,12 @@ function routePandoraMission(body={}){
   if(!authorized){
     return {httpStatus:403,payload:{ok:false,status:'PANDORA_MISSION_AUTHORITY_DENIED'}};
   }
+
+  const gateway=await executeSignedPandoraGateway({
+    missionId,
+    grantId,
+    message:String(process.env.PANDORA_MISSION_TEXT||'').trim()||'DIVA + PANDORA + MALHA CORE + 7 ANJOS: executar destrave governado e retornar prova.'
+  });
 
   const mission=buildAngelMission({
     missionId:PANDORA_MISSION_ID,
@@ -183,7 +274,8 @@ function routePandoraMission(body={}){
       grantId:PANDORA_GRANT_ID,
       canonicalKey:PANDORA_CANONICAL_KEY,
       selected:mission.angels.length,
-      receipts
+      receipts,
+      gateway
     }
   };
 }
@@ -204,7 +296,7 @@ http.createServer(async(req,res)=>{
       const encoded=urlObj.searchParams.get('payload')||'';
       const decoded=Buffer.from(encoded,'base64url').toString('utf8');
       const body=JSON.parse(decoded);
-      const routed=routePandoraMission(body);
+      const routed=await routePandoraMission(body);
       res.writeHead(routed.httpStatus,{
         'content-type':'application/json',
         'access-control-allow-origin':'*',
@@ -219,7 +311,7 @@ http.createServer(async(req,res)=>{
   if(req.url==='/mission'&&req.method==='POST'){
     try{
       const body=await readJsonBody(req);
-      const routed=routePandoraMission(body);
+      const routed=await routePandoraMission(body);
       res.writeHead(routed.httpStatus,{
         'content-type':'application/json',
         'access-control-allow-origin':'*',
