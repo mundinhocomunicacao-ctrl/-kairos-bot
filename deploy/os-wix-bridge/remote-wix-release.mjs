@@ -15,7 +15,7 @@ const MORADA_EMBED_ID=String(process.env.MORADA_EMBED_ID||'fcb4b995-6595-4eae-9e
 const MORADA_EMBED_FILE=path.join(ROOT,'deploy/os-wix-bridge/interaction-recovery-v6.html');
 const MORADA_SOURCE_PUBLISH=/^(1|true|yes)$/i.test(String(process.env.MORADA_SOURCE_PUBLISH||''));
 const MORADA_RELEASE_SHA=String(process.env.MORADA_RELEASE_SHA||'').trim();
-const MORADA_SOURCE_DIR=path.join(ROOT,'deploy/morada-release-source');
+const MORADA_SOURCE_DIR=path.join(ROOT,'morada');
 const MORADA_LIVE='https://www.especialistabrandingeinfluencia.com';
 
 function prepareArtifact(){
@@ -129,9 +129,7 @@ function wixApiKeyFromEnv(){
 
 async function publishMoradaSource(){
   if(!fs.existsSync(MORADA_SOURCE_DIR))throw new Error('MORADA_SOURCE_DIR_MISSING');
-  const manifestPath=path.join(MORADA_SOURCE_DIR,'SNAPSHOT_MANIFEST.json');
-  const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
-  const sourceSha=String(manifest.sourceCommitSha||'').trim();
+  const sourceSha=String(execFileSync('git',['-C',MORADA_SOURCE_DIR,'rev-parse','HEAD'],{encoding:'utf8'})).trim();
   if(!sourceSha)throw new Error('MORADA_SOURCE_SHA_MISSING');
   if(MORADA_RELEASE_SHA&&sourceSha!==MORADA_RELEASE_SHA)throw new Error('MORADA_RELEASE_SHA_MISMATCH '+sourceSha+' expected='+MORADA_RELEASE_SHA);
 
