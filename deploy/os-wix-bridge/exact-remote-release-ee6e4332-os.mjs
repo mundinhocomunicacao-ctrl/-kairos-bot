@@ -5,10 +5,12 @@ import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const SOURCE_SHA='1d9055c5ad0e0e4fb79794fe4402ba8624cbba50';
-const MIRROR_SHA='d75a0c0901602d4b802a0345d0df787f1d76a172';
+const MIRROR_SHA='19fa6e15572058602f4f165d1c58f082dcb6d832';
 const APPROVAL='REC-20260929-HUMAN-APPROVAL-GATE-001';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
+const OVERLAY_DIR=path.join(ROOT,'deploy','os-wix-bridge','os-overlay');
+const OVERLAY_FILES=['.release-source/canonical-sha.txt','lib/diva-system-core.mjs','pages/os/radar.js','scripts/package-wix-worker.mjs'];
 const REL=path.join(ROOT,'.wix-os-full-rollout-071a');
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
@@ -38,6 +40,13 @@ async function syncSource(){
   await run('git',['submodule','update','--init','--recursive'],ROOT);
   const mirror=sh('git',['-C',OS_DIR,'rev-parse','HEAD']);
   if(mirror!==MIRROR_SHA) throw new Error('MIRROR_SHA_MISMATCH:'+mirror);
+  for(const rel of OVERLAY_FILES){
+    const src=path.join(OVERLAY_DIR,rel),dst=path.join(OS_DIR,rel);
+    if(!fs.existsSync(src)) throw new Error('OVERLAY_FILE_MISSING:'+rel);
+    fs.mkdirSync(path.dirname(dst),{recursive:true});
+    fs.copyFileSync(src,dst);
+  }
+  mark('SOURCE_OVERLAY','PASS',SOURCE_SHA+' files='+OVERLAY_FILES.length);
   const marker=String(fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8')).trim();
   if(marker!==SOURCE_SHA) throw new Error('SOURCE_MARKER_MISMATCH:'+marker);
   mark('SOURCE_PARITY','PASS',SOURCE_SHA+' mirror='+MIRROR_SHA);
