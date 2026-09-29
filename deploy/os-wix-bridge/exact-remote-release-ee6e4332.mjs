@@ -52,7 +52,7 @@ function assertSource(){
 }
 function build(){
   state.phase='BUILD';
-  execFileSync('npm',['ci'],{cwd:OS_DIR,stdio:'inherit'});
+  execFileSync('npm',['ci','--include=dev'],{cwd:OS_DIR,stdio:'inherit'});
   execFileSync('npm',['run','build:wix-worker'],{
     cwd:OS_DIR,
     stdio:'inherit',
