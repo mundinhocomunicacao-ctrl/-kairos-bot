@@ -30,10 +30,12 @@ function activateOverlaySnapshot(){
   const expected='77a5d67f2ac5e9fd7b884f726d020cc9b2d6de99';
   const overlayDir=path.join(ROOT,'deploy','os-wix-bridge','os-overlay');
   if(!fs.existsSync(overlayDir))throw new Error('OS_RELEASE_OVERLAY_MISSING');
+  console.log('OS_RELEASE_OVERLAY_START '+expected);
   fs.cpSync(overlayDir,OS_DIR,{recursive:true});
+  console.log('OS_RELEASE_OVERLAY_COPIED '+expected);
   const marker=String(fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8')).trim();
   if(marker!==expected)throw new Error('OS_RELEASE_OVERLAY_MARKER_MISMATCH:'+marker);
-  execFileSync('npm',['ci'],{cwd:OS_DIR,stdio:'inherit'});
+  console.log('OS_RELEASE_OVERLAY_BUILD_START '+expected);
   execFileSync('npm',['run','build:wix-worker'],{
     cwd:OS_DIR,
     stdio:'inherit',
