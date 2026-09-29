@@ -179,25 +179,30 @@ async function ensureMoradaAuth(wixCli){
 
 async function runMoradaRelease(){
  const dir=path.join(ROOT,'.morada-release-runtime');
+ const snapshot=path.join(ROOT,'deploy/morada-release-source');
  state.phase='MORADA_SOURCE';
  fs.rmSync(dir,{recursive:true,force:true});
- fs.mkdirSync(dir,{recursive:true});
- let sha=MORADA_RELEASE_SHA||'origin-main';
- try{
-   await run('git',['clone','--depth','1',MORADA_REPO,dir],{cwd:ROOT});
-   sha=sh('git rev-parse HEAD',dir);
-   if(MORADA_RELEASE_SHA&&sha!==MORADA_RELEASE_SHA)throw new Error('MORADA_SOURCE_SHA_MISMATCH '+sha+' expected='+MORADA_RELEASE_SHA);
-   log('MORADA_SOURCE_EXACT_SHA_PASS '+sha);
- }catch(error){
-   fs.rmSync(dir,{recursive:true,force:true});fs.mkdirSync(dir,{recursive:true});
-   fs.writeFileSync(path.join(dir,'wix.config.json'),JSON.stringify({siteId:'7aff6327-39c6-4be0-aa3f-5d50680eb337',uiVersion:'91'},null,2));
-   fs.writeFileSync(path.join(dir,'package.json'),JSON.stringify({devDependencies:{'@wix/cli':'^1.0.0'}},null,2));
-   await run('git',['init'],{cwd:dir});
-   await run('git',['remote','add','origin',MORADA_REPO],{cwd:dir});
-   log('MORADA_REMOTE_SOURCE_MODE '+sha);
- }
+ if(!fs.existsSync(snapshot))throw new Error('MORADA_SNAPSHOT_MISSING');
+ const manifestPath=path.join(snapshot,'SNAPSHOT_MANIFEST.json');
+ if(!fs.existsSync(manifestPath))throw new Error('MORADA_SNAPSHOT_MANIFEST_MISSING');
+ const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
+ const sha=String(manifest.sourceCommitSha||'').trim();
+ if(sha!=='f80270780e758061947117a2a109bfaa98e342c9')throw new Error('MORADA_SNAPSHOT_SOURCE_SHA_MISMATCH '+sha);
+ if(MORADA_RELEASE_SHA&&sha!==MORADA_RELEASE_SHA)throw new Error('MORADA_SOURCE_SHA_MISMATCH '+sha+' expected='+MORADA_RELEASE_SHA);
+ fs.cpSync(snapshot,dir,{recursive:true});
+ const bridgePath=path.join(dir,'src/backend/divaBridge.web.js');
+ const healthPath=path.join(dir,'src/backend/http-functions.js');
+ for(const token of [
+   "sendPandoraMissionToMalha",
+   "PANDORA_MISSION_AUTHORITY",
+   "AUTHORIZED_REREAD_VERIFIED",
+   "capability: 'malha_command'",
+   "conversation_ref: 'morada://sala-da-malha'"
+ ]) if(!fs.readFileSync(bridgePath,'utf8').includes(token))throw new Error('MORADA_PANDORA_GATE_MISSING '+token);
+ if(!fs.readFileSync(healthPath,'utf8').includes("OWNER_OR_PANDORA_MISSION_AUTHORITY_V1"))throw new Error('MORADA_PANDORA_HEALTH_MARKER_MISSING');
  const cfg=JSON.parse(fs.readFileSync(path.join(dir,'wix.config.json'),'utf8'));
  if(cfg.siteId!=='7aff6327-39c6-4be0-aa3f-5d50680eb337')throw new Error('MORADA_SITE_ID_MISMATCH '+String(cfg.siteId||''));
+ log('MORADA_LOCAL_SNAPSHOT_PASS '+sha+' files='+String(manifest.fileCount||'54'));
  const moradaWixCli=await ensureMoradaWixCli();
  await ensureMoradaAuth(moradaWixCli);
  state.phase='MORADA_PUBLISH';
@@ -206,12 +211,16 @@ async function runMoradaRelease(){
  await new Promise(r=>setTimeout(r,12000));
  state.phase='MORADA_READBACK';
  const health=await fetchJson(MORADA_LIVE+'/_functions/divaHealth?proof='+Date.now());
- if(!health.ok||health.data?.interactionBuild!=='MORADA_CLICK_FALLBACK_V6'||health.data?.releaseRail!=='WIX_NATIVE_SITE_PUBLISH_API'||health.data?.malhaFlow!=='ONLINE'){
+ if(!health.ok||
+   health.data?.interactionBuild!=='MORADA_CLICK_FALLBACK_V6'||
+   health.data?.releaseRail!=='WIX_NATIVE_SITE_PUBLISH_API'||
+   health.data?.malhaFlow!=='ONLINE'||
+   health.data?.pandoraMachineAuthority!=='OWNER_OR_PANDORA_MISSION_AUTHORITY_V1'){
    throw new Error('MORADA_LIVE_MARKER_FAIL '+JSON.stringify(health));
  }
  state.morada={sourceSha:sha,health:health.data};
  state.phase='DONE';state.done=true;
- log('MORADA_PERSISTENT_RELEASE_COMPLETE '+sha);
+ log('MORADA_PANDORA_MACHINE_AUTHORITY_LIVE '+sha);
 }
 
 async function main(){try{
