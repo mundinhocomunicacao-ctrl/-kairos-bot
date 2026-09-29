@@ -1,0 +1,5 @@
+status=PASS
+proof=GABI_ORBI_ROOT_VISUAL_PARITY_LIVE_READBACK
+canonical_sha=3773aaae669119deb96b22bd56b08f807f042192
+live_url=https://radar.gabi.mundinhocomunicacao.com/
+verified_at=2026-09-29T12:29:41Z
