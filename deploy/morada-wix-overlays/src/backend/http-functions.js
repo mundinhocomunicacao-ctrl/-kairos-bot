@@ -1,0 +1,532 @@
+/**
+ * DIVA · MORADA HTTP INGRESS V2 · UMA CHAVE POR IA
+ * backend/http-functions.js
+ *
+ *   GET  /_functions/divaHealth   → saúde da porta (público, não lê nem grava)
+ *   POST /_functions/divaPulse    → header x-diva-key obrigatório
+ *
+ * Chaves (Secrets Manager; o valor nunca aparece em código, resposta ou log):
+ *   DIVA_KEY_GPT     → quem usar grava como origem AI_GPT
+ *   DIVA_KEY_GEMINI  → quem usar grava como origem AI_GEMINI
+ *   DIVA_BRIDGE_KEY  → integrações gerais (Pipedream etc.) → EXTERNAL
+ * A origem vem da CHAVE, não do corpo: ninguém se passa por outra IA.
+ * O "source" que vier no corpo fica guardado como claimedSource.
+ *
+ * Sem nenhum segredo criado: 503 (porta fechada). Chave errada: 403.
+ */
+
+import { ok, badRequest, forbidden, serverError, response } from 'wix-http-functions';
+import { getSecret } from 'wix-secrets-backend';
+import wixData from 'wix-data';
+import { receiveDivaPulse } from './divaPulse';
+import { runDivaBrainTransport, verifyBrainSessionToken, sendPandoraMissionToMalhaInternal } from './divaBridge.web';
+
+const KEYS = [
+    { secret: 'DIVA_KEY_GPT', origin: 'AI_GPT' },
+    { secret: 'DIVA_KEY_GEMINI', origin: 'AI_GEMINI' },
+    { secret: 'DIVA_BRIDGE_KEY', origin: 'EXTERNAL' }
+];
+
+const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
+function sameKey(a, b) {
+    const x = String(a || '');
+    const y = String(b || '');
+    let diff = x.length ^ y.length;
+    const len = Math.max(x.length, y.length);
+    for (let i = 0; i < len; i++) {
+        diff |= (x.charCodeAt(i) || 0) ^ (y.charCodeAt(i) || 0);
+    }
+    return diff === 0 && x.length > 0;
+}
+
+async function loadKeys() {
+    const loaded = [];
+    for (const k of KEYS) {
+        try {
+            const value = await getSecret(k.secret);
+            if (value) loaded.push({ origin: k.origin, value });
+        } catch (error) {
+            // segredo não existe: ignora
+        }
+    }
+    return loaded;
+}
+
+export function get_divaHealth(request) {
+    return ok({
+        headers: JSON_HEADERS,
+        body: {
+            ok: true,
+            service: 'DIVA_MORADA_HTTP_INGRESS',
+            version: 'V2',
+            interactionBuild: 'MORADA_CLICK_FALLBACK_V6',
+            releaseRail: 'WIX_NATIVE_SITE_PUBLISH_API',
+            malhaFlow: 'ONLINE',
+            pandoraMachineAuthority: 'OWNER_OR_PANDORA_MISSION_AUTHORITY_V1',
+            pandoraSourceProbe: 'PANDORA_SOURCE_PROBE_20260929_0521',
+            time: new Date().toISOString()
+        }
+    });
+}
+
+export async function post_divaPulse(request) {
+
+    const keys = await loadKeys();
+
+    if (!keys.length) {
+        return response({
+            status: 503,
+            headers: JSON_HEADERS,
+            body: { ok: false, status: 'INGRESS_NOT_CONFIGURED' }
+        });
+    }
+
+    const provided = request.headers['x-diva-key'];
+    const match = keys.find(k => sameKey(provided, k.value));
+
+    if (!match) {
+        return forbidden({
+            headers: JSON_HEADERS,
+            body: { ok: false, status: 'DIVA_FORBIDDEN' }
+        });
+    }
+
+    let body;
+    try {
+        body = await request.body.json();
+    } catch (error) {
+        return badRequest({ headers: JSON_HEADERS, body: { ok: false, status: 'INVALID_JSON' } });
+    }
+
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return badRequest({ headers: JSON_HEADERS, body: { ok: false, status: 'INVALID_PULSE' } });
+    }
+
+    try {
+        const receipt = await receiveDivaPulse({
+            ...body,
+            source: match.origin,
+            channel: 'HTTP',
+            data: {
+                ...(body.data && typeof body.data === 'object' && !Array.isArray(body.data) ? body.data : {}),
+                claimedSource: body.source || null
+            }
+        });
+
+        const publicReceipt = {
+            ok: receipt?.ok === true,
+            status: receipt?.status || 'UNKNOWN',
+            origin: match.origin,
+            pulseId: receipt?.pulseId || null,
+            memoryRecordId: receipt?.memoryRecordId || null
+        };
+
+        return publicReceipt.ok
+            ? ok({ headers: JSON_HEADERS, body: publicReceipt })
+            : serverError({ headers: JSON_HEADERS, body: publicReceipt });
+
+    } catch (error) {
+        console.error('[DIVA_HTTP_INGRESS_ERROR]', error?.message);
+        return serverError({ headers: JSON_HEADERS, body: { ok: false, status: 'DIVA_INGRESS_ERROR' } });
+    }
+}
+
+
+/**
+ * POST /_functions/pandoraMission
+ * Entrada machine-authorized da Morada.
+ * PANDORA é a chave: missionKey precisa ser o grantId aleatório persistido no ledger.
+ * O trigger também precisa existir fisicamente antes da execução.
+ */
+export async function post_pandoraMission(request) {
+    let body;
+    try {
+        body = await request.body.json();
+    } catch (error) {
+        return badRequest({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'INVALID_JSON' }
+        });
+    }
+
+    const missionId = String(body?.missionId || '').trim().slice(0, 200);
+    const missionKey = String(body?.missionKey || '').trim().slice(0, 260);
+    const triggerEventId = String(body?.triggerEventId || '').trim().slice(0, 220);
+    const text = String(body?.text || body?.message || '').trim().slice(0, 12000);
+
+    if (!missionId || !missionKey || !triggerEventId || !text) {
+        return badRequest({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'PANDORA_HTTP_INVALID_REQUEST' }
+        });
+    }
+
+    let trigger;
+    try {
+        const found = await wixData
+            .query('DIVA_MEMORY_WRITEBACK_V1')
+            .eq('eventId', triggerEventId)
+            .limit(1)
+            .find({ suppressAuth: true });
+        trigger = found?.items?.[0] || null;
+    } catch (error) {
+        console.error('[PANDORA_HTTP_TRIGGER_LOOKUP_ERROR]', 'LOOKUP_FAILED');
+        return serverError({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'PANDORA_HTTP_TRIGGER_LOOKUP_FAILED' }
+        });
+    }
+
+    const triggerPayload = trigger?.payload && typeof trigger.payload === 'object' ? trigger.payload : {};
+    const triggerValid = Boolean(
+        trigger &&
+        String(trigger.eventType || '') === 'diva.morada.pandora.mission.execute' &&
+        String(trigger.status || '') === 'EXECUTE_REQUESTED' &&
+        String(trigger.source || '') === 'PANDORA' &&
+        String(triggerPayload.missionId || '') === missionId &&
+        String(triggerPayload.missionKey || '') === missionKey
+    );
+
+    if (!triggerValid) {
+        return forbidden({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'PANDORA_HTTP_TRIGGER_NOT_FOUND' }
+        });
+    }
+
+    let result;
+    try {
+        result = await sendPandoraMissionToMalhaInternal({
+            missionId,
+            missionKey,
+            text
+        });
+    } catch (error) {
+        console.error('[PANDORA_HTTP_EXECUTION_ERROR]', 'EXECUTION_FAILED');
+        result = {
+            ok: false,
+            status: 'PANDORA_HTTP_EXECUTION_EXCEPTION',
+            missionId
+        };
+    }
+
+    let receiptId = null;
+    try {
+        const receipt = await wixData.insert('DIVA_MEMORY_WRITEBACK_V1', {
+            eventType: 'diva.morada.pandora.mission.execution.receipt',
+            title: 'PANDORA · HTTP EXECUTION RECEIPT',
+            description: 'Receipt da execução PANDORA via HTTP machine ingress.',
+            domain: 'morada-malha',
+            status: result?.ok ? 'EXECUTION_VERIFIED' : 'EXECUTION_FAILED',
+            epistemicState: 'OBSERVED_EVENT',
+            eventId: 'PANDORA_HTTP_RECEIPT_' + Date.now(),
+            source: 'MORADA_BACKEND',
+            validation: result?.ok ? 'PANDORA_HTTP_EXECUTION_PROOF' : 'PANDORA_MACHINE_EXECUTION_FAILURE',
+            payload: {
+                missionId,
+                triggerEventId,
+                authority: result?.authority || null,
+                grantId: result?.grantId || null,
+                httpStatus: result?.httpStatus || null,
+                executionStatus: result?.status || null,
+                gatewayMissionId: result?.gatewayMissionId || null,
+                answer: result?.answer || null,
+                executedAt: new Date().toISOString()
+            }
+        }, { suppressAuth: true, suppressHooks: true });
+        receiptId = receipt?._id || null;
+    } catch (error) {
+        console.error('[PANDORA_HTTP_RECEIPT_ERROR]', 'RECEIPT_FAILED');
+    }
+
+    const publicResult = {
+        ok: result?.ok === true,
+        status: result?.ok ? 'PANDORA_HTTP_EXECUTION_VERIFIED' : (result?.status || 'PANDORA_HTTP_EXECUTION_FAILED'),
+        missionId,
+        triggerEventId,
+        authority: result?.authority || null,
+        grantId: result?.grantId || null,
+        gatewayMissionId: result?.gatewayMissionId || null,
+        receiptId
+    };
+
+    return publicResult.ok
+        ? ok({ headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' }, body: publicResult })
+        : serverError({ headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' }, body: publicResult });
+}
+
+
+/**
+ * POST /_functions/divaAsk
+ * Ponte cognitiva same-origin da Morada.
+ * Exige capability curta emitida por createBrainSession() após owner-check.
+ * A conversa não é persistida; somente um receipt operacional da resposta.
+ */
+export async function post_divaAsk(request) {
+    const authHeader = String(request.headers?.authorization || '');
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+
+    const verified = await verifyBrainSessionToken(token);
+    if (!verified?.ok) {
+        return response({
+            status: 401,
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: verified?.status || 'DIVA_BRAIN_SESSION_INVALID' }
+        });
+    }
+
+    let body;
+    try {
+        body = await request.body.json();
+    } catch (error) {
+        return badRequest({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'INVALID_JSON' }
+        });
+    }
+
+    const text = String(body?.text || '').slice(0, 4000).trim();
+    const history = Array.isArray(body?.history) ? body.history.slice(-10) : [];
+    const requestId = String(body?.id || '').slice(0, 120);
+
+    if (!text) {
+        return badRequest({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'EMPTY' }
+        });
+    }
+
+    let result;
+    try {
+        result = await runDivaBrainTransport({ text, history }, 'MORADA_OWNER');
+    } catch (error) {
+        console.error('[DIVA_HTTP_BRAIN_ERROR]', error?.message);
+        return serverError({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'BRAIN_CALL_FAILED' }
+        });
+    }
+
+    let receipt = null;
+    try {
+        const requestTag = /^DIVA_CANARY_[A-Z0-9_-]+$/i.test(text) ? text : null;
+        const receiptMessage = result?.ok === true ? 'DIVA_REPLY_RECEIPT' : 'DIVA_BRAIN_FAILURE_RECEIPT';
+        const pulseReceipt = await receiveDivaPulse({
+            source: 'DIVA_MORADA_BRAIN',
+            channel: 'HTTP_INTERNAL',
+            type: 'SYSTEM_EVENT',
+            intent: 'MEMORY_WRITE',
+            message: receiptMessage,
+            surface: '/cópia-sobre-mim',
+            identityKey: 'MORADA_OWNER',
+            data: {
+                requestId: requestId || null,
+                requestTag,
+                provider: result?.provider || null,
+                model: result?.model || null,
+                messageId: result?.messageId || null,
+                brainStatus: result?.status || null,
+                attempts: Array.isArray(result?.attempts) ? result.attempts.slice(0, 8) : [],
+                transport: 'HTTP_CAPABILITY_V2'
+            }
+        });
+
+        receipt = {
+            ok: pulseReceipt?.ok === true,
+            status: pulseReceipt?.status || null,
+            pulseId: pulseReceipt?.pulseId || null,
+            memoryRecordId: pulseReceipt?.memoryRecordId || null
+        };
+    } catch (error) {
+        console.error('[DIVA_HTTP_BRAIN_RECEIPT_ERROR]', 'RECEIPT_FAILED');
+        receipt = { ok: false, status: 'RECEIPT_FAILED', pulseId: null, memoryRecordId: null };
+    }
+
+
+    return ok({
+        headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+        body: {
+            ok: result?.ok === true,
+            status: result?.status || 'UNKNOWN',
+            text: result?.ok ? result.text : null,
+            provider: result?.provider || null,
+            model: result?.model || null,
+            messageId: result?.messageId || null,
+            contributors: Array.isArray(result?.contributors) ? result.contributors : null,
+            councilVersion: result?.councilVersion || null,
+            receiptEventId: receipt?.pulseId || null,
+            receipt
+        }
+    });
+}
+
+
+/**
+ * GET /_functions/divaCanary
+ * Canário técnico efêmero. Remover após a primeira prova cognitiva.
+ */
+export async function get_divaCanary(request) {
+    const CANARY_KEY = 'DIVA_CANARY_20260927';
+
+    // One-shot: after the first verified cognitive receipt exists, this endpoint is inert.
+    try {
+        const previous = await wixData
+            .query('DIVA_MEMORY_WRITEBACK_V1')
+            .contains('rawInput', CANARY_KEY)
+            .limit(1)
+            .find({ suppressAuth: true });
+
+        if ((previous?.items || []).length > 0) {
+            return response({
+                status: 410,
+                headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+                body: { ok: false, status: 'CANARY_CONSUMED' }
+            });
+        }
+    } catch (error) {
+        console.warn('[DIVA_CANARY_PRECHECK]', error?.message);
+    }
+
+    const provided = String(request?.query?.nonce || '');
+    if (provided !== 'm0aWKB9L8B-lHKj3gNZJMRU5Bh_C_TGaKvZc94WTh6E') {
+        return forbidden({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'CANARY_FORBIDDEN' }
+        });
+    }
+
+    const requestId = CANARY_KEY;
+    let result;
+    try {
+        result = await runDivaBrainTransport(
+            { text: requestId, history: [] },
+            'MORADA_OWNER_CANARY'
+        );
+    } catch (error) {
+        return serverError({
+            headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+            body: { ok: false, status: 'CANARY_BRAIN_CALL_FAILED' }
+        });
+    }
+
+    let receipt = null;
+    if (result?.ok === true) {
+        const pulseReceipt = await receiveDivaPulse({
+            source: 'DIVA_MORADA_BRAIN',
+            channel: 'HTTP_INTERNAL',
+            type: 'SYSTEM_EVENT',
+            intent: 'MEMORY_WRITE',
+            message: 'DIVA_REPLY_RECEIPT',
+            surface: '/cópia-sobre-mim',
+            identityKey: 'MORADA_OWNER',
+            data: {
+                requestId,
+                requestTag: requestId,
+                provider: result.provider || null,
+                model: result.model || null,
+                messageId: result.messageId || null,
+                brainStatus: result.status || null,
+                transport: 'HTTP_CANARY_EPHEMERAL_V1'
+            }
+        });
+        receipt = {
+            ok: pulseReceipt?.ok === true,
+            status: pulseReceipt?.status || null,
+            pulseId: pulseReceipt?.pulseId || null,
+            memoryRecordId: pulseReceipt?.memoryRecordId || null
+        };
+    }
+
+    return ok({
+        headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+        body: {
+            ok: result?.ok === true,
+            status: result?.status || 'UNKNOWN',
+            text: result?.ok ? result.text : null,
+            provider: result?.provider || null,
+            model: result?.model || null,
+            messageId: result?.messageId || null,
+            attempts: Array.isArray(result?.attempts) ? result.attempts : null,
+            receipt
+        }
+    });
+}
+
+
+/**
+ * GET /_functions/divaCouncilProof20260928
+ * Canário público one-shot, sem input humano e sem leitura de dados internos.
+ * Após a primeira execução comprovada, retorna 410 e deve ser removido.
+ */
+export async function get_divaCouncilProof20260928(request) {
+    const PROOF_KEY = 'DIVA_COUNCIL_PROOF_20260928_V1';
+
+    try {
+        const previous = await wixData
+            .query('DIVA_MEMORY_WRITEBACK_V1')
+            .contains('rawInput', PROOF_KEY)
+            .limit(1)
+            .find({ suppressAuth: true });
+
+        if ((previous?.items || []).length > 0) {
+            return response({
+                status: 410,
+                headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+                body: { ok: false, status: 'COUNCIL_PROOF_CONSUMED' }
+            });
+        }
+    } catch (error) {
+        console.warn('[DIVA_COUNCIL_PROOF_PRECHECK]', 'PRECHECK_FAILED');
+    }
+
+    const result = await runDivaBrainTransport(
+        { text: PROOF_KEY, history: [] },
+        'MORADA_PUBLIC_ONE_SHOT_PROOF'
+    );
+
+    let receipt = null;
+    try {
+        const pulseReceipt = await receiveDivaPulse({
+            source: 'DIVA_MORADA_BRAIN',
+            channel: 'HTTP_INTERNAL',
+            type: 'SYSTEM_EVENT',
+            intent: 'MEMORY_WRITE',
+            message: result?.ok === true ? 'DIVA_COUNCIL_PROOF_RECEIPT' : 'DIVA_COUNCIL_PROOF_FAILURE',
+            surface: '/cópia-sobre-mim',
+            identityKey: 'MORADA_PUBLIC_ONE_SHOT_PROOF',
+            data: {
+                requestTag: PROOF_KEY,
+                provider: result?.provider || null,
+                model: result?.model || null,
+                brainStatus: result?.status || null,
+                attempts: Array.isArray(result?.attempts) ? result.attempts.slice(0, 8) : [],
+                councilVersion: result?.councilVersion || null,
+                contributors: Array.isArray(result?.contributors) ? result.contributors : []
+            }
+        });
+        receipt = {
+            ok: pulseReceipt?.ok === true,
+            status: pulseReceipt?.status || null,
+            pulseId: pulseReceipt?.pulseId || null,
+            memoryRecordId: pulseReceipt?.memoryRecordId || null
+        };
+    } catch (error) {
+        receipt = { ok: false, status: 'RECEIPT_FAILED', pulseId: null, memoryRecordId: null };
+    }
+
+    return response({
+        status: result?.ok === true ? 200 : 503,
+        headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' },
+        body: {
+            ok: result?.ok === true,
+            status: result?.status || 'UNKNOWN',
+            provider: result?.provider || null,
+            model: result?.model || null,
+            councilVersion: result?.councilVersion || null,
+            contributors: Array.isArray(result?.contributors) ? result.contributors : [],
+            attempts: Array.isArray(result?.attempts) ? result.attempts : [],
+            receipt
+        }
+    });
+}
