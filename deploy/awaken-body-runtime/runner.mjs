@@ -129,6 +129,8 @@ function routePandoraMission(body={}){
   const grantId=String(body?.grantId||'');
   const sourceSurface=String(body?.sourceSurface||'');
   const validation=String(body?.validation||'');
+  const transportNonce=String(body?.transportNonce||'');
+  const expectedNonce=String(process.env.PANDORA_MORADA_NONCE||'');
 
   const authorized=
     authority==='PANDORA' &&
@@ -137,7 +139,9 @@ function routePandoraMission(body={}){
     missionId==='MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929' &&
     grantId==='PANDORA::MORADA::MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929' &&
     sourceSurface==='MORADA_AUTOMATION' &&
-    validation==='PANDORA_MISSION_AUTHORITY';
+    validation==='PANDORA_MISSION_AUTHORITY' &&
+    expectedNonce.length>=24 &&
+    transportNonce===expectedNonce;
 
   if(!authorized){
     return {httpStatus:403,payload:{ok:false,status:'PANDORA_MISSION_AUTHORITY_DENIED'}};
@@ -193,6 +197,24 @@ http.createServer(async(req,res)=>{
   if(req.method==='OPTIONS'){
     res.writeHead(204,{'access-control-allow-origin':'*','access-control-allow-methods':'GET,POST,OPTIONS','access-control-allow-headers':'content-type'});
     return res.end();
+  }
+  if(req.method==='GET'&&String(req.url||'').startsWith('/mission?')){
+    try{
+      const urlObj=new URL(req.url,'https://local.invalid');
+      const encoded=urlObj.searchParams.get('payload')||'';
+      const decoded=Buffer.from(encoded,'base64url').toString('utf8');
+      const body=JSON.parse(decoded);
+      const routed=routePandoraMission(body);
+      res.writeHead(routed.httpStatus,{
+        'content-type':'application/json',
+        'access-control-allow-origin':'*',
+        'cache-control':'no-store'
+      });
+      return res.end(JSON.stringify(routed.payload));
+    }catch(error){
+      res.writeHead(400,{'content-type':'application/json','access-control-allow-origin':'*','cache-control':'no-store'});
+      return res.end(JSON.stringify({ok:false,status:'INVALID_MISSION_PAYLOAD'}));
+    }
   }
   if(req.url==='/mission'&&req.method==='POST'){
     try{
