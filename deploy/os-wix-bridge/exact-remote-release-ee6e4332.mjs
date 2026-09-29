@@ -59,8 +59,11 @@ function assertSource(){
 }
 async function build(){
   state.phase='BUILD';
-  await runAsync('npm',['ci','--include=dev'],{cwd:OS_DIR});
+  console.log('WIX_E14D_BUILD_START');
+  await runAsync('npm',['ci','--include=dev','--no-audit','--no-fund','--prefer-offline'],{cwd:OS_DIR});
+  console.log('WIX_E14D_NPM_CI_PASS');
   await runAsync('npm',['run','build:wix-worker'],{cwd:OS_DIR,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live'}});
+  console.log('WIX_E14D_BUILD_WORKER_PASS');
   const entry=fs.readFileSync(path.join(OS_DIR,'dist/wix-server/entry.mjs'),'utf8');
   if(!entry.includes('MUNDO_RUNTIME_SOURCE_SHA:'+JSON.stringify(SOURCE_SHA))) throw new Error('ARTIFACT_RUNTIME_SHA_MISMATCH');
   if(!entry.includes('MUNDO_RUNTIME_ENV:'+JSON.stringify('wix-live'))) throw new Error('ARTIFACT_RUNTIME_ENV_MISMATCH');
