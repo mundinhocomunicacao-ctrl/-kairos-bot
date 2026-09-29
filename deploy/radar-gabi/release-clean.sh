@@ -42,8 +42,10 @@ grep -F "Proposta atualizada em 24/09 · material vigente" "$RADAR_DIR/index.htm
 grep -F "universe:807" "$RADAR_DIR/index.html" >/dev/null
 grep -F "presented:35" "$RADAR_DIR/index.html" >/dev/null
 grep -F "agencies:68" "$RADAR_DIR/index.html" >/dev/null
-grep -F 'camera-orbit="0deg 78deg 92%"' "$RADAR_DIR/index.html" >/dev/null
-grep -F "divaStageHalo" "$RADAR_DIR/index.html" >/dev/null
+grep -F 'id="gabiStudioMicMute"' "$RADAR_DIR/index.html" >/dev/null
+grep -F 'id="gabiStudioStop"' "$RADAR_DIR/index.html" >/dev/null
+grep -F "DIVA ✦ SUA ÁREA" "$RADAR_DIR/index.html" >/dev/null
+grep -F "O que vale sua atenção agora?" "$RADAR_DIR/index.html" >/dev/null
 cp "$RADAR_DIR/index.html" "$RADAR_DIR/dist/index.html"
 
 cd "$RADAR_DIR"
@@ -73,8 +75,10 @@ grep -F "Proposta atualizada em 24/09 · material vigente" /tmp/gabi-radar-live.
 grep -F "universe:807" /tmp/gabi-radar-live.html >/dev/null
 grep -F "presented:35" /tmp/gabi-radar-live.html >/dev/null
 grep -F "agencies:68" /tmp/gabi-radar-live.html >/dev/null
-grep -F 'camera-orbit="0deg 78deg 92%"' /tmp/gabi-radar-live.html >/dev/null
-grep -F "divaStageHalo" /tmp/gabi-radar-live.html >/dev/null
+grep -F 'id="gabiStudioMicMute"' /tmp/gabi-radar-live.html >/dev/null
+grep -F 'id="gabiStudioStop"' /tmp/gabi-radar-live.html >/dev/null
+grep -F "DIVA ✦ SUA ÁREA" /tmp/gabi-radar-live.html >/dev/null
+grep -F "O que vale sua atenção agora?" /tmp/gabi-radar-live.html >/dev/null
 for forbidden in \
   "CLIENT_SAFE_GABI v2" \
   "voz ativa" \
