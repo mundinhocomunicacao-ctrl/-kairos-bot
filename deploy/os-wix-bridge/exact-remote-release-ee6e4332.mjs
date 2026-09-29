@@ -73,6 +73,7 @@ async function build(){
 }
 async function auth(){
   state.phase='AUTH';
+  fs.mkdirSync(REL,{recursive:true});
   const apiKey=String(process.env.WIX_OS_API_KEY||process.env.WIX_MUNDO_API_KEY||process.env.WIX_API_KEY||'').trim();
   if(apiKey){
     await runAsync('npx',['-y','@wix/cli@latest','login','--api-key',apiKey],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
@@ -81,7 +82,33 @@ async function auth(){
   }
   const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'},timeout:30000});
   if(who.status===0&&String(who.stdout||'').trim()){console.log('WIX_AUTH_ALREADY_VALID');return;}
-  throw new Error('WIX_EXACT_AUTH_UNAVAILABLE');
+  await new Promise((resolve,reject)=>{
+    const p=spawn('npx',['-y','@wix/cli@latest','login'],{cwd:REL,env:{...process.env,AI_AGENT:'wix-headless-skill'},stdio:['ignore','pipe','pipe']});
+    let buffer='';
+    const scan=(chunk)=>{
+      const s=String(chunk); process.stdout.write(s); buffer+=s;
+      for(const line of buffer.split('\n')){
+        try{
+          const e=JSON.parse(line.trim());
+          if(e.event==='awaiting_user'){
+            state.phase='AWAITING_WIX_AUTH';
+            state.userCode=e.userCode||null;
+            state.verificationUri=e.verificationUri||null;
+            state.authExpiresInSeconds=e.expiresInSeconds||null;
+            console.log('WIX_E14D_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:state.authExpiresInSeconds}));
+          }
+        }catch{}
+      }
+    };
+    p.stdout.on('data',scan);
+    p.stderr.on('data',d=>process.stderr.write(d));
+    p.on('error',reject);
+    p.on('close',code=>code===0?resolve():reject(new Error('wix login exit '+code)));
+  });
+  const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env:{...process.env,AI_AGENT:'wix-headless-skill'},timeout:30000});
+  if(after.status!==0)throw new Error('WIX_AUTH_FAILED_AFTER_DEVICE_LOGIN');
+  state.userCode=null; state.verificationUri=null; state.authExpiresInSeconds=null;
+  console.log('WIX_DEVICE_AUTH_PASS');
 }
 async function fetchJson(url){
   const res=await fetch(url,{headers:{'cache-control':'no-cache'}});
@@ -103,8 +130,8 @@ async function main(){
   try{
     assertLock();
     assertSource();
-    await build();
     await auth();
+    await build();
     state.phase='RELEASE';
     await runAsync('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
     console.log('WIX_RELEASE_DISPATCHED '+SOURCE_SHA);
