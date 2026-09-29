@@ -1,0 +1,16 @@
+import { sendDivaPulse } from './divaBridge.web';
+
+export async function enviarParaDiva(
+    message,
+    history = [],
+    context = ""
+) {
+    const event = {
+        message: String(message || ""),
+        history: Array.isArray(history) ? history : [],
+        context: String(context || ""),
+        source: "DIVA_MORADA"
+    };
+
+    return await sendDivaPulse(event);
+}
