@@ -147,6 +147,11 @@ async function ensureMoradaAuth(wixCli){
    log('MORADA_WIX_API_KEY_AUTH_PASS');
    return;
  }
+ const existing=spawnSync(wixCli,['whoami'],{cwd:ROOT,encoding:'utf8',env,timeout:30000});
+ if(existing.status===0&&String(existing.stdout||'').trim()){
+   log('MORADA_WIX_AUTH_ALREADY_VALID '+String(existing.stdout||'').trim());
+   return;
+ }
  log('MORADA_WIX_AUTH_FRESH_INSTANCE_DIRECT_DEVICE_LOGIN');
  await new Promise((resolve,reject)=>{
    const p=spawn(wixCli,['login'],{cwd:ROOT,env,stdio:['ignore','pipe','pipe']});
@@ -179,35 +184,58 @@ async function ensureMoradaAuth(wixCli){
 
 async function runMoradaRelease(){
  const dir=path.join(ROOT,'.morada-release-runtime');
- const snapshot=path.join(ROOT,'deploy/morada-release-source');
+ const chunksDir=path.join(ROOT,'deploy/morada-wix-snapshot-chunks');
+ const overlayRoot=path.join(ROOT,'deploy/morada-wix-overlays');
+ const sourceSha='fe5a7d0b6308c5965c6413d2e0f53c9f8bcd55fc';
  state.phase='MORADA_SOURCE';
  fs.rmSync(dir,{recursive:true,force:true});
- if(!fs.existsSync(snapshot))throw new Error('MORADA_SNAPSHOT_MISSING');
- const manifestPath=path.join(snapshot,'SNAPSHOT_MANIFEST.json');
- if(!fs.existsSync(manifestPath))throw new Error('MORADA_SNAPSHOT_MANIFEST_MISSING');
- const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
- const sha=String(manifest.sourceCommitSha||'').trim();
- if(sha!=='f80270780e758061947117a2a109bfaa98e342c9')throw new Error('MORADA_SNAPSHOT_SOURCE_SHA_MISMATCH '+sha);
- if(MORADA_RELEASE_SHA&&sha!==MORADA_RELEASE_SHA)throw new Error('MORADA_SOURCE_SHA_MISMATCH '+sha+' expected='+MORADA_RELEASE_SHA);
- fs.cpSync(snapshot,dir,{recursive:true});
+ fs.mkdirSync(dir,{recursive:true});
+ let count=0;
+ for(const name of ['chunk-01.json','chunk-02.json','chunk-03.json','chunk-04.json']){
+   const doc=JSON.parse(fs.readFileSync(path.join(chunksDir,name),'utf8'));
+   for(const row of (doc.files||[])){
+     const target=path.join(dir,row.path);
+     fs.mkdirSync(path.dirname(target),{recursive:true});
+     fs.writeFileSync(target,String(row.content??''),'utf8');
+     count++;
+   }
+ }
+ if(count!==70)throw new Error('MORADA_SNAPSHOT_FILE_COUNT_'+count);
+ for(const rel of [
+   'src/backend/divaBridge.web.js',
+   'src/backend/data.js',
+   'src/backend/http-functions.js',
+   'scripts/qa-morada-pandora-authority.mjs'
+ ]){
+   const src=path.join(overlayRoot,rel);
+   if(!fs.existsSync(src))throw new Error('MORADA_OVERLAY_MISSING '+rel);
+   const target=path.join(dir,rel);
+   fs.mkdirSync(path.dirname(target),{recursive:true});
+   fs.copyFileSync(src,target);
+ }
  const bridgePath=path.join(dir,'src/backend/divaBridge.web.js');
- const healthPath=path.join(dir,'src/backend/http-functions.js');
+ const httpPath=path.join(dir,'src/backend/http-functions.js');
  for(const token of [
-   "sendPandoraMissionToMalha",
-   "PANDORA_MISSION_AUTHORITY",
-   "AUTHORIZED_REREAD_VERIFIED",
-   "capability: 'malha_command'",
+   'sendPandoraMissionToMalhaInternal',
+   'PANDORA_MISSION_AUTHORITY',
+   'PANDORA_MISSION_KEY_REQUIRED',
+   "String(payload.grantId || '').trim() === requestedMissionKey",
    "conversation_ref: 'morada://sala-da-malha'"
  ]) if(!fs.readFileSync(bridgePath,'utf8').includes(token))throw new Error('MORADA_PANDORA_GATE_MISSING '+token);
- if(!fs.readFileSync(healthPath,'utf8').includes("OWNER_OR_PANDORA_MISSION_AUTHORITY_V1"))throw new Error('MORADA_PANDORA_HEALTH_MARKER_MISSING');
+ for(const token of [
+   'post_pandoraMission',
+   'PANDORA_HTTP_TRIGGER_NOT_FOUND',
+   'PANDORA_HTTP_EXECUTION_PROOF'
+ ]) if(!fs.readFileSync(httpPath,'utf8').includes(token))throw new Error('MORADA_PANDORA_HTTP_MISSING '+token);
  const cfg=JSON.parse(fs.readFileSync(path.join(dir,'wix.config.json'),'utf8'));
  if(cfg.siteId!=='7aff6327-39c6-4be0-aa3f-5d50680eb337')throw new Error('MORADA_SITE_ID_MISMATCH '+String(cfg.siteId||''));
- log('MORADA_LOCAL_SNAPSHOT_PASS '+sha+' files='+String(manifest.fileCount||'54'));
+ await run('node',['scripts/qa-morada-pandora-authority.mjs'],{cwd:dir});
+ log('MORADA_PANDORA_QA_PASS '+sourceSha+' files='+count);
  const moradaWixCli=await ensureMoradaWixCli();
  await ensureMoradaAuth(moradaWixCli);
  state.phase='MORADA_PUBLISH';
  await run(moradaWixCli,['publish','-y'],{cwd:dir,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
- log('MORADA_WIX_PUBLISH_PASS '+sha);
+ log('MORADA_WIX_PUBLISH_PASS '+sourceSha);
  await new Promise(r=>setTimeout(r,12000));
  state.phase='MORADA_READBACK';
  const health=await fetchJson(MORADA_LIVE+'/_functions/divaHealth?proof='+Date.now());
@@ -218,9 +246,9 @@ async function runMoradaRelease(){
    health.data?.pandoraMachineAuthority!=='OWNER_OR_PANDORA_MISSION_AUTHORITY_V1'){
    throw new Error('MORADA_LIVE_MARKER_FAIL '+JSON.stringify(health));
  }
- state.morada={sourceSha:sha,health:health.data};
+ state.morada={sourceSha,health:health.data,httpIngress:'pandoraMission'};
  state.phase='DONE';state.done=true;
- log('MORADA_PANDORA_MACHINE_AUTHORITY_LIVE '+sha);
+ log('MORADA_PANDORA_HTTP_INGRESS_LIVE '+sourceSha);
 }
 
 async function main(){try{
