@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/os-gitlab-ephemeral-runner.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/os-gitlab-ephemeral-runner.yml'
   workflow_dispatch:
 
 permissions:
@@ -20,7 +24,7 @@ jobs:
     timeout-minutes: 40
     env:
       GITLAB_PROJECT_ID: "86501645"
-      EXPECTED_SHA: "071a621c6015ad01206043cf61ec8bfe382e498b"
+      EXPECTED_SHA: "cd177cde97b39ef89e0adf73294fe75f6c2f837d"
       RUNNER_TAG: os-external-failover
       TOKEN_A: ${{ secrets.GITLAB_TOKEN }}
       TOKEN_B: ${{ secrets.GITLAB_PAT }}
