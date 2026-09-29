@@ -41,7 +41,14 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "deploy/radar-gabi/secure-upload/public-$REQUEST_ID.pem"
           git commit -m "relay(radar): publish ephemeral upload key $REQUEST_ID"
-          git push origin HEAD:main
+          pushed=false
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then pushed=true; break; fi
+            sleep 2
+          done
+          test "$pushed" = "true"
 
       - name: Wait for encrypted signed URL
         shell: bash
@@ -74,7 +81,10 @@ jobs:
           set -euo pipefail
           cp deploy/radar-gabi/index.html /tmp/radar-current.html
           test -s /tmp/radar-current.html
-          grep -Fq 'GABI_RADAR_PUBLIC_SAFE_V3' /tmp/radar-current.html
+          grep -Fq 'data-diva-face="DIVA_GABI"' /tmp/radar-current.html
+          grep -Fq 'data-diva-root="DIVA_RAIZ"' /tmp/radar-current.html
+          grep -Fq 'data-orbi-visual="diva-official-v1"' /tmp/radar-current.html
+          grep -Fq 'class="gabiDivaOrb divaAvatar2D hero state-ready"' /tmp/radar-current.html
           grep -Fq 'universe:807' /tmp/radar-current.html
           grep -Fq 'presented:68' /tmp/radar-current.html
           grep -Fq 'proposalSent:18' /tmp/radar-current.html
@@ -82,8 +92,9 @@ jobs:
           grep -Fq 'dmApproached:5' /tmp/radar-current.html
           grep -Fq 'whatsappApproached:8' /tmp/radar-current.html
           grep -Fq 'agencies:68' /tmp/radar-current.html
-          grep -Fq 'camera-orbit="0deg 78deg 92%"' /tmp/radar-current.html
-          grep -Fq 'divaStageHalo' /tmp/radar-current.html
+          for forbidden in '.divaRealModel' '.divaStageHalo' '.divaStageFloor' '<model-viewer' 'static.wixstatic.com/3d/'; do
+            ! grep -F "$forbidden" /tmp/radar-current.html >/dev/null
+          done
           sha256sum /tmp/radar-current.html
           curl --fail --silent --show-error -X PUT -H "Content-Type: text/html" --data-binary @/tmp/radar-current.html "$(cat /tmp/radar-relay/upload-url.txt)"
           echo "RADAR_SIGNED_UPLOAD=PASS"
@@ -101,4 +112,9 @@ jobs:
           printf '%s\n' "$STATUS" > "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
           git add "deploy/radar-gabi/secure-upload/result-$REQUEST_ID.txt"
           git commit -m "relay(radar): upload result $REQUEST_ID $STATUS" || true
-          git push origin HEAD:main || true
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort || true; break; }
+            git push origin HEAD:main && break
+            sleep 2
+          done
