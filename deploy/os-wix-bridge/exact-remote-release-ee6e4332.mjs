@@ -132,14 +132,11 @@ async function ensureMoradaWixCli(){
  for(const bin of candidates){
    if(fs.existsSync(bin)){log('MORADA_WIX_CLI_REUSE_PASS '+bin);return bin}
  }
- const dir=path.join(os.tmpdir(),'morada-persistent-wix-cli');
- fs.rmSync(dir,{recursive:true,force:true});
- log('MORADA_WIX_CLI_INSTALL_START');
- await run('npm',['install','--prefix',dir,'@wix/cli@latest','--no-audit','--no-fund'],{cwd:ROOT,env:{NODE_ENV:'development'}});
- const bin=path.join(dir,'node_modules','.bin','wix');
- if(!fs.existsSync(bin))throw new Error('MORADA_WIX_CLI_MISSING');
- log('MORADA_WIX_CLI_INSTALL_PASS');
- return bin;
+ const proxy=path.join(os.tmpdir(),'morada-wix-proxy');
+ fs.writeFileSync(proxy,"#!/usr/bin/env bash\nexec npx -y @wix/cli@latest \"$@\"\n");
+ fs.chmodSync(proxy,0o755);
+ log('MORADA_WIX_CLI_NPX_PROXY_PASS '+proxy);
+ return proxy;
 }
 async function ensureMoradaAuth(wixCli){
  state.phase='MORADA_WIX_AUTH';
