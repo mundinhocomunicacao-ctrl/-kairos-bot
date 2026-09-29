@@ -1,95 +1,110 @@
 import http from 'node:http';
-import {createHash,createPrivateKey,randomBytes,sign as signPayload} from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const GATEWAY_VERSION='diva-universal-private-gateway-v0.1';
-const INSTALLATION='morada-wix';
-const GATEWAY_PATH='/api/diva-gateway/execute';
-const GATEWAY_URL='https://os.mundinhocomunicacao.com/api/diva-gateway/execute';
+const ROOT=process.cwd();
+const OS_DIR=path.join(ROOT,'os');
+const SOURCE_MARKER=path.join(OS_DIR,'.release-source/canonical-sha.txt');
+const ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
+const RELEASE_DIR=path.join(ROOT,'.wix-live-release');
 
-function stableStringify(value){
-  if(Array.isArray(value))return '['+value.map(stableStringify).join(',')+']';
-  if(value&&typeof value==='object'){
-    return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+stableStringify(value[k])).join(',')+'}';
+const MUNDINHO_WIX_LIVE_SITE_ID=String(process.env.MUNDINHO_WIX_LIVE_SITE_ID||'c80689f2-6627-45fa-a264-4ab2863ba306').trim();
+const MUNDINHO_WIX_LIVE_APP_ID=String(process.env.MUNDINHO_WIX_LIVE_APP_ID||'79eedd41-5ca6-4940-925a-e95e6f3c570e').trim();
+
+function wixApiKeyFromEnv(){
+  for(const alias of ['WIX_MUNDO_API_KEY','WIX_API_KEY','WIX_CLI_API_KEY','WIX_RELEASE_API_KEY','MUNDINHO_WIX_API_KEY','WIX_OS_API_KEY']){
+    const value=String(process.env[alias]||'').trim();
+    if(value)return {alias,value};
   }
-  return JSON.stringify(value);
+  return null;
 }
-function sha256(value){return createHash('sha256').update(String(value||'')).digest('hex');}
-function normalizePrivateKey(value){
-  const raw=String(value||'').trim().replace(/\\n/g,'\n');
-  if(raw.includes('BEGIN PRIVATE KEY'))return raw;
+function run(bin,args,cwd,extraEnv={}){
+  return String(execFileSync(bin,args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{...process.env,...extraEnv}})||'').trim();
+}
+function canonicalSourceSha(){
+  const sha=String(fs.readFileSync(SOURCE_MARKER,'utf8')).trim();
+  if(!/^[a-f0-9]{40}$/i.test(sha))throw new Error('CANONICAL_SOURCE_SHA_INVALID');
+  return sha;
+}
+function repackLive(sha){
+  execFileSync('node',['scripts/package-wix-worker.mjs'],{
+    cwd:OS_DIR,
+    stdio:'inherit',
+    env:{...process.env,MUNDO_RUNTIME_SOURCE_SHA:sha,MUNDO_RUNTIME_ENV:'wix-live'}
+  });
+  if(!fs.existsSync(ENTRY))throw new Error('WIX_WORKER_ENTRY_MISSING');
+  const entry=fs.readFileSync(ENTRY,'utf8');
+  if(!entry.includes('MUNDO_RUNTIME_SOURCE_SHA:'+JSON.stringify(sha)))throw new Error('ARTIFACT_RUNTIME_SHA_MISMATCH');
+  if(!entry.includes('MUNDO_RUNTIME_ENV:'+JSON.stringify('wix-live')))throw new Error('ARTIFACT_RUNTIME_ENV_MISMATCH');
+}
+function prepareRelease(){
+  const sha=canonicalSourceSha();
+  repackLive(sha);
+  fs.rmSync(RELEASE_DIR,{recursive:true,force:true});
+  fs.mkdirSync(RELEASE_DIR,{recursive:true});
+  fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(RELEASE_DIR,'client'),{recursive:true});
+  fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(RELEASE_DIR,'server'),{recursive:true});
+  fs.writeFileSync(path.join(RELEASE_DIR,'wix.config.json'),JSON.stringify({
+    projectType:'Site',
+    appId:MUNDINHO_WIX_LIVE_APP_ID,
+    siteId:MUNDINHO_WIX_LIVE_SITE_ID,
+    site:{outputDirectory:{client:'./client',server:'./server'}}
+  },null,2));
+  return sha;
+}
+function ensureWixAuth(){
   try{
-    const decoded=Buffer.from(raw,'base64').toString('utf8').trim();
-    return decoded.includes('BEGIN PRIVATE KEY')?decoded:raw;
-  }catch{return raw;}
+    const whoami=run('npx',['-y','@wix/cli@latest','whoami'],RELEASE_DIR,{CI:'1',AI_AGENT:'wix-headless-skill'});
+    if(whoami){
+      console.log('WIX_OS_EXISTING_SESSION_PASS');
+      return {authMode:'existing_session',authAlias:'existing_session'};
+    }
+  }catch{}
+  const auth=wixApiKeyFromEnv();
+  if(!auth)throw new Error('WIX_OS_AUTH_UNAVAILABLE');
+  execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
+    cwd:RELEASE_DIR,
+    stdio:'inherit',
+    env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+  });
+  console.log('WIX_OS_API_KEY_AUTH_PASS '+auth.alias);
+  return {authMode:'api_key',authAlias:auth.alias};
 }
-function missionKeyFingerprint(value){return sha256(value).slice(0,16);}
-function headersFor(body){
-  const stored=String(process.env.DIVA_MORADA_GATEWAY_PRIVATE_KEY||'').trim();
-  if(!stored)throw new Error('MORADA_PRIVATE_KEY_MISSING');
-  const timestamp=new Date().toISOString();
-  const nonce=randomBytes(18).toString('base64url');
-  const material=[
-    GATEWAY_VERSION,INSTALLATION,timestamp,nonce,'POST',GATEWAY_PATH,sha256(stableStringify(body))
-  ].join('\n');
-  const key=createPrivateKey(normalizePrivateKey(stored));
-  const signature=signPayload(null,Buffer.from(material,'utf8'),key).toString('base64url');
-  return {
-    'content-type':'application/json',
-    'x-diva-installation-id':INSTALLATION,
-    'x-diva-timestamp':timestamp,
-    'x-diva-nonce':nonce,
-    'x-diva-signature':signature,
-    'x-diva-signature-alg':'ed25519',
-    'x-diva-gateway-version':GATEWAY_VERSION
-  };
-}
-async function execute(){
-  const missionId=String(process.env.PANDORA_MISSION_ID||'').trim();
-  const missionKey=String(process.env.PANDORA_MISSION_KEY||'').trim();
-  const message=String(process.env.PANDORA_MISSION_TEXT||'').trim();
-  if(!missionId||!missionKey||!message)throw new Error('PANDORA_MISSION_ENV_INCOMPLETE');
-
-  const body={
-    surface_id:'wix',
-    mission_id:missionId,
-    message,
-    history:[],
-    currentRoute:'/cópia-sobre-mim',
-    conversation_ref:'morada://sala-da-malha',
-    context:'PANDORA_MISSION_AUTHORITY · deny-by-default · capability=malha_command · missionKeyFingerprint='+missionKeyFingerprint(missionKey)
-  };
-  const response=await fetch(GATEWAY_URL,{method:'POST',headers:headersFor(body),body:JSON.stringify(body)});
-  const raw=await response.text();
-  let json={};
-  try{json=raw?JSON.parse(raw):{};}catch{}
-  const result={
-    phase:response.ok?'PANDORA_DIRECT_GATEWAY_VERIFIED':'PANDORA_DIRECT_GATEWAY_FAILED',
-    ok:response.ok,
-    httpStatus:response.status,
-    missionId,
-    missionKeyFingerprint:missionKeyFingerprint(missionKey),
-    gatewayMissionId:response.headers.get('x-diva-gateway-mission-id')||missionId,
-    gatewayEventId:response.headers.get('x-diva-gateway-event-id')||null,
-    answer:String(json?.answer||json?.message||'').slice(0,4000),
-    provider:json?.provider||null,
-    model:json?.model||null,
-    runtimeRequestId:json?.runtime?.requestId||null
-  };
-  console.log(result.phase+' '+JSON.stringify(result));
+function releaseLive(){
+  const sourceSha=prepareRelease();
+  const auth=ensureWixAuth();
+  execFileSync('npx',['-y','@wix/cli@latest','release'],{
+    cwd:RELEASE_DIR,
+    stdio:'inherit',
+    env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+  });
+  const result=Object.freeze({
+    phase:'WIX_OS_LIVE_RELEASE_VERIFIED',
+    ok:true,
+    released:true,
+    sourceSha,
+    runtimeEnv:'wix-live',
+    siteId:MUNDINHO_WIX_LIVE_SITE_ID,
+    appId:MUNDINHO_WIX_LIVE_APP_ID,
+    authMode:auth.authMode,
+    authAlias:auth.authAlias
+  });
+  console.log('WIX_OS_LIVE_RELEASE_VERIFIED '+JSON.stringify(result));
   return result;
 }
 
-let state={phase:'BOOTING',ok:false};
-async function boot(){
-  try{state=await execute();}
+let state={phase:'BOOTING',ok:false,released:false};
+function boot(){
+  try{state=releaseLive();}
   catch(error){
-    state={phase:'EXECUTOR_ERROR',ok:false,error:String(error?.message||error)};
+    state={phase:'EXECUTOR_ERROR',ok:false,released:false,error:String(error?.message||error)};
     console.error('EXECUTOR_ERROR '+JSON.stringify(state));
   }
 }
 http.createServer((req,res)=>{
   res.setHeader('content-type','application/json');
   res.end(JSON.stringify(state));
-}).listen(PORT,'0.0.0.0',()=>console.log('PANDORA_DIRECT_GATEWAY_EXECUTOR_READY'));
-void boot();
+}).listen(PORT,'0.0.0.0',()=>console.log('WIX_OS_LIVE_RELEASE_EXECUTOR_READY'));
+boot();
