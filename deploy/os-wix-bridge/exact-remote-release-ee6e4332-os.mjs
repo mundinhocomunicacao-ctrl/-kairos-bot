@@ -5,7 +5,7 @@ import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const SOURCE_SHA='6118268145396472ffc93c2f9aa6ce9df26fb456';
-const MIRROR_SHA='2c86f800e2dffb053827b55db8c83fbc36c6b8ff';
+const MIRROR_SHA='1b4c6bc9d2cc3e12c57c3929b636df232d2ce421';
 const APPROVAL='REC-20260929-HUMAN-APPROVAL-GATE-001';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
