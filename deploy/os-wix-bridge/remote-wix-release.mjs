@@ -149,12 +149,23 @@ async function publishMoradaSource(){
 
   execFileSync('node',['scripts/qa-morada-pandora-authority.mjs'],{cwd:MORADA_SOURCE_DIR,stdio:'inherit'});
 
-  const auth=wixApiKeyFromEnv();
-  if(!auth)throw new Error('MORADA_WIX_API_KEY_MISSING');
-  execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
-    cwd:MORADA_SOURCE_DIR,stdio:'inherit',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
-  });
-  console.log('MORADA_WIX_API_KEY_AUTH_PASS '+auth.alias);
+  let authMode='existing_session';
+  let authAlias='existing_session';
+  try{
+    const whoami=String(execFileSync('npx',['-y','@wix/cli@latest','whoami'],{
+      cwd:MORADA_SOURCE_DIR,encoding:'utf8',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+    })).trim();
+    console.log('MORADA_WIX_EXISTING_SESSION_PASS '+whoami.replace(/\s+/g,' '));
+  }catch{
+    const auth=wixApiKeyFromEnv();
+    if(!auth)throw new Error('MORADA_WIX_AUTH_UNAVAILABLE');
+    execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
+      cwd:MORADA_SOURCE_DIR,stdio:'inherit',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+    });
+    authMode='api_key';
+    authAlias=auth.alias;
+    console.log('MORADA_WIX_API_KEY_AUTH_PASS '+auth.alias);
+  }
 
   execFileSync('npx',['-y','@wix/cli@latest','publish','-y'],{
     cwd:MORADA_SOURCE_DIR,stdio:'inherit',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
@@ -175,8 +186,8 @@ async function publishMoradaSource(){
     released:true,
     sourceSha,
     siteId:MORADA_SITE_ID,
-    authMode:'api_key',
-    authAlias:auth.alias,
+    authMode,
+    authAlias,
     health:{
       ok:health?.ok===true,
       interactionBuild:health?.interactionBuild||null,
