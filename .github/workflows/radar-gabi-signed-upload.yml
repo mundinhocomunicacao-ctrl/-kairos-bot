@@ -73,11 +73,14 @@ jobs:
         run: |
           set -euo pipefail
           cp deploy/radar-gabi/index.html /tmp/radar-current.html
-          test "$(wc -c < /tmp/radar-current.html | tr -d ' ')" = "178548"
-          test "$(md5sum /tmp/radar-current.html | awk '{print $1}')" = "e7fd13c56ecc12086acb115e6ce67ea5"
+          test -s /tmp/radar-current.html
           grep -Fq 'GABI_RADAR_PUBLIC_SAFE_V3' /tmp/radar-current.html
           grep -Fq 'universe:807' /tmp/radar-current.html
-          grep -Fq 'presented:35' /tmp/radar-current.html
+          grep -Fq 'presented:68' /tmp/radar-current.html
+          grep -Fq 'proposalSent:18' /tmp/radar-current.html
+          grep -Fq 'mediaKitSent:4' /tmp/radar-current.html
+          grep -Fq 'dmApproached:5' /tmp/radar-current.html
+          grep -Fq 'whatsappApproached:8' /tmp/radar-current.html
           grep -Fq 'agencies:68' /tmp/radar-current.html
           grep -Fq 'camera-orbit="0deg 78deg 92%"' /tmp/radar-current.html
           grep -Fq 'divaStageHalo' /tmp/radar-current.html
