@@ -25,27 +25,21 @@ function wixApiKeyFromEnv(){
 function run(bin,args,cwd,extraEnv={}){
   return String(execFileSync(bin,args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{...process.env,...extraEnv}})||'').trim();
 }
-function activateDirectOsSnapshot(){
+function activateOverlaySnapshot(){
   if(RELEASE_TARGET!=='OS')return;
-  const repo='https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git';
-  const ref='qa/radar-approved-20260929';
   const expected='77a5d67f2ac5e9fd7b884f726d020cc9b2d6de99';
-  const directDir=path.join(ROOT,'.runtime-os-source');
-  fs.rmSync(directDir,{recursive:true,force:true});
-  execFileSync('git',['clone','--depth','1','--branch',ref,repo,directDir],{cwd:ROOT,stdio:'inherit'});
-  const marker=String(fs.readFileSync(path.join(directDir,'.release-source/canonical-sha.txt'),'utf8')).trim();
-  if(marker!==expected)throw new Error('DIRECT_OS_SOURCE_MARKER_MISMATCH:'+marker);
-  execFileSync('npm',['ci'],{cwd:directDir,stdio:'inherit'});
+  const overlayDir=path.join(ROOT,'deploy','os-wix-bridge','os-overlay');
+  if(!fs.existsSync(overlayDir))throw new Error('OS_RELEASE_OVERLAY_MISSING');
+  fs.cpSync(overlayDir,OS_DIR,{recursive:true});
+  const marker=String(fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8')).trim();
+  if(marker!==expected)throw new Error('OS_RELEASE_OVERLAY_MARKER_MISMATCH:'+marker);
+  execFileSync('npm',['ci'],{cwd:OS_DIR,stdio:'inherit'});
   execFileSync('npm',['run','build:wix-worker'],{
-    cwd:directDir,
+    cwd:OS_DIR,
     stdio:'inherit',
     env:{...process.env,MUNDO_RUNTIME_SOURCE_SHA:expected,MUNDO_RUNTIME_ENV:'wix-qa'}
   });
-  OS_DIR=directDir;
-  GABI_DIR=path.join(OS_DIR,'radar-gabi-site');
-  SOURCE_MARKER=path.join(OS_DIR,'.release-source/canonical-sha.txt');
-  ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
-  console.log('DIRECT_OS_SNAPSHOT_PASS '+JSON.stringify({ref,expected}));
+  console.log('OS_RELEASE_OVERLAY_PASS '+JSON.stringify({expected}));
 }
 function canonicalSourceSha(){
   const sha=String(fs.readFileSync(SOURCE_MARKER,'utf8')).trim();
@@ -153,7 +147,7 @@ async function ensureWixAuth(){
   return {authMode:'device_code',authAlias:'device_code'};
 }
 async function releaseLive(){
-  activateDirectOsSnapshot();
+  activateOverlaySnapshot();
   const sourceSha=prepareRelease();
   state={...state,phase:'AUTH',sourceSha};
   const auth=await ensureWixAuth();

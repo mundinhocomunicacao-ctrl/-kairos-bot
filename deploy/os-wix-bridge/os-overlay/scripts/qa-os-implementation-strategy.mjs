@@ -1,0 +1,12 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const contract=fs.readFileSync(new URL('../data/os-implementation-strategy.js',import.meta.url),'utf8');
+const api=fs.readFileSync(new URL('../pages/api/os-implementation-status.js',import.meta.url),'utf8');
+for(const lane of ['MESA_DIVA','RADAR','RELACOES','SOCIAL','PROPOSTAS','LIVE_RELEASE','CUSTODIA']) assert.ok(contract.includes(lane),'missing lane '+lane);
+for(const phase of ['STATE','EVIDENCE','CHANGE','BUILD','RELEASE','RECEIPT','READBACK','NEXT']) assert.ok(contract.includes(phase),'missing phase '+phase);
+assert.match(contract,/OS-MASS-UNLOCK-DIRECT-WIX-LIVE-20260927/);
+assert.match(contract,/exactly twelve primary human areas/);
+assert.match(contract,/canonical \/os entry renders the approved Morada human surface/);
+assert.match(contract,/DIVA remains transversal/);
+assert.match(contract,/rollback/i);assert.match(contract,/append-only/i);
+assert.match(api,/OS_IMPLEMENTATION_STRATEGY/);assert.match(api,/private, no-store/);assert.match(api,/mission_id/);
+console.log('QA_OS_IMPLEMENTATION_STRATEGY PASS · live release strategy + twelve areas');

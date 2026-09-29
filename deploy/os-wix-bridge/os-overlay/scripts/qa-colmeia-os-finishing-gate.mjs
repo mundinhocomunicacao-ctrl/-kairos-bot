@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {COLMEIA_OS_FINISHING_GATE as G} from '../data/colmeia-os-finishing-gate.js';
+import {OS_12_AREA_ROWS,OS_12_AREA_OPERATIONAL_MAP} from '../data/os-12-area-operational-map.js';
+import {agentAccountProvisioningSummary} from '../data/agent-account-provisioning.js';
+
+assert.equal(G.orchestrator,'DIVA');
+assert.equal(G.provenance,'PANDORA');
+assert.equal(G.learning,'ATENEU');
+assert.equal(G.cells.length,5);
+assert.ok(G.checks.includes('VISIBLE_MEDIA_FIRST'));
+assert.ok(G.checks.includes('GROUPING_NE_HIDING'));
+assert.ok(G.checks.includes('NO_EMPTY_DECORATIVE_CARDS'));
+assert.ok(G.checks.includes('TWELVE_PRIMARY_AREAS_ONLY'));
+assert.ok(G.checks.includes('MALHA_SUPPORTS_ALL_AREAS'));
+assert.equal(OS_12_AREA_ROWS.length,12);
+assert.deepEqual([...OS_12_AREA_OPERATIONAL_MAP.systemAreas.malha.supportsAreas],OS_12_AREA_OPERATIONAL_MAP.order);
+const social=fs.readFileSync(new URL('../pages/os/social.js',import.meta.url),'utf8');
+for(const token of ['ContentViewer','platformLaneGrid','SALA DA MALHA · APOIO','Fonte ↗','Levar para Pipeline','Levar para PR','Levar para Ideias']) assert.ok(social.includes(token),'social finishing missing '+token);
+const api=fs.readFileSync(new URL('../pages/api/resource-mesh.js',import.meta.url),'utf8');
+assert.ok(api.includes('agentAccountProvisioningSummary'));
+const summary=agentAccountProvisioningSummary();
+assert.equal(summary.internalProvisioned,summary.total);
+console.log('QA_COLMEIA_OS_FINISHING_GATE PASS',summary);
