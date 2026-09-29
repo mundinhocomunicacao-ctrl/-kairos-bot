@@ -141,3 +141,5 @@ jobs:
           git add deploy/radar-gabi/diagnostics/wix-cli-deployment-probe.txt deploy/radar-gabi/diagnostics/wix-deploy-manifest.txt deploy/radar-gabi/diagnostics/wix-credential-probe.txt
           git commit -m "diag(wix): extract deployment internals from CLI" || true
           git push origin HEAD:main || true
+
+# MORADA_WIX_CREDENTIAL_RECHECK_20260928
