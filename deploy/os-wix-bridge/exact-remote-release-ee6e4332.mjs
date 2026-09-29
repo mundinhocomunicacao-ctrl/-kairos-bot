@@ -133,8 +133,8 @@ async function main(){
   try{
     assertLock();
     assertSource();
-    await auth();
     await build();
+    await auth();
     state.phase='RELEASE';
     await runAsync('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
     console.log('WIX_RELEASE_DISPATCHED '+SOURCE_SHA);
