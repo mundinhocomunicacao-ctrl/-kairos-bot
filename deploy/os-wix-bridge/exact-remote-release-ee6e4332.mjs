@@ -125,6 +125,13 @@ async function materializeArtifact(){
 }
 async function ensureAuth(){state.phase='WIX_AUTH';const env={...process.env,AI_AGENT:'wix-headless-skill'};const apiKey=String(process.env.WIX_OS_API_KEY||process.env.WIX_MUNDO_API_KEY||process.env.WIX_API_KEY||'').trim();if(apiKey){await run('npx',['-y','@wix/cli@latest','login','--api-key',apiKey],{cwd:REL,env});log('WIX_API_KEY_AUTH_PASS');return}const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env,timeout:30000});if(who.status===0){log('WIX_AUTH_ALREADY_VALID');return}await new Promise((resolve,reject)=>{const p=spawn('npx',['-y','@wix/cli@latest','login'],{cwd:REL,env,stdio:['ignore','pipe','pipe']});let b='';p.stdout.on('data',d=>{const s=String(d);process.stdout.write(s);b+=s;for(const line of b.split('\n')){try{const e=JSON.parse(line.trim());if(e.event==='awaiting_user'){state.userCode=e.userCode||null;state.verificationUri=e.verificationUri||null;state.phase='AWAITING_WIX_AUTH';log('DIVA_OS_WIX_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:e.expiresInSeconds||null}))}}catch{}}});p.stderr.on('data',d=>process.stderr.write(d));p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error('wix login exit '+c)))});const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{cwd:REL,encoding:'utf8',env,timeout:30000});if(after.status!==0)throw new Error('WIX_AUTH_FAILED_AFTER_DEVICE_LOGIN');log('WIX_AUTH_PASS')}
 async function ensureMoradaWixCli(){
+ const candidates=[
+   path.join(ROOT,'node_modules','.bin','wix'),
+   path.join(ROOT,'os','node_modules','.bin','wix')
+ ];
+ for(const bin of candidates){
+   if(fs.existsSync(bin)){log('MORADA_WIX_CLI_REUSE_PASS '+bin);return bin}
+ }
  const dir=path.join(os.tmpdir(),'morada-persistent-wix-cli');
  fs.rmSync(dir,{recursive:true,force:true});
  log('MORADA_WIX_CLI_INSTALL_START');
