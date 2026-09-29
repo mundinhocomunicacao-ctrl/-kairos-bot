@@ -1,0 +1,31 @@
+name: Morada publish preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/morada-publish-preflight.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write sanitized preflight
+        env:
+          WIX_CLI: ${{ secrets.WIX_CLI }}
+        run: |
+          mkdir -p diagnostics
+          if [ -n "$WIX_CLI" ]; then PRESENT=true; else PRESENT=false; fi
+          printf '{"wixSecretPresent":%s,"headSha":"%s"}\n' "$PRESENT" "$GITHUB_SHA" > diagnostics/morada-publish-preflight.json
+      - name: Persist preflight
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add diagnostics/morada-publish-preflight.json
+          git commit -m "test(morada): persist publish preflight" || exit 0
+          git push origin HEAD:main
