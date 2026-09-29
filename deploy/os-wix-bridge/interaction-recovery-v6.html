@@ -1,0 +1,37 @@
+<script id="diva-interaction-recovery-v6">
+(()=>{const TARGET='/cópia-sobre-mim',CHANNEL='DIVA_MORADA_AUTH_V1',ROOT=document.documentElement,path=decodeURIComponent(location.pathname).replace(/\/+$/,'');if(path.normalize('NFC')!==TARGET.normalize('NFC'))return;
+const STYLE_ID='diva-interaction-recovery-v6-style';
+const labels={inicio:'Início',mesa:'Mesa',alexandria:'Alexandria',emails:'E-mails',crm:'CRM',propostas:'Propostas',mensagens:'Mensagens',planilhas:'Planilhas',arquivos:'Arquivos'};
+const copy={inicio:'Conversa, contexto e ação.',mesa:'Objetivo → rota → ação → evidência → readback.',alexandria:'Biblioteca viva, sob demanda e com proveniência.',emails:'Leitura + rascunhos quando o Google for conectado. Nunca envio automático.',crm:'Pipeline governado; aparece quando a fonte for lida.',propostas:'Criação, revisão e histórico.',mensagens:'Só espaços autorizados; conversa não vira memória sem decisão.',planilhas:'Fontes governadas.',arquivos:'Documentos e evidências.'};
+const gateState=()=>String(ROOT.getAttribute('data-diva-morada-gate')||document.getElementById('dv')?.dataset.gate||'CHECKING').toUpperCase();
+const blocked=()=>['GUEST','DENIED'].includes(gateState());
+function ensureStyle(){if(document.getElementById(STYLE_ID))return;const s=document.createElement('style');s.id=STYLE_ID;s.textContent=`
+html,body,#SITE_CONTAINER{pointer-events:auto!important}
+#dv{visibility:visible!important;z-index:2147483000!important}
+#dv button,#dv a,#dv input,#dv textarea,#dv select,#dv [role="button"],#dv .tc,#dv .wc,#dv .sg,#dv .ni,#dv .tb{pointer-events:auto!important}
+#dv .modal:not(.open){pointer-events:none!important}
+#diva-malha-room-v15-root{pointer-events:none!important;z-index:2147483646!important}
+#diva-malha-room-v15-root .dmr-launch,#diva-malha-room-v15-root .dmr-room,#diva-malha-room-v15-root .dmr-room *{pointer-events:auto!important}
+`; (document.head||document.documentElement).appendChild(s)}
+function repair(){ensureStyle();const dv=document.getElementById('dv');if(!dv)return false;const isBlocked=blocked();ROOT.setAttribute('data-morada-interaction-guard','ready');ROOT.setAttribute('data-morada-interaction-policy','BLOCK_ONLY_EXPLICIT_DENIAL');if(document.body)document.body.style.setProperty('pointer-events','auto','important');const site=document.getElementById('SITE_CONTAINER');if(site){site.style.setProperty('pointer-events',isBlocked?'auto':'none','important');site.removeAttribute('aria-hidden')}dv.style.setProperty('visibility','visible','important');dv.style.setProperty('z-index','2147483000','important');dv.style.setProperty('pointer-events',isBlocked?'none':'auto','important');if(!isBlocked)dv.querySelectorAll('button,a,input,textarea,select,[role="button"],.tc,.wc,.sg,.ni,.tb').forEach(el=>el.style.setProperty('pointer-events','auto','important'));window.DIVA_INTERACTION_RECOVERY={version:'6.0.0',status:isBlocked?'EXPLICITLY_BLOCKED':'WIX_HOST_BYPASSED',gateState:gateState(),policy:'BLOCK_ONLY_EXPLICIT_DENIAL',backendGate:'requireMoradaOwner()',channel:CHANNEL,checkedAt:new Date().toISOString()};return true}
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function openModule(key){const modal=document.getElementById('dmo'),title=document.getElementById('dmt'),body=document.getElementById('dmb');if(!modal||!title||!body)return false;title.textContent=labels[key]||'DIVA';body.innerHTML='<p>'+esc(copy[key]||copy.inicio)+'</p><p class="mut">Estado: capacidade registrada · sem dados até conexão comprovada.</p>';modal.classList.add('open');document.querySelectorAll('#dv .ni,#dv .tb').forEach(el=>el.classList.toggle('on',el.dataset.m===key));return true}
+function appendMsg(role,text){const thread=document.getElementById('dt');if(!thread)return;const d=document.createElement('div');d.className='msg '+(role==='u'?'u':'d');d.innerHTML='<em>'+(role==='u'?'Você':'DIVA')+'</em>'+esc(text);thread.appendChild(d);thread.scrollTop=1e6}
+async function ask(text){text=String(text||'').trim();if(!text)return;appendMsg('u',text);const fallback=a=>'Anotei. Em modo seguro eu organizo o pedido e abro a área certa, sem inventar dados.';try{const r=window.DIVA_BRAIN_ASK?await window.DIVA_BRAIN_ASK(text,fallback):{ok:true,text:fallback(text),mode:'safe'};appendMsg('d',r?.text||fallback(text))}catch{appendMsg('d','Não consegui responder agora, mas o clique foi recebido.')}}
+function openMalha(){const alias=window.DIVA_MALHA_ROOM_ALIAS;if(alias&&typeof alias.open==='function'){try{if(alias.open(true)===true)return true}catch{}}const room=document.querySelector('#diva-malha-room-v15-root .dmr-room');if(room){room.hidden=false;return true}return false}
+function delegatedClick(e){if(blocked())return;const target=e.target instanceof Element?e.target:null;if(!target)return;
+ const malha=target.closest('.dmr-launch,[data-malha-open]');if(malha){e.preventDefault();e.stopPropagation();openMalha();return}
+ const close=target.closest('.dmr-close');if(close){const room=document.querySelector('#diva-malha-room-v15-root .dmr-room');if(room)room.hidden=true;return}
+ const nav=target.closest('[data-m]');if(nav&&document.getElementById('dv')?.contains(nav)){e.preventDefault();e.stopPropagation();const key=nav.dataset.m;if(key==='portfolio'){location.assign('/');return}openModule(key);return}
+ const prompt=target.closest('[data-p]');if(prompt&&document.getElementById('dv')?.contains(prompt)){e.preventDefault();e.stopPropagation();ask(prompt.dataset.p);return}
+ const send=target.closest('#de');if(send){e.preventDefault();e.stopPropagation();const input=document.getElementById('di');const v=input?.value||'';if(input)input.value='';ask(v);return}
+ const log=target.closest('#dl');if(log){e.preventDefault();e.stopPropagation();document.getElementById('dg')?.classList.toggle('open');return}
+ const modalClose=target.closest('#dmx');if(modalClose){e.preventDefault();e.stopPropagation();document.getElementById('dmo')?.classList.remove('open');return}
+ const tool=target.closest('#dv .tc');if(tool){const href=tool.closest('a')?.href||tool.getAttribute('href');if(href){e.preventDefault();e.stopPropagation();window.open(href,'_blank','noopener');return}}
+}
+document.addEventListener('click',delegatedClick,{capture:true});
+document.addEventListener('keydown',e=>{if(blocked())return;if(e.key==='Enter'&&e.target?.id==='di'){e.preventDefault();const v=e.target.value;e.target.value='';ask(v)}},{capture:true});
+addEventListener('message',e=>{const m=e.data||{};if(m.channel!==CHANNEL)return;if(['DIVA_MORADA_STATE','DIVA_MORADA_BRIDGE_READY'].includes(m.type))repair()});
+repair();const timer=setInterval(repair,500);setTimeout(()=>clearInterval(timer),120000);const observer=new MutationObserver(repair);observer.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),120000);
+})();
+</script>
