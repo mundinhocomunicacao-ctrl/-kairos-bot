@@ -55,15 +55,6 @@ function prepareRelease(){
   return sha;
 }
 async function ensureWixAuth(){
-  try{
-    const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{
-      cwd:RELEASE_DIR,encoding:'utf8',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'},timeout:30000
-    });
-    if(who.status===0&&String(who.stdout||'').trim()){
-      console.log('WIX_OS_EXISTING_SESSION_PASS');
-      return {authMode:'existing_session',authAlias:'existing_session'};
-    }
-  }catch{}
   const auth=wixApiKeyFromEnv();
   if(auth){
     execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
@@ -90,6 +81,9 @@ async function ensureWixAuth(){
             state={...state,phase:'AWAITING_WIX_AUTH',userCode:e.userCode||null,verificationUri:e.verificationUri||null,authExpiresInSeconds:e.expiresInSeconds||null};
             console.log('WIX_OS_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:state.authExpiresInSeconds}));
           }
+          if(e.event==='success'){
+            console.log('WIX_DEVICE_AUTH_SUCCESS_EVENT');
+          }
         }catch{}
       }
     };
@@ -98,10 +92,6 @@ async function ensureWixAuth(){
     p.on('error',reject);
     p.on('close',code=>code===0?resolve():reject(new Error('wix login exit '+code)));
   });
-  const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{
-    cwd:RELEASE_DIR,encoding:'utf8',env:{...process.env,AI_AGENT:'wix-headless-skill'},timeout:30000
-  });
-  if(after.status!==0)throw new Error('WIX_AUTH_FAILED_AFTER_DEVICE_LOGIN');
   state={...state,userCode:null,verificationUri:null,authExpiresInSeconds:null};
   console.log('WIX_DEVICE_AUTH_PASS');
   return {authMode:'device_code',authAlias:'device_code'};
