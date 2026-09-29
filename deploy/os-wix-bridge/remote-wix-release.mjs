@@ -6,6 +6,8 @@ import {execFileSync,spawnSync,spawn} from 'node:child_process';
 const PORT=Number(process.env.PORT||10000);
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
+const GABI_DIR=path.join(OS_DIR,'radar-gabi-site');
+const RELEASE_TARGET=String(process.env.WIX_RELEASE_TARGET||'OS').trim().toUpperCase();
 const SOURCE_MARKER=path.join(OS_DIR,'.release-source/canonical-sha.txt');
 const ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
 const RELEASE_DIR=path.join(ROOT,'.wix-live-release');
@@ -39,7 +41,7 @@ function repackLive(sha){
   if(!entry.includes('MUNDO_RUNTIME_SOURCE_SHA:'+JSON.stringify(sha)))throw new Error('ARTIFACT_RUNTIME_SHA_MISMATCH');
   if(!entry.includes('MUNDO_RUNTIME_ENV:'+JSON.stringify('wix-live')))throw new Error('ARTIFACT_RUNTIME_ENV_MISMATCH');
 }
-function prepareRelease(){
+function prepareOsRelease(){
   const sha=canonicalSourceSha();
   repackLive(sha);
   fs.rmSync(RELEASE_DIR,{recursive:true,force:true});
@@ -53,6 +55,38 @@ function prepareRelease(){
     site:{outputDirectory:{client:'./client',server:'./server'}}
   },null,2));
   return sha;
+}
+function prepareGabiRelease(){
+  const sourceSha=String(process.env.GABI_CANONICAL_SOURCE_SHA||'').trim();
+  if(!/^[a-f0-9]{40}$/i.test(sourceSha))throw new Error('GABI_CANONICAL_SOURCE_SHA_INVALID');
+  const htmlPath=path.join(GABI_DIR,'index.html');
+  if(!fs.existsSync(htmlPath))throw new Error('GABI_RADAR_HTML_MISSING');
+  const html=fs.readFileSync(htmlPath,'utf8');
+  for(const required of [
+    'data-diva-face="DIVA_GABI"',
+    'data-diva-root="DIVA_RAIZ"',
+    'data-orbi-visual="diva-official-v1"',
+    'class="gabiDivaOrb divaAvatar2D hero state-ready"'
+  ]){
+    if(!html.includes(required))throw new Error('GABI_VISUAL_PARITY_REQUIRED_MARKER_MISSING:'+required);
+  }
+  for(const forbidden of ['.divaRealModel','.divaStageHalo','.divaStageFloor','<model-viewer','static.wixstatic.com/3d/']){
+    if(html.includes(forbidden))throw new Error('GABI_VISUAL_PARITY_FORBIDDEN_MARKER:'+forbidden);
+  }
+  fs.rmSync(RELEASE_DIR,{recursive:true,force:true});
+  fs.mkdirSync(path.join(RELEASE_DIR,'dist'),{recursive:true});
+  fs.copyFileSync(htmlPath,path.join(RELEASE_DIR,'dist','index.html'));
+  fs.writeFileSync(path.join(RELEASE_DIR,'wix.config.json'),JSON.stringify({
+    projectType:'Site',
+    appId:MUNDINHO_WIX_LIVE_APP_ID,
+    siteId:MUNDINHO_WIX_LIVE_SITE_ID,
+    site:{outputDirectory:'./dist'}
+  },null,2));
+  return sourceSha;
+}
+function prepareRelease(){
+  if(RELEASE_TARGET==='GABI')return prepareGabiRelease();
+  return prepareOsRelease();
 }
 async function ensureWixAuth(){
   const auth=wixApiKeyFromEnv();
@@ -107,7 +141,8 @@ async function releaseLive(){
     env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
   });
   const result=Object.freeze({
-    phase:'WIX_OS_LIVE_RELEASE_VERIFIED',
+    phase:RELEASE_TARGET==='GABI'?'WIX_GABI_LIVE_RELEASE_VERIFIED':'WIX_OS_LIVE_RELEASE_VERIFIED',
+    target:RELEASE_TARGET,
     ok:true,
     released:true,
     sourceSha,
@@ -117,7 +152,7 @@ async function releaseLive(){
     authMode:auth.authMode,
     authAlias:auth.authAlias
   });
-  console.log('WIX_OS_LIVE_RELEASE_VERIFIED '+JSON.stringify(result));
+  console.log((RELEASE_TARGET==='GABI'?'WIX_GABI_LIVE_RELEASE_VERIFIED ':'WIX_OS_LIVE_RELEASE_VERIFIED ')+JSON.stringify(result));
   return result;
 }
 
@@ -134,6 +169,6 @@ const server=http.createServer((req,res)=>{
   res.end(JSON.stringify(state));
 });
 server.listen(PORT,'0.0.0.0',()=>{
-  console.log('WIX_OS_LIVE_RELEASE_EXECUTOR_READY');
+  console.log('WIX_LIVE_RELEASE_EXECUTOR_READY '+RELEASE_TARGET);
   setImmediate(boot);
 });
