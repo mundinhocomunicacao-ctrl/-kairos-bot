@@ -19,7 +19,9 @@ const processedMessageIds=new Set();
 const DIVA_MESSAGE_MAX_AGE_MS=300000;
 const DIVA_FLOW_WATCHDOG_MS=90000;
 const DIVA_STARTUP_GRACE_MS=Math.max(0,Number(process.env.DIVA_STARTUP_GRACE_MS||30000));
+const DIVA_E2E_CANARY_ON_START=/^(1|true|yes)$/i.test(String(process.env.DIVA_E2E_CANARY_ON_START||""));
 let flowWatchdog=null,flowObserved=false;
+let lastE2eCanary={status:"idle",commandMessageId:null,replyMessageId:null,startedAt:null,completedAt:null,error:null};
 const messageTimestamp=m=>{const raw=m?.messageTimestamp;const n=typeof raw==="number"?raw:Number(raw?.low??raw??0);return n>0?n*1000:Date.now()};
 
 const wake=s=>/^\s*(?:@?diva)\b[\s,:;!?-]*/i.test(String(s||""));
@@ -139,6 +141,21 @@ async function runRelayCanary(){
 }
 
 
+async function runE2eGroupCanary(){
+ if(!DIVA_E2E_CANARY_ON_START||!sock||connection!=="open"||lastE2eCanary.status!=="idle")return;
+ try{
+   const startedAt=new Date().toISOString();
+   const sent=await sock.sendMessage(GROUP_JID,{text:"Diva, responda ao canário E2E do despertar do corpo."});
+   const commandMessageId=sent?.key?.id||null;
+   if(!commandMessageId)throw new Error("e2e_canary_command_id_missing");
+   lastE2eCanary={status:"sent",commandMessageId,replyMessageId:null,startedAt,completedAt:null,error:null};
+   console.log("DIVA_E2E_CANARY_SENT",commandMessageId);
+ }catch(e){
+   lastE2eCanary={...lastE2eCanary,status:"failed",completedAt:new Date().toISOString(),error:String(e?.message||e).slice(0,300)};
+   console.error("DIVA_E2E_CANARY_FAILED",lastE2eCanary.error);
+ }
+}
+
 async function connect(){
  if(bootInProgress)return;bootInProgress=true;
  const {state,saveCreds}=await createVaultAuthState();
@@ -147,7 +164,7 @@ async function connect(){
  sock.ev.on("creds.update",saveCreds);
  sock.ev.on("connection.update",async u=>{
    if(u.qr){qrDataUrl=await QRCode.toDataURL(u.qr);connection="pairing"}
-   if(u.connection==="open"){bootInProgress=false;qrDataUrl=null;connection="open";lastError=null;flowObserved=false;clearTimeout(flowWatchdog);void runRelayCanary();setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000);flowWatchdog=setTimeout(()=>{if(connection==="open"&&!flowObserved){console.log("DIVA_FLOW_WATCHDOG_RECYCLE");console.log("DIVA_SUPERVISED_RESTART");process.exit(1)}},DIVA_FLOW_WATCHDOG_MS)}
+   if(u.connection==="open"){bootInProgress=false;qrDataUrl=null;connection="open";lastError=null;flowObserved=false;clearTimeout(flowWatchdog);void runRelayCanary();setTimeout(()=>{try{sock?.ev?.flush?.();console.log("DIVA_INITIAL_BUFFER_FORCE_FLUSH")}catch{}},15000);setTimeout(()=>{void runE2eGroupCanary()},5000);flowWatchdog=setTimeout(()=>{if(connection==="open"&&!flowObserved){console.log("DIVA_FLOW_WATCHDOG_RECYCLE");console.log("DIVA_SUPERVISED_RESTART");process.exit(1)}},DIVA_FLOW_WATCHDOG_MS)}
    if(u.connection==="close"){
      clearTimeout(flowWatchdog);connection="closed";
      const status=u.lastDisconnect?.error?.output?.statusCode;
@@ -163,11 +180,32 @@ async function connect(){
      if(Date.now()-messageTimestamp(m)>DIVA_MESSAGE_MAX_AGE_MS)continue;
      if(messageId){processedMessageIds.add(messageId);setTimeout(()=>processedMessageIds.delete(messageId),600000)}
      const text=textOf(m);
+     const isE2eCanary=Boolean(lastE2eCanary.commandMessageId&&m.key?.id===lastE2eCanary.commandMessageId);
+     if(isE2eCanary){
+       lastE2eCanary={...lastE2eCanary,status:"upsert_seen"};
+       console.log("DIVA_E2E_CANARY_UPSERT_SEEN",m.key?.id);
+     }
      if(!wake(text))continue;
      try{
        const out=await relay(text,m.key?.id||crypto.randomUUID());
-       if(out?.answer){const sent=await sock.sendMessage(GROUP_JID,{text:String(out.answer)});if(sent?.key?.id){sentMessageIds.add(sent.key.id);setTimeout(()=>sentMessageIds.delete(sent.key.id),300000)}}
-     }catch(e){lastError=String(e?.message||e).slice(0,300)}
+       if(isE2eCanary){
+         lastE2eCanary={...lastE2eCanary,status:"relay_ok"};
+         console.log("DIVA_E2E_CANARY_RELAY_OK",m.key?.id);
+       }
+       if(out?.answer){
+         const sent=await sock.sendMessage(GROUP_JID,{text:String(out.answer)});
+         if(sent?.key?.id){
+           sentMessageIds.add(sent.key.id);setTimeout(()=>sentMessageIds.delete(sent.key.id),300000);
+           if(isE2eCanary){
+             lastE2eCanary={...lastE2eCanary,status:"passed",replyMessageId:sent.key.id,completedAt:new Date().toISOString(),error:null};
+             console.log("DIVA_E2E_CANARY_REPLY_SENT",sent.key.id);
+           }
+         }
+       }
+     }catch(e){
+       lastError=String(e?.message||e).slice(0,300);
+       if(isE2eCanary)lastE2eCanary={...lastE2eCanary,status:"failed",completedAt:new Date().toISOString(),error:lastError};
+     }
    }
  });
 }
@@ -177,6 +215,6 @@ const page=()=>`<!doctype html><html lang="pt-BR"><meta name="viewport" content=
 http.createServer((req,res)=>{
  const u=new URL(req.url,"http://localhost");
  if(req.method==="GET"&&(u.pathname==="/"||u.pathname==="/pair")){res.writeHead(200,{"content-type":"text/html; charset=utf-8","cache-control":"no-store"});return res.end(page())}
- if(req.method==="GET"&&u.pathname==="/health"){res.writeHead(200,{"content-type":"application/json","cache-control":"no-store"});return res.end(JSON.stringify({ok:true,service:"diva-baileys-satellite",connection,groupConfigured:Boolean(GROUP_JID),relayConfigured:Boolean(DIVA_RELAY_URL&&DIVA_LOCAL_RELAY_SECRET),vaultConfigured:Boolean(DIVA_AUTH_VAULT_URL&&DIVA_AUTH_VAULT_SECRET),lastError}))}
+ if(req.method==="GET"&&u.pathname==="/health"){res.writeHead(200,{"content-type":"application/json","cache-control":"no-store"});return res.end(JSON.stringify({ok:true,service:"diva-baileys-satellite",connection,groupConfigured:Boolean(GROUP_JID),relayConfigured:Boolean(DIVA_RELAY_URL&&DIVA_LOCAL_RELAY_SECRET),vaultConfigured:Boolean(DIVA_AUTH_VAULT_URL&&DIVA_AUTH_VAULT_SECRET),lastError,lastE2eCanary}))}
  res.writeHead(404);res.end("not found");
 }).listen(PORT,"0.0.0.0",()=>{console.log("DIVA_BAILEYS_SATELLITE_LISTENING",PORT);connection="takeover_wait";console.log("DIVA_TAKEOVER_WAIT",DIVA_STARTUP_GRACE_MS);const startConnect=()=>{connection="booting";connect().catch(e=>{lastError=String(e?.message||e);connection="failed"})};setTimeout(startConnect,DIVA_STARTUP_GRACE_MS)});
