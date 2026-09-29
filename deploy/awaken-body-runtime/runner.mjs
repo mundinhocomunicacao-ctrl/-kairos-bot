@@ -291,6 +291,36 @@ let snapshot;
 try{snapshot=await prove();}
 catch(error){snapshot={ok:false,error:String(error?.stack||error),checkedAt:new Date().toISOString()};}
 
+if(PANDORA_MISSION_ID && PANDORA_GRANT_ID && String(process.env.DIVA_MORADA_GATEWAY_PRIVATE_KEY||'').trim()){
+  try{
+    console.log('PANDORA_AUTO_EXECUTE_ON_BOOT',JSON.stringify({
+      missionId:PANDORA_MISSION_ID,
+      canonicalKey:PANDORA_CANONICAL_KEY
+    }));
+    const autoRouted=await routePandoraMission({
+      authority:'PANDORA',
+      worldId:'MUNDO',
+      canonicalKey:PANDORA_CANONICAL_KEY,
+      missionId:PANDORA_MISSION_ID,
+      grantId:PANDORA_GRANT_ID,
+      sourceSurface:'MORADA_AUTOMATION',
+      validation:'PANDORA_MISSION_AUTHORITY',
+      transportNonce:randomBytes(24).toString('base64url')
+    });
+    snapshot={
+      ...snapshot,
+      pandoraMission:autoRouted.payload,
+      pandoraMissionHttpStatus:autoRouted.httpStatus
+    };
+  }catch(error){
+    console.error('PANDORA_AUTO_EXECUTION_FAILED',String(error?.stack||error));
+    snapshot={
+      ...snapshot,
+      pandoraMission:{ok:false,status:'PANDORA_AUTO_EXECUTION_FAILED',error:String(error?.message||error)}
+    };
+  }
+}
+
 http.createServer(async(req,res)=>{
   if(req.method==='OPTIONS'){
     res.writeHead(204,{'access-control-allow-origin':'*','access-control-allow-methods':'GET,POST,OPTIONS','access-control-allow-headers':'content-type'});
