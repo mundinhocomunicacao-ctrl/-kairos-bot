@@ -103,8 +103,11 @@ function boot(){
     console.error('EXECUTOR_ERROR '+JSON.stringify(state));
   }
 }
-http.createServer((req,res)=>{
+const server=http.createServer((req,res)=>{
   res.setHeader('content-type','application/json');
   res.end(JSON.stringify(state));
-}).listen(PORT,'0.0.0.0',()=>console.log('WIX_OS_LIVE_RELEASE_EXECUTOR_READY'));
-boot();
+});
+server.listen(PORT,'0.0.0.0',()=>{
+  console.log('WIX_OS_LIVE_RELEASE_EXECUTOR_READY');
+  setImmediate(boot);
+});
