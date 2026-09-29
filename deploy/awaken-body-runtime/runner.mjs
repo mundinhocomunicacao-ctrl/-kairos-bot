@@ -127,7 +127,17 @@ http.createServer((req,res)=>{
     });
     return;
   }
-  if(req.url==='/morada-probe'&&req.method==='GET'){
+  if(req.method==='GET'&&String(req.url||'').startsWith('/morada-probe')){
+    const urlObj=new URL(req.url,'https://local.invalid');
+    const payload=urlObj.searchParams.get('payload');
+    if(payload){
+      try{
+        const decoded=Buffer.from(payload,'base64url').toString('utf8');
+        moradaProbe={receivedAt:new Date().toISOString(),body:JSON.parse(decoded)};
+      }catch(e){
+        moradaProbe={receivedAt:new Date().toISOString(),error:String(e)};
+      }
+    }
     res.writeHead(200,{'content-type':'application/json','access-control-allow-origin':'*','cache-control':'no-store'});
     return res.end(JSON.stringify({ok:true,probe:moradaProbe}));
   }
