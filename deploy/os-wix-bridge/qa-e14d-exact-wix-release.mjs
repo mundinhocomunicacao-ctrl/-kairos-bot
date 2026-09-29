@@ -10,6 +10,7 @@ for(const token of [
   '@wix/cli@latest',
   'release',
   'WIX_EXACT_LIVE_VERIFIED',
-  'RELEASE_LOCK_PASS'
+  'RELEASE_LOCK_PASS',
+  '--include=dev'
 ]) assert.ok(src.includes(token),'missing exact release token '+token);
 console.log('QA_E14D_EXACT_WIX_RELEASE PASS');
