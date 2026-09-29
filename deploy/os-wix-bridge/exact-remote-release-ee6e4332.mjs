@@ -147,8 +147,7 @@ async function ensureMoradaAuth(wixCli){
    log('MORADA_WIX_API_KEY_AUTH_PASS');
    return;
  }
- const who=spawnSync(wixCli,['whoami'],{encoding:'utf8',env,timeout:30000});
- if(who.status===0){log('MORADA_WIX_AUTH_ALREADY_VALID '+String(who.stdout||'').trim());return}
+ log('MORADA_WIX_AUTH_FRESH_INSTANCE_DIRECT_DEVICE_LOGIN');
  await new Promise((resolve,reject)=>{
    const p=spawn(wixCli,['login'],{cwd:ROOT,env,stdio:['ignore','pipe','pipe']});
    let b='';
