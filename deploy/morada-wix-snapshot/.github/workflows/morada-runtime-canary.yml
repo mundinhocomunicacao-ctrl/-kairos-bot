@@ -1,0 +1,93 @@
+name: Morada runtime canary
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/morada-runtime-canary.yml'
+      - 'src/pages/DIVA.bv8it.js'
+      - 'scripts/qa-morada-interaction-fallback.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prove Morada interaction fallback
+        run: node scripts/qa-morada-interaction-fallback.mjs
+
+      - name: Probe live Morada health and brain
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://www.especialistabrandingeinfluencia.com"
+          HEALTH_HTTP="$(curl -sS --retry 3 -o /tmp/health.json -w '%{http_code}' "$BASE/_functions/divaHealth" || true)"
+          HEALTH_HTTP="${HEALTH_HTTP:-000}"
+          CANARY_HTTP="$(curl -sS --retry 2 -o /tmp/canary.json -w '%{http_code}' "$BASE/_functions/divaCanary?nonce=m0aWKB9L8B-lHKj3gNZJMRU5Bh_C_TGaKvZc94WTh6E" || true)"
+          CANARY_HTTP="${CANARY_HTTP:-000}"
+          export HEALTH_HTTP CANARY_HTTP
+          mkdir -p diagnostics
+          node <<'NODE'
+          const fs=require('fs');
+          const parse=(p)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return {parseError:true}}};
+          const health=parse('/tmp/health.json');
+          const canary=parse('/tmp/canary.json');
+          const safeCanary={
+            ok:canary?.ok===true,
+            status:canary?.status||null,
+            provider:canary?.provider||null,
+            model:canary?.model||null,
+            attempts:Array.isArray(canary?.attempts)?canary.attempts:null,
+            receipt:canary?.receipt?{
+              ok:canary.receipt.ok===true,
+              status:canary.receipt.status||null,
+              pulseId:canary.receipt.pulseId||null,
+              memoryRecordId:canary.receipt.memoryRecordId||null
+            }:null
+          };
+          const out={
+            probedAt:new Date().toISOString(),
+            healthHttp:Number(process.env.HEALTH_HTTP),
+            health:{ok:health?.ok===true,service:health?.service||null,version:health?.version||null},
+            canaryHttp:Number(process.env.CANARY_HTTP),
+            canary:safeCanary
+          };
+          fs.writeFileSync('diagnostics/morada-runtime-canary-latest.json',JSON.stringify(out,null,2)+'\n');
+          console.log(JSON.stringify(out));
+          NODE
+
+      - name: Persist sanitized canary receipt
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f diagnostics/morada-runtime-canary-latest.json || exit 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add diagnostics/morada-runtime-canary-latest.json
+          git commit -m "test(morada): persist runtime canary receipt" || exit 0
+          git push origin HEAD:main
+
+      - name: Enforce canary result
+        shell: bash
+        run: |
+          node <<'NODE'
+          const x=require('./diagnostics/morada-runtime-canary-latest.json');
+          if(x.healthHttp!==200 || x.health?.ok!==true) throw new Error('HEALTH_FAIL_'+x.healthHttp);
+          if(x.canaryHttp===410 && x.canary?.status==='CANARY_CONSUMED') {
+            console.log('MORADA_RUNTIME_HEALTH=PASS CANARY=CONSUMED');
+            process.exit(0);
+          }
+          if(x.canaryHttp!==200 || x.canary?.ok!==true) throw new Error('CANARY_FAIL_'+x.canaryHttp+'_'+String(x.canary?.status||'UNKNOWN'));
+          console.log('MORADA_RUNTIME_BRAIN=PASS provider='+String(x.canary.provider||'unknown')+' receipt='+String(x.canary.receipt?.pulseId||'none'));
+          NODE
+
+# CANARY_TOUCH_2026_09_28_GATEWAY_RECONCILIATION
