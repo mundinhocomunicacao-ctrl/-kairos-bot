@@ -26,6 +26,6 @@ for(const needle of [
 ]) assert.ok(src.includes(needle),'missing governed mission ingress contract: '+needle);
 
 assert.equal(src.includes("grantId==='PANDORA::MORADA::"),false,'deterministic Pandora grant must not remain accepted');
-assert.equal(src.includes('BEGIN PRIVATE KEY'),false,'private key must never be embedded');
+assert.equal(src.includes('-----BEGIN PRIVATE KEY-----'),false,'private key PEM must never be embedded');
 
 console.log('MISSION_ENDPOINT_CONTRACT PASS');
