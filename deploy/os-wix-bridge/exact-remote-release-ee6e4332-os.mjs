@@ -36,8 +36,6 @@ async function syncSource(){
   state.phase='SOURCE';
   await run('git',['submodule','sync','--recursive'],ROOT);
   await run('git',['submodule','update','--init','--recursive'],ROOT);
-  await run('git',['-C',OS_DIR,'fetch','origin',MIRROR_SHA],ROOT);
-  await run('git',['-C',OS_DIR,'checkout','--detach',MIRROR_SHA],ROOT);
   const mirror=sh('git',['-C',OS_DIR,'rev-parse','HEAD']);
   if(mirror!==MIRROR_SHA) throw new Error('MIRROR_SHA_MISMATCH:'+mirror);
   const marker=String(fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8')).trim();
