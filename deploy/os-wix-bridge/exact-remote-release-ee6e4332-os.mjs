@@ -4,7 +4,7 @@ import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA='fef196f53d64ebe2b968814d56c6d7c1960d3c0e';
+const SOURCE_SHA='28e4b2282994c8cf6c2abe572bb60a3305af91b7';
 const MIRROR_SHA='19fa6e15572058602f4f165d1c58f082dcb6d832';
 const APPROVAL='REC-20260929-HUMAN-APPROVAL-GATE-001';
 const ROOT=process.cwd();
@@ -57,6 +57,8 @@ async function qaAndBuild(){
   mark('QA_MALHA_HUMAN_COMMAND');
   await run('node',['scripts/qa-morada-auth-click-stack.mjs'],OS_DIR);
   mark('QA_MORADA_AUTH_CLICK_STACK_PREFLIGHT');
+  await run('node',['scripts/qa-morada-google-login-first.mjs'],OS_DIR);
+  mark('QA_MORADA_GOOGLE_LOGIN_FIRST_PREFLIGHT');
   await run('npm',['ci'],OS_DIR);
   mark('NPM_CI');
   await run('npm',['run','qa:release'],OS_DIR);
