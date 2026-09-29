@@ -4,13 +4,13 @@ import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA='28e4b2282994c8cf6c2abe572bb60a3305af91b7';
+const SOURCE_SHA='a19367caf196cec30c7e105080c567bd85c0be56';
 const MIRROR_SHA='19fa6e15572058602f4f165d1c58f082dcb6d832';
 const APPROVAL='REC-20260929-HUMAN-APPROVAL-GATE-001';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const OVERLAY_DIR=path.join(ROOT,'deploy','os-wix-bridge','os-overlay');
-const OVERLAY_FILES=['.release-source/canonical-sha.txt','lib/diva-system-core.mjs','pages/os/radar.js','scripts/package-wix-worker.mjs','integrations/wix/diva-morada/custom-embeds/core-v1-2-auth-bridge-v1.html','integrations/wix/diva-morada/custom-embeds/interaction-recovery-guard-v1.html'];
+const OVERLAY_FILES=['.release-source/canonical-sha.txt','lib/diva-system-core.mjs','pages/os/radar.js','scripts/package-wix-worker.mjs','data/os-design-system.js','integrations/wix/diva-morada/custom-embeds/core-v1-2-auth-bridge-v1.html','integrations/wix/diva-morada/custom-embeds/interaction-recovery-guard-v1.html'];
 const REL=path.join(ROOT,'.wix-os-full-rollout-071a');
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
@@ -59,6 +59,8 @@ async function qaAndBuild(){
   mark('QA_MORADA_AUTH_CLICK_STACK_PREFLIGHT');
   await run('node',['scripts/qa-morada-google-login-first.mjs'],OS_DIR);
   mark('QA_MORADA_GOOGLE_LOGIN_FIRST_PREFLIGHT');
+  await run('node',['scripts/qa-os-full-rollout-rlf-20260929.mjs'],OS_DIR);
+  mark('QA_OS_FULL_ROLLOUT_RLF_20260929_PREFLIGHT');
   await run('npm',['ci'],OS_DIR);
   mark('NPM_CI');
   await run('npm',['run','qa:release'],OS_DIR);
