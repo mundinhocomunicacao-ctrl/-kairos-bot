@@ -4,8 +4,8 @@ import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA='9e87582f2f4bf91e1e207ee9f07de8ec59715665';
-const MIRROR_SHA='19fa6e15572058602f4f165d1c58f082dcb6d832';
+const SOURCE_SHA='1d9055c5ad0e0e4fb79794fe4402ba8624cbba50';
+const MIRROR_SHA='d75a0c0901602d4b802a0345d0df787f1d76a172';
 const APPROVAL='REC-20260929-HUMAN-APPROVAL-GATE-001';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
@@ -36,6 +36,8 @@ async function syncSource(){
   state.phase='SOURCE';
   await run('git',['submodule','sync','--recursive'],ROOT);
   await run('git',['submodule','update','--init','--recursive'],ROOT);
+  await run('git',['-C',OS_DIR,'fetch','origin',MIRROR_SHA],ROOT);
+  await run('git',['-C',OS_DIR,'checkout','--detach',MIRROR_SHA],ROOT);
   const mirror=sh('git',['-C',OS_DIR,'rev-parse','HEAD']);
   if(mirror!==MIRROR_SHA) throw new Error('MIRROR_SHA_MISMATCH:'+mirror);
   const marker=String(fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8')).trim();
