@@ -1,0 +1,888 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "diva",
+      "intents": [
+        {
+          "name": "DivaIntent",
+          "slots": [
+            {
+              "name": "query",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "pergunte {query}",
+            "me diga {query}",
+            "quero saber {query}",
+            "consulte {query}",
+            "veja {query}",
+            "responda {query}",
+            "me responda {query}",
+            "diga {query}",
+            "me atualize sobre {query}",
+            "como está {query}",
+            "qual é {query}",
+            "quais são {query}",
+            "o que é {query}",
+            "fale sobre {query}",
+            "explique {query}"
+          ]
+        },
+        {
+          "name": "DivaContinueIntent",
+          "slots": [],
+          "samples": [
+            "continua",
+            "continue",
+            "continuar",
+            "para continuar",
+            "continue de onde parou",
+            "continuar de onde parou",
+            "para continuar de onde parou",
+            "continue agora",
+            "siga",
+            "siga em frente",
+            "siga de onde parou",
+            "retome",
+            "retome de onde parou",
+            "retome a missão",
+            "continue a missão",
+            "continue a tarefa",
+            "continue trabalhando",
+            "pode continuar",
+            "vai",
+            "vai em frente",
+            "avança",
+            "avance",
+            "próximo",
+            "próxima",
+            "destrava",
+            "destrave",
+            "segue",
+            "pode ir"
+          ]
+        },
+        {
+          "name": "DivaActionIntent",
+          "slots": [
+            {
+              "name": "action",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "execute {action}",
+            "faça {action}",
+            "executar {action}",
+            "fazer {action}"
+          ]
+        },
+        {
+          "name": "DivaTaskIntent",
+          "slots": [
+            {
+              "name": "task",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "crie uma tarefa {task}",
+            "adicione uma tarefa {task}",
+            "coloque na agenda {task}",
+            "criar uma tarefa {task}",
+            "adicionar uma tarefa {task}",
+            "colocar na agenda {task}",
+            "nova tarefa",
+            "tarefa",
+            "crie tarefa {task}",
+            "nova tarefa {task}",
+            "tarefa {task}"
+          ]
+        },
+        {
+          "name": "DivaCompleteTaskIntent",
+          "slots": [
+            {
+              "name": "task",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "conclua a tarefa {task}",
+            "finalize a tarefa {task}",
+            "marque a tarefa {task} como concluída",
+            "concluir a tarefa {task}",
+            "finalizar a tarefa {task}",
+            "marcar a tarefa {task} como concluída",
+            "concluir tarefa",
+            "finalizar tarefa",
+            "terminei uma tarefa"
+          ]
+        },
+        {
+          "name": "DivaNoteIntent",
+          "slots": [
+            {
+              "name": "note",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "registre uma nota {note}",
+            "anote {note}",
+            "registrar uma nota {note}",
+            "anotar {note}",
+            "nova nota",
+            "nota",
+            "anota isso {note}",
+            "guarde {note}"
+          ]
+        },
+        {
+          "name": "DivaLearningIntent",
+          "slots": [
+            {
+              "name": "learning",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "registre um aprendizado {learning}",
+            "aprenda que {learning}",
+            "registrar um aprendizado {learning}",
+            "aprender que {learning}",
+            "novo aprendizado",
+            "aprendizado",
+            "guarde esse aprendizado {learning}"
+          ]
+        },
+        {
+          "name": "DivaDecisionIntent",
+          "slots": [
+            {
+              "name": "decision",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "registre uma decisão {decision}",
+            "salve a decisão {decision}",
+            "registrar uma decisão {decision}",
+            "salvar a decisão {decision}",
+            "nova decisão",
+            "decisão",
+            "decisão {decision}",
+            "fica decidido {decision}"
+          ]
+        },
+        {
+          "name": "DivaBlockerIntent",
+          "slots": [
+            {
+              "name": "blocker",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "registre um bloqueio {blocker}",
+            "marque um bloqueio {blocker}",
+            "registrar um bloqueio {blocker}",
+            "marcar um bloqueio {blocker}",
+            "novo bloqueio",
+            "bloqueio",
+            "travou {blocker}",
+            "está travado {blocker}"
+          ]
+        },
+        {
+          "name": "DivaResolveBlockerIntent",
+          "slots": [
+            {
+              "name": "blocker",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "resolva o bloqueio {blocker}",
+            "feche o bloqueio {blocker}",
+            "resolver o bloqueio {blocker}",
+            "fechar o bloqueio {blocker}",
+            "resolver bloqueio",
+            "fechar bloqueio",
+            "destrave {blocker}",
+            "destrava {blocker}",
+            "resolve {blocker}",
+            "resolva {blocker}"
+          ]
+        },
+        {
+          "name": "DivaStatusIntent",
+          "slots": [],
+          "samples": [
+            "status",
+            "prioridades",
+            "como estamos",
+            "como tá",
+            "como está",
+            "e aí",
+            "onde paramos",
+            "onde parou",
+            "o que tá pegando",
+            "o que está pegando",
+            "me atualiza",
+            "me atualize",
+            "o que falta",
+            "o que falta agora",
+            "qual é a prioridade"
+          ]
+        },
+        {
+          "name": "DivaAreaIntent",
+          "slots": [
+            {
+              "name": "area",
+              "type": "MUNDO_AREA"
+            }
+          ],
+          "samples": [
+            "status de {area}",
+            "como está {area}",
+            "como tá {area}",
+            "me atualiza sobre {area}",
+            "me atualize sobre {area}",
+            "abre {area}",
+            "abra {area}",
+            "entra em {area}",
+            "entre em {area}",
+            "vamos de {area}",
+            "e {area}"
+          ]
+        },
+        {
+          "name": "DivaAreaBareIntent",
+          "slots": [
+            {
+              "name": "area",
+              "type": "MUNDO_AREA"
+            }
+          ],
+          "samples": [
+            "{area}"
+          ]
+        },
+        {
+          "name": "DivaBackIntent",
+          "slots": [],
+          "samples": [
+            "volta",
+            "volte",
+            "voltar",
+            "volta pro começo",
+            "volta pra entrada",
+            "menu",
+            "menu principal",
+            "recomeça daqui"
+          ]
+        },
+        {
+          "name": "DivaGreetingIntent",
+          "slots": [],
+          "samples": [
+            "bom dia",
+            "boa tarde",
+            "boa noite",
+            "oi diva",
+            "olá diva",
+            "oi",
+            "olá"
+          ]
+        },
+        {
+          "name": "DivaTaskListIntent",
+          "slots": [],
+          "samples": [
+            "lista de tarefas",
+            "minhas tarefas",
+            "tarefas de hoje",
+            "tarefas abertas",
+            "o que eu tenho pra fazer",
+            "o que eu tenho para fazer",
+            "o que tenho pra fazer",
+            "meus afazeres",
+            "me diga minhas tarefas"
+          ]
+        },
+        {
+          "name": "DivaCommercialProposalIntent",
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "crie uma proposta comercial {brief}",
+            "criar uma proposta comercial {brief}",
+            "faça uma proposta comercial {brief}",
+            "faz uma proposta comercial {brief}",
+            "monte uma proposta comercial {brief}",
+            "proposta comercial {brief}",
+            "nova proposta comercial",
+            "criar proposta comercial"
+          ]
+        },
+        {
+          "name": "DivaCommercialReplyIntent",
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "crie uma resposta comercial {brief}",
+            "criar uma resposta comercial {brief}",
+            "faça uma resposta comercial {brief}",
+            "resposta comercial {brief}",
+            "me ajuda a responder comercialmente {brief}",
+            "responda comercialmente {brief}",
+            "nova resposta comercial",
+            "criar resposta comercial"
+          ]
+        },
+        {
+          "name": "DivaEmailDraftIntent",
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "crie um email {brief}",
+            "criar um email {brief}",
+            "escreva um email {brief}",
+            "escrever um email {brief}",
+            "monte um email {brief}",
+            "rascunho de email {brief}",
+            "novo email",
+            "criar email"
+          ]
+        },
+        {
+          "name": "DivaWhatsAppDraftIntent",
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "crie uma mensagem de whatsapp {brief}",
+            "criar uma mensagem de whatsapp {brief}",
+            "escreva uma mensagem de whatsapp {brief}",
+            "mensagem de whatsapp {brief}",
+            "responda no whatsapp {brief}",
+            "nova mensagem de whatsapp",
+            "criar mensagem de whatsapp"
+          ]
+        },
+        {
+          "name": "AMAZON.RepeatIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NoIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.YesIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        }
+      ],
+      "types": [
+        {
+          "name": "MUNDO_AREA",
+          "values": [
+            {
+              "id": "MUNDINHO_OS",
+              "name": {
+                "value": "Mundinho OS",
+                "synonyms": [
+                  "os",
+                  "mundinho os",
+                  "sistema mundinho",
+                  "o os"
+                ]
+              }
+            },
+            {
+              "id": "SOCIAL_INSIGHTS",
+              "name": {
+                "value": "Social Insights",
+                "synonyms": [
+                  "social insights",
+                  "social",
+                  "insights",
+                  "social insight",
+                  "área social",
+                  "area social",
+                  "redes sociais"
+                ]
+              }
+            },
+            {
+              "id": "PIPELINE",
+              "name": {
+                "value": "Pipeline",
+                "synonyms": [
+                  "pipeline",
+                  "funil",
+                  "comercial",
+                  "negociações",
+                  "negociacoes"
+                ]
+              }
+            },
+            {
+              "id": "AGENDA",
+              "name": {
+                "value": "Agenda",
+                "synonyms": [
+                  "agenda",
+                  "calendário",
+                  "calendario"
+                ]
+              }
+            },
+            {
+              "id": "CONTATOS",
+              "name": {
+                "value": "Contatos",
+                "synonyms": [
+                  "contatos",
+                  "contato",
+                  "crm",
+                  "relacionamentos"
+                ]
+              }
+            },
+            {
+              "id": "RADAR",
+              "name": {
+                "value": "Radar",
+                "synonyms": [
+                  "radar",
+                  "sinais",
+                  "observatório",
+                  "observatorio"
+                ]
+              }
+            },
+            {
+              "id": "WORKSPACE",
+              "name": {
+                "value": "Workspace",
+                "synonyms": [
+                  "workspace",
+                  "arquivos",
+                  "documentos"
+                ]
+              }
+            },
+            {
+              "id": "EXPLORER",
+              "name": {
+                "value": "Explorer",
+                "synonyms": [
+                  "explorer",
+                  "pesquisa",
+                  "evidências",
+                  "evidencias"
+                ]
+              }
+            },
+            {
+              "id": "CONFIGURACOES",
+              "name": {
+                "value": "Configurações",
+                "synonyms": [
+                  "configurações",
+                  "configuracoes",
+                  "saúde do sistema",
+                  "saude do sistema"
+                ]
+              }
+            },
+            {
+              "id": "GABRIELLA",
+              "name": {
+                "value": "Gabi",
+                "synonyms": [
+                  "gabi",
+                  "gabriella",
+                  "gabriella saraivah",
+                  "saraivah"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "dialog": {
+      "delegationStrategy": "ALWAYS",
+      "intents": [
+        {
+          "name": "DivaTaskIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "task",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaTask"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaCompleteTaskIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "task",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaCompleteTask"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaNoteIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "note",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaNote"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaLearningIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "learning",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaLearning"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaDecisionIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "decision",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaDecision"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaBlockerIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "blocker",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaBlocker"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaResolveBlockerIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "blocker",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaResolveBlocker"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaCommercialProposalIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaCommercialProposal"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaCommercialReplyIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaCommercialReply"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaEmailDraftIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaEmailDraft"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DivaWhatsAppDraftIntent",
+          "delegationStrategy": "ALWAYS",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "brief",
+              "type": "AMAZON.SearchQuery",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.DivaWhatsAppDraft"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "prompts": [
+      {
+        "id": "Elicit.DivaTask",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Qual tarefa?"
+          },
+          {
+            "type": "PlainText",
+            "value": "O que eu crio?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaCompleteTask",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Qual tarefa eu marco como concluída?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Qual tarefa terminou?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaNote",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "O que eu anoto?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Pode falar. O que eu registro?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaLearning",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Qual aprendizado?"
+          },
+          {
+            "type": "PlainText",
+            "value": "O que eu guardo como aprendizado?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaDecision",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Qual decisão?"
+          },
+          {
+            "type": "PlainText",
+            "value": "O que ficou decidido?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaBlocker",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Qual é o bloqueio?"
+          },
+          {
+            "type": "PlainText",
+            "value": "O que travou?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaResolveBlocker",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Qual bloqueio eu resolvo?"
+          },
+          {
+            "type": "PlainText",
+            "value": "O que eu marco como resolvido?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaCommercialProposal",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Pra quem é a proposta?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Me diz a marca e o objetivo."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaCommercialReply",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "O que eu preciso responder?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Me diz a mensagem ou o contexto."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaEmailDraft",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Pra quem é o e-mail?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Me diz pra quem e sobre o quê."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.DivaWhatsAppDraft",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Pra quem é a mensagem?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Me diz pra quem e o contexto."
+          }
+        ]
+      }
+    ]
+  }
+}
