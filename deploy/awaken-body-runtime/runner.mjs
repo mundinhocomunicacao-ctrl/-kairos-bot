@@ -112,6 +112,7 @@ async function prove(){
 const PANDORA_MISSION_ID=String(process.env.PANDORA_MISSION_ID||'').trim();
 const PANDORA_GRANT_ID=String(process.env.PANDORA_MISSION_KEY||'').trim();
 const PANDORA_CANONICAL_KEY='MUNDO/MALHA/AWAKEN_BODY/V1';
+const usedTransportNonces=new Set();
 const DIVA_GATEWAY_VERSION='diva-universal-private-gateway-v0.1';
 const DIVA_GATEWAY_INSTALLATION='morada-wix';
 const DIVA_GATEWAY_PATH='/api/diva-gateway/execute';
@@ -215,7 +216,7 @@ async function routePandoraMission(body={}){
   const sourceSurface=String(body?.sourceSurface||'');
   const validation=String(body?.validation||'');
   const transportNonce=String(body?.transportNonce||'');
-  const expectedNonce=String(process.env.PANDORA_MORADA_NONCE||'');
+
 
   const authorized=
     authority==='PANDORA' &&
@@ -225,11 +226,16 @@ async function routePandoraMission(body={}){
     grantId===String(process.env.PANDORA_MISSION_KEY||'') &&
     sourceSurface==='MORADA_AUTOMATION' &&
     validation==='PANDORA_MISSION_AUTHORITY' &&
-    expectedNonce.length>=24 &&
-    transportNonce===expectedNonce;
+    transportNonce.length>=24 &&
+    !usedTransportNonces.has(transportNonce);
 
   if(!authorized){
     return {httpStatus:403,payload:{ok:false,status:'PANDORA_MISSION_AUTHORITY_DENIED'}};
+  }
+  usedTransportNonces.add(transportNonce);
+  if(usedTransportNonces.size>500){
+    const first=usedTransportNonces.values().next().value;
+    if(first)usedTransportNonces.delete(first);
   }
 
   const gateway=await executeSignedPandoraGateway({
