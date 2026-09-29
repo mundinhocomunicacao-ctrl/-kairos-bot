@@ -1,0 +1,138 @@
+name: Gabi Wix API Release
+on:
+  push:
+    branches:
+      - forge/wix-remote-release-auth-20260927
+    paths:
+      - '.github/workflows/gabi-wix-api-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GABI_SITE_ID: 7687d145-056b-4cc0-9f6f-70c2bb32912e
+      GABI_APP_ID: 97cc208c-a172-4f52-8427-1f301aa42049
+      GABI_LIVE_URL: https://radar.gabi.mundinhocomunicacao.com/
+      GABI_CANONICAL_SHA: 3773aaae669119deb96b22bd56b08f807f042192
+      K1: ${{ secrets.WIX_GABI_RADAR_API_KEY }}
+      K2: ${{ secrets.WIX_MUNDO_API_KEY }}
+      K3: ${{ secrets.WIX_API_KEY }}
+      K4: ${{ secrets.WIX_CLI_API_KEY }}
+      K5: ${{ secrets.WIX_RELEASE_API_KEY }}
+      K6: ${{ secrets.MUNDINHO_WIX_API_KEY }}
+      K7: ${{ secrets.MUNDO_WIX_API_KEY }}
+      K8: ${{ secrets.WIX_ACCOUNT_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate canonical Gabi visual parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE="deploy/gabi-radar-official-release/site/index.html"
+          test -s "$FILE"
+          grep -F 'data-diva-face="DIVA_GABI"' "$FILE" >/dev/null
+          grep -F 'data-diva-root="DIVA_RAIZ"' "$FILE" >/dev/null
+          grep -F 'data-orbi-visual="diva-official-v1"' "$FILE" >/dev/null
+          grep -F 'class="gabiDivaOrb divaAvatar2D hero state-ready"' "$FILE" >/dev/null
+          for forbidden in '.divaRealModel' '.divaStageHalo' '.divaStageFloor' '<model-viewer' 'static.wixstatic.com/3d/'; do
+            ! grep -F "$forbidden" "$FILE" >/dev/null
+          done
+          echo "GABI_ORBI_ROOT_VISUAL_PARITY=PASS"
+
+      - name: Resolve governed Wix credential
+        id: auth
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ops/receipts
+          KEY=""
+          ALIAS=""
+          for pair in "WIX_GABI_RADAR_API_KEY:$K1" "WIX_MUNDO_API_KEY:$K2" "WIX_API_KEY:$K3" "WIX_CLI_API_KEY:$K4" "WIX_RELEASE_API_KEY:$K5" "MUNDINHO_WIX_API_KEY:$K6" "MUNDO_WIX_API_KEY:$K7" "WIX_ACCOUNT_API_KEY:$K8"; do
+            name="${pair%%:*}"
+            value="${pair#*:}"
+            if [ -n "$value" ]; then KEY="$value"; ALIAS="$name"; break; fi
+          done
+          if [ -z "$KEY" ]; then
+            {
+              echo "status=NO_GOVERNED_WIX_KEY"
+              echo "canonical_sha=$GABI_CANONICAL_SHA"
+              echo "site_id=$GABI_SITE_ID"
+              echo "checked_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            } > ops/receipts/GABI_WIX_API_RELEASE_LATEST.txt
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "::add-mask::$KEY"
+          printf '%s' "$KEY" > /tmp/wix-key
+          echo "alias=$ALIAS" >> "$GITHUB_OUTPUT"
+          echo "has_key=true" >> "$GITHUB_OUTPUT"
+
+      - name: Release Gabi to Wix
+        if: steps.auth.outputs.has_key == 'true'
+        shell: bash
+        working-directory: deploy/gabi-radar-official-release/site
+        run: |
+          set -euo pipefail
+          KEY="$(cat /tmp/wix-key)"
+          echo "::add-mask::$KEY"
+          rm -rf dist
+          mkdir -p dist
+          cp index.html dist/index.html
+          CI=1 npx --yes @wix/cli@latest login --api-key "$KEY"
+          rm -f /tmp/wix-key
+          CI=1 npx --yes @wix/cli@latest whoami
+          CI=1 npx --yes @wix/cli@latest release
+          echo "GABI_WIX_RELEASE_SUBMITTED=$GABI_CANONICAL_SHA"
+
+      - name: Prove Gabi live readback
+        if: steps.auth.outputs.has_key == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 24); do
+            curl -fsSL --retry 2 --retry-all-errors "$GABI_LIVE_URL?orbi_root_parity=$i" -o /tmp/gabi-live.html || true
+            if grep -F 'data-diva-face="DIVA_GABI"' /tmp/gabi-live.html >/dev/null 2>&1               && grep -F 'data-diva-root="DIVA_RAIZ"' /tmp/gabi-live.html >/dev/null 2>&1               && grep -F 'class="gabiDivaOrb divaAvatar2D hero state-ready"' /tmp/gabi-live.html >/dev/null 2>&1               && ! grep -F '.divaStageHalo' /tmp/gabi-live.html >/dev/null 2>&1               && ! grep -F '<model-viewer' /tmp/gabi-live.html >/dev/null 2>&1; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ok" = "1"
+          {
+            echo "status=PASS"
+            echo "proof=GABI_ORBI_ROOT_VISUAL_PARITY_LIVE"
+            echo "canonical_sha=$GABI_CANONICAL_SHA"
+            echo "site_id=$GABI_SITE_ID"
+            echo "live_url=$GABI_LIVE_URL"
+            echo "auth_alias=${{ steps.auth.outputs.alias }}"
+            echo "verified_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > ops/receipts/GABI_WIX_API_RELEASE_LATEST.txt
+          echo "GABI_ORBI_ROOT_VISUAL_PARITY_LIVE=PASS"
+
+      - name: Persist non-secret receipt
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f ops/receipts/GABI_WIX_API_RELEASE_LATEST.txt ]; then
+            mkdir -p ops/receipts
+            {
+              echo "status=FAILED_BEFORE_RECEIPT"
+              echo "canonical_sha=$GABI_CANONICAL_SHA"
+              echo "site_id=$GABI_SITE_ID"
+              echo "checked_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            } > ops/receipts/GABI_WIX_API_RELEASE_LATEST.txt
+          fi
+          git config user.name "diva-release-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add ops/receipts/GABI_WIX_API_RELEASE_LATEST.txt
+          git commit -m "receipt(gabi): Wix root visual release result [skip render]" || exit 0
+          git push origin HEAD:forge/wix-remote-release-auth-20260927
