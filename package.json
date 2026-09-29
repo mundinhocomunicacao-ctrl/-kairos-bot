@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node deploy/morada-pandora-dispatch.test.mjs && node deploy/morada-pandora-dispatch.mjs",
+    "start": "node deploy/awaken-body-runtime/mission-endpoint.test.mjs && node deploy/awaken-body-runtime/runner.mjs",
     "test": "node bridge-contract.test.js"
   },
   "engines": {
