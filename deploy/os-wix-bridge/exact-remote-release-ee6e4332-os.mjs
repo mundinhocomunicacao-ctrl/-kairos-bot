@@ -65,7 +65,7 @@ async function qaAndBuild(){
   mark('NPM_CI_DEV_INCLUDED');
   await run('npm',['run','qa:release'],OS_DIR);
   mark('QA_RELEASE');
-  await run('npm',['run','build:vinext'],OS_DIR);
+  await run('npm',['run','build:vinext'],OS_DIR,{NODE_OPTIONS:'--max-old-space-size=320',RAYON_NUM_THREADS:'1',UV_THREADPOOL_SIZE:'1'});
   mark('BUILD_VINEXT');
   await run('npm',['run','build:wix-worker'],OS_DIR,{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-qa'});
   const entry=path.join(OS_DIR,'dist/wix-server/entry.mjs');
