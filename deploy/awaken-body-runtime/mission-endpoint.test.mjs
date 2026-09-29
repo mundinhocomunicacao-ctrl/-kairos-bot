@@ -5,6 +5,9 @@ const src=fs.readFileSync(new URL('./runner.mjs',import.meta.url),'utf8');
 
 for(const needle of [
   "req.url==='/mission'",
+  "startsWith('/mission?')",
+  "process.env.PANDORA_MORADA_NONCE",
+  "transportNonce===expectedNonce",
   "authority==='PANDORA'",
   "worldId==='MUNDO'",
   "canonicalKey==='MUNDO/MALHA/AWAKEN_BODY/V1'",
