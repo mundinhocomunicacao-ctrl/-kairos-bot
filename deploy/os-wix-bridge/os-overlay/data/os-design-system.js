@@ -1,14 +1,14 @@
 import {MUNDO_WEB_BRAND,MUNDO_WEB_BRAND_VERSION} from './web-brand-kit';
 
-export const OS_DESIGN_SYSTEM_VERSION=`mundo-mineral-cobalt-v2-2026-09-27`;
+export const OS_DESIGN_SYSTEM_VERSION=`mundo-editorial-cobalt-v3-2026-09-29`;
 
 export const OS_VISUAL_RESEARCH={
-  source:'MUNDO OS · HOME SHELL MORADA + Radar da Gabi reference · 27/09/2026',
+  source:'MUNDO OS · Mesa/Morada master + Radar aprovado + referência humana mais recente · 29/09/2026',
   referenceUrl:'https://www.especialistabrandingeinfluencia.com/c%C3%B3pia-sobre-mim',
   references:MUNDO_WEB_BRAND.research.sampleSize,
   territories:MUNDO_WEB_BRAND.territories,
   synthesis:{
-    composition:'grandes blocos editoriais com muito respiro, conteúdo primeiro e decoração reduzida',
+    composition:'blocos editoriais compactos, densidade informacional alta, conteúdo primeiro e áreas mortas eliminadas',
     typography:'sans pesada para manchetes + sans operacional para leitura contínua',
     surfaces:'branco quase puro sobre canvas neutro muito leve, bordas suaves e elevação mínima',
     signal:'azul funcional como acento operacional; preto profundo como ação primária',
@@ -34,7 +34,7 @@ export const OS_VISUAL_DIRECTION={
     'preto profundo para estados ativos e ações primárias',
     'homes estruturadas em faixas editoriais, relações e estados; cards só quando a entidade exige contenção explícita',
     'navegação em cápsulas quando houver agrupamento de áreas ou estados',
-    'muito respiro e baixa densidade decorativa',
+    'densidade útil alta, gaps curtos e nenhuma área morta',
     'DIVA integrada sem transformar a interface em painel técnico',
     'a lógica, os dados e a arquitetura do OS não mudam com a camada visual',
     'produção só muda após comparação visual humana com a referência',
@@ -157,6 +157,16 @@ input,select,textarea,.globalSearch input,.contactSearch,.searchInput,.filters s
 .osVisualAction{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}.osVisualAction a,.osVisualAction button{border:1px solid var(--mundo-line);background:#fff;color:var(--mundo-ink);border-radius:999px;padding:9px 12px;font-size:9px;font-weight:850}.osVisualAction .primary{background:var(--mundo-ink)!important;color:#fff!important}
 .osReadingBlock{background:var(--mundo-surface);border:1px solid var(--mundo-line);border-radius:18px;padding:18px}.osReadingBlock small{font-size:8px;font-weight:850;letter-spacing:.12em;text-transform:uppercase;color:var(--mundo-signal)}
 .osReadingBlock h3{font-family:var(--mundo-display);font-size:24px;font-weight:400;margin:6px 0}.osReadingBlock p{margin:0;color:var(--mundo-muted)}
+/* FULL_ROLLOUT_RLF_20260929 · remaining-area visual contract; Mesa/Radar stay on their approved masters */
+.socialInsights,.ideasArea,.contacts,.pipe,.proposalStudio,.agendaPage,.prStudio,.workspaceLive,.explorerPage,.health{
+ --mundo-rollout-radius:var(--mundo-radius-md);
+ --mundo-rollout-shadow:var(--mundo-shadow-soft);
+ --mundo-rollout-gutter:clamp(20px,3.8vw,64px)
+}
+@media(max-width:1024px){.socialInsights,.ideasArea,.contacts,.pipe,.proposalStudio,.agendaPage,.prStudio,.workspaceLive,.explorerPage,.health{--mundo-rollout-gutter:24px}}
+@media(max-width:768px){.socialInsights,.ideasArea,.contacts,.pipe,.proposalStudio,.agendaPage,.prStudio,.workspaceLive,.explorerPage,.health{--mundo-rollout-gutter:18px}}
+@media(max-width:375px){.socialInsights,.ideasArea,.contacts,.pipe,.proposalStudio,.agendaPage,.prStudio,.workspaceLive,.explorerPage,.health{--mundo-rollout-gutter:14px}}
+
 @media(max-width:900px){
  .main,.page,.canonicalHub,.brainMain,.homeDesk,.radarPage,.pipe,.contacts,.workspaceLive{padding-left:16px!important;padding-right:16px!important}
  .editorialHero{grid-template-columns:1fr;padding-top:24px}.editorialHeroAside{border-left:0;border-top:1px solid var(--mundo-line);padding-left:0}
