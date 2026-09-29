@@ -11,8 +11,10 @@ if(!document.getElementById(STYLE_ID)){
 html,body,#SITE_CONTAINER{pointer-events:auto!important}
 html:not([data-diva-morada-gate="authorized"]) #dv{visibility:hidden!important;pointer-events:none!important}
 #dv{z-index:2147482000!important;isolation:isolate!important}
-html[data-diva-morada-gate="authorized"] #dv{visibility:visible!important;z-index:2147483000!important;pointer-events:auto!important}
-html[data-diva-native-login="open"] #dv{visibility:hidden!important;z-index:1!important;pointer-events:none!important}
+html[data-diva-morada-gate="authorized"] #dv{z-index:2147483000!important}
+html[data-diva-morada-gate="authorized"] #dv{visibility:visible!important;pointer-events:auto!important}
+html[data-diva-native-login="open"] #dv{z-index:1!important;pointer-events:none!important}
+html[data-diva-native-login="open"] #dv{visibility:hidden!important}
 #divaMoradaAuthBridge,diva-morada-auth-bridge{position:relative!important;z-index:2147483646!important;pointer-events:auto!important}
 #dv button,#dv a,#dv input,#dv textarea,#dv select,#dv [role="button"],#dv .tc,#dv .wc,#dv .sg,#dv .ni,#dv .tb{pointer-events:auto!important}
 #dv .modal:not(.open){pointer-events:none!important}
