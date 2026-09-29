@@ -13,6 +13,10 @@ const ARCHIVE=path.join(ROOT,'os-88ccd189-artifact.tar.gz');
 const MORADA_SITE_ID=String(process.env.MORADA_SITE_ID||'7aff6327-39c6-4be0-aa3f-5d50680eb337').trim();
 const MORADA_EMBED_ID=String(process.env.MORADA_EMBED_ID||'fcb4b995-6595-4eae-9eb2-f93ae5e2e443').trim();
 const MORADA_EMBED_FILE=path.join(ROOT,'deploy/os-wix-bridge/interaction-recovery-v6.html');
+const MORADA_SOURCE_PUBLISH=/^(1|true|yes)$/i.test(String(process.env.MORADA_SOURCE_PUBLISH||''));
+const MORADA_RELEASE_SHA=String(process.env.MORADA_RELEASE_SHA||'').trim();
+const MORADA_SOURCE_DIR=path.join(ROOT,'deploy/morada-release-source');
+const MORADA_LIVE='https://www.especialistabrandingeinfluencia.com';
 
 function prepareArtifact(){
   const marker=fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8').trim();
@@ -113,10 +117,86 @@ async function patchMoradaEmbed(){
   });
 }
 
+
+function wixApiKeyFromEnv(){
+  const aliases=['WIX_MUNDO_API_KEY','WIX_API_KEY','WIX_CLI_API_KEY','WIX_RELEASE_API_KEY','MUNDINHO_WIX_API_KEY','WIX_OS_API_KEY'];
+  for(const alias of aliases){
+    const value=String(process.env[alias]||'').trim();
+    if(value)return {alias,value};
+  }
+  return null;
+}
+
+async function publishMoradaSource(){
+  if(!fs.existsSync(MORADA_SOURCE_DIR))throw new Error('MORADA_SOURCE_DIR_MISSING');
+  const manifestPath=path.join(MORADA_SOURCE_DIR,'SNAPSHOT_MANIFEST.json');
+  const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
+  const sourceSha=String(manifest.sourceCommitSha||'').trim();
+  if(!sourceSha)throw new Error('MORADA_SOURCE_SHA_MISSING');
+  if(MORADA_RELEASE_SHA&&sourceSha!==MORADA_RELEASE_SHA)throw new Error('MORADA_RELEASE_SHA_MISMATCH '+sourceSha+' expected='+MORADA_RELEASE_SHA);
+
+  const bridge=fs.readFileSync(path.join(MORADA_SOURCE_DIR,'src/backend/divaBridge.web.js'),'utf8');
+  const hook=fs.readFileSync(path.join(MORADA_SOURCE_DIR,'src/backend/data.js'),'utf8');
+  for(const token of [
+    'sendPandoraMissionToMalhaInternal',
+    'PANDORA_MISSION_AUTHORITY',
+    'AUTHORIZED_REREAD_VERIFIED'
+  ]) if(!bridge.includes(token))throw new Error('MORADA_PANDORA_BRIDGE_MISSING '+token);
+  for(const token of [
+    'DIVA_MEMORY_WRITEBACK_V1_afterInsert',
+    'diva.morada.pandora.mission.execute',
+    'EXECUTE_REQUESTED',
+    'PANDORA_MACHINE_EXECUTION_PROOF'
+  ]) if(!hook.includes(token))throw new Error('MORADA_PANDORA_HOOK_MISSING '+token);
+
+  execFileSync('node',['scripts/qa-morada-pandora-authority.mjs'],{cwd:MORADA_SOURCE_DIR,stdio:'inherit'});
+
+  const auth=wixApiKeyFromEnv();
+  if(!auth)throw new Error('MORADA_WIX_API_KEY_MISSING');
+  execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
+    cwd:MORADA_SOURCE_DIR,stdio:'inherit',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+  });
+  console.log('MORADA_WIX_API_KEY_AUTH_PASS '+auth.alias);
+
+  execFileSync('npx',['-y','@wix/cli@latest','publish','-y'],{
+    cwd:MORADA_SOURCE_DIR,stdio:'inherit',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+  });
+  console.log('MORADA_WIX_PUBLISH_PASS '+sourceSha);
+
+  await new Promise(r=>setTimeout(r,10000));
+  const healthResponse=await fetch(MORADA_LIVE+'/_functions/divaHealth?proof='+Date.now(),{headers:{'cache-control':'no-cache'}});
+  const health=await healthResponse.json().catch(()=>({}));
+  if(!healthResponse.ok)throw new Error('MORADA_HEALTH_HTTP_'+healthResponse.status);
+  if(health?.pandoraMachineAuthority!=='OWNER_OR_PANDORA_MISSION_AUTHORITY_V1')throw new Error('MORADA_PANDORA_HEALTH_MARKER_MISSING');
+  if(health?.malhaFlow!=='ONLINE')throw new Error('MORADA_MALHA_FLOW_NOT_ONLINE');
+  console.log('MORADA_PANDORA_MACHINE_AUTHORITY_LIVE '+sourceSha);
+
+  return Object.freeze({
+    phase:'MORADA_SOURCE_PUBLISH_VERIFIED',
+    done:true,
+    released:true,
+    sourceSha,
+    siteId:MORADA_SITE_ID,
+    authMode:'api_key',
+    authAlias:auth.alias,
+    health:{
+      ok:health?.ok===true,
+      interactionBuild:health?.interactionBuild||null,
+      releaseRail:health?.releaseRail||null,
+      malhaFlow:health?.malhaFlow||null,
+      pandoraMachineAuthority:health?.pandoraMachineAuthority||null
+    }
+  });
+}
+
 let state=Object.freeze({phase:'BOOTING',done:false,released:false});
 
 async function boot(){
   try{
+    if(MORADA_SOURCE_PUBLISH){
+      state=await publishMoradaSource();
+      return;
+    }
     if(/^(1|true|yes)$/i.test(String(process.env.MORADA_EMBED_PATCH||''))){
       state=await patchMoradaEmbed();
       console.log('MORADA_EMBED_PATCH_VERIFIED '+JSON.stringify({embedId:state.embedId,beforeRevision:state.beforeRevision,afterRevision:state.afterRevision,authMode:state.authMode,authAlias:state.authAlias}));
