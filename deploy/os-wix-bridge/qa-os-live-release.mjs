@@ -7,7 +7,7 @@ for(const token of [
   'MUNDINHO_WIX_LIVE_APP_ID',
   'wix.config.json',
   '@wix/cli@latest',
-  "['release']",
+  "'release']",
   'ARTIFACT_RUNTIME_SHA_MISMATCH',
   'WIX_OS_LIVE_RELEASE_VERIFIED'
 ]) assert.ok(src.includes(token),'missing OS live release contract token: '+token);
