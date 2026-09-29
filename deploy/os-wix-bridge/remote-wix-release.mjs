@@ -103,10 +103,81 @@ async function release(){
   });
 }
 
+
+async function runPandoraClosureMission(){
+  const missionId='MUNDO::MALHA_CORE::ANJOS7::UNLOCK::20260929';
+  const grantRef='PANDORA_MORADA_RANDOM_GRANT_1790659947059';
+  const [{buildMundoWritebackEvent,executeMundoWritebackWithVerification},{appendGatewayMissionControlEvent}]=await Promise.all([
+    import('../../os/lib/mundo-writeback.mjs'),
+    import('../../os/lib/diva-gateway-mission-registry.mjs')
+  ]);
+  const angels=[
+    ['anjo-01-prisma','PRISMA','DECOMPOSE'],
+    ['anjo-02-nexo','NEXO','CONNECT'],
+    ['anjo-03-vetor','VETOR','EXECUTE'],
+    ['anjo-04-farol','FAROL','VERIFY'],
+    ['anjo-05-arca','ARCA','PRESERVE'],
+    ['anjo-06-pulso','PULSO','MONITOR'],
+    ['anjo-07-aurora','AURORA','RECONCILE']
+  ];
+  const event=buildMundoWritebackEvent({
+    destination:'explorer',
+    kind:'observation',
+    actor:{id:'PANDORA',email:'pandora@machine.authority'},
+    source:'pandora_malha_core_unlock',
+    sourceId:missionId,
+    idempotencyKey:'pandora:os-release-e2e:'+missionId,
+    confidence:1,
+    payload:{
+      observation_type:'pandora_governed_release_e2e_mission',
+      mission_id:missionId,
+      canonical_key:'MUNDO/MALHA/AWAKEN_BODY/V1',
+      closure_queue:'os-release-e2e',
+      maestro_parent_queue:'mundo-products',
+      access_governor:'PANDORA',
+      authority_grant_ref:grantRef,
+      seven_angels:angels.map(([id,name,role])=>({id,name,role})),
+      target:'MORADA_MACHINE_AUTHORITY_AND_MALHA_CORE',
+      next_action:'EXECUTE_VERIFY_REREAD',
+      policy:'PANDORA_GOVERNED_NO_AUTOPROMOTION'
+    }
+  });
+  const write=await executeMundoWritebackWithVerification({event});
+  if(!write.verified){
+    return Object.freeze({phase:'PANDORA_CLOSURE_WRITE_FAILED',done:true,released:false,missionId,write});
+  }
+  const queue=await appendGatewayMissionControlEvent({
+    missionId,
+    actorId:'pandora-malha-core',
+    installationId:'mundinho-os-closure',
+    surfaceId:'os-release-e2e',
+    conversationRef:'pandora://morada/malha-core',
+    eventId:event.event_id,
+    state:'QUEUED_OS_CLOSURE',
+    nextAction:'MAESTRO:mundo-products SUBQUEUE:os-release-e2e EXECUTE_VERIFY_REREAD',
+    contextId:'pandora:'+grantRef,
+    continuityMode:'PANDORA_MISSION_AUTHORITY'
+  });
+  return Object.freeze({
+    phase:write.verified&&queue?.persisted?'PANDORA_CLOSURE_QUEUED_VERIFIED':'PANDORA_CLOSURE_QUEUE_FAILED',
+    done:true,
+    released:false,
+    missionId,
+    grantRef,
+    writeback:{verified:write.verified,persisted:write.persisted,eventId:event.event_id,reason:write.reason||null},
+    queue
+  });
+}
+
 let state=Object.freeze({phase:'BOOTING',done:false,released:false});
 
 async function boot(){
   try{
+    if(/^(1|true|yes)$/i.test(String(process.env.PANDORA_CLOSURE_MODE||''))){
+      state=await runPandoraClosureMission();
+      console.log('PANDORA_CLOSURE_RESULT '+JSON.stringify(state));
+      return;
+    }
     state=await release();
     console.log('MORADA_PANDORA_RELEASE_VERIFIED '+JSON.stringify({
       siteId:state.siteId,
