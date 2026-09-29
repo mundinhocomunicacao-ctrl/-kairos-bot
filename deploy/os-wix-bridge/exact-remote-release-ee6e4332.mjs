@@ -152,7 +152,33 @@ async function ensureMoradaAuth(wixCli){
  }
  const who=spawnSync(wixCli,['whoami'],{encoding:'utf8',env,timeout:30000});
  if(who.status===0){log('MORADA_WIX_AUTH_ALREADY_VALID '+String(who.stdout||'').trim());return}
- throw new Error('MORADA_WIX_AUTH_REFERENCE_MISSING');
+ await new Promise((resolve,reject)=>{
+   const p=spawn(wixCli,['login'],{cwd:ROOT,env,stdio:['ignore','pipe','pipe']});
+   let b='';
+   const scan=(chunk)=>{
+     const s=String(chunk); b+=s; process.stdout.write(s);
+     for(const line of b.split('\n')){
+       try{
+         const e=JSON.parse(line.trim());
+         if(e.event==='awaiting_user'){
+           state.userCode=e.userCode||null;
+           state.verificationUri=e.verificationUri||null;
+           state.phase='AWAITING_MORADA_WIX_AUTH';
+           state.moradaAuthExpiresInSeconds=e.expiresInSeconds||null;
+           log('MORADA_WIX_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:state.moradaAuthExpiresInSeconds}));
+         }
+       }catch{}
+     }
+   };
+   p.stdout.on('data',scan);
+   p.stderr.on('data',d=>process.stderr.write(d));
+   p.on('error',reject);
+   p.on('close',code=>code===0?resolve():reject(new Error('morada wix login exit '+code)));
+ });
+ const after=spawnSync(wixCli,['whoami'],{cwd:ROOT,encoding:'utf8',env,timeout:30000});
+ if(after.status!==0)throw new Error('MORADA_WIX_AUTH_FAILED_AFTER_DEVICE_LOGIN');
+ state.userCode=null; state.verificationUri=null; state.moradaAuthExpiresInSeconds=null;
+ log('MORADA_WIX_AUTH_DEVICE_PASS '+String(after.stdout||'').trim());
 }
 
 async function runMoradaRelease(){
