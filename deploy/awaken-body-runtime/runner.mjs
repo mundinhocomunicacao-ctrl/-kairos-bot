@@ -7,7 +7,40 @@ import {buildElasticMission,executeElasticMission} from '../../lib/maestro-elast
 const PORT=Number(process.env.PORT||10000);
 const startedAt=new Date().toISOString();
 
+async function proveAlexa(){
+  const fs=await import('node:fs');
+  const path=await import('node:path');
+  const model=JSON.parse(fs.readFileSync(path.join(process.cwd(),'docs/integrations/alexa/interaction-model.pt-BR.json'),'utf8'));
+  const registry=fs.readFileSync(path.join(process.cwd(),'data/diva-gateway-installation-registry.js'),'utf8');
+  const gateway=fs.readFileSync(path.join(process.cwd(),'lib/diva-universal-private-gateway.mjs'),'utf8');
+  const route=fs.readFileSync(path.join(process.cwd(),'pages/api/alexa-diva.js'),'utf8');
+  const operation=fs.readFileSync(path.join(process.cwd(),'pages/api/diva-gateway/[operation].js'),'utf8');
+  const voice=await import('../../lib/diva-voice-action.mjs');
+
+  const checks=[];
+  const ok=(name,pass)=>{checks.push({name,pass:Boolean(pass)}); if(!pass) throw new Error('ALEXA_PROOF_FAILED '+name);};
+  ok('voice_action_capability',registry.includes("'voice_action'"));
+  ok('gateway_voice_action',gateway.includes("'voice_action'"));
+  ok('gateway_handler_voice_action',operation.includes("case 'voice_action'"));
+  ok('writeback_reread',operation.includes('executeMundoWritebackWithVerification'));
+  ok('route_classifier',route.includes('classifyDivaVoiceAction'));
+  ok('os_first_context',route.includes('MUNDINHO OS É O ESCOPO PADRÃO'));
+  ok('stop_local',route.includes("if(inbound.kind==='stop')"));
+  ok('control_turn',route.includes("if(inbound.kind==='control')"));
+  const intents=model.interactionModel.languageModel.intents||[];
+  const names=new Set(intents.map(x=>x.name));
+  ok('continue_intent',names.has('DivaContinueIntent'));
+  ok('yes_intent',names.has('AMAZON.YesIntent')||names.has('DivaYesIntent'));
+  ok('no_intent',names.has('AMAZON.NoIntent')||names.has('DivaNoIntent'));
+  ok('stop_intent',names.has('AMAZON.StopIntent'));
+  ok('simple_action_task',voice.classifyDivaVoiceAction('crie uma tarefa revisar social insights')?.type==='create_task');
+  ok('safe_query_not_action',voice.classifyDivaVoiceAction('quais são as oportunidades da Gabi')===null);
+  ok('risk_confirmation',voice.classifyDivaVoiceRisk('envie um email para a marca').requiresConfirmation===true);
+  return {ok:true,status:'ALEXA_RUNTIME_QA_PROVEN',checks};
+}
+
 async function prove(){
+  const alexa=await proveAlexa();
   const angelMission=buildAngelMission({
     missionId:'AWAKEN-BODY-ANJOS-7-20260929',
     intent:'Prove runtime construction and seven-agent governed dispatch for MUNDO/MALHA/AWAKEN_BODY/V1',
@@ -66,6 +99,7 @@ async function prove(){
       coverage:angelPluginCoverage(),
       receipts:angelReceipts
     },
+    alexa,
     maestro:{
       canonicalQueues:MAESTRO_QUEUE_REGISTRY.queues.length,
       provedQueues:maestro.length,
@@ -86,4 +120,4 @@ http.createServer((req,res)=>{
   }
   res.writeHead(404,{'content-type':'application/json'});
   res.end(JSON.stringify({ok:false,error:'not_found'}));
-}).listen(PORT,'0.0.0.0',()=>console.log('AWAKEN_BODY_RUNTIME_PROOF_READY',PORT,JSON.stringify({ok:snapshot.ok,anjos:snapshot?.anjos?.selected,maestro:snapshot?.maestro?.provedQueues})));
+}).listen(PORT,'0.0.0.0',()=>console.log('AWAKEN_BODY_RUNTIME_PROOF_READY',PORT,JSON.stringify({ok:snapshot.ok,anjos:snapshot?.anjos?.selected,maestro:snapshot?.maestro?.provedQueues,alexa:snapshot?.alexa?.status})));
