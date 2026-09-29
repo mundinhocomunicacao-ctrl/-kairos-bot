@@ -5,11 +5,11 @@ import {execFileSync,spawnSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const ROOT=process.cwd();
-const OS_DIR=path.join(ROOT,'os');
-const GABI_DIR=path.join(OS_DIR,'radar-gabi-site');
+let OS_DIR=path.join(ROOT,'os');
+let GABI_DIR=path.join(OS_DIR,'radar-gabi-site');
 const RELEASE_TARGET=String(process.env.WIX_RELEASE_TARGET||'OS').trim().toUpperCase();
-const SOURCE_MARKER=path.join(OS_DIR,'.release-source/canonical-sha.txt');
-const ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
+let SOURCE_MARKER=path.join(OS_DIR,'.release-source/canonical-sha.txt');
+let ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
 const RELEASE_DIR=path.join(ROOT,'.wix-live-release');
 
 const MUNDINHO_WIX_LIVE_SITE_ID=String(process.env.MUNDINHO_WIX_LIVE_SITE_ID||'c80689f2-6627-45fa-a264-4ab2863ba306').trim();
@@ -24,6 +24,28 @@ function wixApiKeyFromEnv(){
 }
 function run(bin,args,cwd,extraEnv={}){
   return String(execFileSync(bin,args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{...process.env,...extraEnv}})||'').trim();
+}
+function activateDirectOsSnapshot(){
+  if(RELEASE_TARGET!=='OS')return;
+  const repo='https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git';
+  const ref='qa/radar-approved-20260929';
+  const expected='77a5d67f2ac5e9fd7b884f726d020cc9b2d6de99';
+  const directDir=path.join(ROOT,'.runtime-os-source');
+  fs.rmSync(directDir,{recursive:true,force:true});
+  execFileSync('git',['clone','--depth','1','--branch',ref,repo,directDir],{cwd:ROOT,stdio:'inherit'});
+  const marker=String(fs.readFileSync(path.join(directDir,'.release-source/canonical-sha.txt'),'utf8')).trim();
+  if(marker!==expected)throw new Error('DIRECT_OS_SOURCE_MARKER_MISMATCH:'+marker);
+  execFileSync('npm',['ci'],{cwd:directDir,stdio:'inherit'});
+  execFileSync('npm',['run','build:wix-worker'],{
+    cwd:directDir,
+    stdio:'inherit',
+    env:{...process.env,MUNDO_RUNTIME_SOURCE_SHA:expected,MUNDO_RUNTIME_ENV:'wix-qa'}
+  });
+  OS_DIR=directDir;
+  GABI_DIR=path.join(OS_DIR,'radar-gabi-site');
+  SOURCE_MARKER=path.join(OS_DIR,'.release-source/canonical-sha.txt');
+  ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
+  console.log('DIRECT_OS_SNAPSHOT_PASS '+JSON.stringify({ref,expected}));
 }
 function canonicalSourceSha(){
   const sha=String(fs.readFileSync(SOURCE_MARKER,'utf8')).trim();
@@ -131,6 +153,7 @@ async function ensureWixAuth(){
   return {authMode:'device_code',authAlias:'device_code'};
 }
 async function releaseLive(){
+  activateDirectOsSnapshot();
   const sourceSha=prepareRelease();
   state={...state,phase:'AUTH',sourceSha};
   const auth=await ensureWixAuth();
