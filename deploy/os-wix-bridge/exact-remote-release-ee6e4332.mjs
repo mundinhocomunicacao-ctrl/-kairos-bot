@@ -1,7 +1,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import {execFileSync,spawnSync} from 'node:child_process';
+import {execFileSync,spawnSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const SOURCE_SHA='e14d631e53c26bcba36457adfa670037fb192a70';
@@ -22,6 +22,13 @@ const state={phase:'BOOT',ok:false,released:false,sourceSha:SOURCE_SHA,mirrorSha
 
 function sh(cmd,args,cwd=ROOT,env={}){
   return String(execFileSync(cmd,args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{...process.env,...env}})||'').trim();
+}
+function runAsync(cmd,args,{cwd=ROOT,env={}}={}){
+  return new Promise((resolve,reject)=>{
+    const p=spawn(cmd,args,{cwd,env:{...process.env,...env},stdio:'inherit'});
+    p.on('error',reject);
+    p.on('close',code=>code===0?resolve():reject(new Error(cmd+' exit '+code)));
+  });
 }
 function assertLock(){
   const lock=JSON.parse(fs.readFileSync(LOCK,'utf8'));
@@ -50,14 +57,10 @@ function assertSource(){
   state.tests.push({gate:'source',status:'PASS'});
   console.log('SOURCE_EXACT_SHA_PASS '+SOURCE_SHA+' mirror='+MIRROR_SHA);
 }
-function build(){
+async function build(){
   state.phase='BUILD';
-  execFileSync('npm',['ci','--include=dev'],{cwd:OS_DIR,stdio:'inherit'});
-  execFileSync('npm',['run','build:wix-worker'],{
-    cwd:OS_DIR,
-    stdio:'inherit',
-    env:{...process.env,MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live'}
-  });
+  await runAsync('npm',['ci','--include=dev'],{cwd:OS_DIR});
+  await runAsync('npm',['run','build:wix-worker'],{cwd:OS_DIR,env:{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live'}});
   const entry=fs.readFileSync(path.join(OS_DIR,'dist/wix-server/entry.mjs'),'utf8');
   if(!entry.includes('MUNDO_RUNTIME_SOURCE_SHA:'+JSON.stringify(SOURCE_SHA))) throw new Error('ARTIFACT_RUNTIME_SHA_MISMATCH');
   if(!entry.includes('MUNDO_RUNTIME_ENV:'+JSON.stringify('wix-live'))) throw new Error('ARTIFACT_RUNTIME_ENV_MISMATCH');
@@ -68,11 +71,11 @@ function build(){
   state.tests.push({gate:'build',status:'PASS'});
   console.log('WIX_LIVE_BUILD_PASS '+SOURCE_SHA);
 }
-function auth(){
+async function auth(){
   state.phase='AUTH';
   const apiKey=String(process.env.WIX_OS_API_KEY||process.env.WIX_MUNDO_API_KEY||process.env.WIX_API_KEY||'').trim();
   if(apiKey){
-    execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',apiKey],{cwd:REL,stdio:'inherit',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}});
+    await runAsync('npx',['-y','@wix/cli@latest','login','--api-key',apiKey],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
     console.log('WIX_API_KEY_AUTH_PASS');
     return;
   }
@@ -100,10 +103,10 @@ async function main(){
   try{
     assertLock();
     assertSource();
-    build();
-    auth();
+    await build();
+    await auth();
     state.phase='RELEASE';
-    execFileSync('npx',['-y','@wix/cli@latest','release'],{cwd:REL,stdio:'inherit',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}});
+    await runAsync('npx',['-y','@wix/cli@latest','release'],{cwd:REL,env:{CI:'1',AI_AGENT:'wix-headless-skill'}});
     console.log('WIX_RELEASE_DISPATCHED '+SOURCE_SHA);
     state.phase='READBACK';
     state.live=await prove(LIVE_HOST,'LIVE');
