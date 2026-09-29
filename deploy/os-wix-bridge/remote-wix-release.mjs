@@ -1,7 +1,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import {execFileSync} from 'node:child_process';
+import {execFileSync,spawnSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const ROOT=process.cwd();
@@ -54,27 +54,63 @@ function prepareRelease(){
   },null,2));
   return sha;
 }
-function ensureWixAuth(){
+async function ensureWixAuth(){
   try{
-    const whoami=run('npx',['-y','@wix/cli@latest','whoami'],RELEASE_DIR,{CI:'1',AI_AGENT:'wix-headless-skill'});
-    if(whoami){
+    const who=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{
+      cwd:RELEASE_DIR,encoding:'utf8',env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'},timeout:30000
+    });
+    if(who.status===0&&String(who.stdout||'').trim()){
       console.log('WIX_OS_EXISTING_SESSION_PASS');
       return {authMode:'existing_session',authAlias:'existing_session'};
     }
   }catch{}
   const auth=wixApiKeyFromEnv();
-  if(!auth)throw new Error('WIX_OS_AUTH_UNAVAILABLE');
-  execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
-    cwd:RELEASE_DIR,
-    stdio:'inherit',
-    env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+  if(auth){
+    execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
+      cwd:RELEASE_DIR,
+      stdio:'inherit',
+      env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
+    });
+    console.log('WIX_OS_API_KEY_AUTH_PASS '+auth.alias);
+    return {authMode:'api_key',authAlias:auth.alias};
+  }
+  await new Promise((resolve,reject)=>{
+    const p=spawn('npx',['-y','@wix/cli@latest','login'],{
+      cwd:RELEASE_DIR,
+      env:{...process.env,AI_AGENT:'wix-headless-skill'},
+      stdio:['ignore','pipe','pipe']
+    });
+    let buffer='';
+    const scan=(chunk)=>{
+      const s=String(chunk); process.stdout.write(s); buffer+=s;
+      for(const line of buffer.split('\n')){
+        try{
+          const e=JSON.parse(line.trim());
+          if(e.event==='awaiting_user'){
+            state={...state,phase:'AWAITING_WIX_AUTH',userCode:e.userCode||null,verificationUri:e.verificationUri||null,authExpiresInSeconds:e.expiresInSeconds||null};
+            console.log('WIX_OS_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:state.authExpiresInSeconds}));
+          }
+        }catch{}
+      }
+    };
+    p.stdout.on('data',scan);
+    p.stderr.on('data',d=>process.stderr.write(d));
+    p.on('error',reject);
+    p.on('close',code=>code===0?resolve():reject(new Error('wix login exit '+code)));
   });
-  console.log('WIX_OS_API_KEY_AUTH_PASS '+auth.alias);
-  return {authMode:'api_key',authAlias:auth.alias};
+  const after=spawnSync('npx',['-y','@wix/cli@latest','whoami'],{
+    cwd:RELEASE_DIR,encoding:'utf8',env:{...process.env,AI_AGENT:'wix-headless-skill'},timeout:30000
+  });
+  if(after.status!==0)throw new Error('WIX_AUTH_FAILED_AFTER_DEVICE_LOGIN');
+  state={...state,userCode:null,verificationUri:null,authExpiresInSeconds:null};
+  console.log('WIX_DEVICE_AUTH_PASS');
+  return {authMode:'device_code',authAlias:'device_code'};
 }
-function releaseLive(){
+async function releaseLive(){
   const sourceSha=prepareRelease();
-  const auth=ensureWixAuth();
+  state={...state,phase:'AUTH',sourceSha};
+  const auth=await ensureWixAuth();
+  state={...state,phase:'RELEASE',authMode:auth.authMode,authAlias:auth.authAlias};
   execFileSync('npx',['-y','@wix/cli@latest','release'],{
     cwd:RELEASE_DIR,
     stdio:'inherit',
@@ -96,10 +132,10 @@ function releaseLive(){
 }
 
 let state={phase:'BOOTING',ok:false,released:false};
-function boot(){
-  try{state=releaseLive();}
+async function boot(){
+  try{state=await releaseLive();}
   catch(error){
-    state={phase:'EXECUTOR_ERROR',ok:false,released:false,error:String(error?.message||error)};
+    state={...state,phase:'EXECUTOR_ERROR',ok:false,released:false,error:String(error?.message||error)};
     console.error('EXECUTOR_ERROR '+JSON.stringify(state));
   }
 }
