@@ -5,30 +5,34 @@ import os from 'node:os';
 import {spawnSync} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const state={done:false,error:null};
+const state={done:false,error:null,excerpts:[]};
 function log(s){console.log(String(s))}
+function walk(p,out=[]){
+  for(const ent of fs.readdirSync(p,{withFileTypes:true})){
+    const full=path.join(p,ent.name);
+    if(ent.isDirectory()) walk(full,out);
+    else if(ent.name.endsWith('.js')) out.push(full);
+  }
+  return out;
+}
 try{
   const dir=path.join(os.tmpdir(),'wix-cli-inspect');
   fs.rmSync(dir,{recursive:true,force:true});
   const n=spawnSync('npm',['install','--prefix',dir,'@wix/cli@latest','--no-audit','--no-fund'],{encoding:'utf8',timeout:180000});
   if(n.status!==0) throw new Error('npm install failed '+n.stderr);
   const root=path.join(dir,'node_modules','@wix','cli');
-  function findFile(p,name){
-    for(const ent of fs.readdirSync(p,{withFileTypes:true})){
-      const full=path.join(p,ent.name);
-      if(ent.isDirectory()){const f=findFile(full,name);if(f)return f}
-      else if(ent.name===name)return full;
+  const files=walk(root);
+  const needles=['updateManifestWithBackendWorker','createComponentsOverride','modifiedComponents','backendWorker'];
+  for(const file of files){
+    const content=fs.readFileSync(file,'utf8');
+    for(const needle of needles){
+      let p=content.indexOf(needle);
+      if(p>=0){
+        const excerpt=content.slice(Math.max(0,p-7000),Math.min(content.length,p+15000));
+        state.excerpts.push({file,needle,excerpt});
+        log('WIX_SOURCE_MATCH '+needle+' '+file);
+      }
     }
-    return null;
-  }
-  const file=findFile(root,'chunk-D7ORRBCE.js');
-  if(!file) throw new Error('chunk-D7ORRBCE.js missing under '+root);
-  log('WIX_OVERRIDE_CHUNK '+file);
-  const lines=fs.readFileSync(file,'utf8').split(/\r?\n/);
-  const ranges=[[5188,5248],[2160,2185],[1380,1410],[1735,1785]];
-  for(const [a,b] of ranges){
-    log('WIX_OVERRIDE_SOURCE_RANGE '+a+'-'+b);
-    for(let i=a;i<=b&&i<=lines.length;i++) log(String(i).padStart(5,' ')+' '+lines[i-1]);
   }
   state.done=true;
 }catch(e){state.error=String(e?.stack||e);console.error(state.error)}
