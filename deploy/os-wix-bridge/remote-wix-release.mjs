@@ -25,7 +25,14 @@ function wixApiKeyFromEnv(){
 function run(bin,args,cwd,extraEnv={}){
   return String(execFileSync(bin,args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{...process.env,...extraEnv}})||'').trim();
 }
-function activateOverlaySnapshot(){
+function runAsync(bin,args,cwd,extraEnv={}){
+  return new Promise((resolve,reject)=>{
+    const p=spawn(bin,args,{cwd,env:{...process.env,...extraEnv},stdio:['ignore','inherit','inherit']});
+    p.on('error',reject);
+    p.on('close',code=>code===0?resolve():reject(new Error(bin+' exit '+code)));
+  });
+}
+async function activateOverlaySnapshot(){
   if(RELEASE_TARGET!=='OS')return;
   const expected='77a5d67f2ac5e9fd7b884f726d020cc9b2d6de99';
   const overlayDir=path.join(ROOT,'deploy','os-wix-bridge','os-overlay');
@@ -36,11 +43,7 @@ function activateOverlaySnapshot(){
   const marker=String(fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8')).trim();
   if(marker!==expected)throw new Error('OS_RELEASE_OVERLAY_MARKER_MISMATCH:'+marker);
   console.log('OS_RELEASE_OVERLAY_BUILD_START '+expected);
-  execFileSync('npm',['run','build:wix-worker'],{
-    cwd:OS_DIR,
-    stdio:'inherit',
-    env:{...process.env,MUNDO_RUNTIME_SOURCE_SHA:expected,MUNDO_RUNTIME_ENV:'wix-qa'}
-  });
+  await runAsync('npm',['run','build:wix-worker'],OS_DIR,{MUNDO_RUNTIME_SOURCE_SHA:expected,MUNDO_RUNTIME_ENV:'wix-qa'});
   console.log('OS_RELEASE_OVERLAY_PASS '+JSON.stringify({expected}));
 }
 function canonicalSourceSha(){
@@ -149,7 +152,7 @@ async function ensureWixAuth(){
   return {authMode:'device_code',authAlias:'device_code'};
 }
 async function releaseLive(){
-  activateOverlaySnapshot();
+  await activateOverlaySnapshot();
   const sourceSha=prepareRelease();
   state={...state,phase:'AUTH',sourceSha};
   const auth=await ensureWixAuth();
