@@ -1,5 +1,8 @@
+const osReleaseLocked=String(process.env.OS_RELEASE_LOCK||'').trim()==='1';
 const target=String(process.env.RELEASE_TARGET||'').trim();
-if(target==='gabi-radar-live-readback'){
+if(osReleaseLocked){
+  await import('./exact-remote-release-ee6e4332-os.mjs');
+}else if(target==='gabi-radar-live-readback'){
   await import('../gabi-radar-official-release/live-readback.mjs');
 }else if(target==='gabi-wix-cli-introspect'){
   await import('../gabi-radar-official-release/wix-cli-introspect.mjs');
