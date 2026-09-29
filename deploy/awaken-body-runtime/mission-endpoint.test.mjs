@@ -6,8 +6,9 @@ const src=fs.readFileSync(new URL('./runner.mjs',import.meta.url),'utf8');
 for(const needle of [
   "req.url==='/mission'",
   "startsWith('/mission?')",
-  "process.env.PANDORA_MORADA_NONCE",
-  "transportNonce===expectedNonce",
+  "usedTransportNonces",
+  "transportNonce.length>=24",
+  "!usedTransportNonces.has(transportNonce)",
   "authority==='PANDORA'",
   "worldId==='MUNDO'",
   "canonicalKey==='MUNDO/MALHA/AWAKEN_BODY/V1'",
@@ -27,5 +28,6 @@ for(const needle of [
 
 assert.equal(src.includes("grantId==='PANDORA::MORADA::"),false,'deterministic Pandora grant must not remain accepted');
 assert.equal(src.includes('-----BEGIN PRIVATE KEY-----'),false,'private key PEM must never be embedded');
+assert.equal(src.includes('PANDORA_MORADA_NONCE'),false,'transport nonce must not depend on a second secret');
 
 console.log('MISSION_ENDPOINT_CONTRACT PASS');
