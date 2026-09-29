@@ -115,5 +115,4 @@ async function main(){
     console.error('WIX_EXACT_RELEASE_ERROR '+state.error);
   }
 }
-http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>console.log('WIX_E14D_EXACT_RELEASE_CONTROLLER_READY'));
-void main();
+http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(state,null,2))}).listen(PORT,'0.0.0.0',()=>{console.log('WIX_E14D_EXACT_RELEASE_CONTROLLER_READY');void main();});
