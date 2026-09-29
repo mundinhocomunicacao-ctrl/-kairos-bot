@@ -21,6 +21,7 @@ for(const needle of [
   "ed25519",
   "https://os.mundinhocomunicacao.com/api/diva-gateway/execute",
   "PANDORA_SIGNED_GATEWAY_VERIFIED",
+  "PANDORA_AUTO_EXECUTE_ON_BOOT",
   "buildAngelMission",
   "minimumAngels:7",
   "MORADA_PANDORA_MISSION_VERIFIED"
