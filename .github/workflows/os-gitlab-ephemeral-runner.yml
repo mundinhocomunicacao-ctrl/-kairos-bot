@@ -241,3 +241,5 @@ jobs:
           fi
           rm -rf /tmp/os-runner
           echo "EPHEMERAL_GITLAB_RUNNER=CLEANED"
+
+# OS_FULL_ROLLOUT_QA_TRIGGER_20260929
