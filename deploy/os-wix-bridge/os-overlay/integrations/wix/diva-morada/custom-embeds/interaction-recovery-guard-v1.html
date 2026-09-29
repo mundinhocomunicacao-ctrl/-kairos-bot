@@ -84,21 +84,21 @@ function repair(){
  ROOT.setAttribute('data-morada-interaction-guard','ready');
  ROOT.style.setProperty('pointer-events','auto','important');
  if(document.body)document.body.style.setProperty('pointer-events','auto','important');
- const gate=ensureGate(),site=document.getElementById('SITE_CONTAINER');
+ const gateEl=ensureGate(),site=document.getElementById('SITE_CONTAINER');
  if(site){site.style.setProperty('pointer-events','auto','important');site.removeAttribute('aria-hidden')}
  document.getElementById('diva-v2')?.remove();
- const gateState=state(),authorized=gateState==='authorized',loginOpen=ROOT.getAttribute('data-diva-native-login')==='open',dv=core();
- if(gate){
-   gate.setAttribute('data-google-ready',String(bridgeReady()));
+ const gate=state(),authorized=gate==='authorized',loginOpen=ROOT.getAttribute('data-diva-native-login')==='open',dv=core();
+ if(gateEl){
+   gateEl.setAttribute('data-google-ready',String(bridgeReady()));
    if(!loginOpen){
-     if(gateState==='checking')status(bridgeReady()?'Verificando sua conta...':'Entre com Google para validar seu acesso.');
-     else if(gateState==='guest')status('Entre com uma conta Google autorizada da Mundinho.');
-     else if(gateState==='denied')status('Esta conta nao tem acesso a Morada.');
+     if(gate==='checking')status(bridgeReady()?'Verificando sua conta...':'Entre com Google para validar seu acesso.');
+     else if(gate==='guest')status('Entre com uma conta Google autorizada da Mundinho.');
+     else if(gate==='denied')status('Esta conta nao tem acesso a Morada.');
    }
  }
  if(dv){
    dv.style.setProperty('visibility',authorized&&!loginOpen?'visible':'hidden','important');
-   dv.style.setProperty('z-index',loginOpen?'1':(authorized?'2147483000':'2147482000'),'important');
+   dv.style.setProperty('z-index',loginOpen?'1':(gate==='authorized'?'2147483000':'2147482000'),'important');
    dv.style.setProperty('pointer-events',authorized&&!loginOpen?'auto':'none','important');
  }
  const malha=document.getElementById('diva-malha-room-v11-root');
