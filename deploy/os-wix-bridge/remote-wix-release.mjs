@@ -180,6 +180,11 @@ async function releaseLive(){
 
 let state={phase:'BOOTING',ok:false,released:false};
 async function boot(){
+  if(String(process.env.MUNDO_PART1_QA_LOCK||'').trim()==='1'){
+    state={...state,phase:'PART1_QA_LOCKED',ok:true,released:false,target:'QA_LOCK'};
+    console.log('WIX_RELEASE_PART1_QA_LOCKED');
+    return;
+  }
   try{state=await releaseLive();}
   catch(error){
     state={...state,phase:'EXECUTOR_ERROR',ok:false,released:false,error:String(error?.message||error)};
