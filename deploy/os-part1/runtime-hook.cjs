@@ -10,7 +10,6 @@ const cmd=[
   'git submodule update --init --recursive --force',
   'echo PART1_RUNTIME_OS_SHA=$(git -C os rev-parse HEAD)',
   'cd os',
-  'npm ci',
   'npm run build:vinext',
   'exec ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --port '+port+' --ip 0.0.0.0'
 ].join(' && ');
