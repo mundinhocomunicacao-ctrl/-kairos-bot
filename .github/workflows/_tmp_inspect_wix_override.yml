@@ -9,17 +9,17 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect modified component conversion
+      - name: Resolve exact Wix internal URLs
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
-          F="$TMP/node_modules/@wix/cli/build/chunk-WWWORPQF.js"
-          echo '=== MODIFIED COMPONENT CONVERSION ==='
-          grep -n 'toModifiedComponents' "$F" | head -20
-          for n in $(grep -n 'toModifiedComponents' "$F" | cut -d: -f1 | head -20); do
-            s=$((n-80)); [ $s -lt 1 ] && s=1; e=$((n+140)); sed -n "${s},${e}p" "$F"; echo '---';
-          done
-          echo '=== REQUEST DEFS ==='
-          sed -n '640,730p' "$F"
+          ROOT="$TMP/node_modules/@wix/cli/build"
+          F="$ROOT/chunk-WWWORPQF.js"
+          echo '=== CREATE OVERRIDE METADATA ==='
+          sed -n '1378,1402p' "$F"
+          echo '=== OVERRIDE RESOLVER MAPPING ==='
+          sed -n '1000,1048p' "$F"
+          echo '=== KNOWN WORKING APP-VERSION RESOLVER ==='
+          grep -R -n -B35 -A55 'get-latest-production' "$ROOT" --include='*.js' | head -500 || true
