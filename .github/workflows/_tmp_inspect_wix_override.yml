@@ -1,4 +1,4 @@
-name: TMP Inspect Wix Override Contract
+name: TMP Radar Public Probe
 on:
   push:
     branches:
@@ -6,15 +6,29 @@ on:
     paths:
       - '.github/workflows/_tmp_inspect_wix_override.yml'
 jobs:
-  inspect:
+  probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve Site releaseAppId
+      - name: Probe Radar public endpoints
         shell: bash
         run: |
           set -euo pipefail
-          TMP="$(mktemp -d)"
-          npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
-          ROOT="$TMP/node_modules/@wix/cli/build"
-          echo '=== releaseAppId assignments ==='
-          grep -R -n -B80 -A120 'releaseAppId' "$ROOT" --include='*.js' | head -2400 || true
+          probe() {
+            url="$1"
+            name="$2"
+            echo "=== $name ==="
+            rm -f /tmp/h /tmp/b
+            code=$(curl -sS -L --max-time 30 -H 'Cache-Control: no-cache' -D /tmp/h -o /tmp/b -w '%{http_code}' "$url" || true)
+            echo "URL=$url"
+            echo "HTTP=$code"
+            echo "FINAL_URL=$(curl -sS -L --max-time 30 -o /dev/null -w '%{url_effective}' "$url" || true)"
+            echo "CONTENT_TYPE=$(grep -i '^content-type:' /tmp/h | tail -1 | tr -d '\r' || true)"
+            echo "SERVER=$(grep -i '^server:' /tmp/h | tail -1 | tr -d '\r' || true)"
+            echo "BYTES=$(wc -c < /tmp/b 2>/dev/null || echo 0)"
+            echo "SHA256=$(sha256sum /tmp/b 2>/dev/null | awk '{print $1}' || true)"
+            echo "TITLE=$(grep -o -i '<title[^>]*>[^<]*</title>' /tmp/b 2>/dev/null | head -1 | sed -E 's/<[^>]+>//g' || true)"
+            echo "BODY_HEAD=$(head -c 240 /tmp/b 2>/dev/null | tr '\n' ' ' || true)"
+          }
+          probe 'https://radar.gabi.mundinhocomunicacao.com/' 'CUSTOM_DOMAIN_ROOT'
+          probe 'https://radar.gabi.mundinhocomunicacao.com/os' 'CUSTOM_DOMAIN_OS'
+          probe 'https://instant-dugewxsuwtwa-mundinhocomunicaca-1412.wix-site-host.com/' 'RELEASE_BASE_ROOT'
