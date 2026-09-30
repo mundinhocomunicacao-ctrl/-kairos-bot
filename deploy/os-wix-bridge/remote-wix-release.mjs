@@ -43,6 +43,22 @@ function verifySource(){
   console.log('QA_SOURCE_PARITY_PASS '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,marker}));
 }
 async function startPrebuiltWixWorker(port,childEnv){
+  const wixAliasCandidates=[
+    ['WIX_MUNDO_API_KEY',process.env.WIX_MUNDO_API_KEY],
+    ['WIX_OS_API_KEY',process.env.WIX_OS_API_KEY],
+    ['WIX_API_KEY',process.env.WIX_API_KEY]
+  ];
+  const selectedWixAlias=wixAliasCandidates.find(([,value])=>String(value||'').trim());
+  if(selectedWixAlias){
+    process.env.WIX_MUNDO_API_KEY=String(selectedWixAlias[1]).trim();
+    childEnv={...childEnv,WIX_MUNDO_API_KEY:process.env.WIX_MUNDO_API_KEY};
+    console.log('QA_WIX_DIRECT_AUTH_ALIAS '+JSON.stringify({configured:true,alias:selectedWixAlias[0]}));
+  }else{
+    console.log('QA_WIX_DIRECT_AUTH_ALIAS '+JSON.stringify({
+      configured:false,
+      aliases:wixAliasCandidates.map(([alias,value])=>({alias,present:Boolean(String(value||'').trim())}))
+    }));
+  }
   const entryPath=path.join(OS_DIR,'dist','wix-server','entry.mjs');
   if(!fs.existsSync(entryPath))throw new Error('QA_PREBUILT_WIX_WORKER_MISSING:'+entryPath);
   const loaded=await import(pathToFileURL(entryPath).href+'?qa='+Date.now());
