@@ -15,37 +15,24 @@
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-PAGE01-2af44107-20260930-USER-AUTHORIZED",
-    "status": "APPROVED",
-    "sourceSha": "2af4410775f65fefdfc7752eaaf5b24281db6bb7",
-    "mirrorSha": "d68bca017fe74733816e8a1171a7484c40984865",
-    "releaseId": "wix-live-2af44107",
+    "requestId": "REL-PAGE01-11000119-20260930-USER-AUTHORIZED",
+    "status": "PLANEJADO",
+    "sourceSha": "110001195572b7af5e0f86cca6f510ea059c9f4f",
+    "mirrorSha": "00cb01375e787e12fd7b0eb03f16f09eb8e2a4f9",
+    "releaseId": "wix-live-11000119",
     "expectedCurrentLiveSourceSha": "2d69bae08b2dcaf35ac6bf61ffdf77296e1b0940",
     "expectedCurrentLiveReleaseId": "wix-qa-2d69bae0",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Targeted Page01 source contract and private artifact rail QA PASS; prior unchanged UI/auth QAs inherited from ccde7087. Authenticated runtime verification remains pending. Two parser fixes verified by node --check and meaningful commercial fixture; independent spec review no material findings.",
-    "buildReceipt": "Render build-stage PASS 2026-09-30T09:28:22.725Z; exact mirror d68bca01; tracked checkout clean; runtime wix-live; artifact SHA256 a42f92d0b95142a5c4fc29ab8537fd18531ef6800fb20bc841e15de91e35d97b; 2024827 bytes. Unauthenticated /manifest returns 401.",
-    "visualReceipt": "LAST_HUMAN_APPROVED_VISUAL pink master ccde7087 preserved; coordination metadata only transported.",
+    "qaReceipt": "Targeted Page01 source contract and private artifact rail QA PASS; prior unchanged UI/auth QAs inherited from ccde7087. Authenticated runtime verification remains pending. Two parser fixes verified by node --check and meaningful commercial fixture; independent spec review no material findings. Latest main Radar file reconciled exactly; compilation pending.",
+    "buildReceipt": "Pending build-stage artifact for reconciled sovereign Radar delta. Full mirror tree parity PASS 1026 blobs and modes; marker identity checked separately.",
+    "visualReceipt": "Page01 approved pink body unchanged. Radar restored exactly from sovereign main e5ef6c6e4b6e9882db9ca3a5f9050e7edd8df09f.",
     "approvedByHuman": true,
     "approvedAt": "2026-09-30T02:00:10.812Z",
     "authorizationProvenance": "Active human instruction ROTA DA DIVA · OS PAGE-BY-PAGE · EXECUÇÃO CONTÍNUA",
     "page01LiveVerified": false,
-    "artifactManifest": {
-      "sourceSha": "2af4410775f65fefdfc7752eaaf5b24281db6bb7",
-      "mirrorSha": "d68bca017fe74733816e8a1171a7484c40984865",
-      "checkout": {
-        "mirrorSha": "d68bca017fe74733816e8a1171a7484c40984865",
-        "trackedCheckoutClean": true
-      },
-      "runtimeEnv": "wix-live",
-      "artifactSha256": "a42f92d0b95142a5c4fc29ab8537fd18531ef6800fb20bc841e15de91e35d97b",
-      "artifactBytes": 2024827,
-      "builtAt": "2026-09-30T09:28:22.725Z",
-      "status": "IMPLEMENTADO",
-      "page01LiveVerified": false
-    }
+    "artifactManifest": null
   },
   "requiredRequestFields": [
     "requestId",
@@ -128,6 +115,43 @@
         "page01LiveVerified": false
       },
       "reason": "Minimal syntax fixes after compiler evidence; no live release of prior tuple."
+    },
+    {
+      "at": "2026-09-30T09:49:47.539Z",
+      "pendingReleaseRequest": {
+        "requestId": "REL-PAGE01-2af44107-20260930-USER-AUTHORIZED",
+        "status": "APPROVED",
+        "sourceSha": "2af4410775f65fefdfc7752eaaf5b24281db6bb7",
+        "mirrorSha": "d68bca017fe74733816e8a1171a7484c40984865",
+        "releaseId": "wix-live-2af44107",
+        "expectedCurrentLiveSourceSha": "2d69bae08b2dcaf35ac6bf61ffdf77296e1b0940",
+        "expectedCurrentLiveReleaseId": "wix-qa-2d69bae0",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "Targeted Page01 source contract and private artifact rail QA PASS; prior unchanged UI/auth QAs inherited from ccde7087. Authenticated runtime verification remains pending. Two parser fixes verified by node --check and meaningful commercial fixture; independent spec review no material findings.",
+        "buildReceipt": "Render build-stage PASS 2026-09-30T09:28:22.725Z; exact mirror d68bca01; tracked checkout clean; runtime wix-live; artifact SHA256 a42f92d0b95142a5c4fc29ab8537fd18531ef6800fb20bc841e15de91e35d97b; 2024827 bytes. Unauthenticated /manifest returns 401.",
+        "visualReceipt": "LAST_HUMAN_APPROVED_VISUAL pink master ccde7087 preserved; coordination metadata only transported.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-09-30T02:00:10.812Z",
+        "authorizationProvenance": "Active human instruction ROTA DA DIVA · OS PAGE-BY-PAGE · EXECUÇÃO CONTÍNUA",
+        "page01LiveVerified": false,
+        "artifactManifest": {
+          "sourceSha": "2af4410775f65fefdfc7752eaaf5b24281db6bb7",
+          "mirrorSha": "d68bca017fe74733816e8a1171a7484c40984865",
+          "checkout": {
+            "mirrorSha": "d68bca017fe74733816e8a1171a7484c40984865",
+            "trackedCheckoutClean": true
+          },
+          "runtimeEnv": "wix-live",
+          "artifactSha256": "a42f92d0b95142a5c4fc29ab8537fd18531ef6800fb20bc841e15de91e35d97b",
+          "artifactBytes": 2024827,
+          "builtAt": "2026-09-30T09:28:22.725Z",
+          "status": "IMPLEMENTADO",
+          "page01LiveVerified": false
+        }
+      },
+      "reason": "Sovereign main advanced to e5ef6c6e (Radar restoration); reconciled into pink candidate 11000119. Previous artifact is superseded for release."
     }
   ]
 }
