@@ -9,19 +9,16 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect exact Wix Site topology contract
+      - name: Inspect exact Wix override client contract
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
           ROOT="$TMP/node_modules/@wix/cli/build"
-          F="$ROOT/chunk-WWWORPQF.js"
-          echo '=== SYMBOL LOCATIONS ==='
-          grep -n 'useUpdateDeploymentTopologyForSite\|updateDeploymentTopologyForSite\|deployment-topology\|versionOverrideId' "$F" || true
-          echo '=== FILE CONTEXT ==='
-          grep -n -B120 -A220 'useUpdateDeploymentTopologyForSite' "$F" || true
-          echo '=== TOPOLOGY CONTEXT ==='
-          grep -n -B120 -A220 'versionOverrideId' "$F" || true
-          echo '=== RELEASE API CONTRACT ==='
-          grep -R -n -B120 -A180 'function release(payload)\|methodFqn:.*Release\|releaseBaseUrl' "$ROOT/ReleaseCommand-"*.js | head -1500 || true
+          echo '=== SYMBOLS ==='
+          grep -R -n 'createComponentsOverride\|updateOverrideWithNoSideEffects\|DevCenterOverridesClient' "$ROOT" --include='*.js' | head -200 || true
+          echo '=== CREATE OVERRIDE CONTEXT ==='
+          grep -R -n -B100 -A220 'createComponentsOverride' "$ROOT" --include='*.js' | head -1800 || true
+          echo '=== OVERRIDE HTTP CONTRACTS ==='
+          grep -R -n -B100 -A220 'components-override\|components-overrides\|override-with-no-side-effects\|modifiedComponents' "$ROOT" --include='*.js' | head -2200 || true
