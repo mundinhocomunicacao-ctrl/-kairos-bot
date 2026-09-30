@@ -7,7 +7,7 @@ const PORT=Number(process.env.PORT||10000);
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const SOURCE_SHA='9f0048f6a0171d537fbdd3614d989f39c1304f3f';
-const MIRROR_SHA='47669401f64d84ee4c1fdce987c01e12bf629d89';
+const MIRROR_SHA='495d472a32616479943c675d3bc682b41db8669a';
 const QA_SECRET='mundinho-mr515-render-qa-session-20260930-9f0048f6';
 const QA_EMAIL='mundinhocomunicacao@gmail.com';
 
