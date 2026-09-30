@@ -9,17 +9,12 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve exact Wix internal URLs
+      - name: Resolve Site releaseAppId
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
           ROOT="$TMP/node_modules/@wix/cli/build"
-          F="$ROOT/chunk-WWWORPQF.js"
-          echo '=== CREATE OVERRIDE METADATA ==='
-          sed -n '1378,1402p' "$F"
-          echo '=== OVERRIDE RESOLVER MAPPING ==='
-          sed -n '1000,1048p' "$F"
-          echo '=== KNOWN WORKING APP-VERSION RESOLVER ==='
-          grep -R -n -B35 -A55 'get-latest-production' "$ROOT" --include='*.js' | head -500 || true
+          echo '=== releaseAppId assignments ==='
+          grep -R -n -B80 -A120 'releaseAppId' "$ROOT" --include='*.js' | head -2400 || true
