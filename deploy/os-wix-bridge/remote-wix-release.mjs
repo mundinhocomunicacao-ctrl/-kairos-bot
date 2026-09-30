@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import http from 'node:http';
+import {pathToFileURL} from 'node:url';
 import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
@@ -41,6 +42,37 @@ function verifySource(){
   }
   console.log('QA_SOURCE_PARITY_PASS '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,marker}));
 }
+async function startPrebuiltWixWorker(port,childEnv){
+  const entryPath=path.join(OS_DIR,'dist','wix-server','entry.mjs');
+  if(!fs.existsSync(entryPath))throw new Error('QA_PREBUILT_WIX_WORKER_MISSING:'+entryPath);
+  const loaded=await import(pathToFileURL(entryPath).href+'?qa='+Date.now());
+  const worker=loaded?.default;
+  if(!worker||typeof worker.fetch!=='function')throw new Error('QA_PREBUILT_WIX_WORKER_INVALID');
+  const runtimeEnv={...process.env,...childEnv};
+  const ctx={waitUntil(promise){Promise.resolve(promise).catch(error=>console.error('QA_WAIT_UNTIL_ERROR '+String(error?.message||error)))},passThroughOnException(){}};
+  const server=http.createServer(async(req,res)=>{
+    try{
+      const chunks=[];
+      for await(const chunk of req)chunks.push(Buffer.from(chunk));
+      const body=chunks.length?Buffer.concat(chunks):null;
+      const init={method:req.method||'GET',headers:req.headers};
+      if(body&&body.length&&init.method!=='GET'&&init.method!=='HEAD')init.body=body;
+      const request=new Request('http://127.0.0.1:'+port+(req.url||'/'),init);
+      const response=await worker.fetch(request,runtimeEnv,ctx);
+      res.statusCode=response.status;
+      response.headers.forEach((value,key)=>res.setHeader(key,value));
+      res.end(Buffer.from(await response.arrayBuffer()));
+    }catch(error){
+      console.error('QA_WIX_WORKER_HTTP_ERROR '+String(error?.stack||error));
+      if(!res.headersSent)res.writeHead(500,{'content-type':'application/json'});
+      res.end(JSON.stringify({ok:false,error:'qa_wix_worker_http_error'}));
+    }
+  });
+  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(port,'0.0.0.0',resolve)});
+  console.log('QA_WIX_WORKER_PREBUILT_RUNTIME_READY '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,port}));
+  return server;
+}
+
 async function smoke(){
   const cookie='mundinho_session='+encodeURIComponent(sessionToken());
   let last=null;
@@ -112,22 +144,14 @@ async function main(){
   };
   await run('node',['scripts/qa-commercial-core-live-binding.mjs'],OS_DIR,childEnv);
   await run('node',['scripts/qa-google-login.mjs'],OS_DIR,childEnv);
-  const prebuiltWrangler=path.join(OS_DIR,'dist','server','wrangler.json');
   const prebuiltWorker=path.join(OS_DIR,'dist','wix-server','entry.mjs');
-  if(!fs.existsSync(prebuiltWrangler))throw new Error('QA_PREBUILT_VINEXT_MISSING:'+prebuiltWrangler);
   if(!fs.existsSync(prebuiltWorker))throw new Error('QA_PREBUILT_WIX_WORKER_MISSING:'+prebuiltWorker);
-  console.log('QA_VINEXT_PREBUILT_REUSE '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
+  console.log('QA_WIX_WORKER_PREBUILT_REUSE '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
 
   await new Promise(resolve=>bootstrap.close(resolve));
   console.log('QA_BOOTSTRAP_PORT_RELEASED '+PORT);
 
-  const app=spawn('npm',['run','start:vinext','--','--ip','0.0.0.0','--port',String(PORT)],{
-    cwd:OS_DIR,
-    env:{...process.env,...childEnv,PORT:String(PORT)},
-    stdio:['ignore','inherit','inherit']
-  });
-  app.on('error',error=>{console.error('QA_APP_SPAWN_ERROR '+String(error?.message||error));process.exit(1)});
-  app.on('close',code=>{console.error('QA_APP_EXIT '+code);process.exit(code||1)});
+  await startPrebuiltWixWorker(PORT,childEnv);
   await smoke();
 }
 main().catch(error=>{
