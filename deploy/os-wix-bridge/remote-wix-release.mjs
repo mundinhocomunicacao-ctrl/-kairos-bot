@@ -8,8 +8,8 @@ import {execFileSync,spawn} from 'node:child_process';
 const PORT=Number(process.env.PORT||10000);
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
-const SOURCE_SHA='9f0048f6a0171d537fbdd3614d989f39c1304f3f';
-const MIRROR_SHA='495d472a32616479943c675d3bc682b41db8669a';
+const SOURCE_SHA='30dbab743860b15a47479c2e57db5857e7561670';
+const MIRROR_SHA='7a952d3bde3396a1fdd687f8589cabd5fd97a530';
 const QA_SECRET='mundinho-mr515-render-qa-session-20260930-9f0048f6';
 const QA_EMAIL='mundinhocomunicacao@gmail.com';
 
