@@ -115,9 +115,11 @@ async function smoke(){
   for(let attempt=1;attempt<=45;attempt++){
     try{
       const response=await fetch('http://127.0.0.1:'+PORT+'/api/live-projection',{
-        headers:{cookie,'cache-control':'no-cache','x-qa-proof':'mr515'}
+        headers:{cookie,'cache-control':'no-cache','x-qa-proof':'mr515'},
+        signal:AbortSignal.timeout(8000)
       });
       const raw=await response.text();
+      console.log('QA_LIVE_PROJECTION_ATTEMPT '+JSON.stringify({attempt,status:response.status}));
       let data={};try{data=raw?JSON.parse(raw):{}}catch{}
       last={status:response.status,data};
       if(
