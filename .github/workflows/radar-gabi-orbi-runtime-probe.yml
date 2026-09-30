@@ -22,7 +22,7 @@ jobs:
           npm init -y >/dev/null 2>&1
           npm install playwright@latest --no-audit --no-fund >/dev/null
           npx playwright install chromium >/dev/null
-      - name: Inspect live Gabi ORBI
+      - name: Inspect live Gabi ORBI behavior
         shell: bash
         run: |
           set -euo pipefail
@@ -31,33 +31,67 @@ jobs:
           (async()=>{
             const browser=await chromium.launch({headless:true});
             const page=await browser.newPage({viewport:{width:1440,height:900}});
-            const logs=[];
-            page.on('console',m=>logs.push(m.type()+':'+m.text()));
-            const res=await page.goto('https://radar.gabi.mundinhocomunicacao.com/',{waitUntil:'networkidle',timeout:45000});
-            await page.click('[data-tab="studio"]'); await page.waitForTimeout(300); const data=await page.evaluate(()=>{
-              const orb=document.querySelector('#gabiDivaOrb');
-              const stage=document.querySelector('.gabiOrbPresence');
-              const core=document.querySelector('#gabiDivaOrb .divaOrbCore');
-              const halo=document.querySelector('#gabiDivaOrb .divaOrbHalo');
-              if(!orb)return {missing:true};
-              const r=orb.getBoundingClientRect();
-              const cr=core?.getBoundingClientRect();
-              const hr=halo?.getBoundingClientRect();
-              const os=getComputedStyle(orb),cs=core?getComputedStyle(core):null,hs=halo?getComputedStyle(halo):null;
-              return {
-                missing:false,
-                httpTitle:document.title,
-                orb:{x:r.x,y:r.y,w:r.width,h:r.height,display:os.display,opacity:os.opacity,visibility:os.visibility,className:orb.className,state:orb.dataset.state},
-                core:cr&&{x:cr.x,y:cr.y,w:cr.width,h:cr.height,background:cs.backgroundImage,boxShadow:cs.boxShadow,animation:cs.animationName},
-                halo:hr&&{x:hr.x,y:hr.y,w:hr.width,h:hr.height,background:hs.backgroundImage,animation:hs.animationName,transform:hs.transform},
-                stage:stage&&{state:stage.dataset.state,rect:(()=>{const q=stage.getBoundingClientRect();return {x:q.x,y:q.y,w:q.width,h:q.height}})()},
-                label:document.querySelector('#gabiStudioPresenceLabel')?.textContent,
-                menu:[...document.querySelectorAll('.gabiOrbiMenu button')].map(x=>({id:x.id,text:x.textContent,disabled:x.disabled}))
+            await page.addInitScript(()=>{
+              class FakeRecognition {
+                constructor(){this.lang='';this.interimResults=false;this.continuous=false;this.maxAlternatives=1}
+                start(){setTimeout(()=>this.onstart?.(),0)}
+                abort(){setTimeout(()=>this.onend?.(),0)}
+              }
+              window.SpeechRecognition=FakeRecognition;
+              window.webkitSpeechRecognition=FakeRecognition;
+              navigator.mediaDevices={getUserMedia:async()=>({getTracks:()=>[{stop(){}}]})};
+              window.SpeechSynthesisUtterance=function(text){this.text=text;this.lang='';this.rate=1;this.pitch=1;this.volume=1;this.voice=null};
+              const voices=[{name:'Google português do Brasil',lang:'pt-BR',localService:true}];
+              const synth={
+                speaking:false,
+                getVoices:()=>voices,
+                cancel(){this.speaking=false},
+                speak(u){this.speaking=true;setTimeout(()=>u.onstart?.(),0);setTimeout(()=>{this.speaking=false;u.onend?.()},220)}
               };
+              Object.defineProperty(window,'speechSynthesis',{value:synth,configurable:true});
             });
+            const res=await page.goto('https://radar.gabi.mundinhocomunicacao.com/',{waitUntil:'networkidle',timeout:45000});
+            await page.click('[data-tab="studio"]');
+            await page.waitForTimeout(150);
+            const snap=async(label)=> {
+              const v=await page.evaluate(()=>{
+                const orb=document.querySelector('#gabiDivaOrb');
+                const stage=document.querySelector('.gabiOrbPresence');
+                const mic=document.querySelector('#gabiStudioMicMute');
+                const stop=document.querySelector('#gabiStudioStop');
+                return {
+                  orbClass:orb?.className,
+                  orbState:orb?.dataset.state,
+                  stageState:stage?.dataset.state,
+                  label:document.querySelector('#gabiStudioPresenceLabel')?.textContent,
+                  micPressed:mic?.getAttribute('aria-pressed'),
+                  micText:mic?.textContent,
+                  stopDisabled:stop?.disabled,
+                  conversationOpen:typeof gabiStudioConversationOpen!=='undefined'?gabiStudioConversationOpen:null
+                };
+              });
+              console.log(label+'='+JSON.stringify(v));
+            };
             console.log('HTTP='+res.status());
-            console.log('ORBI='+JSON.stringify(data));
-            console.log('CONSOLE='+JSON.stringify(logs.slice(-30)));
+            await snap('IDLE');
+            await page.click('#gabiDivaOrb');
+            await page.waitForTimeout(80);
+            await snap('AFTER_ORB_CLICK');
+            await page.evaluate(()=>gabiStudioSpeak('Teste curto de voz natural.'));
+            await page.waitForTimeout(60);
+            await snap('DURING_SPEAK');
+            await page.click('#gabiDivaOrb');
+            await page.waitForTimeout(80);
+            await snap('AFTER_BARGE_IN');
+            await page.click('#gabiStudioMicMute');
+            await page.waitForTimeout(30);
+            await snap('MUTED');
+            await page.click('#gabiStudioMicMute');
+            await page.waitForTimeout(30);
+            await snap('UNMUTED');
+            await page.click('#gabiStudioStop');
+            await page.waitForTimeout(80);
+            await snap('AFTER_STOP');
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
