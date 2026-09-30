@@ -1,201 +1,117 @@
-import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import {execFileSync,spawnSync,spawn} from 'node:child_process';
+import crypto from 'node:crypto';
+import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const ROOT=process.cwd();
-let OS_DIR=path.join(ROOT,'os');
-let GABI_DIR=path.join(OS_DIR,'radar-gabi-site');
-const RELEASE_TARGET=String(process.env.WIX_RELEASE_TARGET||'OS').trim().toUpperCase();
-let SOURCE_MARKER=path.join(OS_DIR,'.release-source/canonical-sha.txt');
-let ENTRY=path.join(OS_DIR,'dist/wix-server/entry.mjs');
-const RELEASE_DIR=path.join(ROOT,'.wix-live-release');
+const OS_DIR=path.join(ROOT,'os');
+const SOURCE_SHA='9f0048f6a0171d537fbdd3614d989f39c1304f3f';
+const MIRROR_SHA='47669401f64d84ee4c1fdce987c01e12bf629d89';
+const QA_SECRET='mundinho-mr515-render-qa-session-20260930-9f0048f6';
+const QA_EMAIL='mundinhocomunicacao@gmail.com';
 
-const MUNDINHO_WIX_LIVE_SITE_ID=String(process.env.MUNDINHO_WIX_LIVE_SITE_ID||'c80689f2-6627-45fa-a264-4ab2863ba306').trim();
-const MUNDINHO_WIX_LIVE_APP_ID=String(process.env.MUNDINHO_WIX_LIVE_APP_ID||'79eedd41-5ca6-4940-925a-e95e6f3c570e').trim();
-
-function wixApiKeyFromEnv(){
-  for(const alias of ['WIX_MUNDO_API_KEY','WIX_API_KEY','WIX_CLI_API_KEY','WIX_RELEASE_API_KEY','MUNDINHO_WIX_API_KEY','WIX_OS_API_KEY']){
-    const value=String(process.env[alias]||'').trim();
-    if(value)return {alias,value};
-  }
-  return null;
+function sh(bin,args,cwd=ROOT,env={}){
+  return String(execFileSync(bin,args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{...process.env,...env}})||'').trim();
 }
-function run(bin,args,cwd,extraEnv={}){
-  return String(execFileSync(bin,args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{...process.env,...extraEnv}})||'').trim();
-}
-function runAsync(bin,args,cwd,extraEnv={}){
+function run(bin,args,cwd=ROOT,env={}){
   return new Promise((resolve,reject)=>{
-    const p=spawn(bin,args,{cwd,env:{...process.env,...extraEnv},stdio:['ignore','inherit','inherit']});
-    p.on('error',reject);
-    p.on('close',code=>code===0?resolve():reject(new Error(bin+' exit '+code)));
+    const child=spawn(bin,args,{cwd,env:{...process.env,...env},stdio:['ignore','inherit','inherit']});
+    child.on('error',reject);
+    child.on('close',code=>code===0?resolve():reject(new Error(bin+' '+args.join(' ')+' exit '+code)));
   });
 }
-async function activateOverlaySnapshot(){
-  if(RELEASE_TARGET!=='OS')return;
-  const expected='77a5d67f2ac5e9fd7b884f726d020cc9b2d6de99';
-  const overlayDir=path.join(ROOT,'deploy','os-wix-bridge','os-overlay');
-  if(!fs.existsSync(overlayDir))throw new Error('OS_RELEASE_OVERLAY_MISSING');
-  console.log('OS_RELEASE_OVERLAY_START '+expected);
-  fs.cpSync(overlayDir,OS_DIR,{recursive:true});
-  console.log('OS_RELEASE_OVERLAY_COPIED '+expected);
+function sessionToken(){
+  const body=Buffer.from(JSON.stringify({
+    email:QA_EMAIL,
+    exp:Date.now()+60*60*1000,
+    iat:Date.now(),
+    authMethod:'render-qa-mr515'
+  })).toString('base64url');
+  const sig=crypto.createHmac('sha256',QA_SECRET).update(body).digest('base64url');
+  return body+'.'+sig;
+}
+function verifySource(){
+  const head=sh('git',['rev-parse','HEAD'],OS_DIR);
   const marker=String(fs.readFileSync(path.join(OS_DIR,'.release-source/canonical-sha.txt'),'utf8')).trim();
-  if(marker!==expected)throw new Error('OS_RELEASE_OVERLAY_MARKER_MISMATCH:'+marker);
-  console.log('OS_RELEASE_OVERLAY_BUILD_START '+expected);
-  await runAsync('npm',['run','build:wix-worker'],OS_DIR,{MUNDO_RUNTIME_SOURCE_SHA:expected,MUNDO_RUNTIME_ENV:'wix-qa'});
-  console.log('OS_RELEASE_OVERLAY_PASS '+JSON.stringify({expected}));
+  if(head!==MIRROR_SHA)throw new Error('QA_MIRROR_SHA_MISMATCH:'+head);
+  if(marker!==SOURCE_SHA)throw new Error('QA_SOURCE_MARKER_MISMATCH:'+marker);
+  console.log('QA_SOURCE_PARITY_PASS '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
 }
-function canonicalSourceSha(){
-  const sha=String(fs.readFileSync(SOURCE_MARKER,'utf8')).trim();
-  if(!/^[a-f0-9]{40}$/i.test(sha))throw new Error('CANONICAL_SOURCE_SHA_INVALID');
-  return sha;
-}
-function repackLive(sha){
-  execFileSync('node',['scripts/package-wix-worker.mjs'],{
-    cwd:OS_DIR,
-    stdio:'inherit',
-    env:{...process.env,MUNDO_RUNTIME_SOURCE_SHA:sha,MUNDO_RUNTIME_ENV:'wix-live'}
-  });
-  if(!fs.existsSync(ENTRY))throw new Error('WIX_WORKER_ENTRY_MISSING');
-  const entry=fs.readFileSync(ENTRY,'utf8');
-  if(!entry.includes('MUNDO_RUNTIME_SOURCE_SHA:'+JSON.stringify(sha)))throw new Error('ARTIFACT_RUNTIME_SHA_MISMATCH');
-  if(!entry.includes('MUNDO_RUNTIME_ENV:'+JSON.stringify('wix-live')))throw new Error('ARTIFACT_RUNTIME_ENV_MISMATCH');
-}
-function prepareOsRelease(){
-  const sha=canonicalSourceSha();
-  repackLive(sha);
-  fs.rmSync(RELEASE_DIR,{recursive:true,force:true});
-  fs.mkdirSync(RELEASE_DIR,{recursive:true});
-  fs.cpSync(path.join(OS_DIR,'dist/client'),path.join(RELEASE_DIR,'client'),{recursive:true});
-  fs.cpSync(path.join(OS_DIR,'dist/wix-server'),path.join(RELEASE_DIR,'server'),{recursive:true});
-  fs.writeFileSync(path.join(RELEASE_DIR,'wix.config.json'),JSON.stringify({
-    projectType:'Site',
-    appId:MUNDINHO_WIX_LIVE_APP_ID,
-    siteId:MUNDINHO_WIX_LIVE_SITE_ID,
-    site:{outputDirectory:{client:'./client',server:'./server'}}
-  },null,2));
-  return sha;
-}
-function prepareGabiRelease(){
-  const sourceSha=String(process.env.GABI_CANONICAL_SOURCE_SHA||'').trim();
-  if(!/^[a-f0-9]{40}$/i.test(sourceSha))throw new Error('GABI_CANONICAL_SOURCE_SHA_INVALID');
-  const htmlPath=path.join(GABI_DIR,'index.html');
-  if(!fs.existsSync(htmlPath))throw new Error('GABI_RADAR_HTML_MISSING');
-  const html=fs.readFileSync(htmlPath,'utf8');
-  for(const required of [
-    'data-diva-face="DIVA_GABI"',
-    'data-diva-root="DIVA_RAIZ"',
-    'data-orbi-visual="diva-official-v1"',
-    'class="gabiDivaOrb divaAvatar2D hero state-ready"'
-  ]){
-    if(!html.includes(required))throw new Error('GABI_VISUAL_PARITY_REQUIRED_MARKER_MISSING:'+required);
-  }
-  for(const forbidden of ['.divaRealModel','.divaStageHalo','.divaStageFloor','<model-viewer','static.wixstatic.com/3d/']){
-    if(html.includes(forbidden))throw new Error('GABI_VISUAL_PARITY_FORBIDDEN_MARKER:'+forbidden);
-  }
-  fs.rmSync(RELEASE_DIR,{recursive:true,force:true});
-  fs.mkdirSync(path.join(RELEASE_DIR,'dist'),{recursive:true});
-  fs.copyFileSync(htmlPath,path.join(RELEASE_DIR,'dist','index.html'));
-  fs.writeFileSync(path.join(RELEASE_DIR,'wix.config.json'),JSON.stringify({
-    projectType:'Site',
-    appId:MUNDINHO_WIX_LIVE_APP_ID,
-    siteId:MUNDINHO_WIX_LIVE_SITE_ID,
-    site:{outputDirectory:'./dist'}
-  },null,2));
-  return sourceSha;
-}
-function prepareRelease(){
-  if(RELEASE_TARGET==='GABI')return prepareGabiRelease();
-  return prepareOsRelease();
-}
-async function ensureWixAuth(){
-  const auth=wixApiKeyFromEnv();
-  if(auth){
-    execFileSync('npx',['-y','@wix/cli@latest','login','--api-key',auth.value],{
-      cwd:RELEASE_DIR,
-      stdio:'inherit',
-      env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
-    });
-    console.log('WIX_OS_API_KEY_AUTH_PASS '+auth.alias);
-    return {authMode:'api_key',authAlias:auth.alias};
-  }
-  await new Promise((resolve,reject)=>{
-    const p=spawn('npx',['-y','@wix/cli@latest','login'],{
-      cwd:RELEASE_DIR,
-      env:{...process.env,AI_AGENT:'wix-headless-skill'},
-      stdio:['ignore','pipe','pipe']
-    });
-    let buffer='';
-    const scan=(chunk)=>{
-      const s=String(chunk); process.stdout.write(s); buffer+=s;
-      for(const line of buffer.split('\n')){
-        try{
-          const e=JSON.parse(line.trim());
-          if(e.event==='awaiting_user'){
-            state={...state,phase:'AWAITING_WIX_AUTH',userCode:e.userCode||null,verificationUri:e.verificationUri||null,authExpiresInSeconds:e.expiresInSeconds||null};
-            console.log('WIX_OS_AWAITING_USER '+JSON.stringify({userCode:state.userCode,verificationUri:state.verificationUri,expiresInSeconds:state.authExpiresInSeconds}));
+async function smoke(){
+  const cookie='mundinho_session='+encodeURIComponent(sessionToken());
+  let last=null;
+  for(let attempt=1;attempt<=45;attempt++){
+    try{
+      const response=await fetch('http://127.0.0.1:'+PORT+'/api/live-projection',{
+        headers:{cookie,'cache-control':'no-cache','x-qa-proof':'mr515'}
+      });
+      const raw=await response.text();
+      let data={};try{data=raw?JSON.parse(raw):{}}catch{}
+      last={status:response.status,data};
+      if(
+        response.status===200 &&
+        data?.ok===true &&
+        data?.live?.status==='ready' &&
+        data?.live?.source==='wix-cms-live' &&
+        data?.live?.readback==='consistent' &&
+        data?.projection?.status==='ready' &&
+        data?.projection?.source==='mundo-live-core'
+      ){
+        console.log('QA_LIVE_PROJECTION_PASS '+JSON.stringify({
+          sourceSha:SOURCE_SHA,
+          httpStatus:response.status,
+          ok:data.ok,
+          live:data.live,
+          projection:{
+            status:data.projection.status,
+            source:data.projection.source,
+            liveCount:data.projection.liveCount,
+            coreOverlay:data.projection.coreOverlay,
+            liveCore:data.projection.liveCore
           }
-          if(e.event==='success'){
-            console.log('WIX_DEVICE_AUTH_SUCCESS_EVENT');
-          }
-        }catch{}
+        }));
+        return;
       }
-    };
-    p.stdout.on('data',scan);
-    p.stderr.on('data',d=>process.stderr.write(d));
-    p.on('error',reject);
-    p.on('close',code=>code===0?resolve():reject(new Error('wix login exit '+code)));
-  });
-  state={...state,userCode:null,verificationUri:null,authExpiresInSeconds:null};
-  console.log('WIX_DEVICE_AUTH_PASS');
-  return {authMode:'device_code',authAlias:'device_code'};
+    }catch(error){last={error:String(error?.message||error)}}
+    await new Promise(resolve=>setTimeout(resolve,2000));
+  }
+  console.error('QA_LIVE_PROJECTION_FAIL '+JSON.stringify({
+    sourceSha:SOURCE_SHA,
+    last:last&&last.data?{
+      status:last.status,
+      ok:last.data?.ok,
+      live:last.data?.live,
+      projection:last.data?.projection?{
+        status:last.data.projection.status,
+        source:last.data.projection.source,
+        reason:last.data.projection.reason
+      }:null
+    }:last
+  }));
 }
-async function releaseLive(){
-  await activateOverlaySnapshot();
-  const sourceSha=prepareRelease();
-  state={...state,phase:'AUTH',sourceSha};
-  const auth=await ensureWixAuth();
-  state={...state,phase:'RELEASE',authMode:auth.authMode,authAlias:auth.authAlias};
-  execFileSync('npx',['-y','@wix/cli@latest','release'],{
-    cwd:RELEASE_DIR,
-    stdio:'inherit',
-    env:{...process.env,CI:'1',AI_AGENT:'wix-headless-skill'}
-  });
-  const result=Object.freeze({
-    phase:RELEASE_TARGET==='GABI'?'WIX_GABI_LIVE_RELEASE_VERIFIED':'WIX_OS_LIVE_RELEASE_VERIFIED',
-    target:RELEASE_TARGET,
-    ok:true,
-    released:true,
-    sourceSha,
-    runtimeEnv:'wix-live',
-    siteId:MUNDINHO_WIX_LIVE_SITE_ID,
-    appId:MUNDINHO_WIX_LIVE_APP_ID,
-    authMode:auth.authMode,
-    authAlias:auth.authAlias
-  });
-  console.log((RELEASE_TARGET==='GABI'?'WIX_GABI_LIVE_RELEASE_VERIFIED ':'WIX_OS_LIVE_RELEASE_VERIFIED ')+JSON.stringify(result));
-  return result;
-}
+async function main(){
+  verifySource();
+  const childEnv={
+    MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,
+    MUNDO_RUNTIME_ENV:'render-qa-mr515',
+    MUNDINHO_SESSION_SECRET:QA_SECRET
+  };
+  await run('node',['scripts/qa-commercial-core-live-binding.mjs'],OS_DIR,childEnv);
+  await run('node',['scripts/qa-google-login.mjs'],OS_DIR,childEnv);
+  await run('npm',['run','build:vinext'],OS_DIR,childEnv);
+  console.log('QA_VINEXT_BUILD_PASS '+SOURCE_SHA);
 
-let state={phase:'BOOTING',ok:false,released:false};
-async function boot(){
-  if(String(process.env.MUNDO_PART1_QA_LOCK||'').trim()==='1'){
-    state={...state,phase:'PART1_QA_LOCKED',ok:true,released:false,target:'QA_LOCK'};
-    console.log('WIX_RELEASE_PART1_QA_LOCKED');
-    return;
-  }
-  try{state=await releaseLive();}
-  catch(error){
-    state={...state,phase:'EXECUTOR_ERROR',ok:false,released:false,error:String(error?.message||error)};
-    console.error('EXECUTOR_ERROR '+JSON.stringify(state));
-  }
+  const app=spawn('npm',['run','start:vinext','--','--ip','0.0.0.0','--port',String(PORT)],{
+    cwd:OS_DIR,
+    env:{...process.env,...childEnv,PORT:String(PORT)},
+    stdio:['ignore','inherit','inherit']
+  });
+  app.on('error',error=>{console.error('QA_APP_SPAWN_ERROR '+String(error?.message||error));process.exit(1)});
+  app.on('close',code=>{console.error('QA_APP_EXIT '+code);process.exit(code||1)});
+  await smoke();
 }
-const server=http.createServer((req,res)=>{
-  res.setHeader('content-type','application/json');
-  res.end(JSON.stringify(state));
-});
-server.listen(PORT,'0.0.0.0',()=>{
-  console.log('WIX_LIVE_RELEASE_EXECUTOR_READY '+RELEASE_TARGET);
-  setImmediate(boot);
+main().catch(error=>{
+  console.error('QA_PREVIEW_BOOT_FAIL '+String(error?.stack||error));
+  process.exit(1);
 });
