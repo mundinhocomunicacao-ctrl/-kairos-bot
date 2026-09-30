@@ -4,8 +4,8 @@ import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA='bc6f845f61f3ffe07c9701d72dd797bb0c52d261';
-const MIRROR_SHA='96f2c35b5e5e6fd3320fa04fb6ce013a71efd413';
+const SOURCE_SHA='a7df997aa9c176b1d5bd3eec5504ca881630224a';
+const MIRROR_SHA='68c8c6581ea266a96cb5b2ea8d0798ecfa7319a7';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-os-pink-master-qa-20260929');
