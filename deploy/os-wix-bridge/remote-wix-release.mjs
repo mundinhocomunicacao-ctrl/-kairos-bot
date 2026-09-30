@@ -180,6 +180,12 @@ async function main(){
     MUNDO_RUNTIME_ENV:'render-qa-mr515',
     MUNDINHO_SESSION_SECRET:QA_SECRET
   };
+  if(String(process.env.QA_DIAG_NEXT_BUILD||'').trim()==='1'){
+    console.log('QA_VERCEL_BUILD_DIAG_START '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
+    await run('npm',['run','vercel-build'],OS_DIR,{...childEnv,NODE_OPTIONS:process.env.NODE_OPTIONS||'--max-old-space-size=384'});
+    console.log('QA_VERCEL_BUILD_DIAG_PASS '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
+    return;
+  }
   const preflightEnv={
     ...childEnv,
     WIX_OS_LIVE_SITE_ID:'c80689f2-6627-45fa-a264-4ab2863ba306'
