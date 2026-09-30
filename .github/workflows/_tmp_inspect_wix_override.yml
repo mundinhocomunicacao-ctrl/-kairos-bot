@@ -9,14 +9,14 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect Wix BaaS project routing contract
+      - name: Inspect exact override client
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
           ROOT="$TMP/node_modules/@wix/cli/build"
-          echo '=== BAAS CLIENT SYMBOLS ==='
-          grep -R -n -B80 -A180 'BackendAsAServiceClient\|getAppProject\|useBackendAsAServiceClient\|customDomain' "$ROOT" --include='*.js' | head -2600 || true
-          echo '=== BAAS HTTP ENDPOINTS ==='
-          grep -R -n -B100 -A220 'app-project\|appProject\|custom-domain\|customDomain\|backend-as-a-service' "$ROOT" --include='*.js' | head -3200 || true
+          echo '=== OVERRIDE CLIENT SYMBOLS ==='
+          grep -R -n -B100 -A260 'createComponentsOverride' "$ROOT" --include='*.js' | head -2200 || true
+          echo '=== OVERRIDE ENDPOINTS ==='
+          grep -R -n -B100 -A260 'component-overrides\|components-overrides\|override.*no.*side.*effects\|Create.*Override' "$ROOT" --include='*.js' | head -2200 || true
