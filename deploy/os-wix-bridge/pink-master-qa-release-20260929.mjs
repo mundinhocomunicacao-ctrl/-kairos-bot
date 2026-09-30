@@ -5,7 +5,7 @@ import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
 const SOURCE_SHA='bc6f845f61f3ffe07c9701d72dd797bb0c52d261';
-const MIRROR_SHA='2175ea975d5fe0282d97a4b5599411262dd5d35a';
+const MIRROR_SHA='96f2c35b5e5e6fd3320fa04fb6ce013a71efd413';
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
 const REL=path.join(ROOT,'.wix-os-pink-master-qa-20260929');
@@ -44,7 +44,17 @@ async function qaAndBuild(){
   mark('NPM_CI');
   await run('node',['scripts/qa-approved-pink-master.mjs'],OS_DIR);
   mark('QA_APPROVED_PINK_MASTER');
-  await run('npm',['run','qa:part1-seven-angels'],OS_DIR);
+  for(const script of [
+    'qa-live-auth-contract.mjs',
+    'qa-google-login.mjs',
+    'qa-os-route-auth-gate.mjs',
+    'qa-vercel-canonical-minimal.mjs',
+    'qa-navigation-deeplink-responsive.mjs',
+    'qa-os-human-ui-regression-guard.mjs',
+    'qa-mobile-contract-sync.mjs',
+    'qa-canonical-surface-links.mjs',
+    'qa-internal-link-audit.mjs'
+  ]) await run('node',['scripts/'+script],OS_DIR);
   mark('QA_PART1_HUMAN_CORE');
   await run('npm',['run','build:vinext'],OS_DIR,{NODE_OPTIONS:'--max-old-space-size=384'});
   mark('BUILD_VINEXT');
