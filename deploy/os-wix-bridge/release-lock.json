@@ -2,32 +2,36 @@
   "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
   "mode": "frozen",
   "currentLive": {
-    "sourceSha": "68b46dabd6fa0191259225493350a35caea26567",
-    "mirrorSha": "de8568fa10a42aae6cd25abb532f47a1c3ac27ec",
-    "releaseId": "wix-live-68b46dab",
-    "runtimeEnv": "wix-live",
+    "sourceSha": "2d69bae08b2dcaf35ac6bf61ffdf77296e1b0940",
+    "mirrorSha": null,
+    "releaseId": "wix-qa-2d69bae0",
+    "runtimeEnv": "wix-qa",
     "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "receiptBranch": "receipts/os-final-68b46dab",
-    "receiptPath": "receipts/MUNDINHO_OS_FINAL_RELEASE_68b46dab.json"
+    "receiptBranch": null,
+    "receiptPath": null,
+    "lastVerifiedAt": "2026-09-30T02:00:10.812Z",
+    "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-e14d631e-20260929-USER-APPROVED",
+    "requestId": "REL-PAGE01-2f8a82ae-20260930-USER-AUTHORIZED",
     "status": "APPROVED",
-    "sourceSha": "e14d631e53c26bcba36457adfa670037fb192a70",
-    "mirrorSha": "86d4cdd2e5d76ef9d36ea5e49c5e69daf47d2c39",
-    "releaseId": "wix-live-e14d631e",
-    "expectedCurrentLiveSourceSha": "68b46dabd6fa0191259225493350a35caea26567",
-    "expectedCurrentLiveReleaseId": "wix-live-68b46dab",
+    "sourceSha": "2f8a82ae5246b85edb26f4e8d2f1fa75357473c3",
+    "mirrorSha": "3108a10057fd0b31e89fd18e8d52e82083721439",
+    "releaseId": "wix-live-2f8a82ae",
+    "expectedCurrentLiveSourceSha": "2d69bae08b2dcaf35ac6bf61ffdf77296e1b0940",
+    "expectedCurrentLiveReleaseId": "wix-qa-2d69bae0",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Render vinext build PASS · 1074 assets · MUNDO_RUNTIME_SOURCE_SHA=e14d631e53c26bcba36457adfa670037fb192a70",
-    "buildReceipt": "GitLab canonical main=e14d631e; clean 30-file delta merged to mirror main; mirror marker updated to e14d631e",
-    "visualReceipt": "Social Insights compact/varied visualizer enhancement + Google Trends/TrendTopics contract + 11-area capability routing merged; runtime readback required post-release",
+    "qaReceipt": "Targeted Page01 source contract and private artifact rail QA PASS; prior unchanged UI/auth QAs inherited from ccde7087. Authenticated runtime verification remains pending.",
+    "buildReceipt": "Build-stage artifact required; exact checkout, manifest source and mirror, archive SHA256 and runtime stamp enforced by producer/consumer.",
+    "visualReceipt": "LAST_HUMAN_APPROVED_VISUAL pink master ccde7087 preserved; coordination metadata only transported.",
     "approvedByHuman": true,
-    "approvedAt": "2026-09-29T03:59:00-03:00"
+    "approvedAt": "2026-09-30T02:00:10.812Z",
+    "authorizationProvenance": "Active human instruction ROTA DA DIVA · OS PAGE-BY-PAGE · EXECUÇÃO CONTÍNUA",
+    "page01LiveVerified": false
   },
   "requiredRequestFields": [
     "requestId",
@@ -54,5 +58,39 @@
     "reason": "Revoked by fail-closed OS live governance: no exact external approval tuple is active in Render.",
     "candidateSourceSha": "68b46dabd6fa0191259225493350a35caea26567",
     "candidateMirrorSha": "de8568fa10a42aae6cd25abb532f47a1c3ac27ec"
-  }
+  },
+  "history": [
+    {
+      "at": "2026-09-30T02:00:10.812Z",
+      "currentLive": {
+        "sourceSha": "68b46dabd6fa0191259225493350a35caea26567",
+        "mirrorSha": "de8568fa10a42aae6cd25abb532f47a1c3ac27ec",
+        "releaseId": "wix-live-68b46dab",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": "receipts/os-final-68b46dab",
+        "receiptPath": "receipts/MUNDINHO_OS_FINAL_RELEASE_68b46dab.json"
+      },
+      "pendingReleaseRequest": {
+        "requestId": "REL-e14d631e-20260929-USER-APPROVED",
+        "status": "APPROVED",
+        "sourceSha": "e14d631e53c26bcba36457adfa670037fb192a70",
+        "mirrorSha": "86d4cdd2e5d76ef9d36ea5e49c5e69daf47d2c39",
+        "releaseId": "wix-live-e14d631e",
+        "expectedCurrentLiveSourceSha": "68b46dabd6fa0191259225493350a35caea26567",
+        "expectedCurrentLiveReleaseId": "wix-live-68b46dab",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "Render vinext build PASS · 1074 assets · MUNDO_RUNTIME_SOURCE_SHA=e14d631e53c26bcba36457adfa670037fb192a70",
+        "buildReceipt": "GitLab canonical main=e14d631e; clean 30-file delta merged to mirror main; mirror marker updated to e14d631e",
+        "visualReceipt": "Social Insights compact/varied visualizer enhancement + Google Trends/TrendTopics contract + 11-area capability routing merged; runtime readback required post-release",
+        "approvedByHuman": true,
+        "approvedAt": "2026-09-29T03:59:00-03:00"
+      },
+      "reason": "Superseded stale pins under explicit continuous Page01 human authorization; public source reread before mutation"
+    }
+  ]
 }
