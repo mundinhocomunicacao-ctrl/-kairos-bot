@@ -40,8 +40,8 @@ async function syncSource(){
 }
 async function qaAndBuild(){
   state.phase='QA_BUILD';
-  await run('npm',['ci'],OS_DIR);
-  mark('NPM_CI');
+  await run('npm',['ci','--include=dev'],OS_DIR,{NODE_ENV:'development',NPM_CONFIG_PRODUCTION:'false'});
+  mark('NPM_CI_DEV_INCLUDED');
   await run('node',['scripts/qa-approved-pink-master.mjs'],OS_DIR);
   mark('QA_APPROVED_PINK_MASTER');
   for(const script of [
