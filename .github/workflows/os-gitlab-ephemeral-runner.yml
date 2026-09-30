@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 40
     env:
       GITLAB_PROJECT_ID: "86501645"
-      EXPECTED_SHA: "cd177cde97b39ef89e0adf73294fe75f6c2f837d"
+      EXPECTED_SHA: "9f0048f6a0171d537fbdd3614d989f39c1304f3f"
       RUNNER_TAG: os-external-failover
       TOKEN_A: ${{ secrets.GITLAB_TOKEN }}
       TOKEN_B: ${{ secrets.GITLAB_PAT }}
@@ -177,7 +177,7 @@ jobs:
           HTTP="$(curl --silent --show-error --output "$BODY" --write-out '%{http_code}' \
             --request POST \
             --header "PRIVATE-TOKEN: $PAT" \
-            --data-urlencode "ref=feat/os-full-rollout-rlf-20260929" \
+            --data-urlencode "ref=fix/os-live-core-auth-reconcile-20260930" \
             --data-urlencode "variables[0][key]=MUNDO_EXTERNAL_FAILOVER" \
             --data-urlencode "variables[0][value]=1" \
             --data-urlencode "variables[1][key]=MUNDO_EXPECTED_SHA" \
