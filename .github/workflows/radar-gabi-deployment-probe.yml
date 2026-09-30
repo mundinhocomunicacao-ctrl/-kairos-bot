@@ -39,3 +39,4 @@ jobs:
           probe v68 'https://ys4rut-instant-dugewxsuwtwa-mundinhocomunicaca-1412.wix-site-host.com/'
           probe v64 'https://tcgx3x-instant-dugewxsuwtwa-mundinhocomunicaca-1412.wix-site-host.com/'
           probe v60 'https://ch0ihr-instant-dugewxsuwtwa-mundinhocomunicaca-1412.wix-site-host.com/'
+# reprobe after Wix v64 restore 2026-09-30
