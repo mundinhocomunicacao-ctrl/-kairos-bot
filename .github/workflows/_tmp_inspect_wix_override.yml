@@ -1,24 +1,18 @@
-name: TMP Inspect Wix Deployment Contract
+name: TMP Inspect Wix Deployment Read Contract
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - '.github/workflows/_tmp_inspect_wix_override.yml'
 jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect Wix Site deployment upload contract
+      - name: Inspect Wix app deployment read/list contract
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
-          npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
+          npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund >/dev/null
           ROOT="$TMP/node_modules/@wix/cli/build"
-          echo '=== CREATE DEPLOYMENT ==='
-          grep -R -n -B140 -A260 'createDeployment' "$ROOT" --include='*.js' | head -2800 || true
-          echo '=== SIGNED UPLOAD ==='
-          grep -R -n -B120 -A240 'uploadUrl\|signed.*url\|presigned\|deploymentUrl' "$ROOT" --include='*.js' | head -3000 || true
-          echo '=== BASS CLIENT ==='
-          grep -R -n -B120 -A240 'BackendAsAService\|backend-as-a-service\|BASS\|BassService' "$ROOT" --include='*.js' | head -2400 || true
+          grep -R -n -B70 -A140 'GetAppDeployment\|ListAppDeployment\|listAppDeployment\|getAppDeployment' "$ROOT" --include='*.js' | head -2600 || true
