@@ -1,20 +1,24 @@
 name: TMP Inspect Wix Override Contract
 on:
   push:
+    branches:
+      - main
     paths:
       - '.github/workflows/_tmp_inspect_wix_override.yml'
 jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect Wix CLI constants and override client
+      - name: Inspect Wix CLI release endpoints
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
-          ROOT="$TMP/node_modules/@wix/cli"
-          echo '=== BACKEND WORKER CONSTANT/ENUM ==='
-          grep -R -n -B8 -A20 'BACKEND_WORKER_COMPONENT_ID\|BACKEND_WORKER' "$ROOT/build" --include='*.js' | head -500 || true
-          echo '=== OVERRIDE CLIENT ==='
-          grep -R -n -B40 -A100 'createComponentsOverride\|modifiedComponents' "$ROOT/build" --include='*.js' | head -800 || true
+          ROOT="$TMP/node_modules/@wix/cli/build"
+          echo '=== PROMOTE DEFINITIONS ==='
+          grep -R -n -B120 -A220 'promoteAppVersionFromDraftToProduction' "$ROOT" --include='*.js' | head -1200 || true
+          echo '=== SUGGEST DEFINITIONS ==='
+          grep -R -n -B120 -A180 'suggestNextVersions' "$ROOT" --include='*.js' | head -1000 || true
+          echo '=== COMMIT OVERRIDE DEFINITIONS ==='
+          grep -R -n -B120 -A180 'commitOverride' "$ROOT" --include='*.js' | head -1000 || true
