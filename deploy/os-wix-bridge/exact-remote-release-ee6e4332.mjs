@@ -1,1 +1,1 @@
-await import('./part1-qa-release-20260929.mjs');
+await import('./pink-master-qa-release-20260929.mjs');
