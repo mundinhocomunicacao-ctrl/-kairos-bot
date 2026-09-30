@@ -2,50 +2,35 @@
   "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
   "mode": "frozen",
   "currentLive": {
-    "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
-    "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
-    "releaseId": "wix-live-c713f110",
+    "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
+    "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
+    "releaseId": "wix-live-ee937067",
     "runtimeEnv": "wix-live",
     "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "receiptBranch": "forge/wix-remote-release-auth-20260927",
-    "receiptPath": "deploy/os-wix-bridge/release-lock.json",
-    "lastVerifiedAt": "2026-09-30T12:47:43Z",
+    "receiptBranch": "receipts/os-release-ee937067-20260930",
+    "receiptPath": "ops/receipts/OS_RELEASE_EE937067_2026-09-30.json",
+    "lastVerifiedAt": "2026-09-30T13:01:40Z",
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-OS-EE937067-20260930-USER-AUTHORIZED",
-    "status": "APPROVED",
-    "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
-    "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
-    "releaseId": "wix-live-ee937067",
-    "expectedCurrentLiveSourceSha": "c713f110d491625905b10516f9dc11079ef89318",
-    "expectedCurrentLiveReleaseId": "wix-live-c713f110",
+    "requestId": null,
+    "status": "NONE",
+    "sourceSha": null,
+    "mirrorSha": null,
+    "releaseId": null,
+    "expectedCurrentLiveSourceSha": "ee9370678d430e721ba085a603f03418e485a182",
+    "expectedCurrentLiveReleaseId": "wix-live-ee937067",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Canonical GitLab main ee937067 merged via MR !508. Reconciled Mesa/Morada, Radar, Social Insights and Creative Studio (Ideas + Proposals). Render artifact rail QA PASS: Page01 release, endpoint contract, current-state consumers, artifact rail and static assets.",
-    "buildReceipt": "BUILD_STAGE_ARTIFACT_READY 2026-09-30T12:56:23.047Z; source ee9370678d430e721ba085a603f03418e485a182; exact mirror d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d based on deployed c713 mirror + complete 25-file GitLab delta; clean checkout; wix-live; SHA256 04f044bc802711d8667be540d0eb87884b369ae53968220580bcb507e8a882a7; 2030516 bytes.",
-    "visualReceipt": "Publish only the reconciled approved surfaces; preserve DIVA/Morada boundaries and client-safe DIVA Gabi. No commercial-stage mutation included in this release.",
-    "approvedByHuman": true,
-    "approvedAt": "2026-09-30T12:47:43Z",
-    "authorizationProvenance": "Active human instruction: 'reconciliue e continue de onde paraou', continuing the prior explicit instruction to publish the completed OS changes and return receipt + OS link before entering Comercial.",
-    "page01LiveVerified": false,
-    "artifactManifest": {
-      "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
-      "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
-      "checkout": {
-        "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
-        "trackedCheckoutClean": true
-      },
-      "runtimeEnv": "wix-live",
-      "artifactSha256": "04f044bc802711d8667be540d0eb87884b369ae53968220580bcb507e8a882a7",
-      "artifactBytes": 2030516,
-      "builtAt": "2026-09-30T12:56:23.047Z",
-      "status": "IMPLEMENTADO",
-      "page01LiveVerified": false
-    }
+    "qaReceipt": "No release pending.",
+    "buildReceipt": "No release pending.",
+    "visualReceipt": "No release pending.",
+    "approvedByHuman": false,
+    "approvedAt": null,
+    "page01LiveVerified": false
   },
   "requiredRequestFields": [
     "requestId",
@@ -265,6 +250,57 @@
         }
       },
       "reason": "Superseded after runtime reread: c713f110 is now live. User instructed to reconcile and continue publication of the approved Mesa + Radar + Social Insights + Creative Studio changes."
+    },
+    {
+      "at": "2026-09-30T13:01:40Z",
+      "currentLive": {
+        "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
+        "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
+        "releaseId": "wix-live-ee937067",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": "receipts/os-release-ee937067-20260930",
+        "receiptPath": "ops/receipts/OS_RELEASE_EE937067_2026-09-30.json",
+        "lastVerifiedAt": "2026-09-30T13:01:40Z",
+        "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
+      },
+      "completedReleaseRequest": {
+        "requestId": "REL-OS-EE937067-20260930-USER-AUTHORIZED",
+        "status": "RELEASED",
+        "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
+        "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
+        "releaseId": "wix-live-ee937067",
+        "expectedCurrentLiveSourceSha": "c713f110d491625905b10516f9dc11079ef89318",
+        "expectedCurrentLiveReleaseId": "wix-live-c713f110",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "Canonical GitLab main ee937067 merged via MR !508. Reconciled Mesa/Morada, Radar, Social Insights and Creative Studio (Ideas + Proposals). Render artifact rail QA PASS: Page01 release, endpoint contract, current-state consumers, artifact rail and static assets.",
+        "buildReceipt": "BUILD_STAGE_ARTIFACT_READY 2026-09-30T12:56:23.047Z; source ee9370678d430e721ba085a603f03418e485a182; exact mirror d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d based on deployed c713 mirror + complete 25-file GitLab delta; clean checkout; wix-live; SHA256 04f044bc802711d8667be540d0eb87884b369ae53968220580bcb507e8a882a7; 2030516 bytes.",
+        "visualReceipt": "Publish only the reconciled approved surfaces; preserve DIVA/Morada boundaries and client-safe DIVA Gabi. No commercial-stage mutation included in this release.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-09-30T12:47:43Z",
+        "authorizationProvenance": "Active human instruction: 'reconciliue e continue de onde paraou', continuing the prior explicit instruction to publish the completed OS changes and return receipt + OS link before entering Comercial.",
+        "page01LiveVerified": false,
+        "artifactManifest": {
+          "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
+          "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
+          "checkout": {
+            "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
+            "trackedCheckoutClean": true
+          },
+          "runtimeEnv": "wix-live",
+          "artifactSha256": "04f044bc802711d8667be540d0eb87884b369ae53968220580bcb507e8a882a7",
+          "artifactBytes": 2030516,
+          "builtAt": "2026-09-30T12:56:23.047Z",
+          "status": "IMPLEMENTADO",
+          "page01LiveVerified": false
+        },
+        "releasedAt": "2026-09-30T13:00:51Z"
+      },
+      "reason": "Exact-SHA Wix DIA A DIA release completed. Origin and canonical SHA readback PASS; /api/release-version, /api/diva-release and /api/preview-readiness all agree on ee937067."
     }
   ]
 }
