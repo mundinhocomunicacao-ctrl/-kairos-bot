@@ -1,0 +1,32 @@
+name: Radar Gabi · ORBI Branch QA
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/radar-gabi-orbi-branch-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout canonical GitLab branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch fix/gabi-orbi-approved-hero-20260930 https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao.git canonical
+      - name: Run ORBI gates
+        working-directory: canonical
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/qa-gabi-orbi-approved-hero.mjs
+          node scripts/qa-gabi-diva-root-visual-parity.mjs
+          node scripts/qa-gabi-orbi-human-voice-v2.mjs
+          node scripts/qa-gabi-diva-studio.mjs
+          node scripts/qa-diva-orbi-canonical-parity.mjs
