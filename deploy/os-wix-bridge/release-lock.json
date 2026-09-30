@@ -18,7 +18,7 @@
     "requestId": "REL-OS-EE937067-20260930-USER-AUTHORIZED",
     "status": "APPROVED",
     "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
-    "mirrorSha": "e08235ac0f2833c8d03599bc6c2d15554e5fe9de",
+    "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
     "releaseId": "wix-live-ee937067",
     "expectedCurrentLiveSourceSha": "c713f110d491625905b10516f9dc11079ef89318",
     "expectedCurrentLiveReleaseId": "wix-live-c713f110",
@@ -26,7 +26,7 @@
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
     "qaReceipt": "Canonical GitLab main ee937067 merged via MR !508. Reconciled Mesa/Morada, Radar, Social Insights and Creative Studio (Ideas + Proposals). Render artifact rail QA PASS: Page01 release, endpoint contract, current-state consumers, artifact rail and static assets.",
-    "buildReceipt": "BUILD_STAGE_ARTIFACT_READY 2026-09-30T12:19:24.606Z; source ee9370678d430e721ba085a603f03418e485a182; mirror e08235ac0f2833c8d03599bc6c2d15554e5fe9de; clean checkout; wix-live; SHA256 a3edd71e47229cf05b18c4f5c4c410fa509cbc188f4a8e468906fdd5889881c6; 2033555 bytes.",
+    "buildReceipt": "BUILD_STAGE_ARTIFACT_READY 2026-09-30T12:56:23.047Z; source ee9370678d430e721ba085a603f03418e485a182; exact mirror d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d based on deployed c713 mirror + complete 25-file GitLab delta; clean checkout; wix-live; SHA256 04f044bc802711d8667be540d0eb87884b369ae53968220580bcb507e8a882a7; 2030516 bytes.",
     "visualReceipt": "Publish only the reconciled approved surfaces; preserve DIVA/Morada boundaries and client-safe DIVA Gabi. No commercial-stage mutation included in this release.",
     "approvedByHuman": true,
     "approvedAt": "2026-09-30T12:47:43Z",
@@ -34,15 +34,15 @@
     "page01LiveVerified": false,
     "artifactManifest": {
       "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
-      "mirrorSha": "e08235ac0f2833c8d03599bc6c2d15554e5fe9de",
+      "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
       "checkout": {
-        "mirrorSha": "e08235ac0f2833c8d03599bc6c2d15554e5fe9de",
+        "mirrorSha": "d2ca075a9dbf37cd6f1ef29073b23388a77c8f2d",
         "trackedCheckoutClean": true
       },
       "runtimeEnv": "wix-live",
-      "artifactSha256": "a3edd71e47229cf05b18c4f5c4c410fa509cbc188f4a8e468906fdd5889881c6",
-      "artifactBytes": 2033555,
-      "builtAt": "2026-09-30T12:19:24.606Z",
+      "artifactSha256": "04f044bc802711d8667be540d0eb87884b369ae53968220580bcb507e8a882a7",
+      "artifactBytes": 2030516,
+      "builtAt": "2026-09-30T12:56:23.047Z",
       "status": "IMPLEMENTADO",
       "page01LiveVerified": false
     }
