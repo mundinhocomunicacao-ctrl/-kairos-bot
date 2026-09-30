@@ -9,17 +9,14 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect exact Wix override public path and releaseAppId
+      - name: Inspect Wix BaaS project routing contract
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
           ROOT="$TMP/node_modules/@wix/cli/build"
-          F="$ROOT/chunk-WWWORPQF.js"
-          echo '=== OVERRIDE RESOLVER ==='
-          sed -n '990,1055p' "$F"
-          echo '=== RELEASE APP ID ==='
-          grep -R -n -B30 -A50 'releaseAppId' "$ROOT" --include='*.js' | head -900 || true
-          echo '=== MODIFIED COMPONENTS ==='
-          grep -R -n -B35 -A80 'function toModifiedComponents\|const toModifiedComponents\|var toModifiedComponents' "$ROOT" --include='*.js' | head -900 || true
+          echo '=== BAAS CLIENT SYMBOLS ==='
+          grep -R -n -B80 -A180 'BackendAsAServiceClient\|getAppProject\|useBackendAsAServiceClient\|customDomain' "$ROOT" --include='*.js' | head -2600 || true
+          echo '=== BAAS HTTP ENDPOINTS ==='
+          grep -R -n -B100 -A220 'app-project\|appProject\|custom-domain\|customDomain\|backend-as-a-service' "$ROOT" --include='*.js' | head -3200 || true
