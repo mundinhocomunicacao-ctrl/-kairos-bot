@@ -34,7 +34,7 @@ jobs:
             const logs=[];
             page.on('console',m=>logs.push(m.type()+':'+m.text()));
             const res=await page.goto('https://radar.gabi.mundinhocomunicacao.com/',{waitUntil:'networkidle',timeout:45000});
-            const data=await page.evaluate(()=>{
+            await page.click('[data-tab="studio"]'); await page.waitForTimeout(300); const data=await page.evaluate(()=>{
               const orb=document.querySelector('#gabiDivaOrb');
               const stage=document.querySelector('.gabiOrbPresence');
               const core=document.querySelector('#gabiDivaOrb .divaOrbCore');
