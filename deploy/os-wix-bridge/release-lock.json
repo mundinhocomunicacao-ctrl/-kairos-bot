@@ -15,22 +15,37 @@
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
   },
   "pendingReleaseRequest": {
-    "requestId": null,
-    "status": "NONE",
-    "sourceSha": null,
-    "mirrorSha": null,
-    "releaseId": null,
+    "requestId": "REL-OS-FCFAB771-20260930-RECONCILED",
+    "status": "APPROVED",
+    "sourceSha": "fcfab771062405642f504d8df45aa19f5fa3a19a",
+    "mirrorSha": "8b51d00ca8b7074608666f3833f604e2c493c971",
+    "releaseId": "wix-live-fcfab771",
     "expectedCurrentLiveSourceSha": "ee9370678d430e721ba085a603f03418e485a182",
     "expectedCurrentLiveReleaseId": "wix-live-ee937067",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "No release pending.",
-    "buildReceipt": "No release pending.",
-    "visualReceipt": "No release pending.",
-    "approvedByHuman": false,
-    "approvedAt": null,
-    "page01LiveVerified": false
+    "qaReceipt": "MR !511 merged to canonical main. Independent build-stage PASS: Page01 QA, endpoint contract, artifact rail, 1075 client JS references resolvable; full vinext build completed for reconciliation source.",
+    "buildReceipt": "BUILD_STAGE_ARTIFACT_READY 2026-09-30T13:51:40.766Z; source fcfab771062405642f504d8df45aa19f5fa3a19a; mirror 8b51d00ca8b7074608666f3833f604e2c493c971; checkout clean; wix-live; SHA256 c0c51cfc558eecd15c08516ce4aed6d38d60a6e2d23a0b9b6dd2d8234ac74a26; 2051045 bytes.",
+    "visualReceipt": "Reconciled latest approved requests only: Mesa nav/identity, Radar human-readable context handoff, Social content-first/listening/Mar Aberto/Trends/source truth, Creative Studio scripts/references/production/bank. Commercial remains out of scope.",
+    "approvedByHuman": true,
+    "approvedAt": "2026-09-30T13:01:40Z",
+    "authorizationProvenance": "Continuous authorization: user previously instructed publish changes and return receipt before entering Comercial; latest instruction requires reconciling all recent requests without asking what is wrong. This release applies only that reconciliation and leaves Comercial untouched.",
+    "page01LiveVerified": false,
+    "artifactManifest": {
+      "sourceSha": "fcfab771062405642f504d8df45aa19f5fa3a19a",
+      "mirrorSha": "8b51d00ca8b7074608666f3833f604e2c493c971",
+      "checkout": {
+        "mirrorSha": "8b51d00ca8b7074608666f3833f604e2c493c971",
+        "trackedCheckoutClean": true
+      },
+      "runtimeEnv": "wix-live",
+      "artifactSha256": "c0c51cfc558eecd15c08516ce4aed6d38d60a6e2d23a0b9b6dd2d8234ac74a26",
+      "artifactBytes": 2051045,
+      "builtAt": "2026-09-30T13:51:40.766Z",
+      "status": "IMPLEMENTADO",
+      "page01LiveVerified": false
+    }
   },
   "requiredRequestFields": [
     "requestId",
