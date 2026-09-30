@@ -1,0 +1,23 @@
+name: Radar Gabi · ORBI Deploy Metadata
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/radar-gabi-orbi-deploy-meta.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  meta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compute Wix static metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE=tmp/orbi-candidate/index.html
+          echo "SIZE=$(wc -c < "$FILE" | tr -d ' ')"
+          echo "MD5=$(md5sum "$FILE" | awk '{print $1}')"
+          echo "MIME=text/html"
+          echo "PATH=/index.html"
