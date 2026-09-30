@@ -2,50 +2,35 @@
   "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
   "mode": "frozen",
   "currentLive": {
-    "sourceSha": "fcfab771062405642f504d8df45aa19f5fa3a19a",
-    "mirrorSha": "8b51d00ca8b7074608666f3833f604e2c493c971",
-    "releaseId": "wix-live-fcfab771",
+    "sourceSha": "55a08b2bfe734fe1e20b070841554a3db452ecd1",
+    "mirrorSha": "96d257ad1e8634be5242f53b463e1f5f67aaa751",
+    "releaseId": "wix-live-55a08b2b",
     "runtimeEnv": "wix-live",
     "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "receiptBranch": "receipts/os-release-fcfab771-20260930",
-    "receiptPath": "ops/receipts/OS_RELEASE_FCFAB771_RECONCILIATION_2026-09-30.json",
-    "lastVerifiedAt": "2026-09-30T13:58:54Z",
+    "receiptBranch": "hotfix/live-google-resume-20260930",
+    "receiptPath": "ops/receipts/OS_AUTH_RESUME_HOTFIX_55A08B2B_2026-09-30.md",
+    "lastVerifiedAt": "2026-09-30T14:38:10Z",
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-OS-AUTH-RESUME-55A08B2B-20260930",
-    "status": "APPROVED",
-    "sourceSha": "55a08b2bfe734fe1e20b070841554a3db452ecd1",
-    "mirrorSha": "96d257ad1e8634be5242f53b463e1f5f67aaa751",
-    "releaseId": "wix-live-55a08b2b",
-    "expectedCurrentLiveSourceSha": "fcfab771062405642f504d8df45aa19f5fa3a19a",
-    "expectedCurrentLiveReleaseId": "wix-live-fcfab771",
+    "requestId": null,
+    "status": "NONE",
+    "sourceSha": null,
+    "mirrorSha": null,
+    "releaseId": null,
+    "expectedCurrentLiveSourceSha": "55a08b2bfe734fe1e20b070841554a3db452ecd1",
+    "expectedCurrentLiveReleaseId": "wix-live-55a08b2b",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Surgical auth hotfix only. Diff from live fcfab771 is pages/api/login-google.js plus qa-google-login-resume.mjs. Build-stage PASS: Page01, endpoint contract, artifact rail, 1064 client JS references.",
-    "buildReceipt": "BUILD_STAGE_ARTIFACT_READY 2026-09-30T14:27:19.170Z; source 55a08b2bfe734fe1e20b070841554a3db452ecd1; mirror 96d257ad1e8634be5242f53b463e1f5f67aaa751; checkout clean; wix-live; SHA256 8e13904e322f93a76f5de6a00887d790016f01322ae41acd56362b5c4eb70aae; 2031098 bytes.",
-    "visualReceipt": "No UI surface change. Hotfix only changes auth continuation: ?resume=1 requests Wix auth prompt=none while preserving Google idp pin, PKCE S256, state cookie and canonical callback. Commercial/Gabi changes present on newer main are deliberately excluded from this runtime hotfix.",
-    "approvedByHuman": true,
-    "approvedAt": "2026-09-30T14:24:00Z",
-    "authorizationProvenance": "User instructed DIVA to reconcile with other chats and terminals and continue after reporting Google login stopped at Google.",
-    "page01LiveVerified": false,
-    "artifactManifest": {
-      "sourceSha": "55a08b2bfe734fe1e20b070841554a3db452ecd1",
-      "mirrorSha": "96d257ad1e8634be5242f53b463e1f5f67aaa751",
-      "checkout": {
-        "mirrorSha": "96d257ad1e8634be5242f53b463e1f5f67aaa751",
-        "trackedCheckoutClean": true
-      },
-      "runtimeEnv": "wix-live",
-      "artifactSha256": "8e13904e322f93a76f5de6a00887d790016f01322ae41acd56362b5c4eb70aae",
-      "artifactBytes": 2031098,
-      "builtAt": "2026-09-30T14:27:19.170Z",
-      "status": "IMPLEMENTADO",
-      "page01LiveVerified": false
-    }
+    "qaReceipt": "No release pending.",
+    "buildReceipt": "No release pending.",
+    "visualReceipt": "No release pending.",
+    "approvedByHuman": false,
+    "approvedAt": null,
+    "page01LiveVerified": false
   },
   "requiredRequestFields": [
     "requestId",
@@ -316,6 +301,23 @@
         "releasedAt": "2026-09-30T13:00:51Z"
       },
       "reason": "Exact-SHA Wix DIA A DIA release completed. Origin and canonical SHA readback PASS; /api/release-version, /api/diva-release and /api/preview-readiness all agree on ee937067."
+    },
+    {
+      "at": "2026-09-30T14:38:10Z",
+      "currentLive": {
+        "sourceSha": "55a08b2bfe734fe1e20b070841554a3db452ecd1",
+        "mirrorSha": "96d257ad1e8634be5242f53b463e1f5f67aaa751",
+        "releaseId": "wix-live-55a08b2b",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": "hotfix/live-google-resume-20260930",
+        "receiptPath": "ops/receipts/OS_AUTH_RESUME_HOTFIX_55A08B2B_2026-09-30.md",
+        "lastVerifiedAt": "2026-09-30T14:38:10Z",
+        "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
+      },
+      "reason": "Google/Wix resume hotfix released; release-version and preview-readiness agree on 55a08b2b. Resume endpoint returns OAuth authorize redirect with PKCE/state/canonical callback."
     }
   ]
 }
