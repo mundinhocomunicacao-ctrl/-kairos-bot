@@ -9,14 +9,20 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect exact override client
+      - name: Inspect minimal override payload
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
-          ROOT="$TMP/node_modules/@wix/cli/build"
-          echo '=== OVERRIDE CLIENT SYMBOLS ==='
-          grep -R -n -B100 -A260 'createComponentsOverride' "$ROOT" --include='*.js' | head -2200 || true
-          echo '=== OVERRIDE ENDPOINTS ==='
-          grep -R -n -B100 -A260 'component-overrides\|components-overrides\|override.*no.*side.*effects\|Create.*Override' "$ROOT" --include='*.js' | head -2200 || true
+          F="$TMP/node_modules/@wix/cli/build/chunk-WWWORPQF.js"
+          echo '=== REQUEST TYPE DEFINITIONS ==='
+          grep -n '_createComponentsOverrideRequest\|_componentsOverride =' "$F" | head -20
+          for n in $(grep -n '_createComponentsOverrideRequest\|_componentsOverride =' "$F" | cut -d: -f1 | head -10); do
+            s=$((n-35)); [ $s -lt 1 ] && s=1; e=$((n+90)); sed -n "${s},${e}p" "$F"; echo '---';
+          done
+          echo '=== CLIENT METHODS ==='
+          grep -n 'createComponentsOverride =\|createComponentsOverride:' "$F" | head -20
+          for n in $(grep -n 'createComponentsOverride =\|createComponentsOverride:' "$F" | cut -d: -f1 | head -10); do
+            s=$((n-35)); [ $s -lt 1 ] && s=1; e=$((n+120)); sed -n "${s},${e}p" "$F"; echo '---';
+          done
