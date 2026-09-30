@@ -9,20 +9,17 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect minimal override payload
+      - name: Inspect modified component conversion
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
           F="$TMP/node_modules/@wix/cli/build/chunk-WWWORPQF.js"
-          echo '=== REQUEST TYPE DEFINITIONS ==='
-          grep -n '_createComponentsOverrideRequest\|_componentsOverride =' "$F" | head -20
-          for n in $(grep -n '_createComponentsOverrideRequest\|_componentsOverride =' "$F" | cut -d: -f1 | head -10); do
-            s=$((n-35)); [ $s -lt 1 ] && s=1; e=$((n+90)); sed -n "${s},${e}p" "$F"; echo '---';
+          echo '=== MODIFIED COMPONENT CONVERSION ==='
+          grep -n 'toModifiedComponents' "$F" | head -20
+          for n in $(grep -n 'toModifiedComponents' "$F" | cut -d: -f1 | head -20); do
+            s=$((n-80)); [ $s -lt 1 ] && s=1; e=$((n+140)); sed -n "${s},${e}p" "$F"; echo '---';
           done
-          echo '=== CLIENT METHODS ==='
-          grep -n 'createComponentsOverride =\|createComponentsOverride:' "$F" | head -20
-          for n in $(grep -n 'createComponentsOverride =\|createComponentsOverride:' "$F" | cut -d: -f1 | head -10); do
-            s=$((n-35)); [ $s -lt 1 ] && s=1; e=$((n+120)); sed -n "${s},${e}p" "$F"; echo '---';
-          done
+          echo '=== REQUEST DEFS ==='
+          sed -n '640,730p' "$F"
