@@ -9,14 +9,17 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect exact Wix override create method
+      - name: Inspect exact Wix override public path and releaseAppId
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
-          F="$TMP/node_modules/@wix/cli/build/chunk-WWWORPQF.js"
-          echo '=== HTTP CREATE OVERRIDE ==='
-          sed -n '1035,1410p' "$F"
-          echo '=== CLIENT CREATE OVERRIDE ==='
-          sed -n '5190,5265p' "$F"
+          ROOT="$TMP/node_modules/@wix/cli/build"
+          F="$ROOT/chunk-WWWORPQF.js"
+          echo '=== OVERRIDE RESOLVER ==='
+          sed -n '990,1055p' "$F"
+          echo '=== RELEASE APP ID ==='
+          grep -R -n -B30 -A50 'releaseAppId' "$ROOT" --include='*.js' | head -900 || true
+          echo '=== MODIFIED COMPONENTS ==='
+          grep -R -n -B35 -A80 'function toModifiedComponents\|const toModifiedComponents\|var toModifiedComponents' "$ROOT" --include='*.js' | head -900 || true
