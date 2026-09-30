@@ -9,16 +9,14 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect exact Wix override client contract
+      - name: Inspect exact Wix override create method
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
-          ROOT="$TMP/node_modules/@wix/cli/build"
-          echo '=== SYMBOLS ==='
-          grep -R -n 'createComponentsOverride\|updateOverrideWithNoSideEffects\|DevCenterOverridesClient' "$ROOT" --include='*.js' | head -200 || true
-          echo '=== CREATE OVERRIDE CONTEXT ==='
-          grep -R -n -B100 -A220 'createComponentsOverride' "$ROOT" --include='*.js' | head -1800 || true
-          echo '=== OVERRIDE HTTP CONTRACTS ==='
-          grep -R -n -B100 -A220 'components-override\|components-overrides\|override-with-no-side-effects\|modifiedComponents' "$ROOT" --include='*.js' | head -2200 || true
+          F="$TMP/node_modules/@wix/cli/build/chunk-WWWORPQF.js"
+          echo '=== HTTP CREATE OVERRIDE ==='
+          sed -n '1035,1410p' "$F"
+          echo '=== CLIENT CREATE OVERRIDE ==='
+          sed -n '5190,5265p' "$F"
