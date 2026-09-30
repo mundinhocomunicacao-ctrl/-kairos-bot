@@ -18,7 +18,7 @@
     "requestId": "REL-OS-C713-PINK-20260930-USER-AUTHORIZED",
     "status": "APPROVED",
     "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
-    "mirrorSha": "455a9ea4c6a117a22cd9b886e8109ecad4f7cfa1",
+    "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
     "releaseId": "wix-live-c713f110",
     "expectedCurrentLiveSourceSha": "6af2776427e1e6a25e271945e6eb006af19abbe3",
     "expectedCurrentLiveReleaseId": "wix-live-6af27764",
@@ -26,7 +26,7 @@
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
     "qaReceipt": "OS/Morada boundary preserved on current main; approved pink visual master mounted globally; proposal generator preserved; Page01 and private artifact rail QA PASS on release mirror.",
-    "buildReceipt": "Render build-stage PASS 2026-09-30T10:48:22.149Z; exact mirror 455a9ea4c6a117a22cd9b886e8109ecad4f7cfa1; tracked checkout clean; wix-live; 1081 client JS references resolvable; artifact SHA256 f53930d209c76472ba2937489f9657661ca81951fa668e167e0af544ffd2cc53; 2061795 bytes.",
+    "buildReceipt": "Render build-stage PASS 2026-09-30T10:53:34.978Z; exact mirror 84637933962f6f5ea430032082eaa3ba6142457a; tracked checkout clean; wix-live; 1081 client JS references resolvable; artifact SHA256 f534c8cdd5faf71953c517600e17cef22d91321c7c0c4f6de255bec747cd63a8; 2062546 bytes.",
     "visualReceipt": "LAST_HUMAN_APPROVED_VISUAL = Painel DIVA: Inteligência em Movimento.png; global pink master #EF3B91/#FFDDEB/#F991C3/#991058 restored without flattening Sales Design / proposal generator.",
     "approvedByHuman": true,
     "approvedAt": "2026-09-30T10:49:01Z",
@@ -34,15 +34,15 @@
     "page01LiveVerified": false,
     "artifactManifest": {
       "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
-      "mirrorSha": "455a9ea4c6a117a22cd9b886e8109ecad4f7cfa1",
+      "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
       "checkout": {
-        "mirrorSha": "455a9ea4c6a117a22cd9b886e8109ecad4f7cfa1",
+        "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
         "trackedCheckoutClean": true
       },
       "runtimeEnv": "wix-live",
-      "artifactSha256": "f53930d209c76472ba2937489f9657661ca81951fa668e167e0af544ffd2cc53",
-      "artifactBytes": 2061795,
-      "builtAt": "2026-09-30T10:48:22.149Z",
+      "artifactSha256": "f534c8cdd5faf71953c517600e17cef22d91321c7c0c4f6de255bec747cd63a8",
+      "artifactBytes": 2062546,
+      "builtAt": "2026-09-30T10:53:34.978Z",
       "status": "IMPLEMENTADO",
       "page01LiveVerified": false
     }
