@@ -112,8 +112,11 @@ async function main(){
   };
   await run('node',['scripts/qa-commercial-core-live-binding.mjs'],OS_DIR,childEnv);
   await run('node',['scripts/qa-google-login.mjs'],OS_DIR,childEnv);
-  await run('npm',['run','build:vinext'],OS_DIR,childEnv);
-  console.log('QA_VINEXT_BUILD_PASS '+SOURCE_SHA);
+  const prebuiltWrangler=path.join(OS_DIR,'dist','server','wrangler.json');
+  const prebuiltWorker=path.join(OS_DIR,'dist','wix-server','entry.mjs');
+  if(!fs.existsSync(prebuiltWrangler))throw new Error('QA_PREBUILT_VINEXT_MISSING:'+prebuiltWrangler);
+  if(!fs.existsSync(prebuiltWorker))throw new Error('QA_PREBUILT_WIX_WORKER_MISSING:'+prebuiltWorker);
+  console.log('QA_VINEXT_PREBUILT_REUSE '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
 
   await new Promise(resolve=>bootstrap.close(resolve));
   console.log('QA_BOOTSTRAP_PORT_RELEASED '+PORT);
