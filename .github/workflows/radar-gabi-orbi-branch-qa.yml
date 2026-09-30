@@ -13,20 +13,78 @@ permissions:
 jobs:
   qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 8
     steps:
-      - name: Checkout canonical GitLab branch
+      - uses: actions/checkout@v4
+      - name: Run candidate ORBI gates
         shell: bash
         run: |
           set -euo pipefail
-          git clone --depth 1 --branch fix/gabi-orbi-approved-hero-20260930 https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao.git canonical
-      - name: Run ORBI gates
-        working-directory: canonical
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/qa-gabi-orbi-approved-hero.mjs
-          node scripts/qa-gabi-diva-root-visual-parity.mjs
-          node scripts/qa-gabi-orbi-human-voice-v2.mjs
-          node scripts/qa-gabi-diva-studio.mjs
-          node scripts/qa-diva-orbi-canonical-parity.mjs
+          node <<'NODE'
+          const fs=require('fs');
+          const assert=require('assert/strict');
+          const {spawnSync}=require('child_process');
+          const html=fs.readFileSync('tmp/orbi-candidate/index.html','utf8');
+
+          const hero=html.indexOf('data-orbi-placement="radar-hero"');
+          const tabs=html.indexOf('<div class="tabs">');
+          const studio=html.indexOf('<section id="studio"');
+          const orb=html.indexOf('id="gabiDivaOrb"');
+          assert.ok(hero>=0&&hero<tabs,'ORBI hero placement');
+          assert.ok(orb>=0&&orb<studio,'ORBI must live before Studio');
+          assert.equal((html.match(/id="gabiDivaOrb"/g)||[]).length,1,'single ORBI identity');
+
+          for(const token of [
+            'class="gabiDivaOrb divaAvatar2D hero state-ready"',
+            'data-diva-face="DIVA_GABI"',
+            'data-diva-root="DIVA_RAIZ"',
+            'data-orbi-visual="diva-official-v1"',
+            'data-orbi-interface="diva-orbi-interface-v1"',
+            'divaOrbHalo','divaOrbCore','divaOrbLight','divaOrbMist','divaOrbPulse',
+            'divaOrbOrbit','divaOrbRibbon','divaOrbSpark',
+            'gabiOrbiControlCluster','id="gabiHeroMic"','id="gabiStudioMicMute"','id="gabiStudioStop"',
+            'Fale com a DIVA'
+          ]) assert.ok(html.includes(token),'missing approved hero token '+token);
+          assert.ok(html.includes('.divaOrbHalo,.divaOrbCore,.divaOrbLight,.divaOrbMist,.divaOrbPulse,.divaOrbRibbon,.divaOrbSpark,.divaOrbOrbit{pointer-events:none}'),'decorative hitboxes must be click-through');
+          console.log('PASS · GABI_ORBI_APPROVED_HERO');
+
+          for(const color of ['#ffddeb','#f98fc2','#ef3b91','#9d0e59']) assert.ok(html.includes(color),'canonical palette '+color);
+          for(const forbidden of ['.divaRealModel','.divaStageHalo','.divaStageFloor','<model-viewer','static.wixstatic.com/3d/']) assert.equal(html.includes(forbidden),false,'forbidden independent visual '+forbidden);
+          console.log('PASS · GABI_ORBI_ROOT_VISUAL_PARITY');
+
+          for(const token of [
+            'function gabiStudioStartVoiceSensor','function gabiStudioStopVoiceSensor','function gabiStudioInterruptFromVoice',
+            'createAnalyser','echoCancellation:true','noiseSuppression:true','autoGainControl:true',
+            'gabiStudioSpeechEpoch','function gabiStudioHardStop','gabiStudioSessionTurns',
+            'function gabiStudioPublicHistory','new AbortController()','gabiStudioRequestController.abort()',
+            "gabiStudioInterruptFromVoice('vad')","rate:.98,pitch:1.00,volume:.96"
+          ]) assert.ok(html.includes(token),'missing voice contract '+token);
+          assert.equal(html.includes('Gabi, montei uma proposta pra você.'),false,'robotic fixed opener');
+          assert.equal(html.includes('Gabi, pensei em uma direção pra você.'),false,'robotic fixed opener');
+          assert.equal(html.includes('Inteligência absorvida por ORBI'),false,'capacity copy must stay hidden');
+          assert.equal(html.includes('id="gabiStudioVoiceToggle"'),false,'redundant voice toggle');
+          assert.equal(html.includes('id="gabiStudioContinue"'),false,'redundant continue control');
+          console.log('PASS · GABI_ORBI_HUMAN_VOICE_V2');
+
+          for(const token of [
+            'DIVA Studio','gabiStudioMic','gabiStudioMicMute','gabiStudioStop',
+            'Ponto de partida','Contexto','Criar com a DIVA','Preset inteligente',
+            'Depois da primeira resposta:','gabiStudioResultPrimary','gabiStudioResultDetails',
+            'data-studio-refine="shorter"','data-studio-refine="another"',
+            'gabiStudioReplay','webkitSpeechRecognition','speechSynthesis',
+            "includes('pare')","includes('continue')",'function gabiStudioPublicContext',
+            '/api/gabi-diva-studio','data-diva-studio-shell="v4"'
+          ]) assert.ok(html.includes(token),'Studio regression '+token);
+          assert.equal(html.includes("fetch('/api/ai'"),false,'client-safe Studio internal endpoint leak');
+          console.log('PASS · GABI_DIVA_STUDIO_SURFACE');
+
+          for(const id of ['gabiDivaOrb','gabiHeroMic','gabiStudioMicMute','gabiStudioStop','gabiStudioPresenceLabel']){
+            assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,'duplicate id '+id);
+          }
+
+          const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(Boolean);
+          fs.writeFileSync('/tmp/gabi-orbi-inline.js',scripts.join('\n'));
+          const parsed=spawnSync(process.execPath,['--check','/tmp/gabi-orbi-inline.js'],{encoding:'utf8'});
+          if(parsed.status!==0){process.stderr.write(parsed.stderr||parsed.stdout);process.exit(parsed.status||1)}
+          console.log('PASS · GABI_ORBI_INLINE_JS_PARSE');
+          NODE
