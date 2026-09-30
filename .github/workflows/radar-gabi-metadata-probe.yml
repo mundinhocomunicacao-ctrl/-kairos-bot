@@ -1,0 +1,21 @@
+name: Radar Gabi · Bundle Metadata Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/radar-gabi-metadata-probe.yml"
+permissions:
+  contents: read
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact bundle metadata
+        run: |
+          set -euo pipefail
+          FILE=deploy/radar-gabi/index.html
+          test -s "$FILE"
+          echo "RADAR_BYTES=$(wc -c < "$FILE" | tr -d ' ')"
+          echo "RADAR_MD5=$(md5sum "$FILE" | awk '{print $1}')"
+          echo "RADAR_SHA256=$(sha256sum "$FILE" | awk '{print $1}')"
