@@ -2,47 +2,47 @@
   "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
   "mode": "frozen",
   "currentLive": {
-    "sourceSha": "6af2776427e1e6a25e271945e6eb006af19abbe3",
-    "mirrorSha": null,
-    "releaseId": "wix-live-6af27764",
+    "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
+    "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
+    "releaseId": "wix-live-c713f110",
     "runtimeEnv": "wix-live",
     "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "receiptBranch": null,
-    "receiptPath": null,
-    "lastVerifiedAt": "2026-09-30T10:49:01Z",
+    "receiptBranch": "forge/wix-remote-release-auth-20260927",
+    "receiptPath": "deploy/os-wix-bridge/release-lock.json",
+    "lastVerifiedAt": "2026-09-30T12:47:43Z",
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-OS-C713-PINK-20260930-USER-AUTHORIZED",
+    "requestId": "REL-OS-EE937067-20260930-USER-AUTHORIZED",
     "status": "APPROVED",
-    "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
-    "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
-    "releaseId": "wix-live-c713f110",
-    "expectedCurrentLiveSourceSha": "6af2776427e1e6a25e271945e6eb006af19abbe3",
-    "expectedCurrentLiveReleaseId": "wix-live-6af27764",
+    "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
+    "mirrorSha": "e08235ac0f2833c8d03599bc6c2d15554e5fe9de",
+    "releaseId": "wix-live-ee937067",
+    "expectedCurrentLiveSourceSha": "c713f110d491625905b10516f9dc11079ef89318",
+    "expectedCurrentLiveReleaseId": "wix-live-c713f110",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "OS/Morada boundary preserved on current main; approved pink visual master mounted globally; proposal generator preserved; Page01 and private artifact rail QA PASS on release mirror.",
-    "buildReceipt": "Render build-stage PASS 2026-09-30T10:53:34.978Z; exact mirror 84637933962f6f5ea430032082eaa3ba6142457a; tracked checkout clean; wix-live; 1081 client JS references resolvable; artifact SHA256 f534c8cdd5faf71953c517600e17cef22d91321c7c0c4f6de255bec747cd63a8; 2062546 bytes.",
-    "visualReceipt": "LAST_HUMAN_APPROVED_VISUAL = Painel DIVA: Inteligência em Movimento.png; global pink master #EF3B91/#FFDDEB/#F991C3/#991058 restored without flattening Sales Design / proposal generator.",
+    "qaReceipt": "Canonical GitLab main ee937067 merged via MR !508. Reconciled Mesa/Morada, Radar, Social Insights and Creative Studio (Ideas + Proposals). Render artifact rail QA PASS: Page01 release, endpoint contract, current-state consumers, artifact rail and static assets.",
+    "buildReceipt": "BUILD_STAGE_ARTIFACT_READY 2026-09-30T12:19:24.606Z; source ee9370678d430e721ba085a603f03418e485a182; mirror e08235ac0f2833c8d03599bc6c2d15554e5fe9de; clean checkout; wix-live; SHA256 a3edd71e47229cf05b18c4f5c4c410fa509cbc188f4a8e468906fdd5889881c6; 2033555 bytes.",
+    "visualReceipt": "Publish only the reconciled approved surfaces; preserve DIVA/Morada boundaries and client-safe DIVA Gabi. No commercial-stage mutation included in this release.",
     "approvedByHuman": true,
-    "approvedAt": "2026-09-30T10:49:01Z",
-    "authorizationProvenance": "Active human instruction: 'vai diva, cade?' following explicit approval of the supplied pink 12-panel reference and proposal-generator contract.",
+    "approvedAt": "2026-09-30T12:47:43Z",
+    "authorizationProvenance": "Active human instruction: 'reconciliue e continue de onde paraou', continuing the prior explicit instruction to publish the completed OS changes and return receipt + OS link before entering Comercial.",
     "page01LiveVerified": false,
     "artifactManifest": {
-      "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
-      "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
+      "sourceSha": "ee9370678d430e721ba085a603f03418e485a182",
+      "mirrorSha": "e08235ac0f2833c8d03599bc6c2d15554e5fe9de",
       "checkout": {
-        "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
+        "mirrorSha": "e08235ac0f2833c8d03599bc6c2d15554e5fe9de",
         "trackedCheckoutClean": true
       },
       "runtimeEnv": "wix-live",
-      "artifactSha256": "f534c8cdd5faf71953c517600e17cef22d91321c7c0c4f6de255bec747cd63a8",
-      "artifactBytes": 2062546,
-      "builtAt": "2026-09-30T10:53:34.978Z",
+      "artifactSha256": "a3edd71e47229cf05b18c4f5c4c410fa509cbc188f4a8e468906fdd5889881c6",
+      "artifactBytes": 2033555,
+      "builtAt": "2026-09-30T12:19:24.606Z",
       "status": "IMPLEMENTADO",
       "page01LiveVerified": false
     }
@@ -215,6 +215,56 @@
         }
       },
       "reason": "Superseded by exact c713 approved pink visual release after current live 6af27764 readback."
+    },
+    {
+      "at": "2026-09-30T12:47:43Z",
+      "currentLive": {
+        "sourceSha": "6af2776427e1e6a25e271945e6eb006af19abbe3",
+        "mirrorSha": null,
+        "releaseId": "wix-live-6af27764",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": null,
+        "receiptPath": null,
+        "lastVerifiedAt": "2026-09-30T10:49:01Z",
+        "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
+      },
+      "pendingReleaseRequest": {
+        "requestId": "REL-OS-C713-PINK-20260930-USER-AUTHORIZED",
+        "status": "APPROVED",
+        "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
+        "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
+        "releaseId": "wix-live-c713f110",
+        "expectedCurrentLiveSourceSha": "6af2776427e1e6a25e271945e6eb006af19abbe3",
+        "expectedCurrentLiveReleaseId": "wix-live-6af27764",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "OS/Morada boundary preserved on current main; approved pink visual master mounted globally; proposal generator preserved; Page01 and private artifact rail QA PASS on release mirror.",
+        "buildReceipt": "Render build-stage PASS 2026-09-30T10:53:34.978Z; exact mirror 84637933962f6f5ea430032082eaa3ba6142457a; tracked checkout clean; wix-live; 1081 client JS references resolvable; artifact SHA256 f534c8cdd5faf71953c517600e17cef22d91321c7c0c4f6de255bec747cd63a8; 2062546 bytes.",
+        "visualReceipt": "LAST_HUMAN_APPROVED_VISUAL = Painel DIVA: Inteligência em Movimento.png; global pink master #EF3B91/#FFDDEB/#F991C3/#991058 restored without flattening Sales Design / proposal generator.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-09-30T10:49:01Z",
+        "authorizationProvenance": "Active human instruction: 'vai diva, cade?' following explicit approval of the supplied pink 12-panel reference and proposal-generator contract.",
+        "page01LiveVerified": false,
+        "artifactManifest": {
+          "sourceSha": "c713f110d491625905b10516f9dc11079ef89318",
+          "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
+          "checkout": {
+            "mirrorSha": "84637933962f6f5ea430032082eaa3ba6142457a",
+            "trackedCheckoutClean": true
+          },
+          "runtimeEnv": "wix-live",
+          "artifactSha256": "f534c8cdd5faf71953c517600e17cef22d91321c7c0c4f6de255bec747cd63a8",
+          "artifactBytes": 2062546,
+          "builtAt": "2026-09-30T10:53:34.978Z",
+          "status": "IMPLEMENTADO",
+          "page01LiveVerified": false
+        }
+      },
+      "reason": "Superseded after runtime reread: c713f110 is now live. User instructed to reconcile and continue publication of the approved Mesa + Radar + Social Insights + Creative Studio changes."
     }
   ]
 }
