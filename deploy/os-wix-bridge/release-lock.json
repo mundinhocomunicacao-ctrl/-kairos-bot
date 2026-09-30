@@ -16,7 +16,7 @@
   },
   "pendingReleaseRequest": {
     "requestId": "REL-PAGE01-11000119-20260930-USER-AUTHORIZED",
-    "status": "PLANEJADO",
+    "status": "APPROVED",
     "sourceSha": "110001195572b7af5e0f86cca6f510ea059c9f4f",
     "mirrorSha": "00cb01375e787e12fd7b0eb03f16f09eb8e2a4f9",
     "releaseId": "wix-live-11000119",
@@ -25,14 +25,27 @@
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Targeted Page01 source contract and private artifact rail QA PASS; prior unchanged UI/auth QAs inherited from ccde7087. Authenticated runtime verification remains pending. Two parser fixes verified by node --check and meaningful commercial fixture; independent spec review no material findings. Latest main Radar file reconciled exactly; compilation pending.",
-    "buildReceipt": "Pending build-stage artifact for reconciled sovereign Radar delta. Full mirror tree parity PASS 1026 blobs and modes; marker identity checked separately.",
+    "qaReceipt": "Targeted Page01 source contract and private artifact rail QA PASS; prior unchanged UI/auth QAs inherited from ccde7087. Authenticated runtime verification remains pending. Two parser fixes verified by node --check and meaningful commercial fixture; independent spec review no material findings. Latest main Radar file reconciled exactly; compilation PASS. Page01 source/endpoint contract and private artifact rail checks PASS on reconciled source.",
+    "buildReceipt": "Render build-stage PASS 2026-09-30T09:50:52.318Z; exact mirror 00cb01375e787e12fd7b0eb03f16f09eb8e2a4f9; tracked checkout clean; wix-live; SHA256 e5b2fa77d4d0ffbb71512a46f547628ac4bce98cd5cd76950083ae4c8e23c1dd; 2033823 bytes. Controller publication remains blocked by missing Wix CLI session; Page01 runtime verification pending.",
     "visualReceipt": "Page01 approved pink body unchanged. Radar restored exactly from sovereign main e5ef6c6e4b6e9882db9ca3a5f9050e7edd8df09f.",
     "approvedByHuman": true,
     "approvedAt": "2026-09-30T02:00:10.812Z",
     "authorizationProvenance": "Active human instruction ROTA DA DIVA · OS PAGE-BY-PAGE · EXECUÇÃO CONTÍNUA",
     "page01LiveVerified": false,
-    "artifactManifest": null
+    "artifactManifest": {
+      "sourceSha": "110001195572b7af5e0f86cca6f510ea059c9f4f",
+      "mirrorSha": "00cb01375e787e12fd7b0eb03f16f09eb8e2a4f9",
+      "checkout": {
+        "mirrorSha": "00cb01375e787e12fd7b0eb03f16f09eb8e2a4f9",
+        "trackedCheckoutClean": true
+      },
+      "runtimeEnv": "wix-live",
+      "artifactSha256": "e5b2fa77d4d0ffbb71512a46f547628ac4bce98cd5cd76950083ae4c8e23c1dd",
+      "artifactBytes": 2033823,
+      "builtAt": "2026-09-30T09:50:52.318Z",
+      "status": "IMPLEMENTADO",
+      "page01LiveVerified": false
+    }
   },
   "requiredRequestFields": [
     "requestId",
