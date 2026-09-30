@@ -9,16 +9,16 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect Wix CLI release endpoints
+      - name: Inspect Wix CLI Site release path
         shell: bash
         run: |
           set -euo pipefail
           TMP="$(mktemp -d)"
           npm install --prefix "$TMP" @wix/cli@latest --no-audit --no-fund
           ROOT="$TMP/node_modules/@wix/cli/build"
-          echo '=== PROMOTE DEFINITIONS ==='
-          grep -R -n -B120 -A220 'promoteAppVersionFromDraftToProduction' "$ROOT" --include='*.js' | head -1200 || true
-          echo '=== SUGGEST DEFINITIONS ==='
-          grep -R -n -B120 -A180 'suggestNextVersions' "$ROOT" --include='*.js' | head -1000 || true
-          echo '=== COMMIT OVERRIDE DEFINITIONS ==='
-          grep -R -n -B120 -A180 'commitOverride' "$ROOT" --include='*.js' | head -1000 || true
+          echo '=== RELEASE SITE ==='
+          grep -R -n -B180 -A320 'ReleaseSite' "$ROOT" --include='*.js' | head -2200 || true
+          echo '=== SITE PROJECT RELEASE CALLS ==='
+          grep -R -n -B120 -A220 'projectType.*Site\|releaseSite\|publishSite\|siteId.*release\|useBackendAsAServiceClient' "$ROOT" --include='*.js' | head -2600 || true
+          echo '=== HOSTING / BACKEND AS A SERVICE ==='
+          grep -R -n -B120 -A220 'backend-as-a-service\|BackendAsAService\|createDeployment\|deploymentUrl\|wix-site-host' "$ROOT" --include='*.js' | head -2600 || true
