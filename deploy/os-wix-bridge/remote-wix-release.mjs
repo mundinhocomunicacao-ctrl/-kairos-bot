@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import http from 'node:http';
 import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
@@ -93,6 +94,16 @@ async function smoke(){
   }));
 }
 async function main(){
+  const bootstrap=http.createServer((req,res)=>{
+    res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});
+    res.end(JSON.stringify({ok:true,status:'warming',sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
+  });
+  await new Promise((resolve,reject)=>{
+    bootstrap.once('error',reject);
+    bootstrap.listen(PORT,'0.0.0.0',resolve);
+  });
+  console.log('QA_BOOTSTRAP_PORT_READY '+PORT);
+
   verifySource();
   const childEnv={
     MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,
@@ -103,6 +114,9 @@ async function main(){
   await run('node',['scripts/qa-google-login.mjs'],OS_DIR,childEnv);
   await run('npm',['run','build:vinext'],OS_DIR,childEnv);
   console.log('QA_VINEXT_BUILD_PASS '+SOURCE_SHA);
+
+  await new Promise(resolve=>bootstrap.close(resolve));
+  console.log('QA_BOOTSTRAP_PORT_RELEASED '+PORT);
 
   const app=spawn('npm',['run','start:vinext','--','--ip','0.0.0.0','--port',String(PORT)],{
     cwd:OS_DIR,
