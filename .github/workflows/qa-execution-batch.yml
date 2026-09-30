@@ -1,0 +1,40 @@
+name: QA Execution Batch 2026-09-30
+on:
+  push:
+    branches:
+      - 'qa/execution-batch-20260930'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax
+        run: |
+          set -euo pipefail
+          node --check pages/api/commercial-delta.js
+          node --check pages/api/gabi-diva-studio.js
+          node --check pages/api/gabi-intent.js
+          node --check lib/commercial-delta-fabric.mjs
+          node --check lib/gabi-intent-writeback.mjs
+          node --check lib/gabi-intent-commercial-match.mjs
+      - name: Contract tests
+        run: |
+          set -euo pipefail
+          node scripts/qa-commercial-delta-event-fabric.mjs
+          node scripts/qa-commercial-delta-batch.mjs
+          node scripts/qa-commercial-delta-api.mjs
+          node scripts/qa-gabi-diva-ask-anything.mjs
+          node scripts/qa-gabi-intent-writeback.mjs
+          node scripts/qa-gabi-intent-commercial-match.mjs
+      - name: Radar inline JavaScript parse
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('radar-gabi-site/index.html','utf8');
+          const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(s=>s.trim());
+          for(let i=0;i<scripts.length;i++) new Function(scripts[i]);
+          console.log('PASS · RADAR_INLINE_JS_PARSE · scripts='+scripts.length);
+          NODE
