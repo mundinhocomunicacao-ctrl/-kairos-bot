@@ -1,0 +1,28 @@
+name: Wix CLI · Serializer Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/wix-serializer-probe.yml"
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install exact CLI and inspect serializer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/wixprobe && cd /tmp/wixprobe
+          npm init -y >/dev/null 2>&1
+          npm i --no-save @wix/cli@1.1.251 >/dev/null 2>&1
+          echo "=== METRO_RUNTIME_FILES ==="
+          find node_modules/@wix/metro-runtime -type f | head -30
+          echo "=== SERIALIZER_MATCHES ==="
+          grep -R -n -E 'function serializer|serializer *=|toJSON.*base64|base64.*toJSON|Uint8Array.*base64|bytes.*base64' node_modules/@wix/metro-runtime node_modules/@wix/ambassador-* 2>/dev/null | head -120 || true
+          echo "=== APP_DEPLOYMENT_HTTP ==="
+          grep -R -n -A80 -B20 'function createAppDeployment' node_modules/@wix/ambassador-velo-backend-v1-app-deployment 2>/dev/null | head -180 || true
