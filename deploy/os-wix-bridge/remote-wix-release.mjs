@@ -42,6 +42,26 @@ function verifySource(){
   }
   console.log('QA_SOURCE_PARITY_PASS '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,marker}));
 }
+async function repackReleaseIdentity(childEnv){
+  const markerPath=path.join(OS_DIR,'.release-source/canonical-sha.txt');
+  const originalMarker=String(fs.readFileSync(markerPath,'utf8')).trim();
+  try{
+    fs.writeFileSync(markerPath,SOURCE_SHA+'\n','utf8');
+    await run('node',['scripts/package-wix-worker.mjs'],OS_DIR,childEnv);
+  }finally{
+    fs.writeFileSync(markerPath,originalMarker+'\n','utf8');
+  }
+  const entryPath=path.join(OS_DIR,'dist','wix-server','entry.mjs');
+  if(!fs.existsSync(entryPath))throw new Error('QA_RELEASE_IDENTITY_ENTRY_MISSING:'+entryPath);
+  const entry=String(fs.readFileSync(entryPath,'utf8'));
+  if(!entry.includes(SOURCE_SHA))throw new Error('QA_RELEASE_IDENTITY_SHA_MISSING:'+SOURCE_SHA);
+  console.log('QA_RELEASE_IDENTITY_REPACK_PASS '+JSON.stringify({
+    sourceSha:SOURCE_SHA,
+    mirrorSha:MIRROR_SHA,
+    originalMarker,
+    markerRestored:true
+  }));
+}
 async function startPrebuiltWixWorker(port,childEnv){
   const wixAliasCandidates=[
     ['WIX_MUNDO_API_KEY',process.env.WIX_MUNDO_API_KEY],
@@ -164,6 +184,7 @@ async function main(){
   };
   await run('node',['scripts/qa-commercial-core-live-binding.mjs'],OS_DIR,preflightEnv);
   await run('node',['scripts/qa-google-login.mjs'],OS_DIR,childEnv);
+  await repackReleaseIdentity(childEnv);
   const prebuiltWorker=path.join(OS_DIR,'dist','wix-server','entry.mjs');
   if(!fs.existsSync(prebuiltWorker))throw new Error('QA_PREBUILT_WIX_WORKER_MISSING:'+prebuiltWorker);
   console.log('QA_WIX_WORKER_PREBUILT_REUSE '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
