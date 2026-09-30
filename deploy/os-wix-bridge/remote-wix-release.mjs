@@ -158,7 +158,11 @@ async function main(){
     MUNDO_RUNTIME_ENV:'render-qa-mr515',
     MUNDINHO_SESSION_SECRET:QA_SECRET
   };
-  await run('node',['scripts/qa-commercial-core-live-binding.mjs'],OS_DIR,childEnv);
+  const preflightEnv={
+    ...childEnv,
+    WIX_OS_LIVE_SITE_ID:'c80689f2-6627-45fa-a264-4ab2863ba306'
+  };
+  await run('node',['scripts/qa-commercial-core-live-binding.mjs'],OS_DIR,preflightEnv);
   await run('node',['scripts/qa-google-login.mjs'],OS_DIR,childEnv);
   const prebuiltWorker=path.join(OS_DIR,'dist','wix-server','entry.mjs');
   if(!fs.existsSync(prebuiltWorker))throw new Error('QA_PREBUILT_WIX_WORKER_MISSING:'+prebuiltWorker);
