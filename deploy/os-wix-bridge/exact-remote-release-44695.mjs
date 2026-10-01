@@ -1,1 +1,2 @@
-await import('./exact-remote-release-ee6e4332-os.mjs');
+await import('./qa-current-release-controller.mjs');
+await import('./current-wix-release.mjs');
