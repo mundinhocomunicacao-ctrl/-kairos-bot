@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('./current-wix-release.mjs',import.meta.url),'utf8');
+const alias=fs.readFileSync(new URL('./exact-remote-release-44695.mjs',import.meta.url),'utf8');
+assert.match(alias,/qa-current-release-controller\.mjs/);
+assert.match(alias,/current-wix-release\.mjs/);
+assert.match(source,/1704e7220dbcf8abf409a428fa10fbcd034a2fe0/);
+assert.match(source,/e3d1a45d498144686b11f7b431561e9aef41e320/);
+assert.doesNotMatch(source,/OVERLAY_DIR|OVERLAY_FILES|SOURCE_MARKER_MISMATCH/);
+assert.match(source,/MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA/);
+assert.match(source,/qa-os-native-runtime-gates\.mjs/);
+for(const token of ["'/api/os-gates/qa'","'/api/os-gates/workflow'",'MAKE_QA_GATE_PASS','MAKE_WORKFLOW_ROUTER_PASS','x-mundinho-gate-executor','WIX_NATIVE'])assert.ok(source.includes(token),token+' missing');
+for(const label of ['QA','LIVE','CANONICAL'])assert.ok(source.includes(label),label+' missing');
+console.log('QA_CURRENT_WIX_RELEASE_CONTROLLER PASS');
