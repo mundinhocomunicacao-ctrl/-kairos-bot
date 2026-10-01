@@ -1,7 +1,7 @@
 [submodule "os"]
 	path = os
 	url = https://github.com/mundinhocomunicacao-ctrl/mundinho-os-live.git
-	branch = forge/os-pink-master-6be4e186
+	branch = mirror/gitlab-main-1704e722
 
 [submodule "morada"]
 	path = morada
