@@ -2,6 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
+import {createHash,timingSafeEqual} from 'node:crypto';
 
 const PORT=Number(process.env.PORT||10000);
 const SOURCE_SHA=String(process.env.OS_SOURCE_SHA||process.env.SOURCE_SHA||'').trim();
@@ -12,6 +13,9 @@ const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const RELEASE_QA_FIRST=String(process.env.OS_RELEASE_QA_FIRST||'0')==='1';
+const BRIDGE_SECRET=String(process.env.MUNDO_RENDER_SOURCE_BRIDGE_SECRET||'').trim();
+const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
+let bridgeResolve=null;
 let state={phase:'BOOT',ok:false,released:false,sourceSha:SOURCE_SHA,source:'GITLAB_CANONICAL_ARCHIVE',tests:[],error:null};
 
 function run(bin,args,cwd=ROOT,extraEnv={}){
@@ -30,6 +34,63 @@ function mark(gate,status='PASS',detail=null){
   state.tests.push({gate,status,detail,at:new Date().toISOString()});
   console.log(gate+'='+status+(detail?' '+detail:''));
 }
+function safeEqualText(a,b){
+  const aa=Buffer.from(String(a||'')),bb=Buffer.from(String(b||''));
+  return aa.length===bb.length&&aa.length>0&&timingSafeEqual(aa,bb);
+}
+function assertSafeTar(archive){
+  const entries=sh('tar',['-tzf',archive],ROOT);
+  for(const raw of entries.split('\n').filter(Boolean)){
+    const name=raw.replace(/^\.\//,'');
+    if(name.startsWith('/')||name.split('/').some(part=>part==='..'))throw new Error('SOURCE_BRIDGE_ARCHIVE_PATH_INVALID');
+  }
+  const listing=sh('tar',['-tvzf',archive],ROOT);
+  if(listing.split('\n').filter(Boolean).some(line=>!/^[-d]/.test(line)))throw new Error('SOURCE_BRIDGE_ARCHIVE_LINK_FORBIDDEN');
+}
+async function waitForBridgeArchive(){
+  if(fs.existsSync(BRIDGE_ARCHIVE))return BRIDGE_ARCHIVE;
+  if(BRIDGE_SECRET.length<32)throw new Error('SOURCE_BRIDGE_SECRET_MISSING');
+  state.phase='WAIT_SOURCE_BRIDGE';
+  await new Promise((resolve,reject)=>{
+    bridgeResolve=resolve;
+    const timer=setTimeout(()=>reject(new Error('SOURCE_BRIDGE_TIMEOUT')),10*60*1000);
+    timer.unref?.();
+  });
+  if(!fs.existsSync(BRIDGE_ARCHIVE))throw new Error('SOURCE_BRIDGE_ARCHIVE_MISSING');
+  return BRIDGE_ARCHIVE;
+}
+async function receiveBridgeArchive(req,res){
+  if(req.method!=='POST'||req.url!=='/source-archive')return false;
+  const auth=String(req.headers.authorization||'');
+  if(BRIDGE_SECRET.length<32||!safeEqualText(auth,'Bearer '+BRIDGE_SECRET)){res.writeHead(401);res.end('unauthorized');return true;}
+  const suppliedSha=String(req.headers['x-source-sha']||'').trim();
+  const suppliedDigest=String(req.headers['x-archive-sha256']||'').trim().toLowerCase();
+  if(suppliedSha!==SOURCE_SHA||!/^[a-f0-9]{64}$/.test(suppliedDigest)){res.writeHead(409);res.end('source identity mismatch');return true;}
+  const temp=BRIDGE_ARCHIVE+'.partial';
+  const hash=createHash('sha256');let bytes=0;
+  const out=fs.createWriteStream(temp,{flags:'w'});
+  try{
+    for await(const chunk of req){
+      bytes+=chunk.length;
+      if(bytes>512*1024*1024)throw new Error('SOURCE_BRIDGE_ARCHIVE_TOO_LARGE');
+      hash.update(chunk);
+      if(!out.write(chunk))await new Promise(resolve=>out.once('drain',resolve));
+    }
+    await new Promise((resolve,reject)=>out.end(err=>err?reject(err):resolve()));
+    if(bytes<1||hash.digest('hex')!==suppliedDigest)throw new Error('SOURCE_BRIDGE_CHECKSUM_MISMATCH');
+    assertSafeTar(temp);
+    fs.renameSync(temp,BRIDGE_ARCHIVE);
+    state.bridge={accepted:true,bytes,sha256:suppliedDigest,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
+    mark('SOURCE_BRIDGE_ARCHIVE_ACCEPTED','PASS',SOURCE_SHA);
+    bridgeResolve?.();bridgeResolve=null;
+    res.writeHead(201,{'content-type':'application/json'});res.end(JSON.stringify({ok:true,sourceSha:SOURCE_SHA,bytes}));
+  }catch(error){
+    try{out.destroy();}catch{}
+    fs.rmSync(temp,{force:true});
+    res.writeHead(400,{'content-type':'application/json'});res.end(JSON.stringify({ok:false,error:String(error?.message||error)}));
+  }
+  return true;
+}
 async function syncSource(){
   state.phase='SOURCE';
   if(!/^[0-9a-f]{40}$/i.test(SOURCE_SHA))throw new Error('OS_SOURCE_SHA_REQUIRED_EXACT_40');
@@ -37,12 +98,22 @@ async function syncSource(){
   fs.mkdirSync(OS_DIR,{recursive:true});
   const archive=path.join(ROOT,'.canonical-'+SOURCE_SHA+'.tar.gz');
   const url='https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao/-/archive/'+SOURCE_SHA+'/mundinhocomunicacao-'+SOURCE_SHA+'.tar.gz';
-  await run('curl',['--fail','--silent','--show-error','--location','--retry','5','--retry-all-errors','--retry-delay','2',url,'-o',archive],ROOT);
-  await run('tar',['-xzf',archive,'--strip-components=1','-C',OS_DIR],ROOT);
+  let transport='direct-gitlab-archive';
+  try{
+    await run('curl',['--fail','--silent','--show-error','--location','--retry','2','--retry-all-errors','--retry-delay','1',url,'-o',archive],ROOT);
+    assertSafeTar(archive);
+    await run('tar',['-xzf',archive,'--strip-components=1','-C',OS_DIR],ROOT);
+  }catch(error){
+    fs.rmSync(archive,{force:true});
+    const bridged=await waitForBridgeArchive();
+    transport='gitlab-ci-source-bridge';
+    await run('tar',['-xzf',bridged,'-C',OS_DIR],ROOT);
+  }
   for(const required of ['package.json','package-lock.json','proxy.js','pages/api/release-version.js','scripts/package-wix-worker.mjs']){
     if(!fs.existsSync(path.join(OS_DIR,required)))throw new Error('CANONICAL_SOURCE_FILE_MISSING:'+required);
   }
-  mark('SOURCE_PARITY','PASS',SOURCE_SHA+' direct-gitlab-archive');
+  state.sourceTransport=transport;
+  mark('SOURCE_PARITY','PASS',SOURCE_SHA+' '+transport);
 }
 async function qaAndBuild(){
   state.phase='QA_BUILD';
@@ -123,8 +194,9 @@ async function main(){
     console.error('OS_LIVE_EXACT_SHA_BLOCKED '+state.error);
   }
 }
-http.createServer((req,res)=>{
-  res.setHeader('content-type','application/json');
+http.createServer(async(req,res)=>{
   res.setHeader('cache-control','no-store');
+  if(await receiveBridgeArchive(req,res))return;
+  res.setHeader('content-type','application/json');
   res.end(JSON.stringify(state,null,2));
 }).listen(PORT,'0.0.0.0',()=>{console.log('OS_EXACT_GITLAB_RELEASE_CONTROLLER_READY');void main();});
