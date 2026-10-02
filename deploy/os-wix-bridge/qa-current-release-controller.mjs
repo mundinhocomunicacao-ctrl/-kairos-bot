@@ -41,3 +41,11 @@ console.log('QA_CURRENT_WIX_RELEASE_CONTROLLER PASS · DIRECT_GITLAB_EXACT_SHA')
 assert.match(source,/EXTERNAL_BUILDER_ONLY=true/);
 assert.match(source,/SOURCE_ARCHIVE_READY_FOR_GITHUB_BUILDER/);
 assert.match(source,/EXTERNAL_BUILD_HANDOFF/);
+assert.match(source,/BUILD_ARCHIVE/);
+assert.match(source,/receiveBuildArtifact/);
+assert.match(source,/\/build-artifact/);
+assert.match(source,/EXTERNAL_BUILD_ARTIFACT_ACCEPTED/);
+assert.match(source,/EXTERNAL_BUILD_ARTIFACT_VERIFIED/);
+assert.match(source,/EXTERNAL_BUILD_SOURCE_SHA_MISMATCH/);
+assert.match(source,/builder:'github-hosted'/);
+
