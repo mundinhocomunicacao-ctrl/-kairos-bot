@@ -13,6 +13,7 @@ const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const RELEASE_QA_FIRST=String(process.env.OS_RELEASE_QA_FIRST||'0')==='1';
+const EXTERNAL_BUILDER_ONLY=true;
 const BRIDGE_AUDIENCE='https://mundinho-wix-exact-44695-release.onrender.com/source-archive';
 const GITLAB_OIDC_ISSUER='https://gitlab.com';
 const GITLAB_OIDC_JWKS='https://gitlab.com/oauth/discovery/keys';
@@ -310,6 +311,12 @@ async function releaseTarget(target,label){
 async function main(){
   try{
     await syncSource();
+    if(EXTERNAL_BUILDER_ONLY){
+      state.phase='EXTERNAL_BUILD_READY';state.ok=true;state.released=false;state.status='SOURCE_ARCHIVE_READY_FOR_GITHUB_BUILDER';
+      mark('EXTERNAL_BUILD_HANDOFF','PASS',SOURCE_SHA);
+      console.log('SOURCE_ARCHIVE_READY_FOR_GITHUB_BUILDER '+SOURCE_SHA);
+      return;
+    }
     await qaAndBuild();
     await ensureAuth();
     if(RELEASE_QA_FIRST)await releaseTarget(QA,'QA');
