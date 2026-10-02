@@ -15,6 +15,9 @@ assert.ok(src.includes("const silentBaileysLogger={"),"Baileys runtime must decl
 assert.ok(src.includes("child(){return this}"),"silent Baileys logger must satisfy child logger contract");
 assert.ok(src.includes("logger:silentBaileysLogger"),"makeWASocket must receive the explicit silent logger");
 assert.ok(src.includes('head.startsWith("Closing session:")'),"libsignal Closing session dumps must be intercepted");
+assert.ok(src.includes('head.startsWith("Removing old closed session:")'),"libsignal old-session dumps must be intercepted");
+for(const method of ["log","info","warn","error","debug"])
+  assert.ok(src.includes(`console[${method}]=(...args)=>`),"all console levels must pass through the Signal-session redaction guard");
 assert.ok(src.includes("DIVA_SIGNAL_SESSION_ROTATION_REDACTED"),"sensitive Signal session dump must be replaced by a sanitized marker");
 assert.ok(src.includes("function safeRelayTarget()"),"relay diagnostics must expose only a sanitized target fingerprint");
 assert.ok(src.includes("return{origin:u.origin,path:u.pathname}"),"relay target diagnostics must omit URL query and credentials");
