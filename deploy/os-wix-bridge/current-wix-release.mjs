@@ -146,6 +146,40 @@ async function syncSource(){
   state.sourceTransport=transport;
   mark('SOURCE_PARITY','PASS',SOURCE_SHA+' '+transport);
 }
+function cgroupMemoryCurrent(){
+  for(const file of ['/sys/fs/cgroup/memory.current','/sys/fs/cgroup/memory/memory.usage_in_bytes']){
+    try{return Number(fs.readFileSync(file,'utf8').trim())||null}catch{}
+  }
+  return null;
+}
+async function reclaimRuntimeFileCache(){
+  state.subphase='RUNTIME_FILE_CACHE_RECLAIM';
+  const before=cgroupMemoryCurrent();
+  try{await run('sync',[],ROOT)}catch{}
+  const python=[
+    'import os, pathlib',
+    'roots=[pathlib.Path(r"'+OS_DIR.replace(/\\/g,'\\\\')+'")/"node_modules", pathlib.Path.home()/".npm"]',
+    'hint=getattr(os,"POSIX_FADV_DONTNEED",4)',
+    'count=0',
+    'for root in roots:',
+    '  if not root.exists(): continue',
+    '  for p in root.rglob("*"):',
+    '    try:',
+    '      if not p.is_file(): continue',
+    '      fd=os.open(str(p),os.O_RDONLY)',
+    '      try: os.posix_fadvise(fd,0,0,hint); count+=1',
+    '      finally: os.close(fd)',
+    '    except Exception: pass',
+    'print(count)'
+  ].join('\\n');
+  let filesHinted='unknown';
+  try{filesHinted=sh('python3',['-c',python],ROOT)}catch{}
+  try{fs.rmSync(path.join(process.env.HOME||ROOT,'.npm','_cacache'),{recursive:true,force:true})}catch{}
+  await new Promise(resolve=>setTimeout(resolve,1200));
+  const after=cgroupMemoryCurrent();
+  mark('RUNTIME_FILE_CACHE_RECLAIM','PASS',JSON.stringify({beforeBytes:before,afterBytes:after,filesHinted}));
+}
+
 async function qaAndBuild(){
   state.phase='QA_BUILD';
   state.subphase='NPM_CI_LOW_MEMORY';
@@ -158,6 +192,7 @@ async function qaAndBuild(){
     await run('node',[script],OS_DIR);
     mark('LOCAL_'+path.basename(script).replace(/\.mjs$/,'').toUpperCase());
   }
+  await reclaimRuntimeFileCache();
   state.subphase='BUILD_WIX_WORKER_LOW_MEMORY';
   await run('npm',['run','build:wix-worker'],OS_DIR,{
     MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,
