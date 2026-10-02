@@ -148,12 +148,22 @@ async function syncSource(){
 }
 async function qaAndBuild(){
   state.phase='QA_BUILD';
-  await run('npm',['ci','--include=dev'],OS_DIR);
+  state.subphase='NPM_CI_LOW_MEMORY';
+  await run('npm',['ci','--include=dev','--no-audit','--no-fund','--prefer-offline'],OS_DIR,{
+    NODE_OPTIONS:'--max-old-space-size=256',
+    npm_config_maxsockets:'4'
+  });
+  mark('NPM_CI_LOW_MEMORY','PASS','heap=256 maxsockets=4');
   for(const script of ['scripts/qa-resource-mesh-v1-1.mjs','scripts/qa-wix-canonical-rail.mjs','scripts/qa-os-domain-release-rail.mjs']){
     await run('node',[script],OS_DIR);
     mark('LOCAL_'+path.basename(script).replace(/\.mjs$/,'').toUpperCase());
   }
-  await run('npm',['run','build:wix-worker'],OS_DIR,{MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,MUNDO_RUNTIME_ENV:'wix-live',NODE_OPTIONS:process.env.NODE_OPTIONS||'--max-old-space-size=1536'});
+  state.subphase='BUILD_WIX_WORKER_LOW_MEMORY';
+  await run('npm',['run','build:wix-worker'],OS_DIR,{
+    MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,
+    MUNDO_RUNTIME_ENV:'wix-live',
+    NODE_OPTIONS:'--max-old-space-size=320'
+  });
   const entry=path.join(OS_DIR,'dist','wix-server','entry.mjs');
   if(!fs.existsSync(entry))throw new Error('WIX_WORKER_ENTRY_MISSING');
   if(!fs.readFileSync(entry,'utf8').includes(SOURCE_SHA))throw new Error('WIX_WORKER_SOURCE_SHA_MISMATCH');
