@@ -33,15 +33,26 @@ const silentBaileysLogger={
  child(){return this},
  trace(){},debug(){},info(){},warn(){},error(){},fatal(){}
 };
-const rawConsoleLog=console.log.bind(console);
-console.log=(...args)=>{
+const rawConsole=Object.fromEntries(
+  ["log","info","warn","error","debug"].map(method=>[method,console[method].bind(console)])
+);
+function redactSensitiveSignalLog(args=[]){
  const head=String(args[0]??"");
- if(head.startsWith("Closing session:")){
-   rawConsoleLog("DIVA_SIGNAL_SESSION_ROTATION_REDACTED");
-   return;
+ if(
+   head.startsWith("Closing session:") ||
+   head.startsWith("Removing old closed session:")
+ ){
+   rawConsole.log("DIVA_SIGNAL_SESSION_ROTATION_REDACTED");
+   return true;
  }
- rawConsoleLog(...args);
-};
+ return false;
+}
+for(const method of ["log","info","warn","error","debug"]){
+ console[method]=(...args)=>{
+   if(redactSensitiveSignalLog(args))return;
+   rawConsole[method](...args);
+ };
+}
 
 function vaultKey(){
  if(!DIVA_AUTH_VAULT_SECRET)throw new Error("DIVA_AUTH_VAULT_SECRET is not configured");
