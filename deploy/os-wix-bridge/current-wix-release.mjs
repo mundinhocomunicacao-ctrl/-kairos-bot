@@ -323,19 +323,71 @@ async function qaAndBuild(){
 function writeConfig(target){
   fs.writeFileSync(path.join(REL,'wix.config.json'),JSON.stringify({projectType:'Site',appId:target.appId,siteId:target.siteId,site:{outputDirectory:{client:'./client',server:'./server'}}},null,2));
 }
+async function interactiveWixDeviceLogin(){
+  state.phase='WIX_AUTH_DEVICE_LOGIN';
+  state.status='AWAITING_WIX_DEVICE_AUTHORIZATION';
+  state.auth={status:'STARTING_DEVICE_LOGIN',startedAt:new Date().toISOString()};
+  await new Promise((resolve,reject)=>{
+    const child=spawn('npx',['-y','@wix/cli@latest','login'],{
+      cwd:REL,
+      env:{...process.env,CI:'0',AI_AGENT:'wix-headless-skill',NO_COLOR:'1'},
+      stdio:['ignore','pipe','pipe']
+    });
+    let buffer='';
+    const consume=(chunk,stream)=>{
+      const raw=String(chunk||'');
+      if(stream==='stdout')process.stdout.write(raw);else process.stderr.write(raw);
+      buffer+=raw;
+      const lines=buffer.split(/\r?\n/);
+      buffer=lines.pop()||'';
+      for(const line of lines){
+        const trimmed=line.trim();
+        if(!trimmed)continue;
+        try{
+          const event=JSON.parse(trimmed);
+          if(event?.event==='awaiting_user'&&event?.verificationUri&&event?.userCode){
+            state.auth={
+              status:'AWAITING_USER',
+              verificationUri:String(event.verificationUri),
+              userCode:String(event.userCode),
+              expiresInSeconds:Number(event.expiresInSeconds)||600,
+              observedAt:new Date().toISOString()
+            };
+            mark('WIX_DEVICE_AUTH_CHALLENGE','PASS','user-action-required');
+          }else if(event?.event==='success'){
+            state.auth={status:'AUTHORIZED',email:event?.email||null,userId:event?.userId||null,observedAt:new Date().toISOString()};
+            mark('WIX_DEVICE_AUTH','PASS','authorized');
+          }
+        }catch{}
+      }
+    };
+    child.stdout.on('data',d=>consume(d,'stdout'));
+    child.stderr.on('data',d=>consume(d,'stderr'));
+    child.on('error',reject);
+    child.on('close',code=>code===0?resolve():reject(new Error('WIX_DEVICE_LOGIN_EXIT_'+code)));
+    const timer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{};reject(new Error('WIX_DEVICE_LOGIN_TIMEOUT'))},11*60*1000);
+    timer.unref?.();
+  });
+}
 async function ensureAuth(){
   try{
     const who=sh('npx',['-y','@wix/cli@latest','whoami'],REL,{CI:'1',AI_AGENT:'wix-headless-skill'});
-    if(who){mark('WIX_AUTH','PASS','cached');return;}
+    if(who){mark('WIX_AUTH','PASS','cached');state.auth={status:'AUTHORIZED',mode:'cached'};return;}
   }catch{}
   for(const alias of ['WIX_OS_API_KEY','WIX_MUNDO_API_KEY','WIX_API_KEY','WIX_CLI_API_KEY','WIX_RELEASE_API_KEY','MUNDINHO_WIX_API_KEY']){
     const value=String(process.env[alias]||'').trim();
     if(!value)continue;
     await run('npx',['-y','@wix/cli@latest','login','--api-key',value],REL,{CI:'1',AI_AGENT:'wix-headless-skill'});
     mark('WIX_AUTH','PASS',alias);
+    state.auth={status:'AUTHORIZED',mode:'api-key',alias};
     return;
   }
-  throw new Error('WIX_AUTH_MISSING');
+  mark('WIX_AUTH_DURABLE_CREDENTIAL','MISS','falling-back-to-device-login');
+  await interactiveWixDeviceLogin();
+  const who=sh('npx',['-y','@wix/cli@latest','whoami'],REL,{CI:'1',AI_AGENT:'wix-headless-skill'});
+  if(!who)throw new Error('WIX_DEVICE_AUTH_REREAD_FAILED');
+  state.auth={...(state.auth||{}),status:'AUTHORIZED',mode:'device-login',reread:true};
+  mark('WIX_AUTH','PASS','device-login');
 }
 async function fetchJson(url,init={}){
   const response=await fetch(url,{...init,headers:{'cache-control':'no-cache',...(init.headers||{})},signal:AbortSignal.timeout(15000)});
