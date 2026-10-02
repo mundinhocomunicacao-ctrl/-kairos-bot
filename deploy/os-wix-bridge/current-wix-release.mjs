@@ -162,7 +162,7 @@ async function qaAndBuild(){
   await run('npm',['run','build:wix-worker'],OS_DIR,{
     MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA,
     MUNDO_RUNTIME_ENV:'wix-live',
-    NODE_OPTIONS:'--max-old-space-size=288'
+    NODE_OPTIONS:'--max-old-space-size=240'
   });
   const entry=path.join(OS_DIR,'dist','wix-server','entry.mjs');
   if(!fs.existsSync(entry))throw new Error('WIX_WORKER_ENTRY_MISSING');
