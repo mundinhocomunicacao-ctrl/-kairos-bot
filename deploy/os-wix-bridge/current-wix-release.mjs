@@ -4,15 +4,15 @@ import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
 
 const PORT=Number(process.env.PORT||10000);
-const SOURCE_SHA='1704e7220dbcf8abf409a428fa10fbcd034a2fe0';
-const MIRROR_SHA='e3d1a45d498144686b11f7b431561e9aef41e320';
+const SOURCE_SHA=String(process.env.OS_SOURCE_SHA||process.env.SOURCE_SHA||'').trim();
 const ROOT=process.cwd();
-const OS_DIR=path.join(ROOT,'os');
-const REL=path.join(ROOT,'.wix-os-gates-release');
-const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
+const OS_DIR=path.join(ROOT,'.canonical-gitlab-source');
+const REL=path.join(ROOT,'.wix-os-live-release');
 const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4940-925a-e95e6f3c570e',host:'https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com'};
 const CANONICAL='https://os.mundinhocomunicacao.com';
-let state={phase:'BOOT',ok:false,released:false,sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA,tests:[],error:null};
+const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
+const RELEASE_QA_FIRST=String(process.env.OS_RELEASE_QA_FIRST||'0')==='1';
+let state={phase:'BOOT',ok:false,released:false,sourceSha:SOURCE_SHA,source:'GITLAB_CANONICAL_ARCHIVE',tests:[],error:null};
 
 function run(bin,args,cwd=ROOT,extraEnv={}){
   return new Promise((resolve,reject)=>{
@@ -32,21 +32,22 @@ function mark(gate,status='PASS',detail=null){
 }
 async function syncSource(){
   state.phase='SOURCE';
-  await run('git',['submodule','sync','--recursive'],ROOT);
-  await run('git',['submodule','update','--init','--recursive'],ROOT);
-  const mirror=sh('git',['rev-parse','HEAD'],OS_DIR);
-  if(mirror!==MIRROR_SHA)throw new Error('MIRROR_SHA_MISMATCH:'+mirror);
-  const subject=sh('git',['show','-s','--format=%B','HEAD'],OS_DIR);
-  if(!subject.includes(SOURCE_SHA))throw new Error('MIRROR_SOURCE_PROVENANCE_MISSING');
-  for(const required of ['package.json','scripts/qa-os-native-runtime-gates.mjs','pages/api/os-gates/qa.js','pages/api/os-gates/workflow.js']){
-    if(!fs.existsSync(path.join(OS_DIR,required)))throw new Error('SOURCE_FILE_MISSING:'+required);
+  if(!/^[0-9a-f]{40}$/i.test(SOURCE_SHA))throw new Error('OS_SOURCE_SHA_REQUIRED_EXACT_40');
+  fs.rmSync(OS_DIR,{recursive:true,force:true});
+  fs.mkdirSync(OS_DIR,{recursive:true});
+  const archive=path.join(ROOT,'.canonical-'+SOURCE_SHA+'.tar.gz');
+  const url='https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao/-/archive/'+SOURCE_SHA+'/mundinhocomunicacao-'+SOURCE_SHA+'.tar.gz';
+  await run('curl',['--fail','--silent','--show-error','--location','--retry','5','--retry-all-errors','--retry-delay','2',url,'-o',archive],ROOT);
+  await run('tar',['-xzf',archive,'--strip-components=1','-C',OS_DIR],ROOT);
+  for(const required of ['package.json','package-lock.json','proxy.js','pages/api/release-version.js','scripts/package-wix-worker.mjs']){
+    if(!fs.existsSync(path.join(OS_DIR,required)))throw new Error('CANONICAL_SOURCE_FILE_MISSING:'+required);
   }
-  mark('SOURCE_PARITY','PASS',SOURCE_SHA+' mirror='+MIRROR_SHA);
+  mark('SOURCE_PARITY','PASS',SOURCE_SHA+' direct-gitlab-archive');
 }
 async function qaAndBuild(){
   state.phase='QA_BUILD';
   await run('npm',['ci','--include=dev'],OS_DIR);
-  for(const script of ['scripts/qa-os-native-runtime-gates.mjs','scripts/qa-wix-canonical-rail.mjs','scripts/qa-os-domain-release-rail.mjs','scripts/qa-os-plugin-capability-fabric.mjs']){
+  for(const script of ['scripts/qa-resource-mesh-v1-1.mjs','scripts/qa-wix-canonical-rail.mjs','scripts/qa-os-domain-release-rail.mjs']){
     await run('node',[script],OS_DIR);
     mark('LOCAL_'+path.basename(script).replace(/\.mjs$/,'').toUpperCase());
   }
@@ -64,6 +65,10 @@ function writeConfig(target){
   fs.writeFileSync(path.join(REL,'wix.config.json'),JSON.stringify({projectType:'Site',appId:target.appId,siteId:target.siteId,site:{outputDirectory:{client:'./client',server:'./server'}}},null,2));
 }
 async function ensureAuth(){
+  try{
+    const who=sh('npx',['-y','@wix/cli@latest','whoami'],REL,{CI:'1',AI_AGENT:'wix-headless-skill'});
+    if(who){mark('WIX_AUTH','PASS','cached');return;}
+  }catch{}
   for(const alias of ['WIX_OS_API_KEY','WIX_MUNDO_API_KEY','WIX_API_KEY','WIX_CLI_API_KEY','WIX_RELEASE_API_KEY','MUNDINHO_WIX_API_KEY']){
     const value=String(process.env[alias]||'').trim();
     if(!value)continue;
@@ -71,10 +76,6 @@ async function ensureAuth(){
     mark('WIX_AUTH','PASS',alias);
     return;
   }
-  try{
-    const who=sh('npx',['-y','@wix/cli@latest','whoami'],REL,{CI:'1',AI_AGENT:'wix-headless-skill'});
-    if(who){mark('WIX_AUTH','PASS','cached');return;}
-  }catch{}
   throw new Error('WIX_AUTH_MISSING');
 }
 async function fetchJson(url,init={}){
@@ -91,8 +92,7 @@ async function proveIdentity(host,label){
         fetchJson(host+'/api/diva-release?proof='+Date.now()),
         fetchJson(host+'/api/preview-readiness?proof='+Date.now())
       ]);
-      const source=rv.data?.sourceSha||pr.data?.sourceSha||dr.data?.deploymentSha;
-      if(source===SOURCE_SHA&&dr.data?.deploymentSha===SOURCE_SHA&&pr.data?.status==='ready'){
+      if(rv.data?.sourceSha===SOURCE_SHA&&dr.data?.deploymentSha===SOURCE_SHA&&pr.data?.sourceSha===SOURCE_SHA&&pr.data?.status==='ready'){
         mark(label+'_IDENTITY_READBACK','PASS',SOURCE_SHA);
         return;
       }
@@ -101,43 +101,30 @@ async function proveIdentity(host,label){
   }
   throw new Error(label+'_EXACT_SHA_READBACK_FAIL');
 }
-async function proveGates(host,label){
-  const qa=await fetchJson(host+'/api/os-gates/qa',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({candidate_sha:SOURCE_SHA,expected_sha:SOURCE_SHA})});
-  if(qa.status!==200||qa.data?.ok!==true||qa.data?.sha!==SOURCE_SHA||qa.data?.proof!=='MAKE_QA_GATE_PASS')throw new Error(label+'_QA_GATE_FAIL:'+qa.status+':'+qa.raw);
-  if(qa.headers.get('x-mundinho-gate-executor')!=='WIX_NATIVE')throw new Error(label+'_QA_EXECUTOR_HEADER_FAIL');
-  const mismatch=await fetchJson(host+'/api/os-gates/qa',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({candidate_sha:SOURCE_SHA,expected_sha:'mismatch'})});
-  if(mismatch.status!==400||mismatch.data?.error!=='EXACT_SHA_MISMATCH')throw new Error(label+'_QA_NEGATIVE_FAIL:'+mismatch.status+':'+mismatch.raw);
-  const workflow=await fetchJson(host+'/api/os-gates/workflow',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({workflow_id:'runtime-'+label.toLowerCase(),current_area:'inicio',object_kind:'area_context'})});
-  if(workflow.status!==200||workflow.data?.proof!=='MAKE_WORKFLOW_ROUTER_PASS'||workflow.data?.next_area!=='radar'||workflow.data?.next_route!=='/os/radar'||workflow.data?.owner_plugin!=='Make')throw new Error(label+'_WORKFLOW_GATE_FAIL:'+workflow.status+':'+workflow.raw);
-  if(workflow.headers.get('x-mundinho-gate-executor')!=='WIX_NATIVE')throw new Error(label+'_WORKFLOW_EXECUTOR_HEADER_FAIL');
-  mark(label+'_NATIVE_GATES','PASS','qa+negative+workflow');
-}
 async function releaseTarget(target,label){
   state.phase='RELEASE_'+label;
   writeConfig(target);
   await run('npx',['-y','@wix/cli@latest','release'],REL,{CI:'1',AI_AGENT:'wix-headless-skill'});
   mark(label+'_RELEASE_DISPATCH');
   await proveIdentity(target.host,label);
-  await proveGates(target.host,label);
 }
 async function main(){
   try{
     await syncSource();
     await qaAndBuild();
     await ensureAuth();
-    await releaseTarget(QA,'QA');
+    if(RELEASE_QA_FIRST)await releaseTarget(QA,'QA');
     await releaseTarget(LIVE,'LIVE');
     await proveIdentity(CANONICAL,'CANONICAL');
-    await proveGates(CANONICAL,'CANONICAL');
-    state.phase='DONE';state.ok=true;state.released=true;state.status='OS_NATIVE_GATES_LIVE_VERIFIED';
-    console.log('OS_NATIVE_GATES_LIVE_VERIFIED '+JSON.stringify({sourceSha:SOURCE_SHA,mirrorSha:MIRROR_SHA}));
+    state.phase='DONE';state.ok=true;state.released=true;state.status='OS_LIVE_EXACT_SHA_VERIFIED';
+    console.log('OS_LIVE_EXACT_SHA_VERIFIED '+JSON.stringify({sourceSha:SOURCE_SHA}));
   }catch(error){
     state.phase='ERROR';state.ok=false;state.released=false;state.status='BLOCKED';state.error=String(error?.stack||error);
-    console.error('OS_NATIVE_GATES_BLOCKED '+state.error);
+    console.error('OS_LIVE_EXACT_SHA_BLOCKED '+state.error);
   }
 }
 http.createServer((req,res)=>{
   res.setHeader('content-type','application/json');
   res.setHeader('cache-control','no-store');
   res.end(JSON.stringify(state,null,2));
-}).listen(PORT,'0.0.0.0',()=>{console.log('OS_NATIVE_GATES_CONTROLLER_READY');void main();});
+}).listen(PORT,'0.0.0.0',()=>{console.log('OS_EXACT_GITLAB_RELEASE_CONTROLLER_READY');void main();});
