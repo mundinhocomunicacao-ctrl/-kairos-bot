@@ -9,6 +9,12 @@ assert.match(source,/gitlab\.com\/mundinhocomunicacao\/mundinhocomunicacao\/\-\/
 assert.match(source,/direct-gitlab-archive/);
 assert.match(source,/GITLAB_OIDC_ISSUER/);
 assert.match(source,/GITLAB_OIDC_JWKS/);
+assert.match(source,/GITHUB_OIDC_ISSUER/);
+assert.match(source,/GITHUB_OIDC_JWKS/);
+assert.match(source,/GITHUB_REPOSITORY/);
+assert.match(source,/verifyGitHubOidc/);
+assert.match(source,/serveBridgeArchive/);
+assert.match(source,/SOURCE_BRIDGE_GITHUB_DOWNLOAD/);
 assert.match(source,/BRIDGE_AUDIENCE/);
 assert.match(source,/project_id/);
 assert.match(source,/ref_protected/);
