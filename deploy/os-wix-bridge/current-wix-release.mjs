@@ -18,6 +18,10 @@ const GITLAB_OIDC_ISSUER='https://gitlab.com';
 const GITLAB_OIDC_JWKS='https://gitlab.com/oauth/discovery/keys';
 const GITLAB_PROJECT_ID='86501645';
 const GITLAB_PROJECT_PATH='mundinhocomunicacao/mundinhocomunicacao';
+const GITHUB_OIDC_ISSUER='https://token.actions.githubusercontent.com';
+const GITHUB_OIDC_JWKS='https://token.actions.githubusercontent.com/.well-known/jwks';
+const GITHUB_REPOSITORY='mundinhocomunicacao-ctrl/mundinho-os-live';
+const GITHUB_REF='refs/heads/main';
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
 let bridgeResolve=null;
@@ -56,6 +60,31 @@ async function verifyBridgeOidc(token){
   if(String(payload?.sha||'')!==SOURCE_SHA||!payload?.job_id||!payload?.pipeline_id)return null;
   if(safeNumber(payload?.exp)<=now||safeNumber(payload?.nbf)>now+30||safeNumber(payload?.iat)>now+30)return null;
   let response;try{response=await fetch(GITLAB_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return null}
+  if(!response.ok)return null;
+  let jwks;try{jwks=await response.json()}catch{return null}
+  const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
+  if(!jwk)return null;
+  try{
+    const key=crypto.createPublicKey({key:jwk,format:'jwk'});
+    const verifier=crypto.createVerify('RSA-SHA256');
+    verifier.update(`${parts[0]}.${parts[1]}`);verifier.end();
+    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return null;
+  }catch{return null}
+  return payload;
+}
+async function verifyGitHubOidc(token){
+  const raw=String(token||'').trim(),parts=raw.split('.');
+  if(parts.length!==3)return null;
+  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return null}
+  const now=Math.floor(Date.now()/1000);
+  if(header?.alg!=='RS256'||!header?.kid)return null;
+  if(payload?.iss!==GITHUB_OIDC_ISSUER||!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return null;
+  if(String(payload?.repository||'')!==GITHUB_REPOSITORY)return null;
+  if(String(payload?.repository_owner||'')!=='mundinhocomunicacao-ctrl')return null;
+  if(String(payload?.ref||'')!==GITHUB_REF||String(payload?.ref_type||'')!=='branch')return null;
+  if(!['push','workflow_dispatch'].includes(String(payload?.event_name||'')))return null;
+  if(safeNumber(payload?.exp)<=now||safeNumber(payload?.nbf)>now+30||safeNumber(payload?.iat)>now+30)return null;
+  let response;try{response=await fetch(GITHUB_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return null}
   if(!response.ok)return null;
   let jwks;try{jwks=await response.json()}catch{return null}
   const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
@@ -120,6 +149,29 @@ async function receiveBridgeArchive(req,res){
     fs.rmSync(temp,{force:true});
     res.writeHead(400,{'content-type':'application/json'});res.end(JSON.stringify({ok:false,error:String(error?.message||error)}));
   }
+  return true;
+}
+async function serveBridgeArchive(req,res){
+  const pathname=String(req.url||'').split('?')[0];
+  if(req.method!=='GET'||pathname!=='/source-archive')return false;
+  const auth=String(req.headers.authorization||'');
+  const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
+  const claims=await verifyGitHubOidc(token);
+  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
+  const requestedSha=String(req.headers['x-source-sha']||'').trim();
+  if(requestedSha!==SOURCE_SHA){res.writeHead(409);res.end('source identity mismatch');return true;}
+  if(!fs.existsSync(BRIDGE_ARCHIVE)){res.writeHead(409);res.end('source archive unavailable');return true;}
+  const digest=state.bridge?.sha256||crypto.createHash('sha256').update(fs.readFileSync(BRIDGE_ARCHIVE)).digest('hex');
+  const bytes=fs.statSync(BRIDGE_ARCHIVE).size;
+  res.writeHead(200,{
+    'content-type':'application/gzip',
+    'content-length':String(bytes),
+    'cache-control':'no-store',
+    'x-source-sha':SOURCE_SHA,
+    'x-archive-sha256':digest
+  });
+  fs.createReadStream(BRIDGE_ARCHIVE).pipe(res);
+  mark('SOURCE_BRIDGE_GITHUB_DOWNLOAD','PASS',SOURCE_SHA);
   return true;
 }
 async function syncSource(){
@@ -273,6 +325,7 @@ async function main(){
 http.createServer(async(req,res)=>{
   res.setHeader('cache-control','no-store');
   if(await receiveBridgeArchive(req,res))return;
+  if(await serveBridgeArchive(req,res))return;
   res.setHeader('content-type','application/json');
   res.end(JSON.stringify(state,null,2));
 }).listen(PORT,'0.0.0.0',()=>{console.log('OS_EXACT_GITLAB_RELEASE_CONTROLLER_READY');void main();});
