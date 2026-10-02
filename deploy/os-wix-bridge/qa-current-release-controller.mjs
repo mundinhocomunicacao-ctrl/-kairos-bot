@@ -37,3 +37,7 @@ assert.match(source,/POSIX_FADV_DONTNEED/);
 assert.match(source,/cgroupMemoryCurrent/);
 assert.match(source,/--max-old-space-size=192/);
 console.log('QA_CURRENT_WIX_RELEASE_CONTROLLER PASS · DIRECT_GITLAB_EXACT_SHA');
+
+assert.match(source,/EXTERNAL_BUILDER_ONLY=true/);
+assert.match(source,/SOURCE_ARCHIVE_READY_FOR_GITHUB_BUILDER/);
+assert.match(source,/EXTERNAL_BUILD_HANDOFF/);
