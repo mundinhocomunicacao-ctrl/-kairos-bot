@@ -26,5 +26,5 @@ assert.match(source,/NPM_CI_LOW_MEMORY/);
 assert.match(source,/--max-old-space-size=256/);
 assert.match(source,/npm_config_maxsockets:'4'/);
 assert.match(source,/BUILD_WIX_WORKER_LOW_MEMORY/);
-assert.match(source,/--max-old-space-size=240/);
+assert.match(source,/--max-old-space-size=192/);
 console.log('QA_CURRENT_WIX_RELEASE_CONTROLLER PASS · DIRECT_GITLAB_EXACT_SHA');
