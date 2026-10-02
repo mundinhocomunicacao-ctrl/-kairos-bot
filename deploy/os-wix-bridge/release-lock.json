@@ -15,30 +15,30 @@
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-SUPER-DIVA-RESOURCE-MESH-3FBDCB3D-20261002",
+    "requestId": "REL-STUDY-BUILD-002-E8109C48-20261002",
     "status": "APPROVED",
-    "sourceSha": "3fbdcb3d6fb917b570172cc98e984ca99735243d",
+    "sourceSha": "e8109c48fb55c509cb6d76900ac1c6ea1f4bc75f",
     "mirrorSha": null,
-    "releaseId": "wix-live-3fbdcb3d",
+    "releaseId": "wix-live-e8109c48",
     "expectedCurrentLiveSourceSha": "2421e47426d2ce87b52100a898eb7e294b558799",
     "expectedCurrentLiveReleaseId": "wix-live-2421e474",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "GitHub hosted exact-source QA PASS: Resource Mesh v1.3 + Wix canonical rail + domain release rail.",
-    "buildReceipt": "GitLab OIDC exact source 3fbdcb3d6fb917b570172cc98e984ca99735243d built on hosted runner; artifact 1690675 bytes; sha256 a0488d92d28efa9c12cb3206e92ecd8db4909513cf350bf79b479abc1a1c89e6; embedded runtime SHA verified.",
-    "visualReceipt": "No architecture redesign. Resource Mesh projects proven organs and current connector states into the existing OS Mesa.",
+    "qaReceipt": "Current main reconciled after STUDY→BUILD 002 merge. Cycle 001 intrinsic layout remains present; Cycle 002 Sprinklr listening-lens contract is now in canonical main.",
+    "buildReceipt": "PENDING exact e8109c48 hosted build + OIDC artifact handoff.",
+    "visualReceipt": "No third-party identity copied; STUDY→BUILD 002 adds listening lens/anomaly operational contract.",
     "approvedByHuman": true,
-    "approvedAt": "2026-10-02T19:31:02.587Z",
-    "authorizationProvenance": "Active user instruction to continue SUPER DIVA macro execution, connect the ecosystem and materialize OS Dia a Dia / Radar / Malha.",
+    "approvedAt": "2026-10-02T19:36:30Z",
+    "authorizationProvenance": "User explicitly instructed to reconcile the linked SUPER DIVA session and continue execution; canonical GitLab main is authoritative.",
     "page01LiveVerified": false,
     "artifactProvenance": {
       "sourceAuthority": "GITLAB_CANONICAL_MAIN",
-      "sourceSha": "3fbdcb3d6fb917b570172cc98e984ca99735243d",
+      "sourceSha": "e8109c48fb55c509cb6d76900ac1c6ea1f4bc75f",
       "sourceTransport": "GITLAB_OIDC_EXACT_SHA",
       "builder": "GITHUB_HOSTED",
-      "buildArtifactSha256": "a0488d92d28efa9c12cb3206e92ecd8db4909513cf350bf79b479abc1a1c89e6",
-      "buildArtifactBytes": 1690675,
+      "buildArtifactSha256": null,
+      "buildArtifactBytes": null,
       "releaseExecutor": "mundinho-wix-exact-ee6e-release",
       "executorSubmoduleSha": "ab6833876e657f47cc602e21aba2da2f4cd87838"
     }
@@ -375,6 +375,81 @@
         "page01LiveVerified": false
       },
       "reason": "Fresh Wix heartbeat reconciled before exact OIDC artifact release; no product mirror equivalence is claimed."
+    },
+    {
+      "at": "2026-10-02T19:36:30Z",
+      "currentLive": {
+        "sourceSha": "2421e47426d2ce87b52100a898eb7e294b558799",
+        "mirrorSha": null,
+        "releaseId": "wix-live-2421e474",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": null,
+        "receiptPath": null,
+        "lastVerifiedAt": "2026-10-02T19:31:02.587Z",
+        "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
+      },
+      "previousPendingReleaseRequest": {
+        "requestId": "REL-SUPER-DIVA-RESOURCE-MESH-3FBDCB3D-20261002",
+        "status": "APPROVED",
+        "sourceSha": "3fbdcb3d6fb917b570172cc98e984ca99735243d",
+        "mirrorSha": null,
+        "releaseId": "wix-live-3fbdcb3d",
+        "expectedCurrentLiveSourceSha": "2421e47426d2ce87b52100a898eb7e294b558799",
+        "expectedCurrentLiveReleaseId": "wix-live-2421e474",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "GitHub hosted exact-source QA PASS: Resource Mesh v1.3 + Wix canonical rail + domain release rail.",
+        "buildReceipt": "GitLab OIDC exact source 3fbdcb3d6fb917b570172cc98e984ca99735243d built on hosted runner; artifact 1690675 bytes; sha256 a0488d92d28efa9c12cb3206e92ecd8db4909513cf350bf79b479abc1a1c89e6; embedded runtime SHA verified.",
+        "visualReceipt": "No architecture redesign. Resource Mesh projects proven organs and current connector states into the existing OS Mesa.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-10-02T19:31:02.587Z",
+        "authorizationProvenance": "Active user instruction to continue SUPER DIVA macro execution, connect the ecosystem and materialize OS Dia a Dia / Radar / Malha.",
+        "page01LiveVerified": false,
+        "artifactProvenance": {
+          "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+          "sourceSha": "3fbdcb3d6fb917b570172cc98e984ca99735243d",
+          "sourceTransport": "GITLAB_OIDC_EXACT_SHA",
+          "builder": "GITHUB_HOSTED",
+          "buildArtifactSha256": "a0488d92d28efa9c12cb3206e92ecd8db4909513cf350bf79b479abc1a1c89e6",
+          "buildArtifactBytes": 1690675,
+          "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+          "executorSubmoduleSha": "ab6833876e657f47cc602e21aba2da2f4cd87838"
+        }
+      },
+      "pendingReleaseRequest": {
+        "requestId": "REL-STUDY-BUILD-002-E8109C48-20261002",
+        "status": "APPROVED",
+        "sourceSha": "e8109c48fb55c509cb6d76900ac1c6ea1f4bc75f",
+        "mirrorSha": null,
+        "releaseId": "wix-live-e8109c48",
+        "expectedCurrentLiveSourceSha": "2421e47426d2ce87b52100a898eb7e294b558799",
+        "expectedCurrentLiveReleaseId": "wix-live-2421e474",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "Current main reconciled after STUDY→BUILD 002 merge. Cycle 001 intrinsic layout remains present; Cycle 002 Sprinklr listening-lens contract is now in canonical main.",
+        "buildReceipt": "PENDING exact e8109c48 hosted build + OIDC artifact handoff.",
+        "visualReceipt": "No third-party identity copied; STUDY→BUILD 002 adds listening lens/anomaly operational contract.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-10-02T19:36:30Z",
+        "authorizationProvenance": "User explicitly instructed to reconcile the linked SUPER DIVA session and continue execution; canonical GitLab main is authoritative.",
+        "page01LiveVerified": false,
+        "artifactProvenance": {
+          "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+          "sourceSha": "e8109c48fb55c509cb6d76900ac1c6ea1f4bc75f",
+          "sourceTransport": "GITLAB_OIDC_EXACT_SHA",
+          "builder": "GITHUB_HOSTED",
+          "buildArtifactSha256": null,
+          "buildArtifactBytes": null,
+          "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+          "executorSubmoduleSha": "ab6833876e657f47cc602e21aba2da2f4cd87838"
+        }
+      },
+      "reason": "Reconciled canonical main after STUDY→BUILD 002 merge; release target advanced from 3fbdcb3d to e8109c48 without altering current live."
     }
   ]
 }
