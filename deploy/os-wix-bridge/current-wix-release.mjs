@@ -2,7 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
-import {createHash,timingSafeEqual} from 'node:crypto';
+import crypto from 'node:crypto';
 
 const PORT=Number(process.env.PORT||10000);
 const SOURCE_SHA=String(process.env.OS_SOURCE_SHA||process.env.SOURCE_SHA||'').trim();
@@ -13,7 +13,12 @@ const LIVE={siteId:'c80689f2-6627-45fa-a264-4ab2863ba306',appId:'79eedd41-5ca6-4
 const CANONICAL='https://os.mundinhocomunicacao.com';
 const QA={siteId:'242b9d6f-71ad-40c6-b1d7-f1f0825e01be',appId:'8fabf7a9-b3c7-43af-ab51-e37968937afb',host:'https://mundinho-headless-qa-mundinhocomunicaca-1412.wix-site-host.com'};
 const RELEASE_QA_FIRST=String(process.env.OS_RELEASE_QA_FIRST||'0')==='1';
-const BRIDGE_SECRET=String(process.env.MUNDO_RENDER_SOURCE_BRIDGE_SECRET||'').trim();
+const BRIDGE_AUDIENCE='https://mundinho-wix-exact-44695-release.onrender.com/source-archive';
+const GITLAB_OIDC_ISSUER='https://gitlab.com';
+const GITLAB_OIDC_JWKS='https://gitlab.com/oauth/discovery/keys';
+const GITLAB_PROJECT_ID='86501645';
+const GITLAB_PROJECT_PATH='mundinhocomunicacao/mundinhocomunicacao';
+const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
 let bridgeResolve=null;
 let state={phase:'BOOT',ok:false,released:false,sourceSha:SOURCE_SHA,source:'GITLAB_CANONICAL_ARCHIVE',tests:[],error:null};
@@ -34,9 +39,34 @@ function mark(gate,status='PASS',detail=null){
   state.tests.push({gate,status,detail,at:new Date().toISOString()});
   console.log(gate+'='+status+(detail?' '+detail:''));
 }
-function safeEqualText(a,b){
-  const aa=Buffer.from(String(a||'')),bb=Buffer.from(String(b||''));
-  return aa.length===bb.length&&aa.length>0&&timingSafeEqual(aa,bb);
+function decodePart(value){return JSON.parse(Buffer.from(String(value||''),'base64url').toString('utf8'))}
+function audienceMatches(aud,expected){return Array.isArray(aud)?aud.includes(expected):String(aud||'')===expected}
+function safeNumber(value){const n=Number(value);return Number.isFinite(n)?n:0}
+async function verifyBridgeOidc(token){
+  const raw=String(token||'').trim(),parts=raw.split('.');
+  if(parts.length!==3)return null;
+  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return null}
+  const now=Math.floor(Date.now()/1000);
+  if(header?.alg!=='RS256'||!header?.kid)return null;
+  if(payload?.iss!==GITLAB_OIDC_ISSUER||!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return null;
+  if(String(payload?.project_id)!==GITLAB_PROJECT_ID||String(payload?.project_path)!==GITLAB_PROJECT_PATH)return null;
+  if(String(payload?.ref)!=='main'||String(payload?.ref_path)!=='refs/heads/main'||String(payload?.ref_type)!=='branch'||String(payload?.ref_protected)!=='true')return null;
+  if(!['api','web'].includes(String(payload?.pipeline_source||'')))return null;
+  if(!ALLOWED_CI_ROLES.has(String(payload?.user_access_level||'').toLowerCase()))return null;
+  if(String(payload?.sha||'')!==SOURCE_SHA||!payload?.job_id||!payload?.pipeline_id)return null;
+  if(safeNumber(payload?.exp)<=now||safeNumber(payload?.nbf)>now+30||safeNumber(payload?.iat)>now+30)return null;
+  let response;try{response=await fetch(GITLAB_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return null}
+  if(!response.ok)return null;
+  let jwks;try{jwks=await response.json()}catch{return null}
+  const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
+  if(!jwk)return null;
+  try{
+    const key=crypto.createPublicKey({key:jwk,format:'jwk'});
+    const verifier=crypto.createVerify('RSA-SHA256');
+    verifier.update(`${parts[0]}.${parts[1]}`);verifier.end();
+    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return null;
+  }catch{return null}
+  return payload;
 }
 function assertSafeTar(archive){
   const entries=sh('tar',['-tzf',archive],ROOT);
@@ -49,7 +79,6 @@ function assertSafeTar(archive){
 }
 async function waitForBridgeArchive(){
   if(fs.existsSync(BRIDGE_ARCHIVE))return BRIDGE_ARCHIVE;
-  if(BRIDGE_SECRET.length<32)throw new Error('SOURCE_BRIDGE_SECRET_MISSING');
   state.phase='WAIT_SOURCE_BRIDGE';
   await new Promise((resolve,reject)=>{
     bridgeResolve=resolve;
@@ -62,12 +91,14 @@ async function waitForBridgeArchive(){
 async function receiveBridgeArchive(req,res){
   if(req.method!=='POST'||req.url!=='/source-archive')return false;
   const auth=String(req.headers.authorization||'');
-  if(BRIDGE_SECRET.length<32||!safeEqualText(auth,'Bearer '+BRIDGE_SECRET)){res.writeHead(401);res.end('unauthorized');return true;}
+  const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
+  const claims=await verifyBridgeOidc(token);
+  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
   const suppliedSha=String(req.headers['x-source-sha']||'').trim();
   const suppliedDigest=String(req.headers['x-archive-sha256']||'').trim().toLowerCase();
   if(suppliedSha!==SOURCE_SHA||!/^[a-f0-9]{64}$/.test(suppliedDigest)){res.writeHead(409);res.end('source identity mismatch');return true;}
   const temp=BRIDGE_ARCHIVE+'.partial';
-  const hash=createHash('sha256');let bytes=0;
+  const hash=crypto.createHash('sha256');let bytes=0;
   const out=fs.createWriteStream(temp,{flags:'w'});
   try{
     for await(const chunk of req){
