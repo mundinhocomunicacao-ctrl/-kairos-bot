@@ -25,7 +25,9 @@ const GITHUB_REPOSITORY='mundinhocomunicacao-ctrl/mundinho-os-live';
 const GITHUB_REF='refs/heads/main';
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
+const BUILD_ARCHIVE=path.join(ROOT,'.external-build-'+SOURCE_SHA+'.tar.gz');
 let bridgeResolve=null;
+let buildResolve=null;
 let state={phase:'BOOT',ok:false,released:false,sourceSha:SOURCE_SHA,source:'GITLAB_CANONICAL_ARCHIVE',tests:[],error:null};
 
 function run(bin,args,cwd=ROOT,extraEnv={}){
@@ -175,6 +177,63 @@ async function serveBridgeArchive(req,res){
   mark('SOURCE_BRIDGE_GITHUB_DOWNLOAD','PASS',SOURCE_SHA);
   return true;
 }
+async function waitForBuildArtifact(){
+  if(fs.existsSync(BUILD_ARCHIVE))return BUILD_ARCHIVE;
+  state.phase='WAIT_EXTERNAL_BUILD';
+  state.status='AWAIT_EXTERNAL_BUILD_ARTIFACT';
+  await new Promise((resolve,reject)=>{
+    buildResolve=resolve;
+    const timer=setTimeout(()=>reject(new Error('EXTERNAL_BUILD_ARTIFACT_TIMEOUT')),20*60*1000);
+    timer.unref?.();
+  });
+  if(!fs.existsSync(BUILD_ARCHIVE))throw new Error('EXTERNAL_BUILD_ARTIFACT_MISSING');
+  return BUILD_ARCHIVE;
+}
+async function receiveBuildArtifact(req,res){
+  if(req.method!=='POST'||req.url!=='/build-artifact')return false;
+  const auth=String(req.headers.authorization||'');
+  const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
+  const claims=await verifyGitHubOidc(token);
+  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
+  const suppliedSha=String(req.headers['x-source-sha']||'').trim();
+  const suppliedDigest=String(req.headers['x-artifact-sha256']||'').trim().toLowerCase();
+  if(suppliedSha!==SOURCE_SHA||!/^[a-f0-9]{64}$/.test(suppliedDigest)){res.writeHead(409);res.end('build identity mismatch');return true;}
+  const temp=BUILD_ARCHIVE+'.partial';
+  const hash=crypto.createHash('sha256');let bytes=0;
+  const out=fs.createWriteStream(temp,{flags:'w'});
+  try{
+    for await(const chunk of req){
+      bytes+=chunk.length;
+      if(bytes>512*1024*1024)throw new Error('EXTERNAL_BUILD_ARTIFACT_TOO_LARGE');
+      hash.update(chunk);
+      if(!out.write(chunk))await new Promise(resolve=>out.once('drain',resolve));
+    }
+    await new Promise((resolve,reject)=>out.end(err=>err?reject(err):resolve()));
+    if(bytes<1||hash.digest('hex')!==suppliedDigest)throw new Error('EXTERNAL_BUILD_ARTIFACT_CHECKSUM_MISMATCH');
+    assertSafeTar(temp);
+    fs.renameSync(temp,BUILD_ARCHIVE);
+    state.externalBuild={accepted:true,bytes,sha256:suppliedDigest,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
+    mark('EXTERNAL_BUILD_ARTIFACT_ACCEPTED','PASS',SOURCE_SHA);
+    buildResolve?.();buildResolve=null;
+    res.writeHead(201,{'content-type':'application/json'});res.end(JSON.stringify({ok:true,sourceSha:SOURCE_SHA,bytes}));
+  }catch(error){
+    try{out.destroy();}catch{}
+    fs.rmSync(temp,{force:true});
+    res.writeHead(400,{'content-type':'application/json'});res.end(JSON.stringify({ok:false,error:String(error?.message||error)}));
+  }
+  return true;
+}
+async function prepareExternalBuildRelease(){
+  const archive=await waitForBuildArtifact();
+  fs.rmSync(REL,{recursive:true,force:true});
+  fs.mkdirSync(REL,{recursive:true});
+  await run('tar',['-xzf',archive,'-C',REL],ROOT);
+  const entry=path.join(REL,'server','entry.mjs');
+  if(!fs.existsSync(path.join(REL,'client')))throw new Error('EXTERNAL_BUILD_CLIENT_MISSING');
+  if(!fs.existsSync(entry))throw new Error('EXTERNAL_BUILD_SERVER_ENTRY_MISSING');
+  if(!fs.readFileSync(entry,'utf8').includes(SOURCE_SHA))throw new Error('EXTERNAL_BUILD_SOURCE_SHA_MISMATCH');
+  mark('EXTERNAL_BUILD_ARTIFACT_VERIFIED','PASS',SOURCE_SHA);
+}
 async function syncSource(){
   state.phase='SOURCE';
   if(!/^[0-9a-f]{40}$/i.test(SOURCE_SHA))throw new Error('OS_SOURCE_SHA_REQUIRED_EXACT_40');
@@ -315,6 +374,12 @@ async function main(){
       state.phase='EXTERNAL_BUILD_READY';state.ok=true;state.released=false;state.status='SOURCE_ARCHIVE_READY_FOR_GITHUB_BUILDER';
       mark('EXTERNAL_BUILD_HANDOFF','PASS',SOURCE_SHA);
       console.log('SOURCE_ARCHIVE_READY_FOR_GITHUB_BUILDER '+SOURCE_SHA);
+      await prepareExternalBuildRelease();
+      await ensureAuth();
+      await releaseTarget(LIVE,'LIVE');
+      await proveIdentity(CANONICAL,'CANONICAL');
+      state.phase='DONE';state.ok=true;state.released=true;state.status='OS_LIVE_EXACT_SHA_VERIFIED';
+      console.log('OS_LIVE_EXACT_SHA_VERIFIED '+JSON.stringify({sourceSha:SOURCE_SHA,builder:'github-hosted'}));
       return;
     }
     await qaAndBuild();
@@ -332,6 +397,7 @@ async function main(){
 http.createServer(async(req,res)=>{
   res.setHeader('cache-control','no-store');
   if(await receiveBridgeArchive(req,res))return;
+  if(await receiveBuildArtifact(req,res))return;
   if(await serveBridgeArchive(req,res))return;
   res.setHeader('content-type','application/json');
   res.end(JSON.stringify(state,null,2));
