@@ -83,29 +83,32 @@ async function verifyBridgeOidc(token){
   return payload;
 }
 async function verifyVercelOidc(token){
-  if(!VERCEL_SOURCE_BRIDGE_ENABLED)return null;
+  const reject=(reason)=>{console.error('VERCEL_OIDC_REJECT='+reason);return null;};
+  if(!VERCEL_SOURCE_BRIDGE_ENABLED)return reject('disabled');
   const raw=String(token||'').trim(),parts=raw.split('.');
-  if(parts.length!==3)return null;
-  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return null}
+  if(parts.length!==3)return reject('shape');
+  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return reject('decode')}
   const now=Math.floor(Date.now()/1000);
-  if(header?.alg!=='RS256'||!header?.kid)return null;
-  if(payload?.iss!==VERCEL_OIDC_ISSUER||!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return null;
-  if(String(payload?.sub||'')!==VERCEL_SUBJECT)return null;
-  if(String(payload?.owner||'')!=='mundinho-os'||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return null;
-  if(String(payload?.project||'')!==VERCEL_PROJECT||String(payload?.project_id||'')!==VERCEL_PROJECT_ID)return null;
-  if(String(payload?.environment||'')!=='production')return null;
-  if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return null;
-  let response;try{response=await fetch(VERCEL_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return null}
-  if(!response.ok)return null;
-  let jwks;try{jwks=await response.json()}catch{return null}
+  if(header?.alg!=='RS256'||!header?.kid)return reject('header');
+  if(payload?.iss!==VERCEL_OIDC_ISSUER)return reject('issuer');
+  if(!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return reject('audience');
+  if(String(payload?.sub||'')!==VERCEL_SUBJECT)return reject('subject');
+  if(String(payload?.owner||'')!=='mundinho-os'||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
+  if(String(payload?.project||'')!==VERCEL_PROJECT||String(payload?.project_id||'')!==VERCEL_PROJECT_ID)return reject('project');
+  if(String(payload?.environment||'')!=='production')return reject('environment');
+  if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return reject('time');
+  let response;try{response=await fetch(VERCEL_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return reject('jwks_fetch')}
+  if(!response.ok)return reject('jwks_http');
+  let jwks;try{jwks=await response.json()}catch{return reject('jwks_json')}
   const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
-  if(!jwk)return null;
+  if(!jwk)return reject('kid');
   try{
     const key=crypto.createPublicKey({key:jwk,format:'jwk'});
     const verifier=crypto.createVerify('RSA-SHA256');
     verifier.update(`${parts[0]}.${parts[1]}`);verifier.end();
-    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return null;
-  }catch{return null}
+    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return reject('signature');
+  }catch{return reject('signature_error')}
+  console.log('VERCEL_OIDC_ACCEPT=production_project_bound');
   return payload;
 }
 async function verifyGitHubOidc(token){
