@@ -21,7 +21,7 @@ assert.match(source,/https:\/\/vercel\.com\/mundinho-os/);
 assert.match(source,/VERCEL_OWNER_ID/);
 assert.match(source,/VERCEL_SOURCE_BRIDGE_ENABLED/);
 assert.match(source,/verifyVercelOidc/);
-assert.match(source,/owner:mundinho-os:project:mundinhocomunicacao:environment:production/);
+assert.match(source,/VERCEL_PROJECT_ID='prj_8kW6ONyrg036RMRGwA1W544lJzc0'/);\nassert.match(source,/VERCEL_PROJECT='mundinho-os-rosa'/);\nassert.match(source,/owner:mundinho-os:project:mundinho-os-rosa:environment:production/);\nassert.doesNotMatch(source,/VERCEL_PROJECT_ID='prj_VzSF21yKWVCHYiXbIst6nO2YdHnz'/);\nassert.doesNotMatch(source,/owner:mundinho-os:project:mundinhocomunicacao:environment:production/);
 assert.match(source,/verifyGitHubOidc/);
 assert.match(source,/serveBridgeArchive/);
 assert.match(source,/SOURCE_BRIDGE_GITHUB_DOWNLOAD/);
