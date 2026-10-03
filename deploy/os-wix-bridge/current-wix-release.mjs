@@ -28,6 +28,7 @@ const VERCEL_OIDC_ISSUER='https://oidc.vercel.com/mundinho-os';
 const VERCEL_OIDC_JWKS='https://oidc.vercel.com/.well-known/jwks';
 const VERCEL_OWNER_ID='team_soWYtG1mYrODtpdbhFUdjjuB';
 const VERCEL_PROJECT_ID='prj_VzSF21yKWVCHYiXbIst6nO2YdHnz';
+const VERCEL_AUDIENCE='https://vercel.com/mundinho-os';
 const VERCEL_PROJECT='mundinhocomunicacao';
 const VERCEL_SUBJECT='owner:mundinho-os:project:mundinhocomunicacao:environment:production';
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
@@ -91,7 +92,7 @@ async function verifyVercelOidc(token){
   const now=Math.floor(Date.now()/1000);
   if(header?.alg!=='RS256'||!header?.kid)return reject('header');
   if(payload?.iss!==VERCEL_OIDC_ISSUER)return reject('issuer');
-  if(!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return reject('audience');
+  if(!audienceMatches(payload?.aud,VERCEL_AUDIENCE))return reject('audience');
   if(String(payload?.sub||'')!==VERCEL_SUBJECT)return reject('subject');
   if(String(payload?.owner||'')!=='mundinho-os'||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
   if(String(payload?.project||'')!==VERCEL_PROJECT||String(payload?.project_id||'')!==VERCEL_PROJECT_ID)return reject('project');

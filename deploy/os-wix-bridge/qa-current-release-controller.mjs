@@ -16,6 +16,8 @@ assert.match(source,/VERCEL_OIDC_ISSUER/);
 assert.match(source,/VERCEL_OIDC_JWKS/);
 assert.match(source,/https:\/\/oidc\.vercel\.com\/\.well-known\/jwks/);
 assert.match(source,/VERCEL_PROJECT_ID/);
+assert.match(source,/VERCEL_AUDIENCE/);
+assert.match(source,/https:\/\/vercel\.com\/mundinho-os/);
 assert.match(source,/VERCEL_OWNER_ID/);
 assert.match(source,/VERCEL_SOURCE_BRIDGE_ENABLED/);
 assert.match(source,/verifyVercelOidc/);

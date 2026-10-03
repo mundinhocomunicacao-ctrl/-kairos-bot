@@ -18,7 +18,7 @@ import fs from 'node:fs';
 import {getVercelOidcToken} from '@vercel/oidc';
 
 const sha=process.env.VERCEL_GIT_COMMIT_SHA;
-const token=await getVercelOidcToken({audience:process.env.MUNDO_SOURCE_BRIDGE});
+const token=await getVercelOidcToken();
 if(!token)throw new Error('VERCEL_OIDC_MISSING');
 
 const response=await fetch(process.env.MUNDO_SOURCE_BRIDGE,{
