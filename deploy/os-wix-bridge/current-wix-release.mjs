@@ -25,7 +25,7 @@ const GITHUB_REPOSITORY='mundinhocomunicacao-ctrl/mundinho-os-live';
 const GITHUB_REF='refs/heads/main';
 const VERCEL_SOURCE_BRIDGE_ENABLED=String(process.env.VERCEL_SOURCE_BRIDGE_ENABLED||'0')==='1';
 const VERCEL_OIDC_ISSUER='https://oidc.vercel.com/mundinho-os';
-const VERCEL_OIDC_JWKS=VERCEL_OIDC_ISSUER+'/.well-known/jwks';
+const VERCEL_OIDC_JWKS='https://oidc.vercel.com/.well-known/jwks';
 const VERCEL_OWNER_ID='team_soWYtG1mYrODtpdbhFUdjjuB';
 const VERCEL_PROJECT_ID='prj_VzSF21yKWVCHYiXbIst6nO2YdHnz';
 const VERCEL_PROJECT='mundinhocomunicacao';
