@@ -23,6 +23,13 @@ const GITHUB_OIDC_ISSUER='https://token.actions.githubusercontent.com';
 const GITHUB_OIDC_JWKS='https://token.actions.githubusercontent.com/.well-known/jwks';
 const GITHUB_REPOSITORY='mundinhocomunicacao-ctrl/mundinho-os-live';
 const GITHUB_REF='refs/heads/main';
+const VERCEL_SOURCE_BRIDGE_ENABLED=String(process.env.VERCEL_SOURCE_BRIDGE_ENABLED||'0')==='1';
+const VERCEL_OIDC_ISSUER='https://oidc.vercel.com/mundinho-os';
+const VERCEL_OIDC_JWKS=VERCEL_OIDC_ISSUER+'/.well-known/jwks';
+const VERCEL_OWNER_ID='team_soWYtG1mYrODtpdbhFUdjjuB';
+const VERCEL_PROJECT_ID='prj_VzSF21yKWVCHYiXbIst6nO2YdHnz';
+const VERCEL_PROJECT='mundinhocomunicacao';
+const VERCEL_SUBJECT='owner:mundinho-os:project:mundinhocomunicacao:environment:production';
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
 const BUILD_ARCHIVE=path.join(ROOT,'.external-build-'+SOURCE_SHA+'.tar.gz');
@@ -63,6 +70,32 @@ async function verifyBridgeOidc(token){
   if(String(payload?.sha||'')!==SOURCE_SHA||!payload?.job_id||!payload?.pipeline_id)return null;
   if(safeNumber(payload?.exp)<=now||safeNumber(payload?.nbf)>now+30||safeNumber(payload?.iat)>now+30)return null;
   let response;try{response=await fetch(GITLAB_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return null}
+  if(!response.ok)return null;
+  let jwks;try{jwks=await response.json()}catch{return null}
+  const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
+  if(!jwk)return null;
+  try{
+    const key=crypto.createPublicKey({key:jwk,format:'jwk'});
+    const verifier=crypto.createVerify('RSA-SHA256');
+    verifier.update(`${parts[0]}.${parts[1]}`);verifier.end();
+    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return null;
+  }catch{return null}
+  return payload;
+}
+async function verifyVercelOidc(token){
+  if(!VERCEL_SOURCE_BRIDGE_ENABLED)return null;
+  const raw=String(token||'').trim(),parts=raw.split('.');
+  if(parts.length!==3)return null;
+  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return null}
+  const now=Math.floor(Date.now()/1000);
+  if(header?.alg!=='RS256'||!header?.kid)return null;
+  if(payload?.iss!==VERCEL_OIDC_ISSUER||!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return null;
+  if(String(payload?.sub||'')!==VERCEL_SUBJECT)return null;
+  if(String(payload?.owner||'')!=='mundinho-os'||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return null;
+  if(String(payload?.project||'')!==VERCEL_PROJECT||String(payload?.project_id||'')!==VERCEL_PROJECT_ID)return null;
+  if(String(payload?.environment||'')!=='production')return null;
+  if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return null;
+  let response;try{response=await fetch(VERCEL_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return null}
   if(!response.ok)return null;
   let jwks;try{jwks=await response.json()}catch{return null}
   const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
@@ -124,9 +157,12 @@ async function receiveBridgeArchive(req,res){
   if(req.method!=='POST'||req.url!=='/source-archive')return false;
   const auth=String(req.headers.authorization||'');
   const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
-  const claims=await verifyBridgeOidc(token);
+  let provider='gitlab';
+  let claims=await verifyBridgeOidc(token);
+  if(!claims){claims=await verifyVercelOidc(token);provider='vercel';}
   if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
   const suppliedSha=String(req.headers['x-source-sha']||'').trim();
+  if(provider==='vercel'&&String(req.headers['x-vercel-git-commit-sha']||'').trim()!==SOURCE_SHA){res.writeHead(409);res.end('vercel source identity mismatch');return true;}
   const suppliedDigest=String(req.headers['x-archive-sha256']||'').trim().toLowerCase();
   if(suppliedSha!==SOURCE_SHA||!/^[a-f0-9]{64}$/.test(suppliedDigest)){res.writeHead(409);res.end('source identity mismatch');return true;}
   const temp=BRIDGE_ARCHIVE+'.partial';
@@ -143,7 +179,7 @@ async function receiveBridgeArchive(req,res){
     if(bytes<1||hash.digest('hex')!==suppliedDigest)throw new Error('SOURCE_BRIDGE_CHECKSUM_MISMATCH');
     assertSafeTar(temp);
     fs.renameSync(temp,BRIDGE_ARCHIVE);
-    state.bridge={accepted:true,bytes,sha256:suppliedDigest,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
+    state.bridge={accepted:true,provider,bytes,sha256:suppliedDigest,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
     mark('SOURCE_BRIDGE_ARCHIVE_ACCEPTED','PASS',SOURCE_SHA);
     bridgeResolve?.();bridgeResolve=null;
     res.writeHead(201,{'content-type':'application/json'});res.end(JSON.stringify({ok:true,sourceSha:SOURCE_SHA,bytes}));
