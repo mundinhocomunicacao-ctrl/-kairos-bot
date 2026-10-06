@@ -429,7 +429,13 @@ async function ensureAuth(){
     state.auth={status:'AUTHORIZED',mode:'api-key',alias};
     return;
   }
-  mark('WIX_AUTH_DURABLE_CREDENTIAL','MISS','falling-back-to-device-login');
+  const durableAuthRequired=String(process.env.WIX_DURABLE_AUTH_REQUIRED||'1').trim()!=='0';
+  if(durableAuthRequired){
+    mark('WIX_AUTH_DURABLE_CREDENTIAL','MISS','durable-api-key-required');
+    state.auth={status:'BLOCKED',mode:'durable-api-key-required'};
+    throw new Error('WIX_DURABLE_AUTH_REQUIRED_API_KEY_MISSING');
+  }
+  mark('WIX_AUTH_DURABLE_CREDENTIAL','MISS','explicit-manual-recovery-enabled');
   await interactiveWixDeviceLogin();
   const who=sh('npx',['-y','@wix/cli@latest','whoami'],REL,{CI:'1',AI_AGENT:'wix-headless-skill'});
   if(!who)throw new Error('WIX_DEVICE_AUTH_REREAD_FAILED');
