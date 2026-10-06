@@ -21,22 +21,35 @@
     "browserCacheFenceVerified": true
   },
   "pendingReleaseRequest": {
-    "requestId": null,
-    "status": "NONE",
-    "sourceSha": null,
+    "requestId": "REL-OS-WIX-SOVEREIGN-BE0C4D9F-20261006",
+    "status": "APPROVED",
+    "sourceSha": "be0c4d9fea642ac5561d72c30bc8454c3b491d08",
     "mirrorSha": null,
-    "releaseId": null,
+    "releaseId": "wix-live-be0c4d9f",
     "expectedCurrentLiveSourceSha": "8e2fdcefdac8b0e47d9ff9fd7a85a422e569c367",
     "expectedCurrentLiveReleaseId": "wix-live-8e2fdcef",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Release complete.",
-    "buildReceipt": "GitHub Actions run 37543751402: exact transport/tree identity PASS, npm ci PASS, complete qa:release PASS, Wix worker build PASS, package/OIDC/artifact handoff PASS. Controller accepted and verified the post-restart artifact before Wix release.",
-    "visualReceipt": "No redesign claim. Runtime consistency/cache eviction release completed.",
-    "approvedByHuman": false,
-    "approvedAt": null,
-    "page01LiveVerified": true
+    "qaReceipt": "RED 37544942721; focused GREEN 37545109326; full qa:release GREEN 37545152009; full GitLab↔transport parity 1350/1350.",
+    "buildReceipt": "PENDING_GITHUB_HOSTED_EXACT_TRANSPORT_BUILD_FOR_BE0C4D9F",
+    "visualReceipt": "Legacy pink removed from public access shell and authenticated canonical navigation; canonical palette is neutral paper + white surface + cobalt #175CFF + dark ink.",
+    "approvedByHuman": true,
+    "approvedAt": "2026-10-06T20:12:30-03:00",
+    "authorizationProvenance": "Active human instruction to inspect metadata because the site remained visually old/pink; DIVA must correct the source and continue the OS release.",
+    "page01LiveVerified": false,
+    "artifactProvenance": {
+      "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+      "sourceSha": "be0c4d9fea642ac5561d72c30bc8454c3b491d08",
+      "transportRef": "transport/os-f9cbbe7d-20261006",
+      "transportCommit": "34efa477b64b216ce6608b8b2eb457a0ff14dc04",
+      "transportTree": "2521157770b7d6d0b8b54120362897b10aca17a8",
+      "blobParity": "1350/1350",
+      "builder": "GITHUB_HOSTED",
+      "buildArtifactSha256": null,
+      "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+      "executorBranch": "forge/wix-remote-release-auth-20260927"
+    }
   },
   "requiredRequestFields": [
     "requestId",
@@ -872,6 +885,44 @@
       "browserFence": "os-browser-fence-v1",
       "runtimeServiceWorker": "SELF_UNREGISTERING_NO_CACHE",
       "reason": "Canonical GitLab tree passed full QA, was built and released through the Wix DIA A DIA controller, and both Wix origin and canonical human domain reread the exact source SHA. Browser fence eliminates legacy worker/cache control."
+    },
+    {
+      "at": "2026-10-06T23:13:30Z",
+      "event": "LEGACY_PINK_SOURCE_CONFIRMED_AND_FIXED",
+      "previousLive": {
+        "sourceSha": "8e2fdcefdac8b0e47d9ff9fd7a85a422e569c367",
+        "mirrorSha": null,
+        "releaseId": "wix-live-8e2fdcef",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": "forge/wix-remote-release-auth-20260927",
+        "receiptPath": "deploy/os-wix-bridge/release-lock.json",
+        "lastVerifiedAt": "2026-10-06T23:00:58.335Z",
+        "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version",
+        "verificationSource": "PUBLISHER_CANONICAL_READBACK_AND_EXTERNAL_HTTP",
+        "evidenceEvent": "OS_LIVE_EXACT_SHA_VERIFIED 8e2fdcefdac8b0e47d9ff9fd7a85a422e569c367",
+        "humanDomainVisualVerified": true,
+        "originReleaseVerified": true,
+        "canonicalDomainRoutingVerified": true,
+        "browserCacheFenceVerified": true
+      },
+      "evidence": {
+        "liveBundlePinkTokens": [
+          "#FFD7E8",
+          "#EC75AE",
+          "#D2247B"
+        ],
+        "sourceFiles": [
+          "pages/index.js",
+          "components/CanonicalGlobalNavigation.js"
+        ],
+        "qaRedRun": 37544942721,
+        "qaGreenRun": 37545109326,
+        "qaFullGreenRun": 37545152009
+      },
+      "reason": "Metadata proved the current live SHA was correct but its visual shell still contained legacy pink source tokens. The source was corrected to the canonical cobalt/neutral design system before this release."
     }
   ],
   "humanDomainVerification": {
