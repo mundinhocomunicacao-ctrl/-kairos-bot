@@ -46,7 +46,7 @@
       "builder": "GITHUB_HOSTED",
       "buildArtifactSha256": null,
       "releaseExecutor": "mundinho-wix-exact-ee6e-release",
-      "executorSubmoduleSha": "6032927dc68ffb403fe8b2ee04f3d0489425ee33"
+      "executorSubmoduleSha": "a597914629641b63b3c38b634df17552e67b29fa"
     }
   },
   "requiredRequestFields": [
@@ -568,6 +568,12 @@
         }
       },
       "reason": "Superseded by Wix runtime sovereignty merge !752."
+    },
+    {
+      "at": "2026-10-06T18:45:00Z",
+      "action": "PUBLISHER_AUTH_RECOVERY_PATCH",
+      "executorSubmoduleSha": "a597914629641b63b3c38b634df17552e67b29fa",
+      "note": "Adds official Wix device-code auth recovery only; no OS product code changed."
     }
   ]
 }
