@@ -20,32 +20,32 @@
     "evidenceRuntimeLabel": "wix-live-00a30e54"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-OS-LIVE-FRESHNESS-5AD27BB0-20261006",
+    "requestId": "REL-OS-LIVE-RECOVERY-67BE8D71-20261006",
     "status": "APPROVED",
-    "sourceSha": "5ad27bb0f2c15c936315abb9f21b6003647c836b",
+    "sourceSha": "67be8d7179cbfdd98b9f0fe2ffbdb3f3b47abafa",
     "mirrorSha": null,
-    "releaseId": "wix-live-5ad27bb0",
+    "releaseId": "wix-live-67be8d71",
     "expectedCurrentLiveSourceSha": "00a30e540d2f74625bd3e1f18d1b6c1fdc0a543b",
     "expectedCurrentLiveReleaseId": "wix-live-00a30e54",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "GitHub hosted exact-source QA PASS on run 37485629931; source archive parity PASS; canonical source QA PASS; Wix worker build PASS for 5ad27bb0.",
-    "buildReceipt": "GitHub run 37485629931 built exact 5ad27bb0; source archive sha256 a7d7e950f6281d5d74eb1573a1c54acc6d46e6a181f0394eb147a227faf63e92; build artifact sha256 e3aff24388dad4e3d876600f0918257d57e107aaccded0fc5e9e9762cb04a71f; handoff previously blocked only by stale release lock.",
-    "visualReceipt": "No human UI redesign. This release applies live freshness/provenance, PR live-first projection, and canonical 12-area contract reconciliation while preserving approved OS/Radar surfaces.",
+    "qaReceipt": "Canonical OS recovery fixes merged; build hosted rail previously passed exact-source QA/build on predecessor. Final SHA differs only by CI-only release transport changes; fresh hosted build/readback required for 67be8d71.",
+    "buildReceipt": "PENDING_FRESH_BUILD_FOR_67BE8D71",
+    "visualReceipt": "No human UI redesign. Preserves approved OS and Radar surfaces while shipping freshness/provenance, PR live-first, 12-area contract reconciliation and CI-only release transport.",
     "approvedByHuman": true,
-    "approvedAt": "2026-10-06T12:15:00-03:00",
-    "authorizationProvenance": "User explicitly instructed DIVA to reconcile, rehydrate, continue, and resolve the OS before advancing SUPERDIVA.",
+    "approvedAt": "2026-10-06T13:09:53-03:00",
+    "authorizationProvenance": "User explicitly instructed DIVA to write the genealogy closeout into her diary and continue the OS release.",
     "page01LiveVerified": false,
     "artifactProvenance": {
       "sourceAuthority": "GITLAB_CANONICAL_MAIN",
-      "sourceSha": "5ad27bb0f2c15c936315abb9f21b6003647c836b",
+      "sourceSha": "67be8d7179cbfdd98b9f0fe2ffbdb3f3b47abafa",
       "sourceTransport": "GITLAB_OIDC_TO_RENDER_SOURCE_BRIDGE_THEN_GITHUB_OIDC",
       "builder": "GITHUB_HOSTED",
-      "buildArtifactSha256": "e3aff24388dad4e3d876600f0918257d57e107aaccded0fc5e9e9762cb04a71f",
+      "buildArtifactSha256": null,
       "buildArtifactBytes": null,
-      "releaseExecutor": "mundinho-wix-exact-ee6e-release",
-      "executorSubmoduleSha": "8fe8152b1167a34287ad5d9c9fcb9e0ffd62f0df"
+      "releaseExecutor": "GITLAB_PROTECTED_RUNNER_TO_WIX_CLI",
+      "executorSubmoduleSha": "6032927dc68ffb403fe8b2ee04f3d0489425ee33"
     }
   },
   "requiredRequestFields": [
@@ -501,6 +501,39 @@
         }
       },
       "reason": "Superseded after Wix CMS runtime evidence reconciliation for OS live freshness recovery."
+    },
+    {
+      "at": "2026-10-06T16:11:00Z",
+      "pendingReleaseRequest": {
+        "requestId": "REL-OS-LIVE-FRESHNESS-5AD27BB0-20261006",
+        "status": "APPROVED",
+        "sourceSha": "5ad27bb0f2c15c936315abb9f21b6003647c836b",
+        "mirrorSha": null,
+        "releaseId": "wix-live-5ad27bb0",
+        "expectedCurrentLiveSourceSha": "00a30e540d2f74625bd3e1f18d1b6c1fdc0a543b",
+        "expectedCurrentLiveReleaseId": "wix-live-00a30e54",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "GitHub hosted exact-source QA PASS on run 37485629931; source archive parity PASS; canonical source QA PASS; Wix worker build PASS for 5ad27bb0.",
+        "buildReceipt": "GitHub run 37485629931 built exact 5ad27bb0; source archive sha256 a7d7e950f6281d5d74eb1573a1c54acc6d46e6a181f0394eb147a227faf63e92; build artifact sha256 e3aff24388dad4e3d876600f0918257d57e107aaccded0fc5e9e9762cb04a71f; handoff previously blocked only by stale release lock.",
+        "visualReceipt": "No human UI redesign. This release applies live freshness/provenance, PR live-first projection, and canonical 12-area contract reconciliation while preserving approved OS/Radar surfaces.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-10-06T12:15:00-03:00",
+        "authorizationProvenance": "User explicitly instructed DIVA to reconcile, rehydrate, continue, and resolve the OS before advancing SUPERDIVA.",
+        "page01LiveVerified": false,
+        "artifactProvenance": {
+          "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+          "sourceSha": "5ad27bb0f2c15c936315abb9f21b6003647c836b",
+          "sourceTransport": "GITLAB_OIDC_TO_RENDER_SOURCE_BRIDGE_THEN_GITHUB_OIDC",
+          "builder": "GITHUB_HOSTED",
+          "buildArtifactSha256": "e3aff24388dad4e3d876600f0918257d57e107aaccded0fc5e9e9762cb04a71f",
+          "buildArtifactBytes": null,
+          "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+          "executorSubmoduleSha": "8fe8152b1167a34287ad5d9c9fcb9e0ffd62f0df"
+        }
+      },
+      "reason": "Superseded by final canonical main after CI-only split of hosted build and protected Wix release."
     }
   ]
 }
