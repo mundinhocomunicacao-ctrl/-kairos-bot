@@ -48,6 +48,12 @@ assert.match(source,/interactiveWixDeviceLogin/);
 assert.match(source,/AWAITING_WIX_DEVICE_AUTHORIZATION/);
 assert.match(source,/WIX_DEVICE_AUTH_CHALLENGE/);
 assert.match(source,/WIX_AUTH_DURABLE_CREDENTIAL/);
+assert.match(source,/WIX_DURABLE_AUTH_REQUIRED/);
+assert.match(source,/WIX_DURABLE_AUTH_REQUIRED_API_KEY_MISSING/);
+assert.match(source,/WIX_OS_API_KEY/);
+assert.match(source,/login','--api-key'/);
+assert.match(source,/durable-api-key-required/);
+
 assert.match(source,/mark\(label\+'_IDENTITY_READBACK'/);
 assert.match(source,/releaseTarget\(LIVE,'LIVE'\)/);
 assert.match(source,/proveIdentity\(CANONICAL,'CANONICAL'\)/);
