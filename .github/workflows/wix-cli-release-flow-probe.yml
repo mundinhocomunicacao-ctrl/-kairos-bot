@@ -34,7 +34,10 @@ jobs:
             'publishDeployment(', 'getDeploymentPipelineDescription(', 'createPreview',
             'deploymentId', 'useRelease', 'ReleaseCommand', 'releaseAction',
             'deployFiles.execute', 'updateManifestWithBackendWorker',
-            'skipPipelineCheck', 'isPublishPipelineDeployment'
+            'skipPipelineCheck', 'isPublishPipelineDeployment',
+            'createAppDeployment', 'completeAppDeployment', 'BackendAsAServiceClient',
+            'getAppProject', 'postForm', 'putBinaryFile', 'releaseHeadlessProject',
+            'createComponentsOverride', 'updateDeploymentTopology'
           ];
           const chunks=[];
           function walk(d){
