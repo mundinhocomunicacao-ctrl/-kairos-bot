@@ -17,29 +17,29 @@
     "evidenceEvent": "CURRENT_LIVE_OBSERVED=287d0475e2fd4f116cfcac569657974598233df3 source=canonical"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-OS-WIX-SOVEREIGN-0581DF38-20261006",
+    "requestId": "REL-OS-WIX-SOVEREIGN-1E04E244-20261006",
     "status": "APPROVED",
-    "sourceSha": "0581df380376e916ce6e2a1dd41e843912c2e9b4",
+    "sourceSha": "1e04e244da6c1eff32c8ba0aa3fcb2293a10f176",
     "mirrorSha": null,
-    "releaseId": "wix-live-0581df38",
+    "releaseId": "wix-live-1e04e244",
     "expectedCurrentLiveSourceSha": "287d0475e2fd4f116cfcac569657974598233df3",
     "expectedCurrentLiveReleaseId": "wix-live-287d0475",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "GitHub hosted Wix External Builder Release run 37521288081: transport identity PASS, npm ci PASS, canonical source QA PASS, build:wix-worker PASS, embedded source SHA PASS, package/upload artifact PASS for canonical GitLab 0581df38.",
-    "buildReceipt": "Exact GitLab transport parity 1323/1323 path+blob SHAs; transport tree 91a3da81c1b6a56e9d433a6a3832889015d630a6; hosted build run 37521288081.",
-    "visualReceipt": "No OS/Radar visual redesign. Delta after 287d0475 is DIVA genealogy runtime consumer/preboot integration only.",
+    "qaReceipt": "RED reproduced on GitHub Actions run 37529974381 at qa-os-genealogy-rehydration-runtime; minimal API contract fix merged via GitLab MR !759; focused GREEN proven on GitHub Actions run 37530270057.",
+    "buildReceipt": "PENDING_GITHUB_HOSTED_EXACT_TRANSPORT_BUILD_FOR_1E04E244",
+    "visualReceipt": "No human UI redesign in MR !759. Release candidate preserves the approved OS/Radar surfaces and adds the selective-inheritance runtime contract plus its explicit rehydrate invariant.",
     "approvedByHuman": true,
-    "approvedAt": "2026-10-06T16:00:00-03:00",
-    "authorizationProvenance": "User instructed DIVA Raiz to rehydrate, reconcile and finish the OS release.",
+    "approvedAt": "2026-10-06T17:57:23-03:00",
+    "authorizationProvenance": "Active human instruction in the OS recovery flow to reconcile, continue and complete the Wix release; terminal receipts were supplied interactively through this session.",
     "page01LiveVerified": false,
     "artifactProvenance": {
       "sourceAuthority": "GITLAB_CANONICAL_MAIN",
-      "sourceSha": "0581df380376e916ce6e2a1dd41e843912c2e9b4",
-      "transportRef": "transport/gitlab-0581df38-20261006",
-      "transportCommit": "aafb1f1cba08b38a861a4bdb836a3d8fd2454221",
-      "transportTree": "91a3da81c1b6a56e9d433a6a3832889015d630a6",
+      "sourceSha": "1e04e244da6c1eff32c8ba0aa3fcb2293a10f176",
+      "transportRef": "transport/os-47d701f4-20261006",
+      "transportCommit": "a47fa8b5e3cee67b8f780ada536a3b41d1f1ea5b",
+      "transportTree": "bed8a5198f3158e111ba7bddf8415eff491b0343",
       "builder": "GITHUB_HOSTED",
       "buildArtifactSha256": null,
       "releaseExecutor": "mundinho-wix-exact-ee6e-release",
@@ -623,6 +623,40 @@
         }
       },
       "reason": "Superseded after publisher canonical readback proved 287d0475 live and canonical main advanced to 0581df38."
+    },
+    {
+      "at": "2026-10-06T20:57:23Z",
+      "previousPendingReleaseRequest": {
+        "requestId": "REL-OS-WIX-SOVEREIGN-0581DF38-20261006",
+        "status": "APPROVED",
+        "sourceSha": "0581df380376e916ce6e2a1dd41e843912c2e9b4",
+        "mirrorSha": null,
+        "releaseId": "wix-live-0581df38",
+        "expectedCurrentLiveSourceSha": "287d0475e2fd4f116cfcac569657974598233df3",
+        "expectedCurrentLiveReleaseId": "wix-live-287d0475",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "GitHub hosted Wix External Builder Release run 37521288081: transport identity PASS, npm ci PASS, canonical source QA PASS, build:wix-worker PASS, embedded source SHA PASS, package/upload artifact PASS for canonical GitLab 0581df38.",
+        "buildReceipt": "Exact GitLab transport parity 1323/1323 path+blob SHAs; transport tree 91a3da81c1b6a56e9d433a6a3832889015d630a6; hosted build run 37521288081.",
+        "visualReceipt": "No OS/Radar visual redesign. Delta after 287d0475 is DIVA genealogy runtime consumer/preboot integration only.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-10-06T16:00:00-03:00",
+        "authorizationProvenance": "User instructed DIVA Raiz to rehydrate, reconcile and finish the OS release.",
+        "page01LiveVerified": false,
+        "artifactProvenance": {
+          "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+          "sourceSha": "0581df380376e916ce6e2a1dd41e843912c2e9b4",
+          "transportRef": "transport/gitlab-0581df38-20261006",
+          "transportCommit": "aafb1f1cba08b38a861a4bdb836a3d8fd2454221",
+          "transportTree": "91a3da81c1b6a56e9d433a6a3832889015d630a6",
+          "builder": "GITHUB_HOSTED",
+          "buildArtifactSha256": null,
+          "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+          "executorBranch": "forge/wix-remote-release-auth-20260927"
+        }
+      },
+      "reason": "Superseded after canonical GitLab MR !759 fixed the focused genealogy rehydration release gate and GREEN was proven on GitHub Actions run 37530270057."
     }
   ]
 }
