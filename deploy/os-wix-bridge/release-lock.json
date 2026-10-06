@@ -20,22 +20,34 @@
     "canonicalDomainRoutingVerified": true
   },
   "pendingReleaseRequest": {
-    "requestId": null,
-    "status": "NONE",
-    "sourceSha": null,
+    "requestId": "REL-OS-WIX-SOVEREIGN-8E2FDCEF-20261006",
+    "status": "APPROVED",
+    "sourceSha": "8e2fdcefdac8b0e47d9ff9fd7a85a422e569c367",
     "mirrorSha": null,
-    "releaseId": null,
+    "releaseId": "wix-live-8e2fdcef",
     "expectedCurrentLiveSourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
     "expectedCurrentLiveReleaseId": "wix-live-7f26e884",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "Release complete.",
-    "buildReceipt": "GitHub Actions run 37534715536 built exact 7f26e884, passed full qa:release, packaged client/server-only artifact, OIDC handoff PASS.",
-    "visualReceipt": "No human UI redesign beyond the reconciled 12-area candidate already approved for release.",
-    "approvedByHuman": false,
-    "approvedAt": null,
-    "page01LiveVerified": true
+    "qaReceipt": "Focused RED reproduced browser ghost cache gap; focused GREEN passed; full npm run qa:release PASS on GitHub Actions run 37542789741 using exact transport 85bd08e9e597fe239452b2b063d03768f6c7f7c9.",
+    "buildReceipt": "PENDING_GITHUB_HOSTED_EXACT_TRANSPORT_BUILD_FOR_8E2FDCEF",
+    "visualReceipt": "No approved human OS surface redesign. Release adds browser cache/service-worker fence and includes already-reconciled ORBI/Armadura changes present in canonical GitLab main.",
+    "approvedByHuman": true,
+    "approvedAt": "2026-10-06T19:49:10-03:00",
+    "authorizationProvenance": "Active human instruction to reconcile DIVA Raiz and keep working until all canonical OS links stop serving divergent old sites.",
+    "page01LiveVerified": false,
+    "artifactProvenance": {
+      "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+      "sourceSha": "8e2fdcefdac8b0e47d9ff9fd7a85a422e569c367",
+      "transportRef": "transport/os-browser-fence-f9cbbe7d-20261006",
+      "transportCommit": "85bd08e9e597fe239452b2b063d03768f6c7f7c9",
+      "transportTree": "79a5dc7de3d64607c4e7e4a39b09c86155578d8c",
+      "builder": "GITHUB_HOSTED",
+      "buildArtifactSha256": null,
+      "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+      "executorBranch": "forge/wix-remote-release-auth-20260927"
+    }
   },
   "requiredRequestFields": [
     "requestId",
@@ -821,6 +833,28 @@
         "stagedLegacyRoutingRules": 0
       },
       "reason": "External Vercel-authenticated HTTP readback proves the human canonical OS domain now serves the Wix-backed Mundinho OS access surface and exact live SHA; legacy pink deployment no longer carries the os alias."
+    },
+    {
+      "at": "2026-10-06T22:49:10Z",
+      "previousPendingReleaseRequest": {
+        "requestId": null,
+        "status": "NONE",
+        "sourceSha": null,
+        "mirrorSha": null,
+        "releaseId": null,
+        "expectedCurrentLiveSourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
+        "expectedCurrentLiveReleaseId": "wix-live-7f26e884",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "Release complete.",
+        "buildReceipt": "GitHub Actions run 37534715536 built exact 7f26e884, passed full qa:release, packaged client/server-only artifact, OIDC handoff PASS.",
+        "visualReceipt": "No human UI redesign beyond the reconciled 12-area candidate already approved for release.",
+        "approvedByHuman": false,
+        "approvedAt": null,
+        "page01LiveVerified": true
+      },
+      "reason": "Open exact canonical release for browser-cache fence after MR !765 merge and full qa:release PASS on GitHub Actions run 37542789741."
     }
   ],
   "humanDomainVerification": {
