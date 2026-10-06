@@ -37,7 +37,10 @@ jobs:
             'skipPipelineCheck', 'isPublishPipelineDeployment',
             'createAppDeployment', 'completeAppDeployment', 'BackendAsAServiceClient',
             'getAppProject', 'postForm', 'putBinaryFile', 'releaseHeadlessProject',
-            'createComponentsOverride', 'updateDeploymentTopology'
+            'createComponentsOverride', 'updateDeploymentTopology',
+            'device-login', 'device_code', 'deviceCode', 'authorization_pending',
+            'verificationUri', 'verification_uri', 'userCode', 'user_code',
+            'oauth', 'tokenEndpoint', 'pollDevice', 'users.wix.com/login/device-login'
           ];
           const chunks=[];
           function walk(d){
