@@ -2,45 +2,50 @@
   "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
   "mode": "frozen",
   "currentLive": {
-    "sourceSha": "2421e47426d2ce87b52100a898eb7e294b558799",
+    "sourceSha": "00a30e540d2f74625bd3e1f18d1b6c1fdc0a543b",
     "mirrorSha": null,
-    "releaseId": "wix-live-2421e474",
+    "releaseId": "wix-live-00a30e54",
     "runtimeEnv": "wix-live",
     "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
     "receiptBranch": null,
     "receiptPath": null,
-    "lastVerifiedAt": "2026-10-02T19:31:02.587Z",
-    "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
+    "lastVerifiedAt": "2026-10-02T15:41:41.334Z",
+    "proofEndpoint": "WIX_CMS_RUNTIME_WRITEBACK",
+    "verificationSource": "WIX_CMS_RUNTIME_WRITEBACK",
+    "evidenceCollection": "DivaWritebackEvents",
+    "evidenceItemId": "mundo-velo-hook-e2e-20261002-002",
+    "evidenceEventType": "mundo.workspace.state_change",
+    "evidenceRuntimeLabel": "wix-live-00a30e54"
   },
   "pendingReleaseRequest": {
-    "requestId": "REL-DIVA-MCP-OPTION1-E4B33567-20261003",
+    "requestId": "REL-OS-LIVE-FRESHNESS-5AD27BB0-20261006",
     "status": "APPROVED",
-    "sourceSha": "e4b33567f47c1412f54eb135e9d1ab73d786babe",
+    "sourceSha": "5ad27bb0f2c15c936315abb9f21b6003647c836b",
     "mirrorSha": null,
-    "releaseId": "wix-live-e4b33567",
-    "expectedCurrentLiveSourceSha": "e5a3c8c3edaf74a79d83feb428effb43cc638ede",
-    "expectedCurrentLiveReleaseId": "e5a3c8c3edaf74a79d83feb428effb43cc638ede",
+    "releaseId": "wix-live-5ad27bb0",
+    "expectedCurrentLiveSourceSha": "00a30e540d2f74625bd3e1f18d1b6c1fdc0a543b",
+    "expectedCurrentLiveReleaseId": "wix-live-00a30e54",
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "MR !702 merged; Vercel production READY; Vercel OIDC source bridge accepted exact e4b33567; GitHub hosted canonical QA and exact Wix worker build PASS.",
-    "buildReceipt": "GitHub run 37111506480 built exact e4b33567; WIX_WORKER_EXACT_SHA_PASS; artifact sha256 054f5eff036b664f039b7653702af9f5fd0a128bad246390b3ac7404e032954e.",
-    "visualReceipt": "No UI redesign. This release closes the backend-only DIVA MCP OAuth broker path; DIVA_MCP_OAUTH_SECRET remains Wix-only and Vercel uses OIDC.",
+    "qaReceipt": "GitHub hosted exact-source QA PASS on run 37485629931; source archive parity PASS; canonical source QA PASS; Wix worker build PASS for 5ad27bb0.",
+    "buildReceipt": "GitHub run 37485629931 built exact 5ad27bb0; source archive sha256 a7d7e950f6281d5d74eb1573a1c54acc6d46e6a181f0394eb147a227faf63e92; build artifact sha256 e3aff24388dad4e3d876600f0918257d57e107aaccded0fc5e9e9762cb04a71f; handoff previously blocked only by stale release lock.",
+    "visualReceipt": "No human UI redesign. This release applies live freshness/provenance, PR live-first projection, and canonical 12-area contract reconciliation while preserving approved OS/Radar surfaces.",
     "approvedByHuman": true,
-    "approvedAt": "2026-10-03T05:59:36-03:00",
-    "authorizationProvenance": "User explicitly rejected Manage Secrets on WIX_MUNDO_API_KEY, selected Option 1 (Wix/Velo backend-only MCP OAuth secret), instructed DIVA to continue/retake and not stop.",
+    "approvedAt": "2026-10-06T12:15:00-03:00",
+    "authorizationProvenance": "User explicitly instructed DIVA to reconcile, rehydrate, continue, and resolve the OS before advancing SUPERDIVA.",
     "page01LiveVerified": false,
     "artifactProvenance": {
       "sourceAuthority": "GITLAB_CANONICAL_MAIN",
-      "sourceSha": "e4b33567f47c1412f54eb135e9d1ab73d786babe",
-      "sourceTransport": "VERCEL_OIDC_TO_RENDER_SOURCE_BRIDGE_THEN_GITHUB_OIDC",
+      "sourceSha": "5ad27bb0f2c15c936315abb9f21b6003647c836b",
+      "sourceTransport": "GITLAB_OIDC_TO_RENDER_SOURCE_BRIDGE_THEN_GITHUB_OIDC",
       "builder": "GITHUB_HOSTED",
-      "buildArtifactSha256": "054f5eff036b664f039b7653702af9f5fd0a128bad246390b3ac7404e032954e",
+      "buildArtifactSha256": "e3aff24388dad4e3d876600f0918257d57e107aaccded0fc5e9e9762cb04a71f",
       "buildArtifactBytes": null,
       "releaseExecutor": "mundinho-wix-exact-ee6e-release",
-      "executorSubmoduleSha": "ab6833876e657f47cc602e21aba2da2f4cd87838"
+      "executorSubmoduleSha": "8fe8152b1167a34287ad5d9c9fcb9e0ffd62f0df"
     }
   },
   "requiredRequestFields": [
@@ -450,6 +455,52 @@
         }
       },
       "reason": "Reconciled canonical main after STUDY→BUILD 002 merge; release target advanced from 3fbdcb3d to e8109c48 without altering current live."
+    },
+    {
+      "at": "2026-10-06T15:24:00Z",
+      "currentLive": {
+        "sourceSha": "2421e47426d2ce87b52100a898eb7e294b558799",
+        "mirrorSha": null,
+        "releaseId": "wix-live-2421e474",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": null,
+        "receiptPath": null,
+        "lastVerifiedAt": "2026-10-02T19:31:02.587Z",
+        "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
+      },
+      "pendingReleaseRequest": {
+        "requestId": "REL-DIVA-MCP-OPTION1-E4B33567-20261003",
+        "status": "APPROVED",
+        "sourceSha": "e4b33567f47c1412f54eb135e9d1ab73d786babe",
+        "mirrorSha": null,
+        "releaseId": "wix-live-e4b33567",
+        "expectedCurrentLiveSourceSha": "e5a3c8c3edaf74a79d83feb428effb43cc638ede",
+        "expectedCurrentLiveReleaseId": "e5a3c8c3edaf74a79d83feb428effb43cc638ede",
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "MR !702 merged; Vercel production READY; Vercel OIDC source bridge accepted exact e4b33567; GitHub hosted canonical QA and exact Wix worker build PASS.",
+        "buildReceipt": "GitHub run 37111506480 built exact e4b33567; WIX_WORKER_EXACT_SHA_PASS; artifact sha256 054f5eff036b664f039b7653702af9f5fd0a128bad246390b3ac7404e032954e.",
+        "visualReceipt": "No UI redesign. This release closes the backend-only DIVA MCP OAuth broker path; DIVA_MCP_OAUTH_SECRET remains Wix-only and Vercel uses OIDC.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-10-03T05:59:36-03:00",
+        "authorizationProvenance": "User explicitly rejected Manage Secrets on WIX_MUNDO_API_KEY, selected Option 1 (Wix/Velo backend-only MCP OAuth secret), instructed DIVA to continue/retake and not stop.",
+        "page01LiveVerified": false,
+        "artifactProvenance": {
+          "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+          "sourceSha": "e4b33567f47c1412f54eb135e9d1ab73d786babe",
+          "sourceTransport": "VERCEL_OIDC_TO_RENDER_SOURCE_BRIDGE_THEN_GITHUB_OIDC",
+          "builder": "GITHUB_HOSTED",
+          "buildArtifactSha256": "054f5eff036b664f039b7653702af9f5fd0a128bad246390b3ac7404e032954e",
+          "buildArtifactBytes": null,
+          "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+          "executorSubmoduleSha": "ab6833876e657f47cc602e21aba2da2f4cd87838"
+        }
+      },
+      "reason": "Superseded after Wix CMS runtime evidence reconciliation for OS live freshness recovery."
     }
   ]
 }
