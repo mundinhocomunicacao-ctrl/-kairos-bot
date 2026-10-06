@@ -31,9 +31,9 @@
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
-    "qaReceipt": "GitHub Actions run 37546875991 PASS: exact Git tree, shell cobalt, archived pink master, global nav visibility and complete qa:release on a 1352/1352 byte-identical transport of GitLab main 38469566.",
+    "qaReceipt": "GitHub Actions run 37547838136 PASS: exact Git tree 9534354856796038488560670b4bdd43fc8c4334, shell cobalt, archived pink master, global nav visibility and complete npm run qa:release on a 1352/1352 byte-identical transport of GitLab main 38469566.",
     "buildReceipt": "PENDING_GITHUB_HOSTED_EXACT_TRANSPORT_BUILD_FOR_38469566",
-    "visualReceipt": "Global ApprovedPinkVisualMaster removed from pages/_app.js and converted to archived no-op reference. Canonical runtime uses design-system neutrals/cobalt; structural rail/mobile/privacy CSS preserved.",
+    "visualReceipt": "Global ApprovedPinkVisualMaster is detached from pages/_app.js and archived as a runtime no-op. Public access and authenticated canonical navigation use the canonical neutral/cobalt system; privacy/rail/mobile structural rules remain in critical CSS.",
     "approvedByHuman": true,
     "approvedAt": "2026-10-06T20:28:30-03:00",
     "authorizationProvenance": "Active human instruction: inspect metadata and fix the OS because the live site remains the old pink site; continue until the correct OS is actually live.",
@@ -971,6 +971,16 @@
         "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version"
       },
       "reason": "Canonical human-domain readback returned wix-live-be0c4d9f. Reconcile lock before releasing main 38469566 which unmounts the global legacy pink overlay."
+    },
+    {
+      "at": "2026-10-06T23:41:30Z",
+      "event": "FINAL_PINK_OVERLAY_REMOVAL_QA_VERIFIED",
+      "sourceSha": "38469566b88a1932f619c7addfae6f45e40b2bc1",
+      "transportCommit": "8fb05543d4f94e98121e7b80a6e9d621f4283fa8",
+      "transportTree": "9534354856796038488560670b4bdd43fc8c4334",
+      "blobParity": "1352/1352",
+      "qaRun": 37547838136,
+      "reason": "Exact-tree full QA passed after unmounting the global ApprovedPinkVisualMaster overlay and preserving only canonical cobalt/neutral runtime styling."
     }
   ],
   "humanDomainVerification": {
