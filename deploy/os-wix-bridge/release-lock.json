@@ -2,19 +2,19 @@
   "policyVersion": "MUNDINHO_OS_LIVE_LOCK_V1",
   "mode": "frozen",
   "currentLive": {
-    "sourceSha": "287d0475e2fd4f116cfcac569657974598233df3",
+    "sourceSha": "c6fc68d274d81d3a9a4a0638eb5f290702fded38",
     "mirrorSha": null,
-    "releaseId": "wix-live-287d0475",
+    "releaseId": null,
     "runtimeEnv": "wix-live",
     "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
     "receiptBranch": null,
     "receiptPath": null,
-    "lastVerifiedAt": "2026-10-06T19:45:44.795Z",
+    "lastVerifiedAt": "2026-10-06T21:25:36.799Z",
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version",
     "verificationSource": "PUBLISHER_CANONICAL_READBACK",
-    "evidenceEvent": "CURRENT_LIVE_OBSERVED=287d0475e2fd4f116cfcac569657974598233df3 source=canonical"
+    "evidenceEvent": "CURRENT_LIVE_OBSERVED=c6fc68d274d81d3a9a4a0638eb5f290702fded38 source=canonical"
   },
   "pendingReleaseRequest": {
     "requestId": "REL-OS-WIX-SOVEREIGN-7F26E884-20261006",
@@ -22,13 +22,13 @@
     "sourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
     "mirrorSha": null,
     "releaseId": "wix-live-7f26e884",
-    "expectedCurrentLiveSourceSha": "287d0475e2fd4f116cfcac569657974598233df3",
-    "expectedCurrentLiveReleaseId": "wix-live-287d0475",
+    "expectedCurrentLiveSourceSha": "c6fc68d274d81d3a9a4a0638eb5f290702fded38",
+    "expectedCurrentLiveReleaseId": null,
     "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
     "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
     "canonicalDomain": "https://os.mundinhocomunicacao.com",
     "qaReceipt": "GitHub Actions run 37533485521 PASS: complete npm run qa:release on reconciled 12-area candidate; MR !760 merged without conflicts into canonical GitLab main.",
-    "buildReceipt": "PENDING_GITHUB_HOSTED_EXACT_TRANSPORT_BUILD_FOR_7F26E884",
+    "buildReceipt": "GitHub Actions run 37533853137: exact canonical SHA, transport/tree, npm ci, full qa:release, Wix worker build, artifact packaging and GitHub OIDC PASS; artifact sha256 2b26eb806682c855f67d1adf522bf7a0fe4c6534894015f030acd367837a0ace. First handoff blocked only by stale current-live lock.",
     "visualReceipt": "No human UI redesign. Candidate reconciles canonical 12-area contracts, Propostas primary surface/closure queue, Mesa root /os, Radar/mobile contract metadata, ANJOS and visual language while preserving approved OS/Radar surfaces.",
     "approvedByHuman": true,
     "approvedAt": "2026-10-06T18:24:11-03:00",
@@ -41,7 +41,7 @@
       "transportCommit": "f0a6bdc838219b937a35c71d4efbbe06d842e0fd",
       "transportTree": "c369916170e7c6840ac9587333c5d4b5c95691a8",
       "builder": "GITHUB_HOSTED",
-      "buildArtifactSha256": null,
+      "buildArtifactSha256": "2b26eb806682c855f67d1adf522bf7a0fe4c6534894015f030acd367837a0ace",
       "releaseExecutor": "mundinho-wix-exact-ee6e-release",
       "executorBranch": "forge/wix-remote-release-auth-20260927"
     }
@@ -691,6 +691,55 @@
         }
       },
       "reason": "Superseded after MR !760 merged the fully reconciled 12-area candidate and GitHub Actions run 37533485521 passed the complete npm run qa:release bundle."
+    },
+    {
+      "at": "2026-10-06T21:27:30Z",
+      "previousCurrentLive": {
+        "sourceSha": "287d0475e2fd4f116cfcac569657974598233df3",
+        "mirrorSha": null,
+        "releaseId": "wix-live-287d0475",
+        "runtimeEnv": "wix-live",
+        "siteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "appId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "receiptBranch": null,
+        "receiptPath": null,
+        "lastVerifiedAt": "2026-10-06T19:45:44.795Z",
+        "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version",
+        "verificationSource": "PUBLISHER_CANONICAL_READBACK",
+        "evidenceEvent": "CURRENT_LIVE_OBSERVED=287d0475e2fd4f116cfcac569657974598233df3 source=canonical"
+      },
+      "previousPendingReleaseRequest": {
+        "requestId": "REL-OS-WIX-SOVEREIGN-7F26E884-20261006",
+        "status": "APPROVED",
+        "sourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
+        "mirrorSha": null,
+        "releaseId": "wix-live-7f26e884",
+        "expectedCurrentLiveSourceSha": "c6fc68d274d81d3a9a4a0638eb5f290702fded38",
+        "expectedCurrentLiveReleaseId": null,
+        "targetSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
+        "targetAppId": "79eedd41-5ca6-4940-925a-e95e6f3c570e",
+        "canonicalDomain": "https://os.mundinhocomunicacao.com",
+        "qaReceipt": "GitHub Actions run 37533485521 PASS: complete npm run qa:release on reconciled 12-area candidate; MR !760 merged without conflicts into canonical GitLab main.",
+        "buildReceipt": "GitHub Actions run 37533853137: exact canonical SHA, transport/tree, npm ci, full qa:release, Wix worker build, artifact packaging and GitHub OIDC PASS; artifact sha256 2b26eb806682c855f67d1adf522bf7a0fe4c6534894015f030acd367837a0ace. First handoff blocked only by stale current-live lock.",
+        "visualReceipt": "No human UI redesign. Candidate reconciles canonical 12-area contracts, Propostas primary surface/closure queue, Mesa root /os, Radar/mobile contract metadata, ANJOS and visual language while preserving approved OS/Radar surfaces.",
+        "approvedByHuman": true,
+        "approvedAt": "2026-10-06T18:24:11-03:00",
+        "authorizationProvenance": "Active human instruction to reconcile the linked DIVA/OS session and continue the Wix release without duplicate architecture; execution remained on canonical GitLab → GitHub transport → Render Wix rail.",
+        "page01LiveVerified": false,
+        "artifactProvenance": {
+          "sourceAuthority": "GITLAB_CANONICAL_MAIN",
+          "sourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
+          "transportRef": "transport/os-47d701f4-20261006",
+          "transportCommit": "f0a6bdc838219b937a35c71d4efbbe06d842e0fd",
+          "transportTree": "c369916170e7c6840ac9587333c5d4b5c95691a8",
+          "builder": "GITHUB_HOSTED",
+          "buildArtifactSha256": "2b26eb806682c855f67d1adf522bf7a0fe4c6534894015f030acd367837a0ace",
+          "releaseExecutor": "mundinho-wix-exact-ee6e-release",
+          "executorBranch": "forge/wix-remote-release-auth-20260927"
+        }
+      },
+      "reason": "Canonical /api/release-version readback from the Wix release controller observed c6fc68d274d81d3a9a4a0638eb5f290702fded38 at 2026-10-06T21:25:36.799Z. Reconcile current-live truth before retrying exact 7f26e884 release; no releaseId inferred."
     }
   ]
 }
