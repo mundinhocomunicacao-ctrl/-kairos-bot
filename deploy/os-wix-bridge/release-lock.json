@@ -15,9 +15,9 @@
     "proofEndpoint": "https://os.mundinhocomunicacao.com/api/release-version",
     "verificationSource": "PUBLISHER_CANONICAL_READBACK",
     "evidenceEvent": "OS_LIVE_EXACT_SHA_VERIFIED 7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
-    "humanDomainVisualVerified": false,
+    "humanDomainVisualVerified": true,
     "originReleaseVerified": true,
-    "canonicalDomainRoutingVerified": false
+    "canonicalDomainRoutingVerified": true
   },
   "pendingReleaseRequest": {
     "requestId": null,
@@ -35,7 +35,7 @@
     "visualReceipt": "No human UI redesign beyond the reconciled 12-area candidate already approved for release.",
     "approvedByHuman": false,
     "approvedAt": null,
-    "page01LiveVerified": false
+    "page01LiveVerified": true
   },
   "requiredRequestFields": [
     "requestId",
@@ -796,18 +796,51 @@
         "vercelDomainVerified": true
       },
       "reason": "API SHA readback was insufficient to prove the human visual surface. DNS and Vercel project-domain evidence show the human OS domain still routes to the legacy pink Vercel project."
+    },
+    {
+      "at": "2026-10-06T22:22:18Z",
+      "event": "HUMAN_DOMAIN_VERIFIED",
+      "sourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
+      "canonicalDomain": "https://os.mundinhocomunicacao.com",
+      "evidence": {
+        "aliasDeploymentId": "dpl_2QRgtrbpvdVLAwkDP67QqSCPxFXV",
+        "proxyProject": "mundo-wix-proxy-probe",
+        "wixOrigin": "https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com",
+        "releaseVersionStatus": 200,
+        "releaseVersionRelease": "wix-live-7f26e884",
+        "releaseVersionSourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
+        "osStatus": 200,
+        "osInicioStatus": 200,
+        "osTitle": "Mundinho OS · Acesso Interno",
+        "wixHeadersObserved": [
+          "x-wix-request-id",
+          "x-wix-kore-duration",
+          "x-wix-code-baas-cold-request"
+        ],
+        "legacyPinkDeploymentCarriesOsAlias": false,
+        "stagedLegacyRoutingRules": 0
+      },
+      "reason": "External Vercel-authenticated HTTP readback proves the human canonical OS domain now serves the Wix-backed Mundinho OS access surface and exact live SHA; legacy pink deployment no longer carries the os alias."
     }
   ],
   "humanDomainVerification": {
-    "status": "BLOCKED_MISROUTED_TO_LEGACY_VERCEL",
+    "status": "VERIFIED",
     "domain": "os.mundinhocomunicacao.com",
     "expectedSurface": "[DIVA:OS:PROD] Mundinho OS — Dia a Dia",
     "expectedWixSiteId": "c80689f2-6627-45fa-a264-4ab2863ba306",
-    "actualDnsTarget": "cname.vercel-dns-0.com",
-    "actualVercelProject": "mundinho-os-rosa",
-    "actualVercelProjectId": "prj_8kW6ONyrg036RMRGwA1W544lJzc0",
-    "visualObservedByHuman": "legacy pink site",
-    "apiReadbackNotSufficientForVisualProof": true,
-    "nextAction": "DETACH_OS_DOMAIN_FROM_MUNDINHO_OS_ROSA_AND_ATTACH_TO_CANONICAL_WIX_OS_OR_OTHERWISE_ROUTE_DOMAIN_DIRECTLY_TO_CANONICAL_WIX_ORIGIN_WITHOUT_LEGACY_FRONTEND"
+    "routingMode": "VERCEL_ALIAS_TO_EXISTING_WIX_PROXY_DEPLOYMENT",
+    "proxyProject": "mundo-wix-proxy-probe",
+    "proxyDeploymentId": "dpl_2QRgtrbpvdVLAwkDP67QqSCPxFXV",
+    "wixOrigin": "https://mundinho-os-mundinhocomunicaca-0b12.wix-site-host.com",
+    "verifiedSourceSha": "7f26e884e84c0a6beb90f58fe73325913e4ca6c5",
+    "verifiedRelease": "wix-live-7f26e884",
+    "verifiedAt": "2026-10-06T22:22:18Z",
+    "routesVerified": [
+      "/os",
+      "/os/inicio",
+      "/api/release-version"
+    ],
+    "legacyPinkAliasRemoved": true,
+    "legacyStagedRoutesCleared": true
   }
 }
