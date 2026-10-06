@@ -32,6 +32,7 @@ const VERCEL_AUDIENCE='https://vercel.com/mundinho-os';
 const VERCEL_PROJECT='mundinho-os-rosa';
 const VERCEL_SUBJECT='owner:mundinho-os:project:mundinho-os-rosa:environment:production';
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
+const ALLOWED_CI_USER_IDS=new Set(['42210703']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
 const BUILD_ARCHIVE=path.join(ROOT,'.external-build-'+SOURCE_SHA+'.tar.gz');
 let bridgeResolve=null;
@@ -58,29 +59,35 @@ function decodePart(value){return JSON.parse(Buffer.from(String(value||''),'base
 function audienceMatches(aud,expected){return Array.isArray(aud)?aud.includes(expected):String(aud||'')===expected}
 function safeNumber(value){const n=Number(value);return Number.isFinite(n)?n:0}
 async function verifyBridgeOidc(token){
+  const reject=(reason)=>{console.error('GITLAB_OIDC_REJECT='+reason);return null;};
   const raw=String(token||'').trim(),parts=raw.split('.');
-  if(parts.length!==3)return null;
-  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return null}
+  if(parts.length!==3)return reject('shape');
+  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return reject('decode')}
   const now=Math.floor(Date.now()/1000);
-  if(header?.alg!=='RS256'||!header?.kid)return null;
-  if(payload?.iss!==GITLAB_OIDC_ISSUER||!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return null;
-  if(String(payload?.project_id)!==GITLAB_PROJECT_ID||String(payload?.project_path)!==GITLAB_PROJECT_PATH)return null;
-  if(String(payload?.ref)!=='main'||String(payload?.ref_path)!=='refs/heads/main'||String(payload?.ref_type)!=='branch'||String(payload?.ref_protected)!=='true')return null;
-  if(!['api','web'].includes(String(payload?.pipeline_source||'')))return null;
-  if(!ALLOWED_CI_ROLES.has(String(payload?.user_access_level||'').toLowerCase()))return null;
-  if(String(payload?.sha||'')!==SOURCE_SHA||!payload?.job_id||!payload?.pipeline_id)return null;
-  if(safeNumber(payload?.exp)<=now||safeNumber(payload?.nbf)>now+30||safeNumber(payload?.iat)>now+30)return null;
-  let response;try{response=await fetch(GITLAB_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return null}
-  if(!response.ok)return null;
-  let jwks;try{jwks=await response.json()}catch{return null}
+  if(header?.alg!=='RS256'||!header?.kid)return reject('header');
+  if(payload?.iss!==GITLAB_OIDC_ISSUER)return reject('issuer');
+  if(!audienceMatches(payload?.aud,BRIDGE_AUDIENCE))return reject('audience');
+  if(String(payload?.project_id)!==GITLAB_PROJECT_ID||String(payload?.project_path)!==GITLAB_PROJECT_PATH)return reject('project');
+  if(String(payload?.ref)!=='main'||String(payload?.ref_path)!=='refs/heads/main'||String(payload?.ref_type)!=='branch'||String(payload?.ref_protected)!=='true')return reject('ref');
+  if(!['api','web'].includes(String(payload?.pipeline_source||'')))return reject('pipeline_source');
+  const role=String(payload?.user_access_level||'').toLowerCase();
+  const principalId=String(payload?.user_id||'');
+  const principalAuthorized=ALLOWED_CI_ROLES.has(role)||(!role&&ALLOWED_CI_USER_IDS.has(principalId));
+  if(!principalAuthorized)return reject(role?'role':'principal');
+  if(String(payload?.sha||'')!==SOURCE_SHA||!payload?.job_id||!payload?.pipeline_id)return reject('source_identity');
+  if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return reject('time');
+  let response;try{response=await fetch(GITLAB_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return reject('jwks_fetch')}
+  if(!response.ok)return reject('jwks_http');
+  let jwks;try{jwks=await response.json()}catch{return reject('jwks_json')}
   const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
-  if(!jwk)return null;
+  if(!jwk)return reject('kid');
   try{
     const key=crypto.createPublicKey({key:jwk,format:'jwk'});
     const verifier=crypto.createVerify('RSA-SHA256');
     verifier.update(`${parts[0]}.${parts[1]}`);verifier.end();
-    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return null;
-  }catch{return null}
+    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return reject('signature');
+  }catch{return reject('signature_error')}
+  console.log('GITLAB_OIDC_ACCEPT='+(role?'role:'+role:'principal:'+principalId));
   return payload;
 }
 async function verifyVercelOidc(token){
