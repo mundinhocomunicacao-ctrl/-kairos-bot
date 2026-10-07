@@ -25,12 +25,12 @@ const GITHUB_REPOSITORY='mundinhocomunicacao-ctrl/mundinho-os-live';
 const GITHUB_REF='refs/heads/main';
 const VERCEL_SOURCE_BRIDGE_ENABLED=String(process.env.VERCEL_SOURCE_BRIDGE_ENABLED||'0')==='1';
 const VERCEL_OIDC_ISSUER='https://oidc.vercel.com/mundinho-os';
-const VERCEL_OIDC_JWKS='https://oidc.vercel.com/.well-known/jwks';
+const VERCEL_OIDC_JWKS='https://oidc.vercel.com/mundinho-os/.well-known/jwks';
 const VERCEL_OWNER_ID='team_soWYtG1mYrODtpdbhFUdjjuB';
+const VERCEL_OWNER_SLUG='mundinho-os';
 const VERCEL_PROJECT_ID='prj_ul6yOIcg4pTEV9OaQ1U8iZztOqcJ';
 const VERCEL_AUDIENCE='https://vercel.com/mundinho-os';
 const VERCEL_PROJECT='mundo-release-exact';
-const VERCEL_SUBJECT='owner:mundinho-os:project:mundo-release-exact:environment:production';
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
 const ALLOWED_CI_USER_IDS=new Set(['42210703']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
@@ -90,6 +90,18 @@ async function verifyBridgeOidc(token){
   console.log('GITLAB_OIDC_ACCEPT='+(role?'role:'+role:'principal:'+principalId));
   return payload;
 }
+function parseVercelSubjectClaims(value){
+  const parts=String(value||'').split(':').filter(Boolean);
+  if(parts.length<6||parts.length%2!==0)return null;
+  const claims={};
+  for(let i=0;i<parts.length;i+=2){
+    const key=String(parts[i]||'').trim();
+    const item=String(parts[i+1]||'').trim();
+    if(!key||!item||Object.prototype.hasOwnProperty.call(claims,key))return null;
+    claims[key]=item;
+  }
+  return claims;
+}
 async function verifyVercelOidc(token){
   const reject=(reason)=>{console.error('VERCEL_OIDC_REJECT='+reason);return null;};
   if(!VERCEL_SOURCE_BRIDGE_ENABLED)return reject('disabled');
@@ -100,8 +112,12 @@ async function verifyVercelOidc(token){
   if(header?.alg!=='RS256'||!header?.kid)return reject('header');
   if(payload?.iss!==VERCEL_OIDC_ISSUER)return reject('issuer');
   if(!audienceMatches(payload?.aud,VERCEL_AUDIENCE))return reject('audience');
-  if(String(payload?.sub||'')!==VERCEL_SUBJECT)return reject('subject');
-  if(String(payload?.owner||'')!=='mundinho-os'||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
+  const subjectClaims=parseVercelSubjectClaims(payload?.sub);
+  if(!subjectClaims||
+    subjectClaims?.owner!==VERCEL_OWNER_SLUG||
+    subjectClaims?.project!==VERCEL_PROJECT||
+    subjectClaims?.environment!==String(payload?.environment||''))return reject('subject');
+  if(String(payload?.owner||'')!==VERCEL_OWNER_SLUG||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
   if(String(payload?.project||'')!==VERCEL_PROJECT||String(payload?.project_id||'')!==VERCEL_PROJECT_ID)return reject('project');
   if(String(payload?.environment||'')!=='production')return reject('environment');
   if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return reject('time');
