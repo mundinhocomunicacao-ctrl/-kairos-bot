@@ -78,6 +78,8 @@ assert.match(source,/WIX_DURABLE_AUTH_REQUIRED_API_KEY_MISSING/);
 assert.match(source,/WIX_EXTERNAL_RELEASE_EXECUTOR_ENABLED/);
 assert.match(source,/WIX_RELEASE_EXECUTOR_PROJECT_ID/);
 assert.match(source,/WIX_RELEASE_EXECUTOR_PROJECT/);
+assert.match(source,/WIX_RELEASE_EXECUTOR_ALLOWED_ENVIRONMENTS/);
+assert.match(source,/new Set\(\['preview','production'\]\)/);
 assert.match(source,/verifyWixReleaseExecutorOidc/);
 assert.match(source,/serveReleaseArtifact/);
 assert.match(source,/serveReleaseArtifact[\s\S]*verifyExternalReleaseReceiptOidc\(token\)/);
