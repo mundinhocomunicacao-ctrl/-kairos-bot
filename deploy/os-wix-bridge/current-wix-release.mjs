@@ -315,7 +315,7 @@ async function proveGitTreeParity(dir,expectedTree){
 async function tryGitHubTreeTransport(){
   if(!/^[0-9a-f]{40}$/i.test(GITHUB_TRANSPORT_COMMIT)||!/^[0-9a-f]{40}$/i.test(GITHUB_TRANSPORT_TREE_SHA))return false;
   const archive=path.join(ROOT,'.github-transport-'+GITHUB_TRANSPORT_COMMIT+'.tar.gz');
-  const url='https://github.com/'+GITHUB_TRANSPORT_REPOSITORY+'/archive/'+GITHUB_TRANSPORT_COMMIT+'.tar.gz';
+  const url='https://codeload.github.com/'+GITHUB_TRANSPORT_REPOSITORY+'/tar.gz/'+GITHUB_TRANSPORT_COMMIT;
   fs.rmSync(archive,{force:true});
   fs.rmSync(OS_DIR,{recursive:true,force:true});
   fs.mkdirSync(OS_DIR,{recursive:true});
