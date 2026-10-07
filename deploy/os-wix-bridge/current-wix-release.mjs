@@ -37,6 +37,7 @@ const VERCEL_PROJECT='mundo-release-exact';
 const WIX_EXTERNAL_RELEASE_EXECUTOR_ENABLED=String(process.env.WIX_EXTERNAL_RELEASE_EXECUTOR_ENABLED||'0')==='1';
 const WIX_RELEASE_EXECUTOR_PROJECT_ID='prj_8kW6ONyrg036RMRGwA1W544lJzc0';
 const WIX_RELEASE_EXECUTOR_PROJECT='mundinho-os-rosa';
+const WIX_RELEASE_EXECUTOR_ALLOWED_ENVIRONMENTS=new Set(['preview','production']);
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
 const ALLOWED_CI_USER_IDS=new Set(['42210703']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
@@ -126,7 +127,7 @@ async function verifyVercelOidc(token){
     subjectClaims?.environment!==String(payload?.environment||''))return reject('subject');
   if(String(payload?.owner||'')!==VERCEL_OWNER_SLUG||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
   if(String(payload?.project||'')!==VERCEL_PROJECT||String(payload?.project_id||'')!==VERCEL_PROJECT_ID)return reject('project');
-  if(String(payload?.environment||'')!=='production')return reject('environment');
+  if(!WIX_RELEASE_EXECUTOR_ALLOWED_ENVIRONMENTS.has(String(payload?.environment||'')))return reject('environment');
   if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return reject('time');
   let response;try{response=await fetch(VERCEL_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return reject('jwks_fetch')}
   if(!response.ok)return reject('jwks_http');
@@ -172,7 +173,7 @@ async function verifyWixReleaseExecutorOidc(token){
     verifier.update(`${parts[0]}.${parts[1]}`);verifier.end();
     if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return reject('signature');
   }catch{return reject('signature_error')}
-  console.log('WIX_RELEASE_EXECUTOR_OIDC_ACCEPT=production_project_bound');
+  console.log('WIX_RELEASE_EXECUTOR_OIDC_ACCEPT='+String(payload?.environment||'unknown')+'_project_bound');
   return payload;
 }
 async function verifyGitHubOidc(token){
