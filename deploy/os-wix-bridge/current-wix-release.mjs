@@ -333,8 +333,8 @@ async function receiveExternalReleaseReceipt(req,res){
   if(req.method!=='POST'||String(req.url||'').split('?')[0]!=='/release-complete')return false;
   const auth=String(req.headers.authorization||'');
   const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
-  const claims=await verifyWixReleaseExecutorOidc(token);
-  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
+  const releaseIdentity=await verifyExternalReleaseReceiptOidc(token);
+  if(!releaseIdentity){res.writeHead(401);res.end('unauthorized');return true;}
   const suppliedSha=String(req.headers['x-source-sha']||'').trim();
   if(suppliedSha!==SOURCE_SHA){res.writeHead(409);res.end('source identity mismatch');return true;}
   try{
