@@ -1,0 +1,76 @@
+name: Verify sovereign OS cd81bc57
+
+on:
+  push:
+    branches:
+      - verify/gitlab-cd81bc57-20261007
+    paths:
+      - '.github/workflows/verify-os-cd81bc57.yml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      SOURCE_SHA: cd81bc570475b3c7e9dee4bc2d6f5f6d400ec999
+      SOURCE_REPO: https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao.git
+    steps:
+      - name: Checkout sovereign GitLab SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/mundinho-os
+          git clone --filter=blob:none "$SOURCE_REPO" /tmp/mundinho-os
+          cd /tmp/mundinho-os
+          git checkout --detach "$SOURCE_SHA"
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          echo "SOVEREIGN_SHA_PASS=$SOURCE_SHA"
+
+      - name: Install dependencies
+        shell: bash
+        working-directory: /tmp/mundinho-os
+        run: |
+          set -euo pipefail
+          npm ci --include=dev
+
+      - name: Run systemic OS gates
+        shell: bash
+        working-directory: /tmp/mundinho-os
+        run: |
+          set -euo pipefail
+          node scripts/qa-os-system-cohesion.mjs
+          node scripts/qa-os-action-integrity.mjs
+          node scripts/qa-gabi-radar-system-cohesion.mjs
+          node scripts/qa-os-armadura-global.mjs
+          node scripts/qa-orbi-mesa-live-context.mjs
+          node scripts/qa-gabi-client-safe-policy.mjs
+          node scripts/qa-os-navigation-contract.mjs
+          node scripts/qa-os-navigation-runtime.mjs
+
+      - name: Build exact Wix artifact
+        shell: bash
+        working-directory: /tmp/mundinho-os
+        run: |
+          set -euo pipefail
+          MUNDO_RUNTIME_SOURCE_SHA="$SOURCE_SHA" MUNDO_RUNTIME_ENV=wix-qa npm run build:wix-worker
+          test -f dist/wix-server/entry.mjs
+          grep -F "$SOURCE_SHA" dist/wix-server/entry.mjs
+          echo "WIX_ARTIFACT_EXACT_SHA_PASS=$SOURCE_SHA"
+
+      - name: Package exact artifact
+        shell: bash
+        working-directory: /tmp/mundinho-os
+        run: |
+          set -euo pipefail
+          tar -czf /tmp/os-cd81bc57-dist.tar.gz dist
+          sha256sum /tmp/os-cd81bc57-dist.tar.gz | tee /tmp/os-cd81bc57-dist.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: os-cd81bc57-wix-dist
+          path: |
+            /tmp/os-cd81bc57-dist.tar.gz
+            /tmp/os-cd81bc57-dist.sha256
+          if-no-files-found: error
+          retention-days: 2
