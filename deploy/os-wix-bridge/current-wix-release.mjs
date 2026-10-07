@@ -322,19 +322,26 @@ async function serveReleaseArtifact(req,res){
   mark('EXTERNAL_WIX_RELEASE_ARTIFACT_DOWNLOAD','PASS',SOURCE_SHA);
   return true;
 }
+async function verifyExternalReleaseReceiptOidc(token){
+  let claims=await verifyWixReleaseExecutorOidc(token);
+  if(claims)return {provider:'vercel',claims};
+  claims=await verifyGitHubOidc(token);
+  if(claims)return {provider:'github',claims};
+  return null;
+}
 async function receiveExternalReleaseReceipt(req,res){
   if(req.method!=='POST'||String(req.url||'').split('?')[0]!=='/release-complete')return false;
   const auth=String(req.headers.authorization||'');
   const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
-  const claims=await verifyWixReleaseExecutorOidc(token);
-  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
+  const releaseIdentity=await verifyExternalReleaseReceiptOidc(token);
+  if(!releaseIdentity){res.writeHead(401);res.end('unauthorized');return true;}
   const suppliedSha=String(req.headers['x-source-sha']||'').trim();
   if(suppliedSha!==SOURCE_SHA){res.writeHead(409);res.end('source identity mismatch');return true;}
   try{
     await proveIdentity(LIVE,'LIVE');
     await proveIdentity(CANONICAL,'CANONICAL');
     state.phase='DONE';state.ok=true;state.released=true;state.status='OS_LIVE_EXACT_SHA_VERIFIED';
-    state.externalRelease={accepted:true,project:WIX_RELEASE_EXECUTOR_PROJECT,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
+    state.externalRelease={accepted:true,provider:releaseIdentity.provider,project:releaseIdentity.provider==='vercel'?WIX_RELEASE_EXECUTOR_PROJECT:GITHUB_REPOSITORY,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
     mark('EXTERNAL_WIX_RELEASE_RECEIPT_ACCEPTED','PASS',SOURCE_SHA);
     externalReleaseResolve?.();externalReleaseResolve=null;
     res.writeHead(200,{'content-type':'application/json'});
