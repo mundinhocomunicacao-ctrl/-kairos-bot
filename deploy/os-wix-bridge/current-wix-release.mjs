@@ -304,8 +304,8 @@ async function serveReleaseArtifact(req,res){
   if(req.method!=='GET'||pathname!=='/release-artifact')return false;
   const auth=String(req.headers.authorization||'');
   const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
-  const claims=await verifyWixReleaseExecutorOidc(token);
-  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
+  const releaseIdentity=await verifyExternalReleaseReceiptOidc(token);
+  if(!releaseIdentity){res.writeHead(401);res.end('unauthorized');return true;}
   const requestedSha=String(req.headers['x-source-sha']||'').trim();
   if(requestedSha!==SOURCE_SHA){res.writeHead(409);res.end('source identity mismatch');return true;}
   if(!fs.existsSync(BUILD_ARCHIVE)){res.writeHead(409);res.end('build artifact unavailable');return true;}
@@ -319,7 +319,7 @@ async function serveReleaseArtifact(req,res){
     'x-artifact-sha256':digest
   });
   fs.createReadStream(BUILD_ARCHIVE).pipe(res);
-  mark('EXTERNAL_WIX_RELEASE_ARTIFACT_DOWNLOAD','PASS',SOURCE_SHA);
+  mark('EXTERNAL_WIX_RELEASE_ARTIFACT_DOWNLOAD','PASS',SOURCE_SHA+' '+releaseIdentity.provider);
   return true;
 }
 async function verifyExternalReleaseReceiptOidc(token){
