@@ -127,7 +127,7 @@ async function verifyVercelOidc(token){
     subjectClaims?.environment!==String(payload?.environment||''))return reject('subject');
   if(String(payload?.owner||'')!==VERCEL_OWNER_SLUG||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
   if(String(payload?.project||'')!==VERCEL_PROJECT||String(payload?.project_id||'')!==VERCEL_PROJECT_ID)return reject('project');
-  if(!WIX_RELEASE_EXECUTOR_ALLOWED_ENVIRONMENTS.has(String(payload?.environment||'')))return reject('environment');
+  if(String(payload?.environment||'')!=='production')return reject('environment');
   if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return reject('time');
   let response;try{response=await fetch(VERCEL_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return reject('jwks_fetch')}
   if(!response.ok)return reject('jwks_http');
@@ -160,7 +160,7 @@ async function verifyWixReleaseExecutorOidc(token){
     subjectClaims?.environment!==String(payload?.environment||''))return reject('subject');
   if(String(payload?.owner||'')!==VERCEL_OWNER_SLUG||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
   if(String(payload?.project||'')!==WIX_RELEASE_EXECUTOR_PROJECT||String(payload?.project_id||'')!==WIX_RELEASE_EXECUTOR_PROJECT_ID)return reject('project');
-  if(String(payload?.environment||'')!=='production')return reject('environment');
+  if(!WIX_RELEASE_EXECUTOR_ALLOWED_ENVIRONMENTS.has(String(payload?.environment||'')))return reject('environment');
   if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return reject('time');
   let response;try{response=await fetch(VERCEL_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return reject('jwks_fetch')}
   if(!response.ok)return reject('jwks_http');
