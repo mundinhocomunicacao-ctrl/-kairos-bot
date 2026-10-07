@@ -81,7 +81,7 @@ assert.match(source,/WIX_RELEASE_EXECUTOR_PROJECT/);
 assert.match(source,/verifyWixReleaseExecutorOidc/);
 assert.match(source,/serveReleaseArtifact/);
 assert.match(source,/serveReleaseArtifact[\s\S]*verifyExternalReleaseReceiptOidc\(token\)/);
-assert.match(source,/releaseIdentity\\.provider/);
+assert.match(source,/releaseIdentity\.provider/);
 assert.match(source,/receiveExternalReleaseReceipt/);
 assert.match(source,/AWAIT_EXTERNAL_WIX_RELEASE/);
 assert.match(source,/EXTERNAL_WIX_RELEASE_ARTIFACT_DOWNLOAD/);
