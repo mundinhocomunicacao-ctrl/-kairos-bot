@@ -34,12 +34,16 @@ const VERCEL_OWNER_SLUG='mundinho-os';
 const VERCEL_PROJECT_ID='prj_ul6yOIcg4pTEV9OaQ1U8iZztOqcJ';
 const VERCEL_AUDIENCE='https://vercel.com/mundinho-os';
 const VERCEL_PROJECT='mundo-release-exact';
+const WIX_EXTERNAL_RELEASE_EXECUTOR_ENABLED=String(process.env.WIX_EXTERNAL_RELEASE_EXECUTOR_ENABLED||'0')==='1';
+const WIX_RELEASE_EXECUTOR_PROJECT_ID='prj_8kW6ONyrg036RMRGwA1W544lJzc0';
+const WIX_RELEASE_EXECUTOR_PROJECT='mundinho-os-rosa';
 const ALLOWED_CI_ROLES=new Set(['maintainer','owner']);
 const ALLOWED_CI_USER_IDS=new Set(['42210703']);
 const BRIDGE_ARCHIVE=path.join(ROOT,'.source-bridge-'+SOURCE_SHA+'.tar.gz');
 const BUILD_ARCHIVE=path.join(ROOT,'.external-build-'+SOURCE_SHA+'.tar.gz');
 let bridgeResolve=null;
 let buildResolve=null;
+let externalReleaseResolve=null;
 let state={phase:'BOOT',ok:false,released:false,sourceSha:SOURCE_SHA,source:'GITLAB_CANONICAL_ARCHIVE',tests:[],error:null};
 
 function run(bin,args,cwd=ROOT,extraEnv={}){
@@ -136,6 +140,39 @@ async function verifyVercelOidc(token){
     if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return reject('signature');
   }catch{return reject('signature_error')}
   console.log('VERCEL_OIDC_ACCEPT=production_project_bound');
+  return payload;
+}
+async function verifyWixReleaseExecutorOidc(token){
+  const reject=(reason)=>{console.error('WIX_RELEASE_EXECUTOR_OIDC_REJECT='+reason);return null;};
+  if(!WIX_EXTERNAL_RELEASE_EXECUTOR_ENABLED)return reject('disabled');
+  const raw=String(token||'').trim(),parts=raw.split('.');
+  if(parts.length!==3)return reject('shape');
+  let header,payload;try{header=decodePart(parts[0]);payload=decodePart(parts[1])}catch{return reject('decode')}
+  const now=Math.floor(Date.now()/1000);
+  if(header?.alg!=='RS256'||!header?.kid)return reject('header');
+  if(payload?.iss!==VERCEL_OIDC_ISSUER)return reject('issuer');
+  if(!audienceMatches(payload?.aud,VERCEL_AUDIENCE))return reject('audience');
+  const subjectClaims=parseVercelSubjectClaims(payload?.sub);
+  if(!subjectClaims||
+    subjectClaims?.owner!==VERCEL_OWNER_SLUG||
+    subjectClaims?.project!==WIX_RELEASE_EXECUTOR_PROJECT||
+    subjectClaims?.environment!==String(payload?.environment||''))return reject('subject');
+  if(String(payload?.owner||'')!==VERCEL_OWNER_SLUG||String(payload?.owner_id||'')!==VERCEL_OWNER_ID)return reject('owner');
+  if(String(payload?.project||'')!==WIX_RELEASE_EXECUTOR_PROJECT||String(payload?.project_id||'')!==WIX_RELEASE_EXECUTOR_PROJECT_ID)return reject('project');
+  if(String(payload?.environment||'')!=='production')return reject('environment');
+  if(safeNumber(payload?.exp)<=now||(payload?.nbf!=null&&safeNumber(payload.nbf)>now+30)||safeNumber(payload?.iat)>now+30)return reject('time');
+  let response;try{response=await fetch(VERCEL_OIDC_JWKS,{headers:{accept:'application/json'},cache:'no-store'})}catch{return reject('jwks_fetch')}
+  if(!response.ok)return reject('jwks_http');
+  let jwks;try{jwks=await response.json()}catch{return reject('jwks_json')}
+  const jwk=Array.isArray(jwks?.keys)?jwks.keys.find(key=>key?.kid===header.kid&&key?.kty==='RSA'&&(!key.alg||key.alg==='RS256')):null;
+  if(!jwk)return reject('kid');
+  try{
+    const key=crypto.createPublicKey({key:jwk,format:'jwk'});
+    const verifier=crypto.createVerify('RSA-SHA256');
+    verifier.update(`${parts[0]}.${parts[1]}`);verifier.end();
+    if(!verifier.verify(key,Buffer.from(parts[2],'base64url')))return reject('signature');
+  }catch{return reject('signature_error')}
+  console.log('WIX_RELEASE_EXECUTOR_OIDC_ACCEPT=production_project_bound');
   return payload;
 }
 async function verifyGitHubOidc(token){
@@ -261,6 +298,63 @@ async function serveBridgeArchive(req,res){
   fs.createReadStream(BRIDGE_ARCHIVE).pipe(res);
   mark('SOURCE_BRIDGE_GITHUB_DOWNLOAD','PASS',SOURCE_SHA);
   return true;
+}
+async function serveReleaseArtifact(req,res){
+  const pathname=String(req.url||'').split('?')[0];
+  if(req.method!=='GET'||pathname!=='/release-artifact')return false;
+  const auth=String(req.headers.authorization||'');
+  const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
+  const claims=await verifyWixReleaseExecutorOidc(token);
+  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
+  const requestedSha=String(req.headers['x-source-sha']||'').trim();
+  if(requestedSha!==SOURCE_SHA){res.writeHead(409);res.end('source identity mismatch');return true;}
+  if(!fs.existsSync(BUILD_ARCHIVE)){res.writeHead(409);res.end('build artifact unavailable');return true;}
+  const digest=state.externalBuild?.sha256||crypto.createHash('sha256').update(fs.readFileSync(BUILD_ARCHIVE)).digest('hex');
+  const bytes=fs.statSync(BUILD_ARCHIVE).size;
+  res.writeHead(200,{
+    'content-type':'application/gzip',
+    'content-length':String(bytes),
+    'cache-control':'no-store',
+    'x-source-sha':SOURCE_SHA,
+    'x-artifact-sha256':digest
+  });
+  fs.createReadStream(BUILD_ARCHIVE).pipe(res);
+  mark('EXTERNAL_WIX_RELEASE_ARTIFACT_DOWNLOAD','PASS',SOURCE_SHA);
+  return true;
+}
+async function receiveExternalReleaseReceipt(req,res){
+  if(req.method!=='POST'||String(req.url||'').split('?')[0]!=='/release-complete')return false;
+  const auth=String(req.headers.authorization||'');
+  const token=auth.startsWith('Bearer ')?auth.slice(7).trim():'';
+  const claims=await verifyWixReleaseExecutorOidc(token);
+  if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
+  const suppliedSha=String(req.headers['x-source-sha']||'').trim();
+  if(suppliedSha!==SOURCE_SHA){res.writeHead(409);res.end('source identity mismatch');return true;}
+  try{
+    await proveIdentity(LIVE,'LIVE');
+    await proveIdentity(CANONICAL,'CANONICAL');
+    state.phase='DONE';state.ok=true;state.released=true;state.status='OS_LIVE_EXACT_SHA_VERIFIED';
+    state.externalRelease={accepted:true,project:WIX_RELEASE_EXECUTOR_PROJECT,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
+    mark('EXTERNAL_WIX_RELEASE_RECEIPT_ACCEPTED','PASS',SOURCE_SHA);
+    externalReleaseResolve?.();externalReleaseResolve=null;
+    res.writeHead(200,{'content-type':'application/json'});
+    res.end(JSON.stringify({ok:true,sourceSha:SOURCE_SHA,status:state.status}));
+  }catch(error){
+    res.writeHead(409,{'content-type':'application/json'});
+    res.end(JSON.stringify({ok:false,error:String(error?.message||error)}));
+  }
+  return true;
+}
+async function waitForExternalReleaseReceipt(){
+  state.phase='AWAIT_EXTERNAL_WIX_RELEASE';
+  state.status='AWAIT_EXTERNAL_WIX_RELEASE';
+  state.ok=true;state.released=false;
+  mark('AWAIT_EXTERNAL_WIX_RELEASE','PASS',SOURCE_SHA);
+  await new Promise((resolve,reject)=>{
+    externalReleaseResolve=resolve;
+    const timer=setTimeout(()=>reject(new Error('EXTERNAL_WIX_RELEASE_RECEIPT_TIMEOUT')),30*60*1000);
+    timer.unref?.();
+  });
 }
 async function waitForBuildArtifact(){
   if(fs.existsSync(BUILD_ARCHIVE))return BUILD_ARCHIVE;
@@ -559,7 +653,16 @@ async function main(){
       mark('EXTERNAL_BUILD_HANDOFF','PASS',SOURCE_SHA);
       console.log('SOURCE_ARCHIVE_READY_FOR_GITHUB_BUILDER '+SOURCE_SHA);
       await prepareExternalBuildRelease();
-      await ensureAuth();
+      try{
+        await ensureAuth();
+      }catch(error){
+        if(WIX_EXTERNAL_RELEASE_EXECUTOR_ENABLED&&String(error?.message||error).includes('WIX_DURABLE_AUTH_REQUIRED_API_KEY_MISSING')){
+          await waitForExternalReleaseReceipt();
+          console.log('OS_LIVE_EXACT_SHA_VERIFIED '+JSON.stringify({sourceSha:SOURCE_SHA,builder:'github-hosted',releaseExecutor:WIX_RELEASE_EXECUTOR_PROJECT}));
+          return;
+        }
+        throw error;
+      }
       await releaseTarget(LIVE,'LIVE');
       await proveIdentity(CANONICAL,'CANONICAL');
       state.phase='DONE';state.ok=true;state.released=true;state.status='OS_LIVE_EXACT_SHA_VERIFIED';
@@ -583,6 +686,8 @@ http.createServer(async(req,res)=>{
   if(await receiveBridgeArchive(req,res))return;
   if(await receiveBuildArtifact(req,res))return;
   if(await serveBridgeArchive(req,res))return;
+  if(await serveReleaseArtifact(req,res))return;
+  if(await receiveExternalReleaseReceipt(req,res))return;
   res.setHeader('content-type','application/json');
   res.end(JSON.stringify(state,null,2));
 }).listen(PORT,'0.0.0.0',()=>{console.log('OS_EXACT_GITLAB_RELEASE_CONTROLLER_READY');void main();});
