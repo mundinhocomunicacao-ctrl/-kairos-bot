@@ -52,6 +52,8 @@ assert.match(source,/SOURCE_BRIDGE_ARCHIVE_ACCEPTED/);
 assert.match(source,/gitlab-ci-source-bridge/);
 assert.match(source,/OS_GITHUB_TRANSPORT_COMMIT/);
 assert.match(source,/OS_GITHUB_TRANSPORT_TREE_SHA/);
+assert.match(source,/https:\/\/codeload\.github\.com/);
+assert.doesNotMatch(source,/https:\/\/github\.com\/'\+GITHUB_TRANSPORT_REPOSITORY\+'\/archive\//);
 assert.match(source,/function proveGitTreeParity/);
 assert.match(source,/run\('git',\['init','-q'\],dir\)/);
 assert.match(source,/run\('git',\['add','-Af','[.]'\],dir\)/);
