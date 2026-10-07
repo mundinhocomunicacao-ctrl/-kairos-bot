@@ -23,6 +23,9 @@ const GITHUB_OIDC_ISSUER='https://token.actions.githubusercontent.com';
 const GITHUB_OIDC_JWKS='https://token.actions.githubusercontent.com/.well-known/jwks';
 const GITHUB_REPOSITORY='mundinhocomunicacao-ctrl/mundinho-os-live';
 const GITHUB_REF='refs/heads/main';
+const GITHUB_TRANSPORT_REPOSITORY='mundinhocomunicacao-ctrl/mundinho-os-live';
+const GITHUB_TRANSPORT_COMMIT=String(process.env.OS_GITHUB_TRANSPORT_COMMIT||'').trim();
+const GITHUB_TRANSPORT_TREE_SHA=String(process.env.OS_GITHUB_TRANSPORT_TREE_SHA||'').trim();
 const VERCEL_SOURCE_BRIDGE_ENABLED=String(process.env.VERCEL_SOURCE_BRIDGE_ENABLED||'0')==='1';
 const VERCEL_OIDC_ISSUER='https://oidc.vercel.com/mundinho-os';
 const VERCEL_OIDC_JWKS='https://oidc.vercel.com/mundinho-os/.well-known/jwks';
@@ -297,6 +300,37 @@ async function prepareExternalBuildRelease(){
   if(!fs.readFileSync(entry,'utf8').includes(SOURCE_SHA))throw new Error('EXTERNAL_BUILD_SOURCE_SHA_MISMATCH');
   mark('EXTERNAL_BUILD_ARTIFACT_VERIFIED','PASS',SOURCE_SHA);
 }
+async function proveGitTreeParity(dir,expectedTree){
+  if(!/^[0-9a-f]{40}$/i.test(String(expectedTree||'')))throw new Error('GITHUB_TRANSPORT_TREE_SHA_REQUIRED');
+  const gitDir=path.join(dir,'.git');
+  fs.rmSync(gitDir,{recursive:true,force:true});
+  await run('git',['init','-q'],dir);
+  await run('git',['add','-Af','.'],dir);
+  const actual=sh('git',['write-tree'],dir);
+  fs.rmSync(gitDir,{recursive:true,force:true});
+  if(actual!==expectedTree)throw new Error('GITHUB_TRANSPORT_TREE_MISMATCH expected='+expectedTree+' actual='+actual);
+  mark('GITHUB_TRANSPORT_TREE_PARITY','PASS',actual);
+  return actual;
+}
+async function tryGitHubTreeTransport(){
+  if(!/^[0-9a-f]{40}$/i.test(GITHUB_TRANSPORT_COMMIT)||!/^[0-9a-f]{40}$/i.test(GITHUB_TRANSPORT_TREE_SHA))return false;
+  const archive=path.join(ROOT,'.github-transport-'+GITHUB_TRANSPORT_COMMIT+'.tar.gz');
+  const url='https://github.com/'+GITHUB_TRANSPORT_REPOSITORY+'/archive/'+GITHUB_TRANSPORT_COMMIT+'.tar.gz';
+  fs.rmSync(archive,{force:true});
+  fs.rmSync(OS_DIR,{recursive:true,force:true});
+  fs.mkdirSync(OS_DIR,{recursive:true});
+  await run('curl',['--fail','--silent','--show-error','--location','--retry','5','--retry-all-errors','--retry-delay','2',url,'-o',archive],ROOT);
+  assertSafeTar(archive);
+  await run('tar',['-xzf',archive,'--strip-components=1','-C',OS_DIR],ROOT);
+  await proveGitTreeParity(OS_DIR,GITHUB_TRANSPORT_TREE_SHA);
+  fs.rmSync(BRIDGE_ARCHIVE,{force:true});
+  await run('tar',['-czf',BRIDGE_ARCHIVE,'-C',OS_DIR,'.'],ROOT);
+  assertSafeTar(BRIDGE_ARCHIVE);
+  const digest=crypto.createHash('sha256').update(fs.readFileSync(BRIDGE_ARCHIVE)).digest('hex');
+  state.bridge={accepted:true,provider:'github-tree-proven-transport',bytes:fs.statSync(BRIDGE_ARCHIVE).size,sha256:digest,sourceSha:SOURCE_SHA,transportCommit:GITHUB_TRANSPORT_COMMIT,transportTree:GITHUB_TRANSPORT_TREE_SHA,at:new Date().toISOString()};
+  mark('SOURCE_BRIDGE_ARCHIVE_ACCEPTED','PASS',SOURCE_SHA+' github-tree-proven-transport');
+  return true;
+}
 async function syncSource(){
   state.phase='SOURCE';
   if(!/^[0-9a-f]{40}$/i.test(SOURCE_SHA))throw new Error('OS_SOURCE_SHA_REQUIRED_EXACT_40');
@@ -311,9 +345,19 @@ async function syncSource(){
     await run('tar',['-xzf',archive,'--strip-components=1','-C',OS_DIR],ROOT);
   }catch(error){
     fs.rmSync(archive,{force:true});
-    const bridged=await waitForBridgeArchive();
-    transport='gitlab-ci-source-bridge';
-    await run('tar',['-xzf',bridged,'-C',OS_DIR],ROOT);
+    let transported=false;
+    try{transported=await tryGitHubTreeTransport()}catch(transportError){
+      console.error('GITHUB_TRANSPORT_REJECT='+String(transportError?.message||transportError));
+      fs.rmSync(OS_DIR,{recursive:true,force:true});
+      fs.mkdirSync(OS_DIR,{recursive:true});
+    }
+    if(transported){
+      transport='github-tree-proven-transport';
+    }else{
+      const bridged=await waitForBridgeArchive();
+      transport='gitlab-ci-source-bridge';
+      await run('tar',['-xzf',bridged,'-C',OS_DIR],ROOT);
+    }
   }
   for(const required of ['package.json','package-lock.json','proxy.js','pages/api/release-version.js','scripts/package-wix-worker.mjs']){
     if(!fs.existsSync(path.join(OS_DIR,required)))throw new Error('CANONICAL_SOURCE_FILE_MISSING:'+required);
