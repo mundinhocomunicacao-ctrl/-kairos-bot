@@ -15,13 +15,25 @@ jobs:
     env:
       SOURCE_SHA: cd81bc570475b3c7e9dee4bc2d6f5f6d400ec999
       SOURCE_REPO: https://gitlab.com/mundinhocomunicacao/mundinhocomunicacao.git
+      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      GITLAB_PAT: ${{ secrets.GITLAB_PAT }}
+      GL_TOKEN: ${{ secrets.GL_TOKEN }}
+      MUNDINHO_GITLAB_TOKEN: ${{ secrets.MUNDINHO_GITLAB_TOKEN }}
     steps:
       - name: Checkout sovereign GitLab SHA
         shell: bash
         run: |
           set -euo pipefail
           rm -rf /tmp/mundinho-os
-          git clone --filter=blob:none "$SOURCE_REPO" /tmp/mundinho-os
+          TOKEN="${GITLAB_TOKEN:-}"
+          [ -n "$TOKEN" ] || TOKEN="${GITLAB_PAT:-}"
+          [ -n "$TOKEN" ] || TOKEN="${GL_TOKEN:-}"
+          [ -n "$TOKEN" ] || TOKEN="${MUNDINHO_GITLAB_TOKEN:-}"
+          if [ -z "$TOKEN" ]; then
+            echo "GITLAB_MACHINE_TOKEN_NOT_CONFIGURED"
+            exit 78
+          fi
+          git clone --filter=blob:none "https://oauth2:${TOKEN}@gitlab.com/mundinhocomunicacao/mundinhocomunicacao.git" /tmp/mundinho-os
           cd /tmp/mundinho-os
           git checkout --detach "$SOURCE_SHA"
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
