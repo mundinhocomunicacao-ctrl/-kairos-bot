@@ -8,6 +8,7 @@ import {execFileSync,spawn} from 'node:child_process';
 const PORT=Number(process.env.PORT||10000);
 const ROOT=process.cwd();
 const OS_DIR=path.join(ROOT,'os');
+const CLIENT_DIR=path.join(OS_DIR,'dist','client');
 const SOURCE_SHA='b199cf50ca16887adf843cc6f715772b846b6703';
 const MIRROR_SHA='b767dfb47797a4102b5f639a104d8655058360f4';
 const QA_SECRET='mundinho-mr515-render-qa-session-20260930-9f0048f6';
@@ -22,6 +23,50 @@ function run(bin,args,cwd=ROOT,env={}){
     child.on('error',reject);
     child.on('close',code=>code===0?resolve():reject(new Error(bin+' '+args.join(' ')+' exit '+code)));
   });
+}
+function clientAssetContentType(filePath){
+  const ext=path.extname(filePath).toLowerCase();
+  return ({
+    '.js':'application/javascript; charset=utf-8',
+    '.mjs':'application/javascript; charset=utf-8',
+    '.css':'text/css; charset=utf-8',
+    '.json':'application/json; charset=utf-8',
+    '.webmanifest':'application/manifest+json; charset=utf-8',
+    '.svg':'image/svg+xml',
+    '.png':'image/png',
+    '.jpg':'image/jpeg',
+    '.jpeg':'image/jpeg',
+    '.webp':'image/webp',
+    '.gif':'image/gif',
+    '.ico':'image/x-icon',
+    '.woff':'font/woff',
+    '.woff2':'font/woff2',
+    '.txt':'text/plain; charset=utf-8',
+    '.html':'text/html; charset=utf-8'
+  })[ext]||'application/octet-stream';
+}
+function serveClientAsset(req,res){
+  const method=String(req.method||'GET').toUpperCase();
+  if(method!=='GET'&&method!=='HEAD')return false;
+  let url;
+  try{url=new URL(req.url||'/','http://127.0.0.1')}catch{return false}
+  let pathname;
+  try{pathname=decodeURIComponent(url.pathname)}catch{return false}
+  if(pathname==='/'||pathname.endsWith('/'))return false;
+  const clientRoot=path.resolve(CLIENT_DIR);
+  const clientRootWithSep=clientRoot+path.sep;
+  const candidate=path.resolve(clientRoot,pathname.replace(/^\/+/, ''));
+  if(!candidate.startsWith(clientRootWithSep))return false;
+  let stat;
+  try{stat=fs.statSync(candidate)}catch{return false}
+  if(!stat.isFile())return false;
+  res.statusCode=200;
+  res.setHeader('content-type',clientAssetContentType(candidate));
+  res.setHeader('content-length',String(stat.size));
+  res.setHeader('cache-control',pathname.startsWith('/_next/static/')?'public,max-age=31536000,immutable':'public,max-age=0,must-revalidate');
+  if(method==='HEAD'){res.end();return true}
+  fs.createReadStream(candidate).pipe(res);
+  return true;
 }
 function sessionToken(){
   const body=Buffer.from(JSON.stringify({
@@ -88,6 +133,7 @@ async function startPrebuiltWixWorker(port,childEnv){
   const ctx={waitUntil(promise){Promise.resolve(promise).catch(error=>console.error('QA_WAIT_UNTIL_ERROR '+String(error?.message||error)))},passThroughOnException(){}};
   const server=http.createServer(async(req,res)=>{
     try{
+      if(serveClientAsset(req,res))return;
       const chunks=[];
       for await(const chunk of req)chunks.push(Buffer.from(chunk));
       const body=chunks.length?Buffer.concat(chunks):null;
