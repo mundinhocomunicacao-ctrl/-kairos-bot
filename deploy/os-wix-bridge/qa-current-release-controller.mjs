@@ -58,7 +58,7 @@ assert.match(source,/run\('git',\['add','-Af','\\.'\],dir\)/);
 assert.match(source,/sh\('git',\['write-tree'\],dir\)/);
 assert.match(source,/GITHUB_TRANSPORT_TREE_PARITY/);
 assert.match(source,/github-tree-proven-transport/);
-assert.match(source,/tar',['"]-czf['"],BRIDGE_ARCHIVE,['"]-C['"],OS_DIR,['"]\.['"]/);
+assert.match(source,/run\('tar',\['-czf',BRIDGE_ARCHIVE,'-C',OS_DIR,'\\.'\],ROOT\)/);
 assert.match(source,/MUNDO_RUNTIME_SOURCE_SHA:SOURCE_SHA/);
 assert.match(source,/qa-resource-mesh-v1-1\.mjs/);
 assert.match(source,/@wix\/cli@latest/);
