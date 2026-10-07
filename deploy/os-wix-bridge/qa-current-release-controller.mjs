@@ -30,7 +30,9 @@ assert.match(source,/subjectClaims\?\.environment!==String\(payload\?\.environme
 assert.doesNotMatch(source,/String\(payload\?\.sub\|\|''\)!==VERCEL_SUBJECT/);
 assert.match(source,/VERCEL_PROJECT_ID='prj_ul6yOIcg4pTEV9OaQ1U8iZztOqcJ'/);
 assert.match(source,/VERCEL_PROJECT='mundo-release-exact'/);
-assert.match(source,/owner:mundinho-os:project:mundo-release-exact:environment:production/);
+assert.match(source,/VERCEL_OWNER_SLUG='mundinho-os'/);
+assert.match(source,/VERCEL_PROJECT='mundo-release-exact'/);
+assert.match(source,/String\(payload\?\.environment\|\|''\)!=='production'/);
 assert.doesNotMatch(source,/VERCEL_PROJECT_ID='prj_8kW6ONyrg036RMRGwA1W544lJzc0'/);
 assert.doesNotMatch(source,/owner:mundinho-os:project:mundinho-os-rosa:environment:production/);
 assert.doesNotMatch(source,/VERCEL_PROJECT_ID='prj_VzSF21yKWVCHYiXbIst6nO2YdHnz'/);
