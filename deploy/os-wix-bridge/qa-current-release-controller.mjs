@@ -38,6 +38,11 @@ assert.doesNotMatch(source,/owner:mundinho-os:project:mundinho-os-rosa:environme
 assert.doesNotMatch(source,/VERCEL_PROJECT_ID='prj_VzSF21yKWVCHYiXbIst6nO2YdHnz'/);
 assert.doesNotMatch(source,/owner:mundinho-os:project:mundinhocomunicacao:environment:production/);
 assert.match(source,/verifyGitHubOidc/);
+assert.match(source,/provider='github'/);
+assert.match(source,/x-transport-commit/);
+assert.match(source,/x-transport-tree/);
+assert.match(source,/GITHUB_TRANSPORT_IDENTITY_MISMATCH/);
+assert.match(source,/await proveGitTreeParity\(verifyDir,GITHUB_TRANSPORT_TREE_SHA\)/);
 assert.match(source,/serveBridgeArchive/);
 assert.match(source,/SOURCE_BRIDGE_GITHUB_DOWNLOAD/);
 assert.match(source,/BRIDGE_AUDIENCE/);
