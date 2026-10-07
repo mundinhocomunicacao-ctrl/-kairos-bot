@@ -190,9 +190,17 @@ async function receiveBridgeArchive(req,res){
   let provider='gitlab';
   let claims=await verifyBridgeOidc(token);
   if(!claims){claims=await verifyVercelOidc(token);provider='vercel';}
+  if(!claims){claims=await verifyGitHubOidc(token);provider='github';}
   if(!claims){res.writeHead(401);res.end('unauthorized');return true;}
   const suppliedSha=String(req.headers['x-source-sha']||'').trim();
   if(provider==='vercel'&&String(req.headers['x-vercel-git-commit-sha']||'').trim()!==SOURCE_SHA){res.writeHead(409);res.end('vercel source identity mismatch');return true;}
+  if(provider==='github'){
+    const suppliedTransportCommit=String(req.headers['x-transport-commit']||'').trim();
+    const suppliedTransportTree=String(req.headers['x-transport-tree']||'').trim();
+    if(suppliedTransportCommit!==GITHUB_TRANSPORT_COMMIT||suppliedTransportTree!==GITHUB_TRANSPORT_TREE_SHA){
+      res.writeHead(409);res.end('GITHUB_TRANSPORT_IDENTITY_MISMATCH');return true;
+    }
+  }
   const suppliedDigest=String(req.headers['x-archive-sha256']||'').trim().toLowerCase();
   if(suppliedSha!==SOURCE_SHA||!/^[a-f0-9]{64}$/.test(suppliedDigest)){res.writeHead(409);res.end('source identity mismatch');return true;}
   const temp=BRIDGE_ARCHIVE+'.partial';
@@ -208,6 +216,17 @@ async function receiveBridgeArchive(req,res){
     await new Promise((resolve,reject)=>out.end(err=>err?reject(err):resolve()));
     if(bytes<1||hash.digest('hex')!==suppliedDigest)throw new Error('SOURCE_BRIDGE_CHECKSUM_MISMATCH');
     assertSafeTar(temp);
+    if(provider==='github'){
+      const verifyDir=path.join(ROOT,'.github-source-verify-'+SOURCE_SHA);
+      fs.rmSync(verifyDir,{recursive:true,force:true});
+      fs.mkdirSync(verifyDir,{recursive:true});
+      try{
+        await run('tar',['-xzf',temp,'-C',verifyDir],ROOT);
+        await proveGitTreeParity(verifyDir,GITHUB_TRANSPORT_TREE_SHA);
+      }finally{
+        fs.rmSync(verifyDir,{recursive:true,force:true});
+      }
+    }
     fs.renameSync(temp,BRIDGE_ARCHIVE);
     state.bridge={accepted:true,provider,bytes,sha256:suppliedDigest,sourceSha:SOURCE_SHA,at:new Date().toISOString()};
     mark('SOURCE_BRIDGE_ARCHIVE_ACCEPTED','PASS',SOURCE_SHA);
